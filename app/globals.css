@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f8f8f8;
   --foreground: #171717;
+  --surface: #ffffffcc;
+  --panel: #fafafa;
+  --panel-text: #171717;
+  --border: #e5e5e5;
+  --muted-text: #737373;
+  --button-bg: #ffffffcc;
+  --button-text: #171717;
+  --button-border: #d4d4d4;
+  --button-hover-bg: #171717;
+  --button-hover-text: #ffffff;
 }
 
 @theme inline {
@@ -12,15 +22,95 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="dark"] {
+  --background: #000000;
+  --foreground: #f5f5f5;
+  --surface: #0b0b0bcc;
+  --panel: #121212;
+  --panel-text: #f9fafb;
+  --border: #2a2a2a;
+  --muted-text: #a3a3a3;
+  --button-bg: #121212cc;
+  --button-text: #f3f4f6;
+  --button-border: #2f2f2f;
+  --button-hover-bg: #f9fafb;
+  --button-hover-text: #111111;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Helvetica Neue", Arial, "system-ui", sans-serif;
+}
+.btn {
+  @apply bg-gray-200 text-sm py-2 rounded-lg hover:bg-gray-300 transition;
+}
+
+.tool-float-button {
+  @apply pointer-events-auto border backdrop-blur px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg transition focus:outline-none focus:ring-2 focus:ring-neutral-900 justify-center min-w-[84px] sm:min-w-[104px];
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-color: var(--button-border);
+}
+
+.tool-float-button:hover {
+  background: var(--button-hover-bg);
+  color: var(--button-hover-text);
+}
+
+[data-theme="dark"] .tool-float-button {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .tool-float-button:hover {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+
+[data-theme="dark"] .bg-neutral-50 {
+  background-color: var(--background) !important;
+}
+
+[data-theme="dark"] .bg-white\/80 {
+  background-color: var(--surface) !important;
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--panel) !important;
+}
+
+[data-theme="dark"] .bg-neutral-50,
+[data-theme="dark"] .bg-neutral-900,
+[data-theme="dark"] .text-black,
+[data-theme="dark"] .text-neutral-900 {
+  color: var(--panel-text) !important;
+}
+
+[data-theme="dark"] .text-neutral-500,
+[data-theme="dark"] .text-neutral-700,
+[data-theme="dark"] .text-neutral-300 {
+  color: var(--muted-text) !important;
+}
+
+[data-theme="dark"] .border-neutral-200,
+[data-theme="dark"] .border-neutral-300,
+[data-theme="dark"] .border-neutral-100,
+[data-theme="dark"] .border-neutral-900 {
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .hover\:bg-neutral-100:hover {
+  background-color: #202020 !important;
+}
+
+[data-theme="dark"] .hover\:bg-neutral-900:hover {
+  background-color: var(--button-hover-bg) !important;
+}
+
+[data-theme="dark"] .hover\:text-white:hover {
+  color: var(--button-hover-text) !important;
+}
+
+[data-theme="dark"] .placeholder\:text-neutral-300::placeholder {
+  color: var(--muted-text) !important;
 }
