@@ -19,6 +19,17 @@ A simple tool to quickly format your text.
 
 ---
 
+## 🛠️ Day 2: JSON Formatter
+
+Format and validate JSON instantly.
+
+### ✨ Features
+- Pretty print JSON
+- Detect invalid JSON
+- Copy formatted output
+
+---
+
 ## 🌐 Live Demo
 👉 https://boring-tools-nine.vercel.app/
 
