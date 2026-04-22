@@ -54,6 +54,21 @@ Features:
 Route:
 - `/word-counter`
 
+### Day 4: Password Generator
+
+Generate secure passwords with custom options.
+
+Features:
+- Adjustable password length
+- Uppercase letters
+- Lowercase letters
+- Numbers
+- Symbols
+- Copy generated password
+
+Route:
+- `/password-generator`
+
 ---
 
 ## UI/UX Updates
@@ -96,7 +111,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 1 ✅ Text Formatter
 - Day 2 ✅ JSON Formatter
 - Day 3 ✅ Word Counter
-- Day 4 ⏳ Coming soon...
+- Day 4 ✅ Password Generator
+- Day 5 ⏳ Coming soon...
 
 ---
 
