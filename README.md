@@ -30,6 +30,18 @@ Format and validate JSON instantly.
 
 ---
 
+## 🛠️ Day 3: Word Counter
+
+Count words, characters, and sentences instantly.
+
+### ✨ Features
+- Word count
+- Character count
+- Characters without spaces
+- Sentence count
+
+---
+
 ## 🌐 Live Demo
 👉 https://boring-tools-nine.vercel.app/
 
