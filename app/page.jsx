@@ -6,7 +6,7 @@ export default function Home() {
       <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-6 items-center">
         <h1 className="text-4xl font-bold tracking-tight text-neutral-900 mb-1">BoringTools <span className="align-middle">🚀</span></h1>
         <p className="text-neutral-500 text-lg mb-2">100 Days. 100 Boring Tools.</p>
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <a
             href="/text-formatter"
             className="border border-neutral-900 text-neutral-900 py-2 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
@@ -25,6 +25,16 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 6h16.5m-16.5 6h16.5" />
             </svg>
             JSON Formatter
+          </a>
+
+          <a
+            href="/word-counter"
+            className="border border-neutral-900 text-neutral-900 py-2 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 6.75h9m-9 4.5h9m-9 4.5h5.25M4.5 3.75h15a.75.75 0 01.75.75v15a.75.75 0 01-.75.75h-15a.75.75 0 01-.75-.75v-15a.75.75 0 01.75-.75z" />
+            </svg>
+            Word Counter
           </a>
         </div>
       </div>
