@@ -46,6 +46,16 @@ export default function Home() {
             </svg>
             Password Generator
           </a>
+
+          <a
+            href="/age-calculator"
+            className="border border-neutral-900 text-neutral-900 py-2 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3.75h10.5A2.25 2.25 0 0119.5 6v12a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 18V6a2.25 2.25 0 012.25-2.25zm0 4.5h10.5M8.25 2.25v3m7.5-3v3" />
+            </svg>
+            Age Calculator
+          </a>
         </div>
       </div>
       <style jsx global>{`

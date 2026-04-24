@@ -69,6 +69,18 @@ Features:
 Route:
 - `/password-generator`
 
+### Day 5: Age Calculator
+
+Calculate exact age from date of birth.
+
+Features:
+- Exact age in years, months, and days
+- Simple date picker input
+- Input validation for empty and future dates
+
+Route:
+- `/age-calculator`
+
 ---
 
 ## UI/UX Updates
@@ -112,7 +124,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 2 ✅ JSON Formatter
 - Day 3 ✅ Word Counter
 - Day 4 ✅ Password Generator
-- Day 5 ⏳ Coming soon...
+- Day 5 ✅ Age Calculator
+- Day 6 ⏳ Coming soon...
 
 ---
 
