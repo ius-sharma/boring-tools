@@ -81,6 +81,20 @@ Features:
 Route:
 - `/age-calculator`
 
+### Day 6: Unit Converter
+
+Convert common units instantly with a cleaner UI.
+
+Features:
+- Convert Length, Weight, and Temperature
+- Swap input/output units quickly
+- Precision control for output value
+- One-click copy for converted result
+- Improved responsive layout and themed custom dropdowns
+
+Route:
+- `/unit-converter`
+
 ---
 
 ## UI/UX Updates
@@ -125,7 +139,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 3 ✅ Word Counter
 - Day 4 ✅ Password Generator
 - Day 5 ✅ Age Calculator
-- Day 6 ⏳ Coming soon...
+- Day 6 ✅ Unit Converter
 
 ---
 
