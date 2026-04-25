@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import ThemedDropdown from "./components/ThemedDropdown";
 
 const tools = [
   {
@@ -9,7 +10,7 @@ const tools = [
     href: "/text-formatter",
     category: "Text",
     description: "Clean and transform text instantly.",
-    meta: "Fast",
+    status: "Live",
   },
   {
     id: "json-formatter",
@@ -17,39 +18,39 @@ const tools = [
     href: "/json-formatter",
     category: "Developer",
     description: "Format and validate JSON in one click.",
-    meta: "No upload",
+    status: "Live",
   },
   {
     id: "word-counter",
     name: "Word Counter",
     href: "/word-counter",
     category: "Text",
-    description: "Count words, characters, and lines quickly.",
-    meta: "Instant",
+    description: "Count words and characters quickly.",
+    status: "Live",
   },
   {
     id: "password-generator",
     name: "Password Generator",
     href: "/password-generator",
     category: "Security",
-    description: "Generate strong passwords with custom rules.",
-    meta: "Secure",
+    description: "Generate secure passwords with options.",
+    status: "Live",
   },
   {
     id: "age-calculator",
     name: "Age Calculator",
     href: "/age-calculator",
     category: "Utility",
-    description: "Get exact age from date of birth.",
-    meta: "Simple",
+    description: "Calculate age from date of birth.",
+    status: "Live",
   },
   {
     id: "qr-generator",
     name: "QR Generator",
     href: "/qr-generator",
     category: "Developer",
-    description: "Create downloadable QR codes from any text.",
-    meta: "Share-ready",
+    description: "Generate downloadable QR from text.",
+    status: "Live",
     isNew: true,
   },
   {
@@ -57,8 +58,8 @@ const tools = [
     name: "Unit Converter",
     href: "/unit-converter",
     category: "Utility",
-    description: "Convert length, weight, and temperature.",
-    meta: "Precise",
+    description: "Convert length, weight, temperature.",
+    status: "Live",
   },
 ];
 
@@ -67,85 +68,160 @@ const upcomingTools = [
     id: "file-name-sanitizer",
     name: "File Name Sanitizer",
     category: "Utility",
-    description: "Clean unsafe or messy filenames before sharing.",
+    description: "Clean unsafe or messy filenames.",
     eta: "Coming Soon",
   },
   {
     id: "roast-my-todo-list",
     name: "Roast My To-Do List",
     category: "Fun + Productivity",
-    description: "Get playful roasts with practical next-step prompts.",
+    description: "Playful roast with practical next steps.",
     eta: "Coming Soon",
   },
   {
     id: "markdown-previewer",
     name: "Markdown Previewer",
     category: "Developer",
-    description: "Write markdown and preview in real-time.",
+    description: "Write markdown and preview instantly.",
     eta: "Coming Soon",
   },
   {
     id: "pomodoro-timer",
     name: "Pomodoro Timer",
     category: "Productivity",
-    description: "Focus with work-break timer sessions.",
+    description: "Focus sessions with timer cycles.",
     eta: "Coming Soon",
   },
   {
     id: "image-compressor",
     name: "Image Compressor / Resizer",
     category: "Media",
-    description: "Resize and compress images in browser.",
+    description: "Compress and resize images quickly.",
     eta: "Coming Soon",
   },
 ];
 
-const categories = ["All", "Text", "Developer", "Utility", "Security"];
+const quickFilters = [
+  { id: "all", label: "All" },
+  { id: "most-used", label: "Most Used" },
+  { id: "new", label: "New" },
+  { id: "developer", label: "Developer" },
+];
+
+const categories = ["All", "Text", "Developer", "Utility", "Security", "Productivity", "Media", "Fun + Productivity"];
+const categoryOptions = categories.map((item) => ({ value: item, label: item }));
+
 const RECENT_STORAGE_KEY = "boring_tools_recent";
+const USAGE_STORAGE_KEY = "boring_tools_usage_map";
+
+function filterMatch(tool, query, category) {
+  const normalized = query.trim().toLowerCase();
+  const matchesCategory = category === "All" || tool.category === category;
+  const matchesQuery =
+    !normalized ||
+    tool.name.toLowerCase().includes(normalized) ||
+    tool.description.toLowerCase().includes(normalized) ||
+    tool.category.toLowerCase().includes(normalized);
+
+  return matchesCategory && matchesQuery;
+}
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [quickFilter, setQuickFilter] = useState("all");
+  const [category, setCategory] = useState("All");
   const [recentTools, setRecentTools] = useState([]);
+  const [usageMap, setUsageMap] = useState({});
+  const [upcomingOpen, setUpcomingOpen] = useState(false);
+
+  const searchRef = useRef(null);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(RECENT_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        setRecentTools(parsed);
+      const rawRecent = localStorage.getItem(RECENT_STORAGE_KEY);
+      const parsedRecent = JSON.parse(rawRecent || "[]");
+      if (Array.isArray(parsedRecent)) {
+        setRecentTools(parsedRecent);
       }
     } catch {
       setRecentTools([]);
     }
+
+    try {
+      const rawUsage = localStorage.getItem(USAGE_STORAGE_KEY);
+      const parsedUsage = JSON.parse(rawUsage || "{}");
+      if (parsedUsage && typeof parsedUsage === "object") {
+        setUsageMap(parsedUsage);
+      }
+    } catch {
+      setUsageMap({});
+    }
   }, []);
 
-  const filteredTools = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
+  const toolsByUsage = useMemo(() => {
+    return [...tools].sort((a, b) => (usageMap[b.id] || 0) - (usageMap[a.id] || 0));
+  }, [usageMap]);
 
-    return tools.filter((tool) => {
-      const matchesCategory = activeCategory === "All" || tool.category === activeCategory;
-      const matchesSearch =
-        !normalized ||
-        tool.name.toLowerCase().includes(normalized) ||
-        tool.description.toLowerCase().includes(normalized) ||
-        tool.category.toLowerCase().includes(normalized);
+  const filteredLiveTools = useMemo(() => {
+    let base = [...tools];
 
-      return matchesCategory && matchesSearch;
-    });
-  }, [activeCategory, query]);
+    if (quickFilter === "most-used") {
+      const used = toolsByUsage.filter((tool) => (usageMap[tool.id] || 0) > 0);
+      base = used.length ? used : toolsByUsage;
+    }
 
-  const featuredTool = tools.find((tool) => tool.isNew) || tools[tools.length - 1];
-  const recentToolCards = useMemo(
+    if (quickFilter === "new") {
+      base = base.filter((tool) => tool.isNew);
+    }
+
+    if (quickFilter === "developer") {
+      base = base.filter((tool) => tool.category === "Developer");
+    }
+
+    return base.filter((tool) => filterMatch(tool, query, category));
+  }, [category, quickFilter, query, toolsByUsage, usageMap]);
+
+  const filteredUpcomingTools = useMemo(() => {
+    return upcomingTools.filter((tool) => filterMatch(tool, query, category));
+  }, [category, query]);
+
+  const recentCards = useMemo(
     () => recentTools.map((id) => tools.find((tool) => tool.id === id)).filter(Boolean),
     [recentTools]
   );
 
-  const handleToolVisit = (toolId) => {
-    const next = [toolId, ...recentTools.filter((id) => id !== toolId)].slice(0, 4);
-    setRecentTools(next);
-    localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(next));
+  const featuredTool = tools.find((tool) => tool.isNew) || tools[0];
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      const target = event.target;
+      const isInput = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+
+      if (event.key === "/" && !isInput) {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+
+      if (event.key === "Enter" && target === searchRef.current && filteredLiveTools[0]) {
+        window.location.href = filteredLiveTools[0].href;
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [filteredLiveTools]);
+
+  const handleOpenTool = (toolId) => {
+    const nextRecent = [toolId, ...recentTools.filter((id) => id !== toolId)].slice(0, 4);
+    setRecentTools(nextRecent);
+    localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(nextRecent));
+
+    const nextUsage = {
+      ...usageMap,
+      [toolId]: (usageMap[toolId] || 0) + 1,
+    };
+    setUsageMap(nextUsage);
+    localStorage.setItem(USAGE_STORAGE_KEY, JSON.stringify(nextUsage));
   };
 
   return (
@@ -155,183 +231,258 @@ export default function Home() {
         <div className="absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-neutral-300 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-5 sm:p-8 shadow-xl flex flex-col gap-6 sm:gap-8">
-        <header className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">100 Days Build</p>
-              <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-neutral-900 mt-1">BoringTools</h1>
-              <p className="text-neutral-600 mt-2 text-sm sm:text-base">Daily utility tools. Zero login. Instant results in your browser.</p>
-            </div>
-            <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-right min-w-[150px]">
-              <p className="text-xs text-neutral-500">Available tools</p>
-              <p className="text-2xl font-bold text-neutral-900">{tools.length}</p>
-              <p className="text-xs text-neutral-500 mt-1">{upcomingTools.length} upcoming</p>
-            </div>
+      <div className="relative mx-auto w-full max-w-6xl rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-5 sm:p-8 shadow-xl flex flex-col gap-5 sm:gap-6">
+        <header className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex items-start justify-between gap-4 flex-wrap">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">100 Days Build</p>
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-neutral-900 mt-1">BoringTools</h1>
+            <p className="text-neutral-600 mt-2 text-sm sm:text-base">Small tools for boring problems. Fast, local, no login.</p>
           </div>
+          <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 min-w-[170px]">
+            <p className="text-xs text-neutral-500">Live / Upcoming</p>
+            <p className="text-2xl font-bold text-neutral-900">{tools.length} / {upcomingTools.length}</p>
+          </div>
+        </header>
 
+        <section className="sticky top-3 z-20 rounded-2xl border border-neutral-200 bg-white backdrop-blur p-4 sm:p-5 shadow-sm flex flex-col gap-3">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
             <label className="rounded-xl border border-neutral-200 bg-white px-4 py-3 flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-neutral-500">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
+                ref={searchRef}
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search tools by name, purpose, or category"
+                placeholder="Search tools (press / to focus, Enter to open first)"
                 className="w-full bg-transparent text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
               />
             </label>
-            <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 flex items-center justify-between gap-8">
+            <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 flex items-center justify-between gap-6">
               <div>
-                <p className="text-xs text-neutral-500">Visible</p>
-                <p className="text-lg font-semibold text-neutral-900">{filteredTools.length}</p>
+                <p className="text-xs text-neutral-500">Visible live</p>
+                <p className="text-lg font-semibold text-neutral-900">{filteredLiveTools.length}</p>
               </div>
               <div>
                 <p className="text-xs text-neutral-500">Category</p>
-                <p className="text-lg font-semibold text-neutral-900">{activeCategory}</p>
+                <p className="text-lg font-semibold text-neutral-900">{category}</p>
               </div>
             </div>
           </div>
-        </header>
 
-        <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5 flex flex-wrap gap-2">
-          {categories.map((category) => {
-            const isActive = category === activeCategory;
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveCategory(category)}
-                className={`bt-chip px-3 py-2 rounded-lg text-sm font-semibold border transition ${isActive ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"}`}
-              >
-                {category}
-              </button>
-            );
-          })}
-        </section>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            {quickFilters.map((filter) => {
+              const active = quickFilter === filter.id;
+              return (
+                <button
+                  key={filter.id}
+                  type="button"
+                  onClick={() => setQuickFilter(filter.id)}
+                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-semibold border transition ${
+                    active
+                      ? "border-neutral-900 bg-neutral-900 text-white"
+                      : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
+          </div>
 
-        <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Featured</p>
-              <h2 className="text-2xl font-bold text-neutral-900 mt-1">{featuredTool.name}</h2>
-              <p className="text-neutral-600 text-sm mt-2 max-w-2xl">{featuredTool.description} Latest live release from the active roadmap.</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-sm text-neutral-600">
+              Showing <span className="font-semibold text-neutral-900">{filteredLiveTools.length}</span> live tool(s)
+              {query ? (
+                <>
+                  {" "}for <span className="font-semibold text-neutral-900">"{query}"</span>
+                </>
+              ) : null}
+              .
+            </p>
+            <div className="flex items-center gap-2 sm:min-w-[280px]">
+              <span className="text-sm text-neutral-500">More categories</span>
+              <ThemedDropdown
+                ariaLabel="Select more categories"
+                value={category}
+                options={categoryOptions}
+                onChange={setCategory}
+              />
             </div>
-            <a
-              href={featuredTool.href}
-              onClick={() => handleToolVisit(featuredTool.id)}
-              className="border border-neutral-900 text-neutral-900 py-2.5 px-5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
-            >
-              Try Now
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 21 12m0 0-3.75 5.25M21 12H3" />
-              </svg>
-            </a>
           </div>
         </section>
 
-        {recentToolCards.length > 0 && (
-          <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <h2 className="text-base sm:text-lg font-semibold text-neutral-900">Recently Used</h2>
-              <span className="text-xs text-neutral-500">Last {recentToolCards.length} tools</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {recentToolCards.map((tool) => (
+        <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Featured today</p>
+            <p className="text-base font-semibold text-neutral-900 mt-1">{featuredTool.name}</p>
+            <p className="text-sm text-neutral-600">{featuredTool.description}</p>
+          </div>
+          <a
+            href={featuredTool.href}
+            onClick={() => handleOpenTool(featuredTool.id)}
+            className="shrink-0 border border-neutral-900 text-neutral-900 py-2 px-4 rounded-lg text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
+          >
+            Try Now
+          </a>
+        </section>
+
+        {recentCards.length > 0 && (
+          <details className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
+            <summary className="cursor-pointer list-none flex items-center justify-between gap-4">
+              <span className="text-base sm:text-lg font-semibold text-neutral-900">Recently Used</span>
+              <span className="text-xs text-neutral-500">Last {recentCards.length}</span>
+            </summary>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {recentCards.map((tool) => (
                 <a
                   key={tool.id}
                   href={tool.href}
-                  onClick={() => handleToolVisit(tool.id)}
+                  onClick={() => handleOpenTool(tool.id)}
                   className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900 transition"
                 >
                   {tool.name}
                 </a>
               ))}
             </div>
-          </section>
+          </details>
         )}
 
-        <section>
-          <div className="flex items-center justify-between gap-4 mb-4">
+        <section className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
             <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Live Tools</h2>
-            <p className="text-sm text-neutral-500">Runs directly in your browser</p>
+            <p className="text-sm text-neutral-500">Ready now</p>
           </div>
 
-          {filteredTools.length === 0 ? (
+          {filteredLiveTools.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
-              <p className="text-neutral-900 font-semibold">No matching tool found</p>
-              <p className="text-sm text-neutral-500 mt-1">Try another search or switch category.</p>
+              <p className="text-neutral-900 font-semibold">No matching live tool found</p>
+              <p className="text-sm text-neutral-500 mt-1">Try another query or tap a quick keyword.</p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {["text", "json", "password", "convert"].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setQuery(preset)}
+                    className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold text-neutral-700 hover:border-neutral-900"
+                  >
+                    {preset}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-              {filteredTools.map((tool, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+              {filteredLiveTools.map((tool, index) => (
                 <a
                   key={tool.id}
                   href={tool.href}
-                  onClick={() => handleToolVisit(tool.id)}
-                  className="bt-card rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 flex flex-col gap-4 hover:border-neutral-900 hover:-translate-y-0.5 transition"
-                  style={{ animationDelay: `${index * 45}ms` }}
+                  onClick={() => handleOpenTool(tool.id)}
+                  className="bt-card rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 flex flex-col gap-3 hover:border-neutral-900 hover:-translate-y-0.5 transition"
+                  style={{ animationDelay: `${index * 35}ms` }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs uppercase tracking-[0.12em] text-neutral-500">{tool.category}</p>
                       <h3 className="mt-1 text-lg font-semibold text-neutral-900 leading-tight">{tool.name}</h3>
                     </div>
-                    {tool.isNew && (
-                      <span className="text-xs font-semibold rounded-full border border-neutral-900 text-neutral-900 px-2 py-1">New</span>
-                    )}
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-[11px] font-semibold rounded-full border border-neutral-300 px-2 py-1 text-neutral-700">{tool.status}</span>
+                      {tool.isNew && <span className="text-[11px] font-semibold rounded-full border border-neutral-900 bg-neutral-900 text-white px-2 py-1">New</span>}
+                    </div>
                   </div>
 
-                  <p className="text-sm text-neutral-600 min-h-[42px]">{tool.description}</p>
+                  <p className="text-sm text-neutral-600">{tool.description}</p>
 
-                  <div className="flex items-center justify-between gap-3 mt-auto">
-                    <span className="rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs text-neutral-600">{tool.meta}</span>
-                    <span className="text-sm font-semibold text-neutral-900 inline-flex items-center gap-1">
-                      Open
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 21 12m0 0-3.75 5.25M21 12H3" />
-                      </svg>
-                    </span>
-                  </div>
+                  <span className="text-sm font-semibold text-neutral-900 inline-flex items-center gap-1 mt-auto">
+                    Open
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 21 12m0 0-3.75 5.25M21 12H3" />
+                    </svg>
+                  </span>
                 </a>
               ))}
             </div>
           )}
         </section>
 
-        <section>
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Upcoming Tools</h2>
-            <p className="text-sm text-neutral-500">Rolling out one by one</p>
+        <section className="space-y-3">
+          <button
+            type="button"
+            onClick={() => setUpcomingOpen((current) => !current)}
+            className="w-full rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left flex items-center justify-between gap-4 hover:border-neutral-900 transition"
+          >
+            <div>
+              <p className="text-lg sm:text-xl font-semibold text-neutral-900">Upcoming Tools</p>
+              <p className="text-sm text-neutral-500">{filteredUpcomingTools.length} planned</p>
+            </div>
+            <span className="text-sm font-semibold text-neutral-700">{upcomingOpen ? "Hide" : "Show"}</span>
+          </button>
+
+          {upcomingOpen && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+              {filteredUpcomingTools.map((tool) => (
+                <div
+                  key={tool.id}
+                  className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-4 sm:p-5 flex flex-col gap-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="text-xs uppercase tracking-[0.12em] text-neutral-500">{tool.category}</p>
+                    <span className="text-[11px] font-semibold rounded-full border border-neutral-300 bg-white px-2 py-1 text-neutral-600">{tool.eta}</span>
+                  </div>
+                  <h4 className="text-base font-semibold text-neutral-900 leading-tight">{tool.name}</h4>
+                  <p className="text-sm text-neutral-600">{tool.description}</p>
+                  <button
+                    type="button"
+                    disabled
+                    className="mt-auto rounded-lg border border-neutral-300 bg-white text-neutral-500 px-3 py-2 text-sm font-semibold cursor-not-allowed"
+                  >
+                    Coming Soon
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-3xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex flex-col gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-2xl">
+              <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Add your suggestion</p>
+              <h2 className="text-2xl font-bold text-neutral-900 mt-1">Tell us the boring problem you want solved</h2>
+              <p className="text-sm text-neutral-600 mt-2">Suggestion pipeline is currently under development. Submission form will be enabled soon.</p>
+            </div>
+            <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-right min-w-[160px]">
+              <p className="text-xs text-neutral-500">Suggestion box</p>
+              <p className="text-sm font-semibold text-neutral-900">Coming Soon</p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-            {upcomingTools.map((tool) => (
-              <div
-                key={tool.id}
-                className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-4 sm:p-5 flex flex-col gap-3"
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
+            <textarea
+              disabled
+              rows={4}
+              className="w-full rounded-2xl border border-neutral-200 bg-white p-4 text-sm text-neutral-500 placeholder:text-neutral-500 cursor-not-allowed"
+              placeholder="Suggestion intake is under development. This will be available soon."
+            />
+            <div className="flex flex-col gap-3 min-w-[220px]">
+              <button
+                type="button"
+                disabled
+                className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-500 cursor-not-allowed"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-xs uppercase tracking-[0.12em] text-neutral-500">{tool.category}</p>
-                  <span className="text-[11px] font-semibold rounded-full border border-neutral-300 bg-white px-2 py-1 text-neutral-600">
-                    {tool.eta}
-                  </span>
+                Coming Soon
+              </button>
+              <div className="rounded-2xl border border-neutral-200 bg-white p-4 text-xs text-neutral-500 leading-6">
+                Planned workflow:
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <span className="rounded-full border border-neutral-200 px-2 py-1">structured suggestion capture</span>
+                  <span className="rounded-full border border-neutral-200 px-2 py-1">direct spreadsheet sync</span>
+                  <span className="rounded-full border border-neutral-200 px-2 py-1">maintained queue</span>
                 </div>
-
-                <h3 className="text-base font-semibold text-neutral-900 leading-tight">{tool.name}</h3>
-                <p className="text-sm text-neutral-600 min-h-[40px]">{tool.description}</p>
-
-                <button
-                  type="button"
-                  disabled
-                  className="mt-auto rounded-lg border border-neutral-300 bg-white text-neutral-500 px-3 py-2 text-sm font-semibold cursor-not-allowed"
-                >
-                  Coming Soon
-                </button>
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
@@ -340,11 +491,21 @@ export default function Home() {
           <p className="font-medium text-neutral-900">BoringTools</p>
         </footer>
       </div>
+
       <style jsx global>{`
         .bt-card {
           opacity: 0;
           transform: translateY(8px);
-          animation: bt-card-in 320ms ease forwards;
+          animation: bt-card-in 280ms ease forwards;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
 
         @keyframes bt-card-in {

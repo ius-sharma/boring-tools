@@ -118,6 +118,8 @@ Route:
 - Persistent top controls for quick navigation
 - Home button on tool pages for one-click return
 - Responsive layout for desktop, tablet, and mobile
+- Enhanced home discovery: fast search, quick filters, and custom category dropdown
+- Suggestion intake panel is currently marked as Coming Soon (under development)
 
 ---
 
@@ -163,6 +165,10 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 10 ⏳ Markdown Previewer — Coming Soon
 - Day 11 ⏳ Pomodoro Timer — Coming Soon
 - Day 12 ⏳ Image Compressor / Resizer — Coming Soon
+
+### Under Development
+
+- Suggestion to Spreadsheet pipeline (direct structured sync) — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
