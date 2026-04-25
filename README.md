@@ -158,11 +158,13 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ### Upcoming Releases
 
-- Day 8 ⏳ Markdown Previewer — Coming Soon
-- Day 9 ⏳ Pomodoro Timer — Coming Soon
-- Day 10 ⏳ Image Compressor / Resizer — Coming Soon
+- Day 8 ⏳ File Name Sanitizer — Coming Soon
+- Day 9 ⏳ Roast My To-Do List — Coming Soon
+- Day 10 ⏳ Markdown Previewer — Coming Soon
+- Day 11 ⏳ Pomodoro Timer — Coming Soon
+- Day 12 ⏳ Image Compressor / Resizer — Coming Soon
 
-> Coming soon: these tools are in progress and will be released one-by-one.
+> Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
 ---
 

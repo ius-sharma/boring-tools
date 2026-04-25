@@ -64,6 +64,20 @@ const tools = [
 
 const upcomingTools = [
   {
+    id: "file-name-sanitizer",
+    name: "File Name Sanitizer",
+    category: "Utility",
+    description: "Clean unsafe or messy filenames before sharing.",
+    eta: "Coming Soon",
+  },
+  {
+    id: "roast-my-todo-list",
+    name: "Roast My To-Do List",
+    category: "Fun + Productivity",
+    description: "Get playful roasts with practical next-step prompts.",
+    eta: "Coming Soon",
+  },
+  {
     id: "markdown-previewer",
     name: "Markdown Previewer",
     category: "Developer",
@@ -293,7 +307,7 @@ export default function Home() {
             <p className="text-sm text-neutral-500">Rolling out one by one</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {upcomingTools.map((tool) => (
               <div
                 key={tool.id}
