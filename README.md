@@ -95,6 +95,20 @@ Features:
 Route:
 - `/unit-converter`
 
+### Day 7: QR Generator
+
+Generate downloadable QR codes instantly from text or links.
+
+Features:
+- Generate QR code from plain text or URL
+- Input validation with user-friendly error handling
+- Instant preview of generated QR code
+- One-click PNG download
+- Clean responsive UI matching project theme
+
+Route:
+- `/qr-generator`
+
 ---
 
 ## UI/UX Updates
@@ -140,10 +154,10 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 4 ✅ Password Generator
 - Day 5 ✅ Age Calculator
 - Day 6 ✅ Unit Converter
+- Day 7 ✅ QR Generator
 
 ### Upcoming Releases
 
-- Day 7 ⏳ QR Generator — Coming Soon
 - Day 8 ⏳ Markdown Previewer — Coming Soon
 - Day 9 ⏳ Pomodoro Timer — Coming Soon
 - Day 10 ⏳ Image Compressor / Resizer — Coming Soon

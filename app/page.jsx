@@ -44,24 +44,25 @@ const tools = [
     meta: "Simple",
   },
   {
+    id: "qr-generator",
+    name: "QR Generator",
+    href: "/qr-generator",
+    category: "Developer",
+    description: "Create downloadable QR codes from any text.",
+    meta: "Share-ready",
+    isNew: true,
+  },
+  {
     id: "unit-converter",
     name: "Unit Converter",
     href: "/unit-converter",
     category: "Utility",
     description: "Convert length, weight, and temperature.",
     meta: "Precise",
-    isNew: true,
   },
 ];
 
 const upcomingTools = [
-  {
-    id: "qr-generator",
-    name: "QR Generator",
-    category: "Developer",
-    description: "Create downloadable QR codes from any text.",
-    eta: "Coming Soon",
-  },
   {
     id: "markdown-previewer",
     name: "Markdown Previewer",
