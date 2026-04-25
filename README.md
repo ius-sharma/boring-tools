@@ -141,6 +141,15 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 5 ✅ Age Calculator
 - Day 6 ✅ Unit Converter
 
+### Upcoming Releases
+
+- Day 7 ⏳ QR Generator — Coming Soon
+- Day 8 ⏳ Markdown Previewer — Coming Soon
+- Day 9 ⏳ Pomodoro Timer — Coming Soon
+- Day 10 ⏳ Image Compressor / Resizer — Coming Soon
+
+> Coming soon: these tools are in progress and will be released one-by-one.
+
 ---
 
 ## Philosophy

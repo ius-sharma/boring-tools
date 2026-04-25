@@ -50,43 +50,42 @@ const tools = [
     category: "Utility",
     description: "Convert length, weight, and temperature.",
     meta: "Precise",
-  },
-  {
-    id: "qr-generator",
-    name: "QR Generator",
-    href: "/qr-generator",
-    category: "Developer",
-    description: "Create downloadable QR codes from any text.",
-    meta: "Share-ready",
-  },
-  {
-    id: "markdown-previewer",
-    name: "Markdown Previewer",
-    href: "/markdown-previewer",
-    category: "Developer",
-    description: "Write markdown and preview in real-time.",
-    meta: "Live",
-  },
-  {
-    id: "pomodoro-timer",
-    name: "Pomodoro Timer",
-    href: "/pomodoro-timer",
-    category: "Productivity",
-    description: "Focus with work-break timer sessions.",
-    meta: "Focus",
-  },
-  {
-    id: "image-compressor",
-    name: "Image Compressor / Resizer",
-    href: "/image-compressor",
-    category: "Media",
-    description: "Resize and compress images in browser.",
-    meta: "Local",
     isNew: true,
   },
 ];
 
-const categories = ["All", "Text", "Developer", "Utility", "Productivity", "Security", "Media"];
+const upcomingTools = [
+  {
+    id: "qr-generator",
+    name: "QR Generator",
+    category: "Developer",
+    description: "Create downloadable QR codes from any text.",
+    eta: "Coming Soon",
+  },
+  {
+    id: "markdown-previewer",
+    name: "Markdown Previewer",
+    category: "Developer",
+    description: "Write markdown and preview in real-time.",
+    eta: "Coming Soon",
+  },
+  {
+    id: "pomodoro-timer",
+    name: "Pomodoro Timer",
+    category: "Productivity",
+    description: "Focus with work-break timer sessions.",
+    eta: "Coming Soon",
+  },
+  {
+    id: "image-compressor",
+    name: "Image Compressor / Resizer",
+    category: "Media",
+    description: "Resize and compress images in browser.",
+    eta: "Coming Soon",
+  },
+];
+
+const categories = ["All", "Text", "Developer", "Utility", "Security"];
 const RECENT_STORAGE_KEY = "boring_tools_recent";
 
 export default function Home() {
@@ -122,7 +121,7 @@ export default function Home() {
     });
   }, [activeCategory, query]);
 
-  const featuredTool = tools.find((tool) => tool.isNew) || tools[0];
+  const featuredTool = tools.find((tool) => tool.isNew) || tools[tools.length - 1];
   const recentToolCards = useMemo(
     () => recentTools.map((id) => tools.find((tool) => tool.id === id)).filter(Boolean),
     [recentTools]
@@ -152,6 +151,7 @@ export default function Home() {
             <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 text-right min-w-[150px]">
               <p className="text-xs text-neutral-500">Available tools</p>
               <p className="text-2xl font-bold text-neutral-900">{tools.length}</p>
+              <p className="text-xs text-neutral-500 mt-1">{upcomingTools.length} upcoming</p>
             </div>
           </div>
 
@@ -202,7 +202,7 @@ export default function Home() {
             <div>
               <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Featured</p>
               <h2 className="text-2xl font-bold text-neutral-900 mt-1">{featuredTool.name}</h2>
-              <p className="text-neutral-600 text-sm mt-2 max-w-2xl">{featuredTool.description} Perfect for reducing file size before sharing or upload.</p>
+              <p className="text-neutral-600 text-sm mt-2 max-w-2xl">{featuredTool.description} Latest live release from the active roadmap.</p>
             </div>
             <a
               href={featuredTool.href}
@@ -240,7 +240,7 @@ export default function Home() {
 
         <section>
           <div className="flex items-center justify-between gap-4 mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">All Tools</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Live Tools</h2>
             <p className="text-sm text-neutral-500">Runs directly in your browser</p>
           </div>
 
@@ -284,6 +284,40 @@ export default function Home() {
               ))}
             </div>
           )}
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Upcoming Tools</h2>
+            <p className="text-sm text-neutral-500">Rolling out one by one</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+            {upcomingTools.map((tool) => (
+              <div
+                key={tool.id}
+                className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-4 sm:p-5 flex flex-col gap-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs uppercase tracking-[0.12em] text-neutral-500">{tool.category}</p>
+                  <span className="text-[11px] font-semibold rounded-full border border-neutral-300 bg-white px-2 py-1 text-neutral-600">
+                    {tool.eta}
+                  </span>
+                </div>
+
+                <h3 className="text-base font-semibold text-neutral-900 leading-tight">{tool.name}</h3>
+                <p className="text-sm text-neutral-600 min-h-[40px]">{tool.description}</p>
+
+                <button
+                  type="button"
+                  disabled
+                  className="mt-auto rounded-lg border border-neutral-300 bg-white text-neutral-500 px-3 py-2 text-sm font-semibold cursor-not-allowed"
+                >
+                  Coming Soon
+                </button>
+              </div>
+            ))}
+          </div>
         </section>
 
         <footer className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600 flex flex-wrap items-center justify-between gap-3">
