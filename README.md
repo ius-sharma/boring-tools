@@ -109,6 +109,20 @@ Features:
 Route:
 - `/qr-generator`
 
+### Day 8: File Name Sanitizer
+
+Sanitize and standardize file names for safer sharing and storage.
+
+Features:
+- Clean unsafe characters from file names
+- Support kebab-case, snake_case, and readable naming styles
+- Preserve file extensions safely
+- Handle reserved Windows file names automatically
+- Batch preview and one-click copy for sanitized output
+
+Route:
+- `/file-name-sanitizer`
+
 ---
 
 ## UI/UX Updates
@@ -157,10 +171,10 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 5 ✅ Age Calculator
 - Day 6 ✅ Unit Converter
 - Day 7 ✅ QR Generator
+- Day 8 ✅ File Name Sanitizer
 
 ### Upcoming Releases
 
-- Day 8 ⏳ File Name Sanitizer — Coming Soon
 - Day 9 ⏳ Roast My To-Do List — Coming Soon
 - Day 10 ⏳ Markdown Previewer — Coming Soon
 - Day 11 ⏳ Pomodoro Timer — Coming Soon

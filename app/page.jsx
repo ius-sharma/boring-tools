@@ -51,7 +51,6 @@ const tools = [
     category: "Developer",
     description: "Generate downloadable QR from text.",
     status: "Live",
-    isNew: true,
   },
   {
     id: "unit-converter",
@@ -61,16 +60,18 @@ const tools = [
     description: "Convert length, weight, temperature.",
     status: "Live",
   },
-];
-
-const upcomingTools = [
   {
     id: "file-name-sanitizer",
     name: "File Name Sanitizer",
+    href: "/file-name-sanitizer",
     category: "Utility",
     description: "Clean unsafe or messy filenames.",
-    eta: "Coming Soon",
+    status: "Live",
+    isNew: true,
   },
+];
+
+const upcomingTools = [
   {
     id: "roast-my-todo-list",
     name: "Roast My To-Do List",
