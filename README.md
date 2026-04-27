@@ -133,7 +133,7 @@ Route:
 - Home button on tool pages for one-click return
 - Responsive layout for desktop, tablet, and mobile
 - Enhanced home discovery: fast search, quick filters, and custom category dropdown
-- Suggestion intake panel is currently marked as Coming Soon (under development)
+- Suggestion intake panel now captures ideas and syncs them to Google Sheets
 
 ---
 
@@ -175,16 +175,17 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ### Upcoming Releases
 
-- Day 9 ⏳ Roast My To-Do List — Coming Soon
-- Day 10 ⏳ Markdown Previewer — Coming Soon
-- Day 11 ⏳ Pomodoro Timer — Coming Soon
-- Day 12 ⏳ Image Compressor / Resizer — Coming Soon
-
-### Under Development
-
-- Suggestion to Spreadsheet pipeline (direct structured sync) — Coming Soon
+- Day 9 ⏳ Resume Bullet Rewriter — Coming Soon
+- Day 10 ⏳ Roast My To-Do List — Coming Soon
+- Day 11 ⏳ Markdown Previewer — Coming Soon
+- Day 12 ⏳ Pomodoro Timer — Coming Soon
+- Day 13 ⏳ Image Compressor / Resizer — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
+
+## Suggestions
+
+Suggestions submitted from the home page are sent to the Google Sheets-backed intake workflow. For live deployment, configure the spreadsheet credentials in Vercel environment variables and redeploy.
 
 ---
 
