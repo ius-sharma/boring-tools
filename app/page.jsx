@@ -67,6 +67,14 @@ const tools = [
     category: "Utility",
     description: "Clean unsafe or messy filenames.",
     status: "Live",
+  },
+  {
+    id: "pomodoro-timer",
+    name: "Pomodoro Timer",
+    href: "/pomodoro-timer",
+    category: "Productivity",
+    description: "Focus sessions with timer cycles.",
+    status: "Live",
     isNew: true,
   },
 ];
@@ -91,13 +99,6 @@ const upcomingTools = [
     name: "Markdown Previewer",
     category: "Developer",
     description: "Write markdown and preview instantly.",
-    eta: "Coming Soon",
-  },
-  {
-    id: "pomodoro-timer",
-    name: "Pomodoro Timer",
-    category: "Productivity",
-    description: "Focus sessions with timer cycles.",
     eta: "Coming Soon",
   },
   {

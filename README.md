@@ -123,6 +123,20 @@ Features:
 Route:
 - `/file-name-sanitizer`
 
+### Day 9: Pomodoro Timer
+
+Boost productivity with time-based work and break cycles.
+
+Features:
+- 25-minute focused work sessions
+- 5-minute break periods
+- Start, Pause, and Reset controls
+- Automatic session cycling
+- Session counter to track productivity
+
+Route:
+- `/pomodoro-timer`
+
 ---
 
 ## UI/UX Updates
@@ -172,13 +186,13 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 6 ✅ Unit Converter
 - Day 7 ✅ QR Generator
 - Day 8 ✅ File Name Sanitizer
+- Day 9 ✅ Pomodoro Timer
 
 ### Upcoming Releases
 
-- Day 9 ⏳ Resume Bullet Rewriter — Coming Soon
-- Day 10 ⏳ Roast My To-Do List — Coming Soon
-- Day 11 ⏳ Markdown Previewer — Coming Soon
-- Day 12 ⏳ Pomodoro Timer — Coming Soon
+- Day 10 ⏳ Resume Bullet Rewriter — Coming Soon
+- Day 11 ⏳ Roast My To-Do List — Coming Soon
+- Day 12 ⏳ Markdown Previewer — Coming Soon
 - Day 13 ⏳ Image Compressor / Resizer — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
