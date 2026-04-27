@@ -73,6 +73,13 @@ const tools = [
 
 const upcomingTools = [
   {
+    id: "resume-bullet-rewriter",
+    name: "Resume Bullet Rewriter",
+    category: "Career",
+    description: "Turn rough notes into strong resume bullets.",
+    eta: "Coming Soon",
+  },
+  {
     id: "roast-my-todo-list",
     name: "Roast My To-Do List",
     category: "Fun + Productivity",
@@ -109,8 +116,21 @@ const quickFilters = [
   { id: "developer", label: "Developer" },
 ];
 
-const categories = ["All", "Text", "Developer", "Utility", "Security", "Productivity", "Media", "Fun + Productivity"];
+const categories = ["All", "Text", "Developer", "Utility", "Security", "Productivity", "Media", "Career", "Fun + Productivity"];
 const categoryOptions = categories.map((item) => ({ value: item, label: item }));
+const suggestionCategoryOptions = [
+  { value: "New Tool Idea", label: "New Tool Idea" },
+  { value: "Bug Report", label: "Bug Report" },
+  { value: "UX Improvement", label: "UX Improvement" },
+  { value: "General Feedback", label: "General Feedback" },
+];
+
+const initialSuggestionForm = {
+  name: "",
+  email: "",
+  category: "New Tool Idea",
+  suggestion: "",
+};
 
 const RECENT_STORAGE_KEY = "boring_tools_recent";
 const USAGE_STORAGE_KEY = "boring_tools_usage_map";
@@ -134,6 +154,10 @@ export default function Home() {
   const [recentTools, setRecentTools] = useState([]);
   const [usageMap, setUsageMap] = useState({});
   const [upcomingOpen, setUpcomingOpen] = useState(false);
+  const [suggestionForm, setSuggestionForm] = useState(initialSuggestionForm);
+  const [suggestionQueueCount, setSuggestionQueueCount] = useState(null);
+  const [, setSuggestionSync] = useState({ status: "loading", message: "" });
+  const [suggestionState, setSuggestionState] = useState({ status: "idle", message: "" });
 
   const searchRef = useRef(null);
 
@@ -157,6 +181,44 @@ export default function Home() {
     } catch {
       setUsageMap({});
     }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadSuggestionQueue = async () => {
+      try {
+        const response = await fetch("/api/suggestions", { cache: "no-store" });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        if (!active) {
+          return;
+        }
+
+        setSuggestionQueueCount(Number.isFinite(data?.total) ? data.total : 0);
+        setSuggestionSync({
+          status: data?.sheetSync?.status || "disabled",
+          message: data?.sheetSync?.message || "",
+        });
+      } catch {
+        if (active) {
+          setSuggestionQueueCount(null);
+          setSuggestionSync({
+            status: "error",
+            message: "Unable to read suggestion sync status.",
+          });
+        }
+      }
+    };
+
+    loadSuggestionQueue();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const toolsByUsage = useMemo(() => {
@@ -223,6 +285,71 @@ export default function Home() {
     };
     setUsageMap(nextUsage);
     localStorage.setItem(USAGE_STORAGE_KEY, JSON.stringify(nextUsage));
+  };
+
+  const handleSuggestionChange = (field, value) => {
+    setSuggestionForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleSuggestionSubmit = async (event) => {
+    event.preventDefault();
+
+    const suggestion = suggestionForm.suggestion.trim();
+    if (!suggestion) {
+      setSuggestionState({
+        status: "error",
+        message: "Please add a suggestion before saving it.",
+      });
+      return;
+    }
+
+    setSuggestionState({
+      status: "saving",
+      message: "Saving locally for spreadsheet sync testing...",
+    });
+
+    try {
+      const response = await fetch("/api/suggestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: suggestionForm.name,
+          email: suggestionForm.email,
+          category: suggestionForm.category,
+          suggestion,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Unable to save suggestion");
+      }
+
+      setSuggestionQueueCount(Number.isFinite(data?.queued) ? data.queued : suggestionQueueCount);
+      setSuggestionSync({
+        status: data?.sheetSync?.status || "disabled",
+        message: data?.sheetSync?.message || "",
+      });
+      setSuggestionForm(initialSuggestionForm);
+      setSuggestionState({
+        status: "success",
+        message:
+          data?.sheetSync?.status === "synced"
+            ? "Thanks! Your suggestion is in and we’ll review it soon."
+            : "Thanks! Your suggestion is saved and will be reviewed soon.",
+      });
+    } catch (error) {
+      setSuggestionState({
+        status: "error",
+        message: error instanceof Error ? error.message : "Suggestion save failed.",
+      });
+    }
   };
 
   return (
@@ -455,36 +582,86 @@ export default function Home() {
               <p className="text-sm text-neutral-600 mt-2">Suggestion pipeline is currently under development. Submission form will be enabled soon.</p>
             </div>
             <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-right min-w-[160px]">
-              <p className="text-xs text-neutral-500">Suggestion box</p>
-              <p className="text-sm font-semibold text-neutral-900">Coming Soon</p>
+              <p className="text-xs text-neutral-500">Share an idea</p>
+              <p className="text-sm font-semibold text-neutral-900">Help shape the next tool</p>
+              <p className="mt-1 text-[11px] text-neutral-500">Tell us the boring problem you want solved.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
-            <textarea
-              disabled
-              rows={4}
-              className="w-full rounded-2xl border border-neutral-200 bg-white p-4 text-sm text-neutral-500 placeholder:text-neutral-500 cursor-not-allowed"
-              placeholder="Suggestion intake is under development. This will be available soon."
-            />
-            <div className="flex flex-col gap-3 min-w-[220px]">
-              <button
-                type="button"
-                disabled
-                className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold text-neutral-500 cursor-not-allowed"
-              >
-                Coming Soon
-              </button>
-              <div className="rounded-2xl border border-neutral-200 bg-white p-4 text-xs text-neutral-500 leading-6">
-                Planned workflow:
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="rounded-full border border-neutral-200 px-2 py-1">structured suggestion capture</span>
-                  <span className="rounded-full border border-neutral-200 px-2 py-1">direct spreadsheet sync</span>
-                  <span className="rounded-full border border-neutral-200 px-2 py-1">maintained queue</span>
-                </div>
+            <form className="grid grid-cols-1 gap-3" onSubmit={handleSuggestionSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Name</span>
+                  <input
+                    type="text"
+                    value={suggestionForm.name}
+                    onChange={(event) => handleSuggestionChange("name", event.target.value)}
+                    className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                    placeholder="Optional"
+                  />
+                </label>
+
+                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Email</span>
+                  <input
+                    type="email"
+                    value={suggestionForm.email}
+                    onChange={(event) => handleSuggestionChange("email", event.target.value)}
+                    className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                    placeholder="Optional"
+                  />
+                </label>
               </div>
-            </div>
-          </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3">
+                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion type</span>
+                  <ThemedDropdown
+                    ariaLabel="Select suggestion type"
+                    value={suggestionForm.category}
+                    options={suggestionCategoryOptions}
+                    onChange={(value) => handleSuggestionChange("category", value)}
+                  />
+                </label>
+
+                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion</span>
+                  <textarea
+                    rows={5}
+                    value={suggestionForm.suggestion}
+                    onChange={(event) => handleSuggestionChange("suggestion", event.target.value)}
+                    className="w-full resize-none bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                    placeholder="Tell us the boring problem you want solved and how you expect it to behave."
+                  />
+                </label>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="text-xs text-neutral-500 leading-6 max-w-2xl">Thanks for helping us improve the tool collection.</p>
+                <button
+                  type="submit"
+                  disabled={suggestionState.status === "saving"}
+                  className="rounded-2xl border border-neutral-900 bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {suggestionState.status === "saving" ? "Saving..." : "Save suggestion"}
+                </button>
+              </div>
+
+              {suggestionState.message ? (
+                <div
+                  className={`rounded-2xl border px-4 py-3 text-sm ${
+                    suggestionState.status === "success"
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                      : suggestionState.status === "error"
+                        ? "border-rose-200 bg-rose-50 text-rose-900"
+                        : "border-neutral-200 bg-white text-neutral-700"
+                  }`}
+                  role="status"
+                >
+                  {suggestionState.message}
+                </div>
+              ) : null}
+            </form>
         </section>
 
         <footer className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600 flex flex-wrap items-center justify-between gap-3">
