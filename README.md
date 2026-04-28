@@ -137,6 +137,20 @@ Features:
 Route:
 - `/pomodoro-timer`
 
+### Day 10: Image Compressor / Resizer
+
+Compress and resize images with a clean, browser-based workflow.
+
+Features:
+- Drop or browse image uploads
+- Resize by max width and height
+- Adjust output quality
+- Export in JPEG, WebP, or PNG formats
+- See file size savings after processing
+
+Route:
+- `/image-compressor`
+
 ---
 
 ## UI/UX Updates
@@ -187,13 +201,14 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 7 ✅ QR Generator
 - Day 8 ✅ File Name Sanitizer
 - Day 9 ✅ Pomodoro Timer
+- Day 10 ✅ Image Compressor / Resizer
 
 ### Upcoming Releases
 
 - Day 10 ⏳ Resume Bullet Rewriter — Coming Soon
-- Day 11 ⏳ Roast My To-Do List — Coming Soon
-- Day 12 ⏳ Markdown Previewer — Coming Soon
-- Day 13 ⏳ Image Compressor / Resizer — Coming Soon
+- Day 11 ⏳ Resume Bullet Rewriter — Coming Soon
+- Day 12 ⏳ Roast My To-Do List — Coming Soon
+- Day 13 ⏳ Markdown Previewer — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 

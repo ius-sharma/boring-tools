@@ -69,13 +69,21 @@ const tools = [
     status: "Live",
   },
   {
+    id: "image-compressor",
+    name: "Image Compressor / Resizer",
+    href: "/image-compressor",
+    category: "Media",
+    description: "Compress and resize images quickly.",
+    status: "Live",
+    isNew: true,
+  },
+  {
     id: "pomodoro-timer",
     name: "Pomodoro Timer",
     href: "/pomodoro-timer",
     category: "Productivity",
     description: "Focus sessions with timer cycles.",
     status: "Live",
-    isNew: true,
   },
 ];
 
@@ -99,13 +107,6 @@ const upcomingTools = [
     name: "Markdown Previewer",
     category: "Developer",
     description: "Write markdown and preview instantly.",
-    eta: "Coming Soon",
-  },
-  {
-    id: "image-compressor",
-    name: "Image Compressor / Resizer",
-    category: "Media",
-    description: "Compress and resize images quickly.",
     eta: "Coming Soon",
   },
 ];
