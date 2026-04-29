@@ -4,16 +4,45 @@ import { useEffect, useRef, useState } from "react";
 export default function PomodoroTimer() {
   const WORK_TIME = 25 * 60;
   const BREAK_TIME = 5 * 60;
+  const LONG_BREAK_TIME = 15 * 60;
 
   const [seconds, setSeconds] = useState(WORK_TIME);
   const [running, setRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [sessions, setSessions] = useState(0);
+  const [dailyStats, setDailyStats] = useState({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
+  const [showSettings, setShowSettings] = useState(false);
+  const [scheduledSessions, setScheduledSessions] = useState(0);
+  const [workPreset, setWorkPreset] = useState(25);
+  const [breakPreset, setBreakPreset] = useState(5);
+  const [customWorkTime, setCustomWorkTime] = useState(25);
+  const [customBreakTime, setCustomBreakTime] = useState(5);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [sessionsUntilLongBreak, setSessionsUntilLongBreak] = useState(4);
+
   const notificationPermissionRequestedRef = useRef(false);
   const transitionLockRef = useRef(false);
   const workerRef = useRef(null);
   const [workerReady, setWorkerReady] = useState(false);
+  const audioContextRef = useRef(null);
 
+  // Load stats from localStorage
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const saved = localStorage.getItem("pomodoroStats");
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.date === today) {
+        setDailyStats(data.stats);
+      } else {
+        localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: { focusSessions: 0, breakSessions: 0, focusMinutes: 0 } }));
+      }
+    } else {
+      localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: { focusSessions: 0, breakSessions: 0, focusMinutes: 0 } }));
+    }
+  }, []);
+
+  // Register Service Worker
   const registerServiceWorker = async () => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
       return;
@@ -49,11 +78,52 @@ export default function PomodoroTimer() {
     registerServiceWorker();
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (running) handlePause();
+        else handleStart();
+      }
+      if (e.code === "KeyR") {
+        e.preventDefault();
+        resetTimer();
+      }
+      if (e.code === "Escape") {
+        setShowSettings(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [running]);
+
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
     const sec = secs % 60;
-
     return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
+
+  // Play beep sound
+  const playBeep = () => {
+    if (!soundEnabled) return;
+    try {
+      const audioContext = audioContextRef.current || new (window.AudioContext || window.webkitAudioContext)();
+      audioContextRef.current = audioContext;
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = 800;
+      oscillator.type = "sine";
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+      console.log("Sound play failed");
+    }
   };
 
   const sendNotification = (title, body) => {
@@ -62,6 +132,7 @@ export default function PomodoroTimer() {
     }
 
     if (Notification.permission === "granted") {
+      playBeep();
       new Notification(title, { body });
     }
   };
@@ -75,11 +146,12 @@ export default function PomodoroTimer() {
       try {
         await Notification.requestPermission();
       } catch {
-        // Ignore permission errors and continue without notifications.
+        // Ignore
       }
     }
   };
 
+  // Main countdown timer
   useEffect(() => {
     let timer;
 
@@ -98,21 +170,42 @@ export default function PomodoroTimer() {
           transitionLockRef.current = true;
 
           if (!isBreak) {
-            setSessions((currentSessions) => currentSessions + 1);
+            // Work session completed
+            const newSessions = sessions + 1;
+            setSessions(newSessions);
             setIsBreak(true);
-            sendNotification("Focus session complete", "Break time started. Take 5 minutes to reset.");
-            return BREAK_TIME;
+
+            // Update daily stats
+            const newStats = { ...dailyStats, focusSessions: dailyStats.focusSessions + 1, focusMinutes: dailyStats.focusMinutes + customWorkTime };
+            setDailyStats(newStats);
+            const today = new Date().toDateString();
+            localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
+
+            // Check if long break needed
+            if (newSessions % 4 === 0 && newSessions > 0) {
+              sendNotification("4 sessions completed!", `Time for a 15 min long break. Great work!`);
+              return LONG_BREAK_TIME;
+            }
+
+            sendNotification("Focus session complete", `Break time started. Take ${customBreakTime} minutes to reset.`);
+            return customBreakTime * 60;
           }
 
+          // Break session completed
           setIsBreak(false);
-          sendNotification("Break finished", "Focus time started. Back to work.");
-          return WORK_TIME;
+          const newStats = { ...dailyStats, breakSessions: dailyStats.breakSessions + 1 };
+          setDailyStats(newStats);
+          const today = new Date().toDateString();
+          localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
+
+          sendNotification("Break finished", `Focus time started. Back to work.`);
+          return customWorkTime * 60;
         });
       }, 1000);
     }
 
     return () => clearInterval(timer);
-  }, [running, isBreak]);
+  }, [running, isBreak, customWorkTime, customBreakTime, sessions, dailyStats]);
 
   const handleStart = async () => {
     if (!notificationPermissionRequestedRef.current) {
@@ -148,7 +241,7 @@ export default function PomodoroTimer() {
   const resetTimer = () => {
     setRunning(false);
     setIsBreak(false);
-    setSeconds(WORK_TIME);
+    setSeconds(customWorkTime * 60);
     transitionLockRef.current = false;
 
     if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -160,23 +253,71 @@ export default function PomodoroTimer() {
     }
   };
 
+  const applyPreset = (preset) => {
+    if (preset === "standard") {
+      setCustomWorkTime(25);
+      setCustomBreakTime(5);
+    } else if (preset === "long") {
+      setCustomWorkTime(50);
+      setCustomBreakTime(10);
+    } else if (preset === "short") {
+      setCustomWorkTime(15);
+      setCustomBreakTime(3);
+    }
+    setShowSettings(false);
+    resetTimer();
+  };
+
+  const applyCustom = () => {
+    setShowSettings(false);
+    resetTimer();
+  };
+
+  // Check if last 3 seconds for pulsing effect
+  const isLastThreeSeconds = seconds <= 3 && seconds > 0 && running;
+
+  // Get current max time
+  const maxTime = isBreak ? customBreakTime * 60 : customWorkTime * 60;
+  const progress = ((maxTime - seconds) / maxTime) * 100;
+
+  // Next phase text
+  const nextPhaseText = isBreak ? `Next: ${customWorkTime} min focus` : `Next: ${customBreakTime} min break`;
+
   return (
     <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-6">
+      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-2xl border border-neutral-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center text-center">
           <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Pomodoro Timer</h1>
           <p className="text-neutral-500 text-base">Stay focused with work and break cycles</p>
         </div>
 
-        <div className="w-full p-6 border border-neutral-200 rounded-xl bg-neutral-50 text-center">
-          <p className="mb-2 text-base font-medium text-neutral-600">
-            {isBreak ? "Break Time" : "Focus Time"}
-          </p>
-          <div className="text-5xl sm:text-6xl font-bold text-neutral-900 tabular-nums">
+        {/* Timer Display with Progress Ring */}
+        <div className="w-full p-6 border border-neutral-200 rounded-xl bg-neutral-50 text-center relative">
+          <div className="flex justify-center mb-4">
+            <svg width="120" height="120" viewBox="0 0 120 120" className="transform -rotate-90">
+              {/* Background circle */}
+              <circle cx="60" cy="60" r="55" fill="none" stroke="#e5e7eb" strokeWidth="3" />
+              {/* Progress circle */}
+              <circle
+                cx="60"
+                cy="60"
+                r="55"
+                fill="none"
+                stroke="#171717"
+                strokeWidth="3"
+                strokeDasharray={`${(progress / 100) * 345.6} 345.6`}
+                style={{ transition: "stroke-dasharray 1s linear" }}
+              />
+            </svg>
+          </div>
+          <p className="mb-2 text-base font-medium text-neutral-600">{isBreak ? "Break Time" : "Focus Time"}</p>
+          <div className={`text-5xl sm:text-6xl font-bold text-neutral-900 tabular-nums ${isLastThreeSeconds ? "animate-pulse" : ""}`}>
             {formatTime(seconds)}
           </div>
+          <p className="text-xs text-neutral-500 mt-3">{nextPhaseText}</p>
         </div>
 
+        {/* Controls */}
         <div className="grid grid-cols-3 gap-2">
           <button
             onClick={handleStart}
@@ -200,17 +341,150 @@ export default function PomodoroTimer() {
           </button>
         </div>
 
-        <p className="text-center text-xs sm:text-sm text-neutral-500">
-          Start dabane par notification permission prompt aayega, phir focus aur break khatam hote hi alert milega.
+        {/* Keyboard Shortcuts Info */}
+        <p className="text-center text-xs text-neutral-500">
+          <span className="font-medium">Shortcuts:</span> Space (Start/Pause) • R (Reset) • Esc (Close)
         </p>
 
-        <div className="w-full p-4 border border-neutral-200 rounded-xl bg-neutral-50 text-center">
-          <p className="text-sm text-neutral-500">Completed Sessions</p>
-          <p className="text-2xl font-semibold text-neutral-900">{sessions}</p>
+        {/* Daily Stats */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
+            <p className="text-xs text-neutral-500">Focus Sessions</p>
+            <p className="text-xl font-semibold text-neutral-900">{dailyStats.focusSessions}</p>
+          </div>
+          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
+            <p className="text-xs text-neutral-500">Break Sessions</p>
+            <p className="text-xl font-semibold text-neutral-900">{dailyStats.breakSessions}</p>
+          </div>
+          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
+            <p className="text-xs text-neutral-500">Focus Minutes</p>
+            <p className="text-xl font-semibold text-neutral-900">{dailyStats.focusMinutes}</p>
+          </div>
         </div>
+
+        {/* Session Queue & Settings */}
+        <div className="flex gap-2">
+          <div className="flex-1 p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
+            <p className="text-xs text-neutral-500">Sessions Till Long Break</p>
+            <p className="text-lg font-semibold text-neutral-900">{4 - (sessions % 4)}</p>
+          </div>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="px-4 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          >
+            ⚙️ Settings
+          </button>
+        </div>
+
+        {/* Settings Modal */}
+        {showSettings && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md border border-neutral-200">
+              <h2 className="text-2xl font-bold text-neutral-900 mb-4">Settings</h2>
+
+              {/* Presets */}
+              <div className="mb-6">
+                <p className="font-medium text-neutral-900 mb-3">Timer Presets</p>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    onClick={() => applyPreset("standard")}
+                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                  >
+                    Standard (25-5)
+                  </button>
+                  <button
+                    onClick={() => applyPreset("long")}
+                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                  >
+                    Long (50-10)
+                  </button>
+                  <button
+                    onClick={() => applyPreset("short")}
+                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                  >
+                    Short (15-3)
+                  </button>
+                </div>
+              </div>
+
+              {/* Custom Timer */}
+              <div className="mb-6">
+                <p className="font-medium text-neutral-900 mb-3">Custom Timer</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm text-neutral-600 mb-1">Work (minutes)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={customWorkTime}
+                      onChange={(e) => setCustomWorkTime(parseInt(e.target.value) || 1)}
+                      className="w-full border border-neutral-300 rounded-lg p-2 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-neutral-600 mb-1">Break (minutes)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={customBreakTime}
+                      onChange={(e) => setCustomBreakTime(parseInt(e.target.value) || 1)}
+                      className="w-full border border-neutral-300 rounded-lg p-2 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sound Toggle */}
+              <div className="mb-6">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={soundEnabled}
+                    onChange={(e) => setSoundEnabled(e.target.checked)}
+                    className="w-4 h-4 border-neutral-300 rounded focus:ring-2 focus:ring-neutral-900"
+                  />
+                  <span className="text-neutral-900 font-medium">Enable Sound Notifications</span>
+                </label>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={applyCustom}
+                  className="flex-1 bg-neutral-900 text-white rounded-lg py-2 font-medium hover:bg-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                >
+                  Apply
+                </button>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="flex-1 border border-neutral-300 rounded-lg py-2 text-neutral-700 font-medium hover:bg-neutral-100 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <p className="text-center text-xs text-neutral-500">
+          Background notifications enabled • Service Worker active
+        </p>
       </div>
 
       <style jsx global>{`
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
+        .animate-pulse {
+          animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
         html { font-family: 'Inter', 'Helvetica Neue', Arial, 'system-ui', sans-serif; }
       `}</style>
     </div>

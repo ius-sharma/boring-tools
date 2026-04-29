@@ -135,6 +135,15 @@ Features:
 - Browser notifications when focus or break sessions finish
 - Session counter to track productivity
 
+Enhancements (UI & Background):
+- Sound notifications (optional beep) on session transitions
+- Visual progress ring and pulsing countdown for imminent transitions
+- Customizable timers and presets (Standard, Long, Short) with settings modal
+- Daily statistics (focus sessions, break sessions, total focus minutes) saved to localStorage
+- Keyboard shortcuts: Space (Start/Pause), R (Reset), Esc (Close settings)
+- Automatic long break after every 4 focus sessions
+- Background Service Worker handles timer when tab is inactive so system notifications still fire
+
 Route:
 - `/pomodoro-timer`
 
