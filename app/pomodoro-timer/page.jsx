@@ -11,6 +11,43 @@ export default function PomodoroTimer() {
   const [sessions, setSessions] = useState(0);
   const notificationPermissionRequestedRef = useRef(false);
   const transitionLockRef = useRef(false);
+  const workerRef = useRef(null);
+  const [workerReady, setWorkerReady] = useState(false);
+
+  const registerServiceWorker = async () => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.register("/service-worker.js", {
+        scope: "/",
+      });
+      workerRef.current = registration;
+      setWorkerReady(true);
+
+      const handleMessage = (event) => {
+        if (event.data.action === "TIMER_UPDATE") {
+          const { seconds: newSeconds, isBreak: newIsBreak, sessions: newSessions } = event.data.payload;
+          setSeconds(newSeconds);
+          setIsBreak(newIsBreak);
+          setSessions(newSessions);
+        }
+      };
+
+      navigator.serviceWorker.addEventListener("message", handleMessage);
+
+      return () => {
+        navigator.serviceWorker.removeEventListener("message", handleMessage);
+      };
+    } catch (error) {
+      console.log("Service Worker registration skipped (dev mode is ok)");
+    }
+  };
+
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
 
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
@@ -83,12 +120,44 @@ export default function PomodoroTimer() {
       await requestNotificationPermission();
     }
     setRunning(true);
+
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      const channel = new MessageChannel();
+      navigator.serviceWorker.controller.postMessage(
+        {
+          action: "START_TIMER",
+          payload: { seconds, isBreak, sessions },
+        },
+        [channel.port2]
+      );
+    }
+  };
+
+  const handlePause = () => {
+    setRunning(false);
+
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      const channel = new MessageChannel();
+      navigator.serviceWorker.controller.postMessage(
+        { action: "PAUSE_TIMER" },
+        [channel.port2]
+      );
+    }
   };
 
   const resetTimer = () => {
     setRunning(false);
     setIsBreak(false);
     setSeconds(WORK_TIME);
+    transitionLockRef.current = false;
+
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      const channel = new MessageChannel();
+      navigator.serviceWorker.controller.postMessage(
+        { action: "RESET_TIMER" },
+        [channel.port2]
+      );
+    }
   };
 
   return (
@@ -117,7 +186,7 @@ export default function PomodoroTimer() {
           </button>
 
           <button
-            onClick={() => setRunning(false)}
+            onClick={handlePause}
             className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
           >
             Pause
