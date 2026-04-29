@@ -161,6 +161,20 @@ Features:
 Route:
 - `/image-compressor`
 
+### Day 11: Resume Bullet Rewriter
+
+Turn rough notes into polished, resume-ready bullets with AI-assisted rewriting.
+
+Features:
+- Rewrite messy notes into cleaner resume bullets
+- Choose tone presets like Impact-focused, ATS-friendly, Leadership, and Technical
+- Select how many bullets to generate
+- Copy the rewritten bullets in one click
+- Clean responsive layout with side-by-side input and output panels
+
+Route:
+- `/resume-bullet-rewriter`
+
 ---
 
 ## UI/UX Updates
@@ -212,11 +226,10 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 8 ✅ File Name Sanitizer
 - Day 9 ✅ Pomodoro Timer
 - Day 10 ✅ Image Compressor / Resizer
+- Day 11 ✅ Resume Bullet Rewriter
 
 ### Upcoming Releases
 
-- Day 10 ⏳ Resume Bullet Rewriter — Coming Soon
-- Day 11 ⏳ Resume Bullet Rewriter — Coming Soon
 - Day 12 ⏳ Roast My To-Do List — Coming Soon
 - Day 13 ⏳ Markdown Previewer — Coming Soon
 

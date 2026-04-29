@@ -78,6 +78,15 @@ const tools = [
     isNew: true,
   },
   {
+    id: "resume-bullet-rewriter",
+    name: "Resume Bullet Rewriter",
+    href: "/resume-bullet-rewriter",
+    category: "Career",
+    description: "Turn rough notes into strong resume bullets.",
+    status: "Live",
+    isNew: true,
+  },
+  {
     id: "pomodoro-timer",
     name: "Pomodoro Timer",
     href: "/pomodoro-timer",
@@ -88,13 +97,6 @@ const tools = [
 ];
 
 const upcomingTools = [
-  {
-    id: "resume-bullet-rewriter",
-    name: "Resume Bullet Rewriter",
-    category: "Career",
-    description: "Turn rough notes into strong resume bullets.",
-    eta: "Coming Soon",
-  },
   {
     id: "roast-my-todo-list",
     name: "Roast My To-Do List",
