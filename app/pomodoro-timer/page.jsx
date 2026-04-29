@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function PomodoroTimer() {
   const WORK_TIME = 25 * 60;
@@ -9,35 +9,80 @@ export default function PomodoroTimer() {
   const [running, setRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [sessions, setSessions] = useState(0);
-
-  useEffect(() => {
-    let timer;
-
-    if (running && seconds > 0) {
-      timer = setInterval(() => {
-        setSeconds((prev) => prev - 1);
-      }, 1000);
-    }
-
-    if (seconds === 0) {
-      if (!isBreak) {
-        setSessions((prev) => prev + 1);
-        setIsBreak(true);
-        setSeconds(BREAK_TIME);
-      } else {
-        setIsBreak(false);
-        setSeconds(WORK_TIME);
-      }
-    }
-
-    return () => clearInterval(timer);
-  }, [running, seconds, isBreak]);
+  const notificationPermissionRequestedRef = useRef(false);
+  const transitionLockRef = useRef(false);
 
   const formatTime = (secs) => {
     const mins = Math.floor(secs / 60);
     const sec = secs % 60;
 
     return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
+
+  const sendNotification = (title, body) => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") {
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      new Notification(title, { body });
+    }
+  };
+
+  const requestNotificationPermission = async () => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") {
+      return;
+    }
+
+    if (Notification.permission === "default") {
+      try {
+        await Notification.requestPermission();
+      } catch {
+        // Ignore permission errors and continue without notifications.
+      }
+    }
+  };
+
+  useEffect(() => {
+    let timer;
+
+    if (running) {
+      timer = setInterval(() => {
+        setSeconds((prev) => {
+          if (prev > 1) {
+            transitionLockRef.current = false;
+            return prev - 1;
+          }
+
+          if (transitionLockRef.current) {
+            return prev;
+          }
+
+          transitionLockRef.current = true;
+
+          if (!isBreak) {
+            setSessions((currentSessions) => currentSessions + 1);
+            setIsBreak(true);
+            sendNotification("Focus session complete", "Break time started. Take 5 minutes to reset.");
+            return BREAK_TIME;
+          }
+
+          setIsBreak(false);
+          sendNotification("Break finished", "Focus time started. Back to work.");
+          return WORK_TIME;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [running, isBreak]);
+
+  const handleStart = async () => {
+    if (!notificationPermissionRequestedRef.current) {
+      notificationPermissionRequestedRef.current = true;
+      await requestNotificationPermission();
+    }
+    setRunning(true);
   };
 
   const resetTimer = () => {
@@ -65,7 +110,7 @@ export default function PomodoroTimer() {
 
         <div className="grid grid-cols-3 gap-2">
           <button
-            onClick={() => setRunning(true)}
+            onClick={handleStart}
             className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
           >
             Start
