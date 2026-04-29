@@ -131,6 +131,10 @@ export default function PomodoroTimer() {
           </button>
         </div>
 
+        <p className="text-center text-xs sm:text-sm text-neutral-500">
+          Start dabane par notification permission prompt aayega, phir focus aur break khatam hote hi alert milega.
+        </p>
+
         <div className="w-full p-4 border border-neutral-200 rounded-xl bg-neutral-50 text-center">
           <p className="text-sm text-neutral-500">Completed Sessions</p>
           <p className="text-2xl font-semibold text-neutral-900">{sessions}</p>

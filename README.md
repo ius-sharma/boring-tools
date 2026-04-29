@@ -132,6 +132,7 @@ Features:
 - 5-minute break periods
 - Start, Pause, and Reset controls
 - Automatic session cycling
+- Browser notifications when focus or break sessions finish
 - Session counter to track productivity
 
 Route:
