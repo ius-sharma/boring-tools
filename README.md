@@ -175,6 +175,36 @@ Features:
 Route:
 - `/resume-bullet-rewriter`
 
+### Day 12: GST Calculator
+
+Calculate GST-inclusive and GST-exclusive totals in seconds.
+
+Features:
+- Handle before-GST and including-GST calculations
+- Use common GST presets or a custom rate
+- Show base amount, GST amount, and total amount clearly
+- Keep the UI clean and finance-friendly
+
+Route:
+- `/gst-calculator`
+
+### Upcoming (Day 13+)
+
+The following tools are in progress and will be released after Day 12. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+
+- Day 13: To-Do List — `/to-do-list` (Coming Soon)
+- Day 14: Truth or Dare Play — `/truth-or-dare-play` (Coming Soon)
+- Day 15: Time Zone Converter — `/time-zone-converter` (Coming Soon)
+
+Features:
+- Switch between truth, dare, and random modes
+- Play new rounds instantly with fresh prompts
+- Keep a short history of recent rounds
+- Stay inside the same minimal black-and-white layout
+
+Route:
+- `/truth-or-dare-play`
+
 ---
 
 ## UI/UX Updates
@@ -227,11 +257,18 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 9 ✅ Pomodoro Timer
 - Day 10 ✅ Image Compressor / Resizer
 - Day 11 ✅ Resume Bullet Rewriter
+- Day 12 ✅ GST Calculator
+
+### Upcoming Releases (Day 13+)
+
+- Day 13 ⏳ To-Do List — Coming Soon
+- Day 14 ⏳ Truth or Dare Play — Coming Soon
+- Day 15 ⏳ Time Zone Converter — Coming Soon
 
 ### Upcoming Releases
 
-- Day 12 ⏳ Roast My To-Do List — Coming Soon
-- Day 13 ⏳ Markdown Previewer — Coming Soon
+- Day 16 ⏳ Roast My To-Do List — Coming Soon
+- Day 17 ⏳ Markdown Previewer — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 

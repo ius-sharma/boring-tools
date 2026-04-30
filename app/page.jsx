@@ -87,6 +87,42 @@ const tools = [
     isNew: true,
   },
   {
+    id: "time-zone-converter",
+    name: "Time Zone Converter",
+    href: "/time-zone-converter",
+    category: "Time & Date",
+    description: "Convert meeting times across time zones.",
+    status: "Live",
+    isNew: true,
+  },
+  {
+    id: "to-do-list",
+    name: "To-Do List",
+    href: "/to-do-list",
+    category: "Productivity",
+    description: "Track tasks locally with saved progress.",
+    status: "Live",
+    isNew: true,
+  },
+  {
+    id: "gst-calculator",
+    name: "GST Calculator",
+    href: "/gst-calculator",
+    category: "Finance",
+    description: "Calculate GST-inclusive and exclusive totals.",
+    status: "Live",
+    isNew: true,
+  },
+  {
+    id: "truth-or-dare-play",
+    name: "Truth or Dare Play",
+    href: "/truth-or-dare-play",
+    category: "Fun",
+    description: "Spin up a clean truth-or-dare game quickly.",
+    status: "Live",
+    isNew: true,
+  },
+  {
     id: "pomodoro-timer",
     name: "Pomodoro Timer",
     href: "/pomodoro-timer",
@@ -113,6 +149,32 @@ const upcomingTools = [
   },
 ];
 
+// Which tools should be accessible (live) right now — keep this list small and local-only.
+const liveToolIds = new Set([
+  "text-formatter",
+  "json-formatter",
+  "word-counter",
+  "password-generator",
+  "age-calculator",
+  "unit-converter",
+  "qr-generator",
+  "file-name-sanitizer",
+  "pomodoro-timer",
+  "image-compressor",
+  "resume-bullet-rewriter",
+  "gst-calculator",
+]);
+
+// Derive the currently available live tools and the rest (moved to upcoming)
+const availableTools = tools.filter((t) => liveToolIds.has(t.id));
+const otherTools = tools.filter((t) => !liveToolIds.has(t.id));
+
+// Compose the authoritative upcoming list (existing upcoming + moved tools)
+const allUpcoming = [
+  ...upcomingTools,
+  ...otherTools.map((t) => ({ id: t.id, name: t.name, category: t.category, description: t.description, eta: "Coming Soon" })),
+];
+
 const quickFilters = [
   { id: "all", label: "All" },
   { id: "most-used", label: "Most Used" },
@@ -120,7 +182,7 @@ const quickFilters = [
   { id: "developer", label: "Developer" },
 ];
 
-const categories = ["All", "Text", "Developer", "Utility", "Security", "Productivity", "Media", "Career", "Fun + Productivity"];
+const categories = ["All", "Text", "Developer", "Utility", "Security", "Productivity", "Media", "Career", "Time & Date", "Finance", "Fun", "Fun + Productivity"];
 const categoryOptions = categories.map((item) => ({ value: item, label: item }));
 const suggestionCategoryOptions = [
   { value: "New Tool Idea", label: "New Tool Idea" },
@@ -226,11 +288,11 @@ export default function Home() {
   }, []);
 
   const toolsByUsage = useMemo(() => {
-    return [...tools].sort((a, b) => (usageMap[b.id] || 0) - (usageMap[a.id] || 0));
+    return [...availableTools].sort((a, b) => (usageMap[b.id] || 0) - (usageMap[a.id] || 0));
   }, [usageMap]);
 
   const filteredLiveTools = useMemo(() => {
-    let base = [...tools];
+    let base = [...availableTools];
 
     if (quickFilter === "most-used") {
       const used = toolsByUsage.filter((tool) => (usageMap[tool.id] || 0) > 0);
@@ -249,15 +311,15 @@ export default function Home() {
   }, [category, quickFilter, query, toolsByUsage, usageMap]);
 
   const filteredUpcomingTools = useMemo(() => {
-    return upcomingTools.filter((tool) => filterMatch(tool, query, category));
+    return allUpcoming.filter((tool) => filterMatch(tool, query, category));
   }, [category, query]);
 
   const recentCards = useMemo(
-    () => recentTools.map((id) => tools.find((tool) => tool.id === id)).filter(Boolean),
+    () => recentTools.map((id) => availableTools.find((tool) => tool.id === id)).filter(Boolean),
     [recentTools]
   );
 
-  const featuredTool = tools.find((tool) => tool.isNew) || tools[0];
+  const featuredTool = availableTools.find((t) => t.id === "gst-calculator") || availableTools.find((tool) => tool.isNew) || availableTools[0];
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -363,123 +425,160 @@ export default function Home() {
         <div className="absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-neutral-300 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-5 sm:p-8 shadow-xl flex flex-col gap-5 sm:gap-6">
-        <header className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex items-start justify-between gap-4 flex-wrap">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">100 Days Build</p>
-            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-neutral-900 mt-1">BoringTools</h1>
-            <p className="text-neutral-600 mt-2 text-sm sm:text-base">Small tools for boring problems. Fast, local, no login.</p>
+      <main className="relative mx-auto w-full max-w-7xl flex flex-col gap-6 sm:gap-8">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-neutral-500">100 Days Build</p>
+            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-neutral-900 mt-1">BoringTools</h1>
+            <p className="mt-3 text-sm sm:text-base text-neutral-600 max-w-2xl">
+              Small tools for boring problems. Fast, local, no login, and ready to grow into About, Contact, and Privacy pages without tightening the layout.
+            </p>
           </div>
-          <div className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 min-w-[170px]">
-            <p className="text-xs text-neutral-500">Live / Upcoming</p>
-            <p className="text-2xl font-bold text-neutral-900">{tools.length} / {upcomingTools.length}</p>
+
+          <div className="grid grid-cols-3 gap-3 sm:min-w-[340px]">
+            <div className="rounded-2xl border border-neutral-200 bg-white/80 backdrop-blur px-4 py-3">
+              <p className="text-xs text-neutral-500">Live</p>
+              <p className="text-2xl font-bold text-neutral-900">{availableTools.length}</p>
+            </div>
+            <div className="rounded-2xl border border-neutral-200 bg-white/80 backdrop-blur px-4 py-3">
+              <p className="text-xs text-neutral-500">Upcoming</p>
+              <p className="text-2xl font-bold text-neutral-900">{allUpcoming.length}</p>
+            </div>
+            <div className="rounded-2xl border border-neutral-200 bg-white/80 backdrop-blur px-4 py-3">
+              <p className="text-xs text-neutral-500">Collections</p>
+              <p className="text-2xl font-bold text-neutral-900">{categories.length - 1}</p>
+            </div>
           </div>
         </header>
 
-        <section className="sticky top-3 z-20 rounded-2xl border border-neutral-200 bg-white backdrop-blur p-4 sm:p-5 shadow-sm flex flex-col gap-3">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
-            <label className="rounded-xl border border-neutral-200 bg-white px-4 py-3 flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-neutral-500">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                ref={searchRef}
-                type="text"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search tools (press / to focus, Enter to open first)"
-                className="w-full bg-transparent text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-              />
-            </label>
-            <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3 flex items-center justify-between gap-6">
-              <div>
-                <p className="text-xs text-neutral-500">Visible live</p>
-                <p className="text-lg font-semibold text-neutral-900">{filteredLiveTools.length}</p>
+        <section className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-4 sm:gap-6">
+          <div className="rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-5 sm:p-6 shadow-sm flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <p className="text-xs uppercase tracking-[0.16em] text-neutral-500">Browse</p>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-900">Find a tool fast, then keep moving</h2>
+              <p className="text-sm text-neutral-600 max-w-2xl">The layout stays open so extra pages can fit naturally later. Search, filter, and launch from one clean surface.</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3">
+              <label className="rounded-2xl border border-neutral-200 bg-white px-4 py-3 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-neutral-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search tools (press / to focus, Enter to open first)"
+                  className="w-full bg-transparent text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                />
+              </label>
+              <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 flex items-center justify-between gap-6">
+                <div>
+                  <p className="text-xs text-neutral-500">Visible live</p>
+                  <p className="text-lg font-semibold text-neutral-900">{filteredLiveTools.length}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500">Category</p>
+                  <p className="text-lg font-semibold text-neutral-900">{category}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-neutral-500">Category</p>
-                <p className="text-lg font-semibold text-neutral-900">{category}</p>
+            </div>
+
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              {quickFilters.map((filter) => {
+                const active = quickFilter === filter.id;
+                return (
+                  <button
+                    key={filter.id}
+                    type="button"
+                    onClick={() => setQuickFilter(filter.id)}
+                    className={`shrink-0 px-3 py-2 rounded-lg text-sm font-semibold border transition ${
+                      active
+                        ? "border-neutral-900 bg-neutral-900 text-white"
+                        : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-sm text-neutral-600">
+                Showing <span className="font-semibold text-neutral-900">{filteredLiveTools.length}</span> live tool(s)
+                {query ? (
+                  <>
+                    {" "}for <span className="font-semibold text-neutral-900">"{query}"</span>
+                  </>
+                ) : null}
+                .
+              </p>
+              <div className="flex items-center gap-2 sm:min-w-[280px]">
+                <span className="text-sm text-neutral-500">More categories</span>
+                <div className="relative w-full max-w-[220px]">
+                  <ThemedDropdown
+                    ariaLabel="Select more categories"
+                    value={category}
+                    options={categoryOptions}
+                    onChange={setCategory}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {quickFilters.map((filter) => {
-              const active = quickFilter === filter.id;
-              return (
-                <button
-                  key={filter.id}
-                  type="button"
-                  onClick={() => setQuickFilter(filter.id)}
-                  className={`shrink-0 px-3 py-2 rounded-lg text-sm font-semibold border transition ${
-                    active
-                      ? "border-neutral-900 bg-neutral-900 text-white"
-                      : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-900 hover:text-neutral-900"
-                  }`}
-                >
-                  {filter.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-sm text-neutral-600">
-              Showing <span className="font-semibold text-neutral-900">{filteredLiveTools.length}</span> live tool(s)
-              {query ? (
-                <>
-                  {" "}for <span className="font-semibold text-neutral-900">"{query}"</span>
-                </>
-              ) : null}
-              .
-            </p>
-            <div className="flex items-center gap-2 sm:min-w-[280px]">
-              <span className="text-sm text-neutral-500">More categories</span>
-              <ThemedDropdown
-                ariaLabel="Select more categories"
-                value={category}
-                options={categoryOptions}
-                onChange={setCategory}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Featured today</p>
-            <p className="text-base font-semibold text-neutral-900 mt-1">{featuredTool.name}</p>
-            <p className="text-sm text-neutral-600">{featuredTool.description}</p>
-          </div>
-          <a
-            href={featuredTool.href}
-            onClick={() => handleOpenTool(featuredTool.id)}
-            className="shrink-0 border border-neutral-900 text-neutral-900 py-2 px-4 rounded-lg text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
-          >
-            Try Now
-          </a>
-        </section>
-
-        {recentCards.length > 0 && (
-          <details className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
-            <summary className="cursor-pointer list-none flex items-center justify-between gap-4">
-              <span className="text-base sm:text-lg font-semibold text-neutral-900">Recently Used</span>
-              <span className="text-xs text-neutral-500">Last {recentCards.length}</span>
-            </summary>
-            <div className="flex flex-wrap gap-2 mt-3">
-              {recentCards.map((tool) => (
+          <div className="flex flex-col gap-4">
+            <section className="rounded-3xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex flex-col gap-4 shadow-sm">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.15em] text-neutral-500">Featured today</p>
+                  <p className="text-2xl font-semibold text-neutral-900 mt-1">{featuredTool.name}</p>
+                </div>
                 <a
-                  key={tool.id}
-                  href={tool.href}
-                  onClick={() => handleOpenTool(tool.id)}
-                  className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900 transition"
+                  href={featuredTool.href}
+                  onClick={() => handleOpenTool(featuredTool.id)}
+                  className="shrink-0 border border-neutral-900 text-neutral-900 py-2 px-4 rounded-lg text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
                 >
-                  {tool.name}
+                  Try Now
                 </a>
-              ))}
-            </div>
-          </details>
-        )}
+              </div>
+              <p className="text-sm text-neutral-600">{featuredTool.description}</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-neutral-200 bg-white p-3">
+                  <p className="text-xs text-neutral-500">Live today</p>
+                  <p className="text-lg font-semibold text-neutral-900">Ready now</p>
+                </div>
+                <div className="rounded-2xl border border-neutral-200 bg-white p-3">
+                  <p className="text-xs text-neutral-500">Current mode</p>
+                  <p className="text-lg font-semibold text-neutral-900">Sectioned</p>
+                </div>
+              </div>
+            </section>
+
+            {recentCards.length > 0 && (
+              <details className="rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-5 sm:p-6 shadow-sm">
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-4">
+                  <span className="text-base sm:text-lg font-semibold text-neutral-900">Recently Used</span>
+                  <span className="text-xs text-neutral-500">Last {recentCards.length}</span>
+                </summary>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {recentCards.map((tool) => (
+                    <a
+                      key={tool.id}
+                      href={tool.href}
+                      onClick={() => handleOpenTool(tool.id)}
+                      className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-800 hover:border-neutral-900 hover:text-neutral-900 transition"
+                    >
+                      {tool.name}
+                    </a>
+                  ))}
+                </div>
+              </details>
+            )}
+          </div>
+        </section>
 
         <section className="space-y-4">
           <div className="flex items-center justify-between gap-4">
@@ -578,6 +677,8 @@ export default function Home() {
           )}
         </section>
 
+        {/* About/Contact/Privacy pages moved to dedicated routes. Removed inline cards. */}
+
         <section className="rounded-3xl border border-neutral-200 bg-neutral-50 p-5 sm:p-6 flex flex-col gap-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-2xl">
@@ -592,87 +693,92 @@ export default function Home() {
             </div>
           </div>
 
-            <form className="grid grid-cols-1 gap-3" onSubmit={handleSuggestionSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
-                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Name</span>
-                  <input
-                    type="text"
-                    value={suggestionForm.name}
-                    onChange={(event) => handleSuggestionChange("name", event.target.value)}
-                    className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-                    placeholder="Optional"
-                  />
-                </label>
+          <form className="grid grid-cols-1 gap-3" onSubmit={handleSuggestionSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Name</span>
+                <input
+                  type="text"
+                  value={suggestionForm.name}
+                  onChange={(event) => handleSuggestionChange("name", event.target.value)}
+                  className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                  placeholder="Optional"
+                />
+              </label>
 
-                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
-                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Email</span>
-                  <input
-                    type="email"
-                    value={suggestionForm.email}
-                    onChange={(event) => handleSuggestionChange("email", event.target.value)}
-                    className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-                    placeholder="Optional"
-                  />
-                </label>
+              <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Email</span>
+                <input
+                  type="email"
+                  value={suggestionForm.email}
+                  onChange={(event) => handleSuggestionChange("email", event.target.value)}
+                  className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                  placeholder="Optional"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3">
+              <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion type</span>
+                <ThemedDropdown
+                  ariaLabel="Select suggestion type"
+                  value={suggestionForm.category}
+                  options={suggestionCategoryOptions}
+                  onChange={(value) => handleSuggestionChange("category", value)}
+                />
+              </label>
+
+              <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
+                <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion</span>
+                <textarea
+                  rows={5}
+                  value={suggestionForm.suggestion}
+                  onChange={(event) => handleSuggestionChange("suggestion", event.target.value)}
+                  className="w-full resize-none bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
+                  placeholder="Tell us the boring problem you want solved and how you expect it to behave."
+                />
+              </label>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-xs text-neutral-500 leading-6 max-w-2xl">Thanks for helping us improve the tool collection.</p>
+              <button
+                type="submit"
+                disabled={suggestionState.status === "saving"}
+                className="rounded-2xl border border-neutral-900 bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {suggestionState.status === "saving" ? "Saving..." : "Save suggestion"}
+              </button>
+            </div>
+
+            {suggestionState.message ? (
+              <div
+                className={`rounded-2xl border px-4 py-3 text-sm ${
+                  suggestionState.status === "success"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+                    : suggestionState.status === "error"
+                      ? "border-rose-200 bg-rose-50 text-rose-900"
+                      : "border-neutral-200 bg-white text-neutral-700"
+                }`}
+                role="status"
+              >
+                {suggestionState.message}
               </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-3">
-                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
-                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion type</span>
-                  <ThemedDropdown
-                    ariaLabel="Select suggestion type"
-                    value={suggestionForm.category}
-                    options={suggestionCategoryOptions}
-                    onChange={(value) => handleSuggestionChange("category", value)}
-                  />
-                </label>
-
-                <label className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-2">
-                  <span className="text-xs uppercase tracking-[0.14em] text-neutral-500">Suggestion</span>
-                  <textarea
-                    rows={5}
-                    value={suggestionForm.suggestion}
-                    onChange={(event) => handleSuggestionChange("suggestion", event.target.value)}
-                    className="w-full resize-none bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
-                    placeholder="Tell us the boring problem you want solved and how you expect it to behave."
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className="text-xs text-neutral-500 leading-6 max-w-2xl">Thanks for helping us improve the tool collection.</p>
-                <button
-                  type="submit"
-                  disabled={suggestionState.status === "saving"}
-                  className="rounded-2xl border border-neutral-900 bg-neutral-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-70"
-                >
-                  {suggestionState.status === "saving" ? "Saving..." : "Save suggestion"}
-                </button>
-              </div>
-
-              {suggestionState.message ? (
-                <div
-                  className={`rounded-2xl border px-4 py-3 text-sm ${
-                    suggestionState.status === "success"
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-                      : suggestionState.status === "error"
-                        ? "border-rose-200 bg-rose-50 text-rose-900"
-                        : "border-neutral-200 bg-white text-neutral-700"
-                  }`}
-                  role="status"
-                >
-                  {suggestionState.message}
-                </div>
-              ) : null}
-            </form>
+            ) : null}
+          </form>
         </section>
 
-        <footer className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600 flex flex-wrap items-center justify-between gap-3">
+        <footer className="rounded-3xl border border-neutral-200 bg-white/80 backdrop-blur p-4 sm:p-5 text-sm text-neutral-600 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p>Build in public: one practical tool every day.</p>
+          <div className="flex flex-wrap items-center gap-3 text-neutral-500">
+            <a href="/about" className="hover:underline">About</a>
+            <a href="/contact" className="hover:underline">Contact</a>
+            <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
+          </div>
           <p className="font-medium text-neutral-900">BoringTools</p>
         </footer>
-      </div>
+      </main>
 
       <style jsx global>{`
         .bt-card {

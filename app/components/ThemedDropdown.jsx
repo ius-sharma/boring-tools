@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, cloneElement } from "react";
+import { createPortal } from "react-dom";
 
-export default function ThemedDropdown({ value, options, onChange, ariaLabel }) {
+export default function ThemedDropdown({ value, options, onChange, ariaLabel, inlineMenu = false }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [menuStyle, setMenuStyle] = useState(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const handlePointerDown = (event) => {
@@ -30,9 +34,43 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel }) 
     };
   }, []);
 
+  useEffect(() => {
+    // mark mounted so portal/menu rendering only happens after client hydration
+    setMounted(true);
+  }, []);
+
   const selectedLabel = useMemo(() => {
     return options.find((option) => option.value === value)?.label ?? value;
   }, [options, value]);
+
+  useEffect(() => {
+    if (!open || inlineMenu) {
+      setMenuStyle(null);
+      return undefined;
+    }
+
+    const update = () => {
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        setMenuStyle({
+          position: "fixed",
+          left: `${rect.left}px`,
+          top: `${rect.bottom + 8}px`,
+          minWidth: `${rect.width}px`,
+          zIndex: 99999,
+        });
+      }
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update);
+    };
+  }, [open, inlineMenu]);
 
   return (
     <div ref={rootRef} className="relative w-full">
@@ -42,6 +80,7 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel }) 
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
+        ref={triggerRef}
         className="theme-dropdown-trigger w-full flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-4 text-left text-base text-neutral-900 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-900"
       >
         <span className="truncate font-medium">{selectedLabel}</span>
@@ -59,34 +98,60 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel }) 
         </svg>
       </button>
 
-      {open && (
-        <div className="theme-dropdown-menu absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl">
-          <div className="max-h-60 overflow-auto p-1">
-            {options.map((option) => {
-              const active = option.value === value;
+      {open && mounted && (
+        (() => {
+          const menu = (
+            <div className={`theme-dropdown-menu ${inlineMenu ? "relative z-10 mt-2" : "overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl"}`} style={inlineMenu ? undefined : menuStyle}>
+              <div className="max-h-60 overflow-auto p-1">
+                {options.map((option) => {
+                  const active = option.value === value;
 
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={active}
-                  onClick={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm transition ${
-                    active
-                      ? "theme-dropdown-option-active"
-                      : "theme-dropdown-option text-neutral-700 hover:bg-neutral-100"
-                  }`}
-                >
-                  <span className="font-medium">{option.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="option"
+                      aria-selected={active}
+                      onClick={() => {
+                        onChange(option.value);
+                        setOpen(false);
+                      }}
+                      className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm transition ${
+                        active
+                          ? "theme-dropdown-option-active"
+                          : "theme-dropdown-option text-neutral-700 hover:bg-neutral-100"
+                      }`}
+                    >
+                      <span className="font-medium">{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+
+          if (inlineMenu) return menu;
+
+          // position portal menu relative to trigger
+          if (triggerRef.current) {
+            const rect = triggerRef.current.getBoundingClientRect();
+            const computed = {
+              position: "fixed",
+              left: `${rect.left}px`,
+              top: `${rect.bottom + 8}px`,
+              minWidth: `${rect.width}px`,
+              zIndex: 99999,
+            };
+            const styleToUse = menuStyle || computed;
+            return createPortal(
+              // clone menu with inline style applied
+              /*#__PURE__*/ cloneElement(menu, { style: inlineMenu ? undefined : styleToUse }),
+              document.body
+            );
+          }
+
+          return createPortal(menu, document.body);
+        })()
       )}
     </div>
   );
