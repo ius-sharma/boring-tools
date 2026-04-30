@@ -43,8 +43,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-between gap-3 p-3 sm:p-4 pointer-events-none">
-          <HomeButton />
           <ThemeToggle />
+          <HomeButton />
         </div>
         {children}
       </body>
