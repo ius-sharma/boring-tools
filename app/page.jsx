@@ -163,6 +163,7 @@ const liveToolIds = new Set([
   "image-compressor",
   "resume-bullet-rewriter",
   "gst-calculator",
+  "to-do-list",
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
