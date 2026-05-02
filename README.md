@@ -188,11 +188,24 @@ Features:
 Route:
 - `/gst-calculator`
 
-### Upcoming (Day 13+)
+### Day 13: To-Do List
 
-The following tools are in progress and will be released after Day 12. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+Simple, lightweight to-do list manager to track tasks and priorities.
 
-- Day 13: To-Do List — `/to-do-list` (Coming Soon)
+Features:
+- Add, edit, and delete tasks
+- Mark tasks complete/incomplete
+- Simple localStorage persistence
+- Filter by all/active/completed
+- Clean responsive UI matching project theme
+
+Route:
+- `/to-do-list`
+
+### Upcoming (Day 14+)
+
+The following tools are in progress and will be released after Day 13. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+
 - Day 14: Truth or Dare Play — `/truth-or-dare-play` (Coming Soon)
 - Day 15: Time Zone Converter — `/time-zone-converter` (Coming Soon)
 
@@ -258,10 +271,11 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 10 ✅ Image Compressor / Resizer
 - Day 11 ✅ Resume Bullet Rewriter
 - Day 12 ✅ GST Calculator
+- Day 13 ✅ To-Do List
 
-### Upcoming Releases (Day 13+)
 
-- Day 13 ⏳ To-Do List — Coming Soon
+### Upcoming Releases (Day 14+)
+
 - Day 14 ⏳ Truth or Dare Play — Coming Soon
 - Day 15 ⏳ Time Zone Converter — Coming Soon
 
