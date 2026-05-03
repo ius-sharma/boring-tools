@@ -164,6 +164,7 @@ const liveToolIds = new Set([
   "resume-bullet-rewriter",
   "gst-calculator",
   "to-do-list",
+  "time-zone-converter",
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)

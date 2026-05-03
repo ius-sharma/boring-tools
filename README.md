@@ -202,12 +202,24 @@ Features:
 Route:
 - `/to-do-list`
 
-### Upcoming (Day 14+)
+### Day 14: Time Zone Converter
 
-The following tools are in progress and will be released after Day 13. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+Convert meeting times across time zones quickly and accurately.
 
-- Day 14: Truth or Dare Play — `/truth-or-dare-play` (Coming Soon)
-- Day 15: Time Zone Converter — `/time-zone-converter` (Coming Soon)
+Features:
+- Convert between time zones using common cities and IANA zone names
+- Quick presets for UTC, local, and major time zones
+- Copy and share converted time with one click
+- Clean responsive UI with optional 12/24-hour toggle
+
+Route:
+- `/time-zone-converter`
+
+### Upcoming (Day 15+)
+
+The following tools are in progress and will be released after Day 14. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+
+- Day 15: Truth or Dare Play — `/truth-or-dare-play` (Coming Soon)
 
 Features:
 - Switch between truth, dare, and random modes
@@ -273,11 +285,12 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 12 ✅ GST Calculator
 - Day 13 ✅ To-Do List
 
+- Day 14 ✅ Time Zone Converter
 
-### Upcoming Releases (Day 14+)
 
-- Day 14 ⏳ Truth or Dare Play — Coming Soon
-- Day 15 ⏳ Time Zone Converter — Coming Soon
+### Upcoming Releases (Day 15+)
+
+- Day 15 ⏳ Truth or Dare Play — Coming Soon
 
 ### Upcoming Releases
 
