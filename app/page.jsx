@@ -321,7 +321,7 @@ export default function Home() {
     [recentTools]
   );
 
-  const featuredTool = availableTools.find((t) => t.id === "to-do-list") || availableTools.find((tool) => tool.isNew) || availableTools[0];
+  const featuredTool = availableTools.find((t) => t.id === "time-zone-converter") || availableTools.find((tool) => tool.isNew) || availableTools[0];
 
   useEffect(() => {
     const onKeyDown = (event) => {
