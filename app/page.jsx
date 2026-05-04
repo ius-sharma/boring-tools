@@ -165,6 +165,7 @@ const liveToolIds = new Set([
   "gst-calculator",
   "to-do-list",
   "time-zone-converter",
+  "truth-or-dare-play",
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
@@ -321,7 +322,7 @@ export default function Home() {
     [recentTools]
   );
 
-  const featuredTool = availableTools.find((t) => t.id === "time-zone-converter") || availableTools.find((tool) => tool.isNew) || availableTools[0];
+  const featuredTool = availableTools.find((t) => t.id === "truth-or-dare-play") || availableTools.find((tool) => tool.isNew) || availableTools[0];
 
   useEffect(() => {
     const onKeyDown = (event) => {

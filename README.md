@@ -215,20 +215,23 @@ Features:
 Route:
 - `/time-zone-converter`
 
-### Upcoming (Day 15+)
+### Day 15: Truth or Dare Play
 
-The following tools are in progress and will be released after Day 14. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
-
-- Day 15: Truth or Dare Play — `/truth-or-dare-play` (Coming Soon)
+Playful party game to play with friends and break the ice.
 
 Features:
 - Switch between truth, dare, and random modes
 - Play new rounds instantly with fresh prompts
 - Keep a short history of recent rounds
 - Stay inside the same minimal black-and-white layout
+- Simple responsive UI matching project theme
 
 Route:
 - `/truth-or-dare-play`
+
+### Upcoming (Day 16+)
+
+The following tools are in progress and will be released after Day 15. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
 
 ---
 
@@ -286,13 +289,9 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 13 ✅ To-Do List
 
 - Day 14 ✅ Time Zone Converter
+- Day 15 ✅ Truth or Dare Play
 
-
-### Upcoming Releases (Day 15+)
-
-- Day 15 ⏳ Truth or Dare Play — Coming Soon
-
-### Upcoming Releases
+### Upcoming Releases (Day 16+)
 
 - Day 16 ⏳ Roast My To-Do List — Coming Soon
 - Day 17 ⏳ Markdown Previewer — Coming Soon
