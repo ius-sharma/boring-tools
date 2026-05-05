@@ -143,8 +143,6 @@ const tools = [
 
 const upcomingTools = [
   {
-    /* 'Roast My To-Do List' moved to live tools */
-  {
     id: "markdown-previewer",
     name: "Markdown Previewer",
     category: "Developer",
