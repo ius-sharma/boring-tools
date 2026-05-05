@@ -295,6 +295,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 - Day 16 ⏳ Roast My To-Do List — Coming Soon
 - Day 17 ⏳ Markdown Previewer — Coming Soon
+ - Day 18 ⏳ Video Transcriber — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 

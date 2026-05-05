@@ -147,6 +147,13 @@ const upcomingTools = [
     description: "Write markdown and preview instantly.",
     eta: "Coming Soon",
   },
+  {
+    id: "video-transcriber",
+    name: "Video Transcriber",
+    category: "Media",
+    description: "Transcribe video audio to text quickly and accurately.",
+    eta: "Coming Soon",
+  },
 ];
 
 // Which tools should be accessible (live) right now — keep this list small and local-only.
