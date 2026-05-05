@@ -130,16 +130,20 @@ const tools = [
     description: "Focus sessions with timer cycles.",
     status: "Live",
   },
+  {
+    id: "roast-my-todo-list",
+    name: "Roast My To-Do List",
+    href: "/roast-my-todo-list",
+    category: "Fun + Productivity",
+    description: "Playful roast with practical next steps.",
+    status: "Live",
+    isNew: true,
+  },
 ];
 
 const upcomingTools = [
   {
-    id: "roast-my-todo-list",
-    name: "Roast My To-Do List",
-    category: "Fun + Productivity",
-    description: "Playful roast with practical next steps.",
-    eta: "Coming Soon",
-  },
+    /* 'Roast My To-Do List' moved to live tools */
   {
     id: "markdown-previewer",
     name: "Markdown Previewer",
@@ -173,6 +177,7 @@ const liveToolIds = new Set([
   "to-do-list",
   "time-zone-converter",
   "truth-or-dare-play",
+  "roast-my-todo-list",
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
