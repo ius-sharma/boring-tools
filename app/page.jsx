@@ -139,16 +139,18 @@ const tools = [
     status: "Live",
     isNew: true,
   },
-];
-
-const upcomingTools = [
   {
     id: "markdown-previewer",
     name: "Markdown Previewer",
+    href: "/markdown-previewer",
     category: "Developer",
     description: "Write markdown and preview instantly.",
-    eta: "Coming Soon",
+    status: "Live",
+    isNew: true,
   },
+];
+
+const upcomingTools = [
   {
     id: "video-transcriber",
     name: "Video Transcriber",
@@ -176,6 +178,7 @@ const liveToolIds = new Set([
   "time-zone-converter",
   "truth-or-dare-play",
   "roast-my-todo-list",
+  "markdown-previewer",
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
