@@ -6,13 +6,17 @@ import { createPortal } from "react-dom";
 export default function ThemedDropdown({ value, options, onChange, ariaLabel, inlineMenu = false }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
+  const menuRef = useRef(null);
   const triggerRef = useRef(null);
   const [menuStyle, setMenuStyle] = useState(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const handlePointerDown = (event) => {
-      if (rootRef.current && !rootRef.current.contains(event.target)) {
+      const isInsideTrigger = rootRef.current && rootRef.current.contains(event.target);
+      const isInsideMenu = menuRef.current && menuRef.current.contains(event.target);
+
+      if (!isInsideTrigger && !isInsideMenu) {
         setOpen(false);
       }
     };
@@ -101,7 +105,11 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel, in
       {open && mounted && (
         (() => {
           const menu = (
-            <div className={`theme-dropdown-menu ${inlineMenu ? "relative z-10 mt-2" : "overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl"}`} style={inlineMenu ? undefined : menuStyle}>
+            <div
+              ref={menuRef}
+              className={`theme-dropdown-menu ${inlineMenu ? "relative z-10 mt-2" : "overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl"}`}
+              style={inlineMenu ? undefined : menuStyle}
+            >
               <div className="max-h-60 overflow-auto p-1">
                 {options.map((option) => {
                   const active = option.value === value;
