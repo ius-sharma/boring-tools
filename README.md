@@ -229,9 +229,34 @@ Features:
 Route:
 - `/truth-or-dare-play`
 
-### Upcoming (Day 16+)
+### Day 16: Roast My To-Do List
 
-The following tools are in progress and will be released after Day 15. They are listed here as "Coming Soon" and are visible in the app's Upcoming section.
+Playful roast with practical next steps for your tasks.
+
+Features:
+- Input your to-do list and get a humorous roast
+- Receive practical suggestions to tackle each task
+- Fun + productivity blend for motivation
+- Copy roasted output for sharing
+- Clean responsive UI matching project theme
+
+Route:
+- `/roast-my-todo-list`
+
+### Day 17: Markdown Previewer
+
+Write markdown and preview instantly with live rendering.
+
+Features:
+- Real-time markdown to HTML preview
+- Split-pane layout (editor + preview)
+- Support for headers, lists, links, code blocks, and more
+- Dark/light theme toggle
+- Copy rendered HTML output
+- Clean responsive UI matching project theme
+
+Route:
+- `/markdown-previewer`
 
 ---
 
@@ -293,7 +318,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 16 ✅ Roast My To-Do List
 - Day 17 ✅ Markdown Previewer
 
-### Upcoming Releases (Day 16+)
+### Upcoming Releases (Day 18+)
 
 - Day 18 ⏳ Video Transcriber — Coming Soon
 
