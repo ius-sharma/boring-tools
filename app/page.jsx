@@ -148,6 +148,14 @@ const tools = [
     status: "Live",
     isNew: true,
   },
+  {
+    id: "base-converter",
+    name: "Base Converter",
+    href: "/base-converter",
+    category: "Developer",
+    description: "Convert Binary, Decimal, Octal, and Hex instantly.",
+    status: "Upcoming",
+  },
 ];
 
 const upcomingTools = [
@@ -156,6 +164,13 @@ const upcomingTools = [
     name: "Video Transcriber",
     category: "Media",
     description: "Transcribe video audio to text quickly and accurately.",
+    eta: "Coming Soon",
+  },
+  {
+    id: "base-converter",
+    name: "Base Converter",
+    category: "Developer",
+    description: "Convert Binary, Decimal, Octal, and Hex instantly.",
     eta: "Coming Soon",
   },
 ];
@@ -179,6 +194,7 @@ const liveToolIds = new Set([
   "truth-or-dare-play",
   "roast-my-todo-list",
   "markdown-previewer",
+  
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
@@ -186,9 +202,12 @@ const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 const otherTools = tools.filter((t) => !liveToolIds.has(t.id));
 
 // Compose the authoritative upcoming list (existing upcoming + moved tools)
+const upcomingIds = new Set(upcomingTools.map((t) => t.id));
 const allUpcoming = [
   ...upcomingTools,
-  ...otherTools.map((t) => ({ id: t.id, name: t.name, category: t.category, description: t.description, eta: "Coming Soon" })),
+  ...otherTools
+    .filter((t) => !upcomingIds.has(t.id))
+    .map((t) => ({ id: t.id, name: t.name, category: t.category, description: t.description, eta: "Coming Soon" })),
 ];
 
 const quickFilters = [

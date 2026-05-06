@@ -321,6 +321,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ### Upcoming Releases (Day 18+)
 
 - Day 18 ⏳ Video Transcriber — Coming Soon
+ - Day 19 ⏳ Base Converter — Coming Soon
 
 > Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
