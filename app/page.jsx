@@ -171,7 +171,7 @@ const tools = [
     href: "/aspect-ratio-calculator",
     category: "Developer",
     description: "Resize images while preserving aspect ratio.",
-    status: "Live",
+    status: "Upcoming",
   },
   {
     id: "distance-between-cities",
@@ -179,7 +179,7 @@ const tools = [
     href: "/distance-between-cities",
     category: "Utility",
     description: "Compute straight-line distance and travel estimates.",
-    status: "Live",
+    status: "Upcoming",
   },
   {
     id: "currency-converter",
@@ -187,7 +187,7 @@ const tools = [
     href: "/currency-converter",
     category: "Finance",
     description: "Quick currency conversions with optional historical rates.",
-    status: "Live",
+    status: "Upcoming",
   },
 ];
 
@@ -221,10 +221,6 @@ const liveToolIds = new Set([
   "roast-my-todo-list",
   "markdown-previewer",
   "video-transcriber",
-  "aspect-ratio-calculator",
-  "distance-between-cities",
-  "currency-converter",
-  
 ]);
 
 // Derive the currently available live tools and the rest (moved to upcoming)
