@@ -149,6 +149,15 @@ const tools = [
     isNew: true,
   },
   {
+    id: "video-transcriber",
+    name: "Video Transcriber",
+    href: "/video-transcriber",
+    category: "Media",
+    description: "Transcribe video audio to text quickly and accurately.",
+    status: "Live",
+    isNew: true,
+  },
+  {
     id: "base-converter",
     name: "Base Converter",
     href: "/base-converter",
@@ -156,16 +165,33 @@ const tools = [
     description: "Convert Binary, Decimal, Octal, and Hex instantly.",
     status: "Upcoming",
   },
+  {
+    id: "aspect-ratio-calculator",
+    name: "Aspect Ratio Calculator",
+    href: "/aspect-ratio-calculator",
+    category: "Developer",
+    description: "Resize images while preserving aspect ratio.",
+    status: "Live",
+  },
+  {
+    id: "distance-between-cities",
+    name: "Distance Between Cities",
+    href: "/distance-between-cities",
+    category: "Utility",
+    description: "Compute straight-line distance and travel estimates.",
+    status: "Live",
+  },
+  {
+    id: "currency-converter",
+    name: "Currency Converter",
+    href: "/currency-converter",
+    category: "Finance",
+    description: "Quick currency conversions with optional historical rates.",
+    status: "Live",
+  },
 ];
 
 const upcomingTools = [
-  {
-    id: "video-transcriber",
-    name: "Video Transcriber",
-    category: "Media",
-    description: "Transcribe video audio to text quickly and accurately.",
-    eta: "Coming Soon",
-  },
   {
     id: "base-converter",
     name: "Base Converter",
@@ -194,6 +220,10 @@ const liveToolIds = new Set([
   "truth-or-dare-play",
   "roast-my-todo-list",
   "markdown-previewer",
+  "video-transcriber",
+  "aspect-ratio-calculator",
+  "distance-between-cities",
+  "currency-converter",
   
 ]);
 
@@ -263,25 +293,40 @@ export default function Home() {
   const searchRef = useRef(null);
 
   useEffect(() => {
+    let active = true;
+
+    let nextRecent = [];
     try {
       const rawRecent = localStorage.getItem(RECENT_STORAGE_KEY);
       const parsedRecent = JSON.parse(rawRecent || "[]");
       if (Array.isArray(parsedRecent)) {
-        setRecentTools(parsedRecent);
+        nextRecent = parsedRecent;
       }
     } catch {
-      setRecentTools([]);
+      nextRecent = [];
     }
 
+    let nextUsage = {};
     try {
       const rawUsage = localStorage.getItem(USAGE_STORAGE_KEY);
       const parsedUsage = JSON.parse(rawUsage || "{}");
       if (parsedUsage && typeof parsedUsage === "object") {
-        setUsageMap(parsedUsage);
+        nextUsage = parsedUsage;
       }
     } catch {
-      setUsageMap({});
+      nextUsage = {};
     }
+
+    const timer = window.setTimeout(() => {
+      if (!active) return;
+      setRecentTools(nextRecent);
+      setUsageMap(nextUsage);
+    }, 0);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -545,7 +590,7 @@ export default function Home() {
                 Showing <span className="font-semibold text-neutral-900">{filteredLiveTools.length}</span> live tool(s)
                 {query ? (
                   <>
-                    {" "}for <span className="font-semibold text-neutral-900">"{query}"</span>
+                    {" "}for <span className="font-semibold text-neutral-900">&quot;{query}&quot;</span>
                   </>
                 ) : null}
                 .

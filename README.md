@@ -289,6 +289,16 @@ npm run dev
 
 Open `http://localhost:3000`
 
+### Optional private env vars
+
+For the Distance Between Cities tool, add your Google Directions key to `/.env.local`:
+
+```bash
+GOOGLE_DIRECTIONS_KEY=your_key_here
+```
+
+Keep `/.env.local` out of git and set the same variable in your deployment secrets.
+
 ---
 
 ## Goal
@@ -318,12 +328,12 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 16 ✅ Roast My To-Do List
 - Day 17 ✅ Markdown Previewer
 
-### Upcoming Releases (Day 18+)
+### Live + Upcoming Releases
 
-- Day 18 ⏳ Video Transcriber — Coming Soon
- - Day 19 ⏳ Base Converter — Coming Soon
+- Day 18 ✅ Video Transcriber
+- Day 19 ⏳ Base Converter — Coming Soon
 
-> Coming soon: these tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
+> Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
 ## Suggestions
 
