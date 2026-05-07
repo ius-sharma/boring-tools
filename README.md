@@ -332,6 +332,9 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 - Day 18 ✅ Video Transcriber
 - Day 19 ⏳ Base Converter — Coming Soon
+- Day 20 ⏳ Aspect Ratio Calculator — Coming Soon
+- Day 21 ⏳ Distance Between Cities — Coming Soon
+- Day 22 ⏳ Currency Converter — Coming Soon
 
 > Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
