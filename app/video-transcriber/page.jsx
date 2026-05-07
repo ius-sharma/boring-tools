@@ -65,16 +65,16 @@ export default function VideoTranscriber() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-3xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-3xl border border-slate-200 flex flex-col gap-6">
         <div className="text-center flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Video Transcriber</h1>
-          <p className="text-neutral-500 text-base">Extract captions from YouTube and Instagram videos instantly.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Video Transcriber</h1>
+          <p className="text-slate-500 text-base">Extract captions from YouTube and Instagram videos instantly.</p>
         </div>
 
         <form onSubmit={handleTranscribe} className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
-            <label htmlFor="url" className="text-sm font-semibold text-neutral-900">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
+            <label htmlFor="url" className="text-sm font-semibold text-slate-900">
               Video URL
             </label>
             <input
@@ -83,15 +83,15 @@ export default function VideoTranscriber() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="Paste YouTube, Shorts, or Instagram video URL here..."
-              className="border border-neutral-300 rounded-lg p-3 bg-neutral-50 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="border border-slate-300 rounded-lg p-3 bg-slate-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
-            <p className="text-xs text-neutral-500">Supports: YouTube videos, YouTube Shorts, Instagram Reels, and video posts</p>
+            <p className="text-xs text-slate-500">Supports: YouTube videos, YouTube Shorts, Instagram Reels, and video posts</p>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="border border-neutral-900 text-neutral-900 rounded-lg px-4 py-3 font-semibold hover:bg-neutral-900 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="border border-slate-900 text-slate-900 rounded-lg px-4 py-3 font-semibold hover:bg-slate-900 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Transcribing..." : "Transcribe"}
           </button>
@@ -104,31 +104,31 @@ export default function VideoTranscriber() {
         )}
 
         {transcript && (
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-xs text-neutral-500">Transcript</p>
-                <p className="text-sm font-semibold text-neutral-900">{videoTitle}</p>
+                <p className="text-xs text-slate-500">Transcript</p>
+                <p className="text-sm font-semibold text-slate-900">{videoTitle}</p>
               </div>
-              <span className="text-xs text-neutral-500">{transcript.split(" ").length} words</span>
+              <span className="text-xs text-slate-500">{transcript.split(" ").length} words</span>
             </div>
 
-            <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 p-3 max-h-96 overflow-y-auto">
-              <p className="text-sm text-neutral-900 dark:text-neutral-100 whitespace-pre-wrap leading-relaxed">{transcript}</p>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-3 max-h-96 overflow-y-auto">
+              <p className="text-sm text-slate-900 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">{transcript}</p>
             </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex-1 border border-neutral-900 text-neutral-900 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
+                className="flex-1 border border-slate-900 text-slate-900 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-slate-900 hover:text-white transition"
               >
                 {copied ? "✓ Copied" : "Copy"}
               </button>
               <button
                 type="button"
                 onClick={handleDownload}
-                className="flex-1 border border-neutral-900 text-neutral-900 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-neutral-900 hover:text-white transition"
+                className="flex-1 border border-slate-900 text-slate-900 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-slate-900 hover:text-white transition"
               >
                 Download
               </button>
@@ -136,9 +136,9 @@ export default function VideoTranscriber() {
           </div>
         )}
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">How it works</p>
-          <ul className="mt-2 space-y-1 text-xs text-neutral-600">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">How it works</p>
+          <ul className="mt-2 space-y-1 text-xs text-slate-700">
             <li>• YouTube videos, Shorts, and short links (youtu.be)</li>
             <li>• Instagram Reels and video posts</li>
             <li>• YouTube: Uses official captions if available</li>
@@ -155,3 +155,5 @@ export default function VideoTranscriber() {
     </div>
   );
 }
+
+

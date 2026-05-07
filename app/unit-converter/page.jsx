@@ -118,11 +118,11 @@ export default function UnitConverter() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-5 sm:p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-5 sm:gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-5 sm:p-8 w-full max-w-xl border border-slate-200 flex flex-col gap-5 sm:gap-6">
         <div className="flex flex-col gap-1 items-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Unit Converter</h1>
-          <p className="text-neutral-500 text-base">Convert values across length, weight, and temperature</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Unit Converter</h1>
+          <p className="text-slate-500 text-base">Convert values across length, weight, and temperature</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -157,7 +157,7 @@ export default function UnitConverter() {
             setValue(e.target.value);
             resetOutputState();
           }}
-          className="w-full p-4 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black placeholder:text-neutral-300"
+          className="w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900 placeholder:text-slate-300"
         />
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -173,7 +173,7 @@ export default function UnitConverter() {
 
           <button
             onClick={swapUnits}
-            className="h-14 min-w-14 border border-neutral-300 rounded-xl px-4 py-3 text-neutral-700 bg-neutral-50 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900 flex items-center justify-center shadow-sm"
+            className="h-14 min-w-14 border border-slate-300 rounded-xl px-4 py-3 text-slate-700 bg-slate-50 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900 flex items-center justify-center shadow-sm"
             aria-label="Swap units"
           >
             ⇄
@@ -192,7 +192,7 @@ export default function UnitConverter() {
 
         <button
           onClick={convert}
-          className="w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          className="w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
         >
           Convert
         </button>
@@ -200,28 +200,28 @@ export default function UnitConverter() {
         {error && <p className="text-red-600 text-sm -mt-2">{error}</p>}
 
         {result ? (
-          <div className="w-full p-4 border border-neutral-200 rounded-xl bg-neutral-50 text-center space-y-2">
-            <h2 className="text-2xl font-bold text-neutral-900">{result}</h2>
-            <p className="text-sm text-neutral-500">{toUnit}</p>
-            <p className="text-sm text-neutral-600 break-words">
+          <div className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 text-center space-y-2">
+            <h2 className="text-2xl font-bold text-slate-900">{result}</h2>
+            <p className="text-sm text-slate-500">{toUnit}</p>
+            <p className="text-sm text-slate-700 break-words">
               {value} {fromUnit} = {result} {toUnit}
             </p>
 
             <button
               onClick={copyResult}
-              className="w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
             >
               Copy Result
             </button>
           </div>
         ) : (
-          <div className="w-full p-4 border border-dashed border-neutral-100 rounded-xl bg-neutral-50 text-neutral-300 text-base min-h-[96px] flex items-center justify-center select-none">
+          <div className="w-full p-4 border border-dashed border-slate-100 rounded-xl bg-slate-50 text-slate-300 text-base min-h-[96px] flex items-center justify-center select-none">
             Converted output will appear here
           </div>
         )}
 
         {showToast && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50 animate-fade-in-out">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50 animate-fade-in-out">
             Result copied!
           </div>
         )}
@@ -242,3 +242,5 @@ export default function UnitConverter() {
     </div>
   );
 }
+
+

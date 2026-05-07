@@ -45,15 +45,15 @@ export default function JsonFormatter() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">JSON Formatter</h1>
-          <p className="text-neutral-500 text-base">Format, minify and validate JSON instantly</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">JSON Formatter</h1>
+          <p className="text-slate-600 text-base">Format, minify and validate JSON instantly</p>
         </div>
 
         <textarea
-          className="w-full p-4 border border-neutral-200 rounded-xl mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition resize-none text-base text-black placeholder:text-neutral-300"
+          className="w-full p-4 border border-slate-300 rounded-xl mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition resize-none text-base text-slate-900 placeholder:text-slate-400"
           rows="6"
           placeholder="Paste your JSON here..."
           value={input}
@@ -62,16 +62,16 @@ export default function JsonFormatter() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <button onClick={formatJSON} className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900">Format JSON</button>
-          <button onClick={minifyJSON} className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900">Minify JSON</button>
-          <button onClick={clearAll} className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900">Clear</button>
+          <button onClick={formatJSON} className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-orange-500">Format JSON</button>
+          <button onClick={minifyJSON} className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-orange-500">Minify JSON</button>
+          <button onClick={clearAll} className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-orange-500">Clear</button>
         </div>
 
         {error && <p className="text-red-600 text-sm -mt-1">{error}</p>}
 
         {output ? (
           <textarea
-            className="w-full p-4 border border-neutral-100 rounded-xl bg-neutral-50 text-base mb-2 resize-none focus:outline-none text-black"
+            className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 text-base mb-2 resize-none focus:outline-none text-slate-900"
             rows="6"
             placeholder="Formatted output..."
             value={output}
@@ -79,14 +79,14 @@ export default function JsonFormatter() {
             spellCheck={false}
           />
         ) : (
-          <div className="w-full p-4 border border-dashed border-neutral-100 rounded-xl bg-neutral-50 text-neutral-300 text-base mb-2 min-h-[144px] flex items-center justify-center select-none">
+          <div className="w-full p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 text-base mb-2 min-h-[144px] flex items-center justify-center select-none">
             Output will appear here
           </div>
         )}
 
         <button
           onClick={copyToClipboard}
-          className={`w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
           disabled={!output}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -96,7 +96,7 @@ export default function JsonFormatter() {
         </button>
 
         {showToast && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50 animate-fade-in-out">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-50 animate-fade-in-out">
             Output copied!
           </div>
         )}
@@ -117,3 +117,5 @@ export default function JsonFormatter() {
     </div>
   );
 }
+
+

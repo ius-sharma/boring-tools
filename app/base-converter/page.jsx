@@ -154,15 +154,15 @@ export default function BaseConverterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-4xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-4xl border border-slate-200 flex flex-col gap-6">
         <div className="text-center flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Base Converter</h1>
-          <p className="text-neutral-500 text-base">Convert values between Binary, Decimal, Octal, and Hex in real time.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Base Converter</h1>
+          <p className="text-slate-500 text-base">Convert values between Binary, Decimal, Octal, and Hex in real time.</p>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 flex flex-col gap-3">
-          <p className="text-sm text-neutral-600">Quick examples</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex flex-col gap-3">
+          <p className="text-sm text-slate-700">Quick examples</p>
           <div className="flex flex-wrap gap-2">
             {EXAMPLES.map((item) => (
               <button
@@ -172,7 +172,7 @@ export default function BaseConverterPage() {
                   setSourceBase(item.base);
                   setSourceValue(item.value);
                 }}
-                className="rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-900 hover:text-neutral-900 transition"
+                className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900 transition"
               >
                 {item.label}
               </button>
@@ -183,7 +183,7 @@ export default function BaseConverterPage() {
                 setSourceBase("decimal");
                 setSourceValue("");
               }}
-              className="rounded-full border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-900 hover:text-neutral-900 transition"
+              className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:border-slate-900 hover:text-slate-900 transition"
             >
               Clear
             </button>
@@ -196,30 +196,30 @@ export default function BaseConverterPage() {
             const value = active ? sourceValue : conversion[field.key];
 
             return (
-              <div key={field.key} className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
+              <div key={field.key} className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-neutral-900">{field.label}</p>
-                    <p className="text-xs text-neutral-500">Base {BASES[field.key]}</p>
+                    <p className="text-sm font-semibold text-slate-900">{field.label}</p>
+                    <p className="text-xs text-slate-500">Base {BASES[field.key]}</p>
                   </div>
-                  {active && <span className="text-[11px] font-semibold rounded-full border border-neutral-900 bg-neutral-900 text-white px-2 py-1">Input</span>}
+                  {active && <span className="text-[11px] font-semibold rounded-full border border-orange-500 bg-orange-500 text-white px-2 py-1">Input</span>}
                 </div>
 
                 <input
                   value={value}
                   onChange={(event) => handleFieldChange(field.key, event.target.value)}
                   placeholder={field.placeholder}
-                  className="w-full p-3 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black placeholder:text-neutral-300"
+                  className="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900 placeholder:text-slate-300"
                 />
 
                 <button
                   type="button"
                   onClick={() => handleCopy(field.key)}
                   disabled={!value}
-                  className={`w-full border py-2 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${
+                  className={`w-full border py-2 rounded-lg font-semibold transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${
                     value
-                      ? "border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white"
-                      : "border-neutral-300 text-neutral-400 cursor-not-allowed"
+                        ? "border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white"
+                      : "border-slate-300 text-slate-400 cursor-not-allowed"
                   }`}
                 >
                   {copiedField === field.key ? "Copied" : `Copy ${field.label}`}
@@ -232,7 +232,7 @@ export default function BaseConverterPage() {
         {conversion.error ? (
           <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">{conversion.error}</div>
         ) : (
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-600">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             Tip: Type in any field and all other bases update automatically.
           </div>
         )}
@@ -244,3 +244,5 @@ export default function BaseConverterPage() {
     </div>
   );
 }
+
+

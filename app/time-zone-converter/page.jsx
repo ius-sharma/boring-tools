@@ -150,40 +150,40 @@ export default function TimeZoneConverter() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-slate-200 flex flex-col gap-6">
         <div className="text-center flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Time Zone Converter</h1>
-          <p className="text-neutral-500 text-base">Convert meeting times across zones without mental math.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Time Zone Converter</h1>
+          <p className="text-slate-500 text-base">Convert meeting times across zones without mental math.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_auto_0.95fr] gap-4 items-stretch">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-4">
             <div>
-              <p className="text-sm font-medium text-neutral-900">Source zone</p>
-              <p className="text-xs text-neutral-500">The time you already have</p>
+              <p className="text-sm font-medium text-slate-900">Source zone</p>
+              <p className="text-xs text-slate-500">The time you already have</p>
             </div>
 
-            <label className="text-sm text-neutral-600 flex flex-col gap-2">
+            <label className="text-sm text-slate-700 flex flex-col gap-2">
               Date &amp; time
               <div className="flex gap-2 items-center">
                 <input
                   type="datetime-local"
                   value={sourceDateTime}
                   onChange={(event) => setSourceDateTime(event.target.value)}
-                  className="flex-1 border border-neutral-300 rounded-lg p-2.5 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 bg-neutral-50"
+                  className="flex-1 border border-slate-300 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 bg-slate-50"
                 />
                 <button
                   type="button"
                   onClick={() => setSourceDateTime(getDateTimeValueForZone(new Date(), sourceZone))}
-                  className="h-10 px-3 rounded-lg border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-100 transition"
+                  className="h-10 px-3 rounded-lg border border-slate-300 bg-white text-slate-900 hover:bg-slate-100 transition"
                 >
                   Now
                 </button>
               </div>
             </label>
 
-            <label className="text-sm text-neutral-600 flex flex-col gap-2">
+            <label className="text-sm text-slate-700 flex flex-col gap-2">
               Time zone
               <ThemedDropdown
                 ariaLabel="Select source time zone"
@@ -194,13 +194,13 @@ export default function TimeZoneConverter() {
             </label>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <p className="text-xs text-neutral-500">Clock</p>
-                <p className="text-2xl font-semibold text-neutral-900 tabular-nums">{sourceClock}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs text-slate-500">Clock</p>
+                <p className="text-2xl font-semibold text-slate-900 tabular-nums">{sourceClock}</p>
               </div>
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <p className="text-xs text-neutral-500">Offset</p>
-                <p className="text-2xl font-semibold text-neutral-900 tabular-nums">{sourceOffset}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs text-slate-500">Offset</p>
+                <p className="text-2xl font-semibold text-slate-900 tabular-nums">{sourceOffset}</p>
               </div>
             </div>
           </div>
@@ -209,20 +209,20 @@ export default function TimeZoneConverter() {
             <button
               type="button"
               onClick={handleSwap}
-              className="h-12 w-12 rounded-full border border-neutral-300 bg-white text-neutral-900 font-semibold hover:bg-neutral-100 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="h-12 w-12 rounded-full border border-slate-300 bg-white text-slate-900 font-semibold hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
               aria-label="Swap time zones"
             >
               ↔
             </button>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-4">
             <div>
-              <p className="text-sm font-medium text-neutral-900">Target zone</p>
-              <p className="text-xs text-neutral-500">The converted time you need</p>
+              <p className="text-sm font-medium text-slate-900">Target zone</p>
+              <p className="text-xs text-slate-500">The converted time you need</p>
             </div>
 
-            <label className="text-sm text-neutral-600 flex flex-col gap-2">
+            <label className="text-sm text-slate-700 flex flex-col gap-2">
               Time zone
               <ThemedDropdown
                 ariaLabel="Select target time zone"
@@ -232,37 +232,37 @@ export default function TimeZoneConverter() {
               />
             </label>
 
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 flex flex-col gap-2">
-              <p className="text-xs text-neutral-500">Converted date &amp; time</p>
-              <p className="text-2xl font-semibold text-neutral-900">{targetDisplay}</p>
-              <p className="text-sm text-neutral-500">{targetZone} · {targetOffset}</p>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex flex-col gap-2">
+              <p className="text-xs text-slate-500">Converted date &amp; time</p>
+              <p className="text-2xl font-semibold text-slate-900">{targetDisplay}</p>
+              <p className="text-sm text-slate-500">{targetZone} · {targetOffset}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <p className="text-xs text-neutral-500">Clock</p>
-                <p className="text-2xl font-semibold text-neutral-900 tabular-nums">{targetClock}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs text-slate-500">Clock</p>
+                <p className="text-2xl font-semibold text-slate-900 tabular-nums">{targetClock}</p>
               </div>
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3">
-                <p className="text-xs text-neutral-500">Offset</p>
-                <p className="text-2xl font-semibold text-neutral-900 tabular-nums">{targetOffset}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-xs text-slate-500">Offset</p>
+                <p className="text-2xl font-semibold text-slate-900 tabular-nums">{targetOffset}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs text-neutral-500">Source view</p>
-            <p className="text-sm font-medium text-neutral-900 mt-1">{sourceDisplay}</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs text-slate-500">Source view</p>
+            <p className="text-sm font-medium text-slate-900 mt-1">{sourceDisplay}</p>
           </div>
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs text-neutral-500">Target view</p>
-            <p className="text-sm font-medium text-neutral-900 mt-1">{targetDisplay}</p>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs text-slate-500">Target view</p>
+            <p className="text-sm font-medium text-slate-900 mt-1">{targetDisplay}</p>
           </div>
         </div>
 
-        <p className="text-center text-xs text-neutral-500">Black-and-white UI, quick swap, and clear offsets for meeting planning.</p>
+        <p className="text-center text-xs text-slate-500">Black-and-white UI, quick swap, and clear offsets for meeting planning.</p>
       </div>
 
       <style jsx global>{`
@@ -271,3 +271,5 @@ export default function TimeZoneConverter() {
     </div>
   );
 }
+
+

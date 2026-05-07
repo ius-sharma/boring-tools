@@ -100,32 +100,32 @@ export default function FileNameSanitizer() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">File Name Sanitizer</h1>
-          <p className="text-neutral-500 text-base">Clean messy filenames for safe sharing, backups, and uploads.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">File Name Sanitizer</h1>
+          <p className="text-slate-500 text-base">Clean messy filenames for safe sharing, backups, and uploads.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-base font-semibold text-neutral-900">Original names</h2>
-              <span className="text-xs text-neutral-500">One per line</span>
+              <h2 className="text-base font-semibold text-slate-900">Original names</h2>
+              <span className="text-xs text-slate-500">One per line</span>
             </div>
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
               rows={10}
-              className="w-full p-4 border border-neutral-200 rounded-xl bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-sm text-black placeholder:text-neutral-300"
+              className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-sm text-slate-900 placeholder:text-slate-300"
               placeholder="Paste file names here..."
             />
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-4">
-            <h2 className="text-base font-semibold text-neutral-900">Sanitize options</h2>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-4">
+            <h2 className="text-base font-semibold text-slate-900">Sanitize options</h2>
 
-            <label className="text-sm text-neutral-600 flex flex-col gap-2">
+            <label className="text-sm text-slate-700 flex flex-col gap-2">
               Naming style
               <ThemedDropdown
                 ariaLabel="Select naming style"
@@ -135,7 +135,7 @@ export default function FileNameSanitizer() {
               />
             </label>
 
-            <label className="text-sm text-neutral-600 flex flex-col gap-2">
+            <label className="text-sm text-slate-700 flex flex-col gap-2">
               Max length: {maxLength}
               <input
                 type="range"
@@ -143,36 +143,36 @@ export default function FileNameSanitizer() {
                 max="120"
                 value={maxLength}
                 onChange={(event) => setMaxLength(Number(event.target.value))}
-                className="w-full accent-neutral-900"
+                className="w-full accent-slate-900"
               />
             </label>
 
             <button
               type="button"
               onClick={handleCopy}
-              className="w-full border border-neutral-900 text-neutral-900 py-2.5 rounded-lg font-semibold hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full border border-orange-500 text-orange-600 py-2.5 rounded-lg font-semibold hover:bg-orange-500 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               {copied ? "Copied" : "Copy sanitized list"}
             </button>
 
-            <p className="text-xs text-neutral-500">Removes unsafe symbols, trims spaces, and avoids reserved Windows file names.</p>
+            <p className="text-xs text-slate-500">Removes unsafe symbols, trims spaces, and avoids reserved Windows file names.</p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-base font-semibold text-neutral-900">Sanitized preview</h2>
-            <span className="text-xs text-neutral-500">{sanitized.length} file(s)</span>
+            <h2 className="text-base font-semibold text-slate-900">Sanitized preview</h2>
+            <span className="text-xs text-slate-500">{sanitized.length} file(s)</span>
           </div>
 
           {sanitized.length === 0 ? (
-            <p className="text-sm text-neutral-500">Add at least one filename to preview sanitized output.</p>
+            <p className="text-sm text-slate-500">Add at least one filename to preview sanitized output.</p>
           ) : (
             <div className="grid grid-cols-1 gap-2">
               {sanitized.map((item, idx) => (
-                <div key={`${item.original}-${idx}`} className="rounded-xl border border-neutral-200 bg-white p-3 text-sm">
-                  <p className="text-neutral-500 truncate">{item.original}</p>
-                  <p className="text-neutral-900 font-medium truncate">{item.clean}</p>
+                <div key={`${item.original}-${idx}`} className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
+                  <p className="text-slate-500 truncate">{item.original}</p>
+                  <p className="text-slate-900 font-medium truncate">{item.clean}</p>
                 </div>
               ))}
             </div>
@@ -186,3 +186,5 @@ export default function FileNameSanitizer() {
     </div>
   );
 }
+
+

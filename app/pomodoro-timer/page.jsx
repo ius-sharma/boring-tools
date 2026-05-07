@@ -284,15 +284,15 @@ export default function PomodoroTimer() {
   const nextPhaseText = isBreak ? `Next: ${customWorkTime} min focus` : `Next: ${customBreakTime} min break`;
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-2xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Pomodoro Timer</h1>
-          <p className="text-neutral-500 text-base">Stay focused with work and break cycles</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Pomodoro Timer</h1>
+          <p className="text-slate-500 text-base">Stay focused with work and break cycles</p>
         </div>
 
         {/* Timer Display with Progress Ring */}
-        <div className="w-full p-6 border border-neutral-200 rounded-xl bg-neutral-50 text-center relative">
+        <div className="w-full p-6 border border-slate-200 rounded-xl bg-slate-50 text-center relative">
           <div className="flex justify-center mb-4">
             <svg width="120" height="120" viewBox="0 0 120 120" className="transform -rotate-90">
               {/* Background circle */}
@@ -310,67 +310,67 @@ export default function PomodoroTimer() {
               />
             </svg>
           </div>
-          <p className="mb-2 text-base font-medium text-neutral-600">{isBreak ? "Break Time" : "Focus Time"}</p>
-          <div className={`text-5xl sm:text-6xl font-bold text-neutral-900 tabular-nums ${isLastThreeSeconds ? "animate-pulse" : ""}`}>
+          <p className="mb-2 text-base font-medium text-slate-700">{isBreak ? "Break Time" : "Focus Time"}</p>
+          <div className={`text-5xl sm:text-6xl font-bold text-slate-900 tabular-nums ${isLastThreeSeconds ? "animate-pulse" : ""}`}>
             {formatTime(seconds)}
           </div>
-          <p className="text-xs text-neutral-500 mt-3">{nextPhaseText}</p>
+          <p className="text-xs text-slate-500 mt-3">{nextPhaseText}</p>
         </div>
 
         {/* Controls */}
         <div className="grid grid-cols-3 gap-2">
           <button
             onClick={handleStart}
-            className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
             Start
           </button>
 
           <button
             onClick={handlePause}
-            className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
             Pause
           </button>
 
           <button
             onClick={resetTimer}
-            className="border border-neutral-300 rounded-lg py-2 px-2 text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
             Reset
           </button>
         </div>
 
         {/* Keyboard Shortcuts Info */}
-        <p className="text-center text-xs text-neutral-500">
+        <p className="text-center text-xs text-slate-500">
           <span className="font-medium">Shortcuts:</span> Space (Start/Pause) • R (Reset) • Esc (Close)
         </p>
 
         {/* Daily Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
-            <p className="text-xs text-neutral-500">Focus Sessions</p>
-            <p className="text-xl font-semibold text-neutral-900">{dailyStats.focusSessions}</p>
+          <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">Focus Sessions</p>
+            <p className="text-xl font-semibold text-slate-900">{dailyStats.focusSessions}</p>
           </div>
-          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
-            <p className="text-xs text-neutral-500">Break Sessions</p>
-            <p className="text-xl font-semibold text-neutral-900">{dailyStats.breakSessions}</p>
+          <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">Break Sessions</p>
+            <p className="text-xl font-semibold text-slate-900">{dailyStats.breakSessions}</p>
           </div>
-          <div className="p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
-            <p className="text-xs text-neutral-500">Focus Minutes</p>
-            <p className="text-xl font-semibold text-neutral-900">{dailyStats.focusMinutes}</p>
+          <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">Focus Minutes</p>
+            <p className="text-xl font-semibold text-slate-900">{dailyStats.focusMinutes}</p>
           </div>
         </div>
 
         {/* Session Queue & Settings */}
         <div className="flex gap-2">
-          <div className="flex-1 p-3 border border-neutral-200 rounded-lg bg-neutral-50 text-center">
-            <p className="text-xs text-neutral-500">Sessions Till Long Break</p>
-            <p className="text-lg font-semibold text-neutral-900">{4 - (sessions % 4)}</p>
+          <div className="flex-1 p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">Sessions Till Long Break</p>
+            <p className="text-lg font-semibold text-slate-900">{4 - (sessions % 4)}</p>
           </div>
           <button
             onClick={() => setShowSettings(!showSettings)}
-            className="px-4 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="px-4 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
             ⚙️ Settings
           </button>
@@ -379,28 +379,28 @@ export default function PomodoroTimer() {
         {/* Settings Modal */}
         {showSettings && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md border border-neutral-200">
-              <h2 className="text-2xl font-bold text-neutral-900 mb-4">Settings</h2>
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md border border-slate-200">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">Settings</h2>
 
               {/* Presets */}
               <div className="mb-6">
-                <p className="font-medium text-neutral-900 mb-3">Timer Presets</p>
+                <p className="font-medium text-slate-900 mb-3">Timer Presets</p>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => applyPreset("standard")}
-                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
                   >
                     Standard (25-5)
                   </button>
                   <button
                     onClick={() => applyPreset("long")}
-                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
                   >
                     Long (50-10)
                   </button>
                   <button
                     onClick={() => applyPreset("short")}
-                    className="p-2 border border-neutral-300 rounded-lg hover:bg-neutral-100 transition text-sm font-medium text-neutral-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
                   >
                     Short (15-3)
                   </button>
@@ -409,28 +409,28 @@ export default function PomodoroTimer() {
 
               {/* Custom Timer */}
               <div className="mb-6">
-                <p className="font-medium text-neutral-900 mb-3">Custom Timer</p>
+                <p className="font-medium text-slate-900 mb-3">Custom Timer</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm text-neutral-600 mb-1">Work (minutes)</label>
+                    <label className="block text-sm text-slate-700 mb-1">Work (minutes)</label>
                     <input
                       type="number"
                       min="1"
                       max="60"
                       value={customWorkTime}
                       onChange={(e) => setCustomWorkTime(parseInt(e.target.value) || 1)}
-                      className="w-full border border-neutral-300 rounded-lg p-2 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-neutral-600 mb-1">Break (minutes)</label>
+                    <label className="block text-sm text-slate-700 mb-1">Break (minutes)</label>
                     <input
                       type="number"
                       min="1"
                       max="60"
                       value={customBreakTime}
                       onChange={(e) => setCustomBreakTime(parseInt(e.target.value) || 1)}
-                      className="w-full border border-neutral-300 rounded-lg p-2 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                 </div>
@@ -443,9 +443,9 @@ export default function PomodoroTimer() {
                     type="checkbox"
                     checked={soundEnabled}
                     onChange={(e) => setSoundEnabled(e.target.checked)}
-                    className="w-4 h-4 border-neutral-300 rounded focus:ring-2 focus:ring-neutral-900"
+                    className="w-4 h-4 border-slate-300 rounded focus:ring-2 focus:ring-slate-900"
                   />
-                  <span className="text-neutral-900 font-medium">Enable Sound Notifications</span>
+                  <span className="text-slate-900 font-medium">Enable Sound Notifications</span>
                 </label>
               </div>
 
@@ -453,13 +453,13 @@ export default function PomodoroTimer() {
               <div className="flex gap-2">
                 <button
                   onClick={applyCustom}
-                  className="flex-1 bg-neutral-900 text-white rounded-lg py-2 font-medium hover:bg-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="flex-1 bg-orange-500 text-white rounded-lg py-2 font-medium hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   Apply
                 </button>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="flex-1 border border-neutral-300 rounded-lg py-2 text-neutral-700 font-medium hover:bg-neutral-100 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="flex-1 border border-slate-300 rounded-lg py-2 text-slate-700 font-medium hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
                 >
                   Close
                 </button>
@@ -468,7 +468,7 @@ export default function PomodoroTimer() {
           </div>
         )}
 
-        <p className="text-center text-xs text-neutral-500">
+        <p className="text-center text-xs text-slate-500">
           Background notifications enabled • Service Worker active
         </p>
       </div>
@@ -490,3 +490,5 @@ export default function PomodoroTimer() {
     </div>
   );
 }
+
+

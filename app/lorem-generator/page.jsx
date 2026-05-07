@@ -79,11 +79,11 @@ export default function LoremGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-3xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-3xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Lorem Generator</h1>
-          <p className="text-neutral-500 text-base">Generate placeholder text in words, sentences, or paragraphs</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Lorem Generator</h1>
+          <p className="text-slate-500 text-base">Generate placeholder text in words, sentences, or paragraphs</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -92,7 +92,7 @@ export default function LoremGenerator() {
             value={count}
             onChange={(e) => setCount(Number(e.target.value))}
             min="1"
-            className="w-full p-4 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black"
+            className="w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900"
           />
 
           <ThemedDropdown
@@ -108,7 +108,7 @@ export default function LoremGenerator() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
             onClick={generateLorem}
-            className="w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
             Generate
           </button>
@@ -116,18 +116,18 @@ export default function LoremGenerator() {
           <button
             onClick={copyText}
             disabled={!output}
-            className={`w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             Copy
           </button>
         </div>
 
         {output ? (
-          <pre className="w-full p-4 border border-neutral-200 rounded-xl bg-neutral-50 text-black whitespace-pre-wrap">
+          <pre className="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 text-slate-900 whitespace-pre-wrap">
             {output}
           </pre>
         ) : (
-          <div className="w-full p-4 border border-dashed border-neutral-100 rounded-xl bg-neutral-50 text-neutral-300 text-base min-h-[120px] flex items-center justify-center select-none">
+          <div className="w-full p-4 border border-dashed border-slate-100 rounded-xl bg-slate-50 text-slate-300 text-base min-h-[120px] flex items-center justify-center select-none">
             Generated lorem text will appear here
           </div>
         )}
@@ -139,3 +139,5 @@ export default function LoremGenerator() {
     </div>
   );
 }
+
+

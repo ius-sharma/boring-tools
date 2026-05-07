@@ -85,14 +85,14 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel, in
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         ref={triggerRef}
-        className="theme-dropdown-trigger w-full flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-4 text-left text-base text-neutral-900 shadow-sm transition hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+        className="theme-dropdown-trigger w-full flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-4 text-left text-base text-slate-900 shadow-sm transition hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-500"
       >
         <span className="truncate font-medium">{selectedLabel}</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className={`theme-dropdown-chevron h-5 w-5 shrink-0 text-neutral-500 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+          className={`theme-dropdown-chevron h-5 w-5 shrink-0 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
         >
           <path
             fillRule="evenodd"
@@ -107,7 +107,7 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel, in
           const menu = (
             <div
               ref={menuRef}
-              className={`theme-dropdown-menu ${inlineMenu ? "relative z-10 mt-2" : "overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-2xl"}`}
+              className={`theme-dropdown-menu ${inlineMenu ? "relative z-10 mt-2" : "overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"}`}
               style={inlineMenu ? undefined : menuStyle}
             >
               <div className="max-h-60 overflow-auto p-1">
@@ -127,7 +127,7 @@ export default function ThemedDropdown({ value, options, onChange, ariaLabel, in
                       className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm transition ${
                         active
                           ? "theme-dropdown-option-active"
-                          : "theme-dropdown-option text-neutral-700 hover:bg-neutral-100"
+                          : "theme-dropdown-option text-slate-700"
                       }`}
                     >
                       <span className="font-medium">{option.label}</span>

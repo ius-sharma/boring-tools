@@ -47,23 +47,23 @@ export default function AgeCalculator() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Age Calculator</h1>
-          <p className="text-neutral-500 text-base">Calculate exact age in years, months, and days</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Age Calculator</h1>
+          <p className="text-slate-500 text-base">Calculate exact age in years, months, and days</p>
         </div>
 
         <input
           type="date"
           value={dob}
           onChange={(e) => setDob(e.target.value)}
-          className="w-full p-4 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black"
+          className="w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900"
         />
 
         <button
           onClick={calculateAge}
-          className="w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+          className="w-full border border-orange-500 text-orange-600 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-orange-500 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500"
         >
           Calculate Age
         </button>
@@ -72,23 +72,23 @@ export default function AgeCalculator() {
 
         {age ? (
           <div className="grid grid-cols-3 gap-3">
-            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-              <h2 className="text-2xl font-bold text-neutral-900">{age.years}</h2>
-              <p className="text-sm text-neutral-500">Years</p>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+              <h2 className="text-2xl font-bold text-slate-900">{age.years}</h2>
+              <p className="text-sm text-slate-500">Years</p>
             </div>
 
-            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-              <h2 className="text-2xl font-bold text-neutral-900">{age.months}</h2>
-              <p className="text-sm text-neutral-500">Months</p>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+              <h2 className="text-2xl font-bold text-slate-900">{age.months}</h2>
+              <p className="text-sm text-slate-500">Months</p>
             </div>
 
-            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-              <h2 className="text-2xl font-bold text-neutral-900">{age.days}</h2>
-              <p className="text-sm text-neutral-500">Days</p>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+              <h2 className="text-2xl font-bold text-slate-900">{age.days}</h2>
+              <p className="text-sm text-slate-500">Days</p>
             </div>
           </div>
         ) : (
-          <div className="w-full p-4 border border-dashed border-neutral-100 rounded-xl bg-neutral-50 text-neutral-300 text-base min-h-[96px] flex items-center justify-center select-none">
+          <div className="w-full p-4 border border-dashed border-slate-100 rounded-xl bg-slate-50 text-slate-300 text-base min-h-[96px] flex items-center justify-center select-none">
             Your age result will appear here
           </div>
         )}
@@ -100,3 +100,5 @@ export default function AgeCalculator() {
     </div>
   );
 }
+
+

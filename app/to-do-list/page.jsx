@@ -78,18 +78,18 @@ export default function ToDoList() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-5xl border border-slate-200 flex flex-col gap-6">
         <div className="text-center flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">To-Do List</h1>
-          <p className="text-neutral-500 text-base">A clean local-storage task board that keeps your list on this device.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">To-Do List</h1>
+          <p className="text-slate-500 text-base">A clean local-storage task board that keeps your list on this device.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-base font-semibold text-neutral-900">Add task</h2>
-              <span className="text-xs text-neutral-500">Saved locally</span>
+              <h2 className="text-base font-semibold text-slate-900">Add task</h2>
+              <span className="text-xs text-slate-500">Saved locally</span>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
@@ -102,29 +102,29 @@ export default function ToDoList() {
                   }
                 }}
                 placeholder="Add a task and press Enter"
-                className="flex-1 border border-neutral-300 rounded-lg p-3 bg-neutral-50 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="flex-1 border border-slate-300 rounded-lg p-3 bg-slate-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
               <button
                 type="button"
                 onClick={handleAdd}
-                className="border border-neutral-900 text-neutral-900 rounded-lg px-4 py-3 font-semibold hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                className="border border-slate-900 text-slate-900 rounded-lg px-4 py-3 font-semibold hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
               >
                 Add
               </button>
             </div>
 
             <div className="grid grid-cols-3 gap-3 pt-2">
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-center">
-                <p className="text-xs text-neutral-500">Total</p>
-                <p className="text-xl font-semibold text-neutral-900">{stats.total}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                <p className="text-xs text-slate-500">Total</p>
+                <p className="text-xl font-semibold text-slate-900">{stats.total}</p>
               </div>
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-center">
-                <p className="text-xs text-neutral-500">Active</p>
-                <p className="text-xl font-semibold text-neutral-900">{stats.active}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                <p className="text-xs text-slate-500">Active</p>
+                <p className="text-xl font-semibold text-slate-900">{stats.active}</p>
               </div>
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-center">
-                <p className="text-xs text-neutral-500">Done</p>
-                <p className="text-xl font-semibold text-neutral-900">{stats.completed}</p>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+                <p className="text-xs text-slate-500">Done</p>
+                <p className="text-xl font-semibold text-slate-900">{stats.completed}</p>
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function ToDoList() {
                   key={item.value}
                   type="button"
                   onClick={() => setFilter(item.value)}
-                  className={`rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${filter === item.value ? "border-neutral-900 bg-neutral-900 text-white" : "border-neutral-300 text-neutral-700 hover:bg-neutral-100"}`}
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${filter === item.value ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300 text-slate-700 hover:bg-slate-100"}`}
                 >
                   {item.label}
                 </button>
@@ -147,42 +147,42 @@ export default function ToDoList() {
                 type="button"
                 onClick={handleClearCompleted}
                 disabled={!stats.completed}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${stats.completed ? "border-neutral-300 text-neutral-700 hover:bg-neutral-100" : "border-neutral-200 text-neutral-300 cursor-not-allowed"}`}
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${stats.completed ? "border-slate-300 text-slate-700 hover:bg-slate-100" : "border-slate-200 text-slate-300 cursor-not-allowed"}`}
               >
                 Clear completed
               </button>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 flex flex-col gap-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-base font-semibold text-neutral-900">Task board</h2>
-              <span className="text-xs text-neutral-500">{filteredTodos.length} visible</span>
+              <h2 className="text-base font-semibold text-slate-900">Task board</h2>
+              <span className="text-xs text-slate-500">{filteredTodos.length} visible</span>
             </div>
 
             {!filteredTodos.length ? (
-              <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 p-8 text-center">
-                <p className="text-sm text-neutral-500">No tasks yet. Add something small and keep it local.</p>
+              <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
+                <p className="text-sm text-slate-500">No tasks yet. Add something small and keep it local.</p>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
                 {filteredTodos.map((todo) => (
-                  <div key={todo.id} className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 flex items-start gap-3">
+                  <div key={todo.id} className="rounded-xl border border-slate-200 bg-slate-50 p-4 flex items-start gap-3">
                     <input
                       type="checkbox"
                       checked={todo.done}
                       onChange={() => handleToggle(todo.id)}
-                      className="mt-1 h-4 w-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                      className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${todo.done ? "text-neutral-400 line-through" : "text-neutral-900"}`}>
+                      <p className={`text-sm font-medium ${todo.done ? "text-slate-400 line-through" : "text-slate-900"}`}>
                         {todo.text}
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleDelete(todo.id)}
-                      className="text-xs font-semibold text-neutral-500 hover:text-neutral-900 transition"
+                      className="text-xs font-semibold text-slate-500 hover:text-slate-900 transition"
                     >
                       Delete
                     </button>
@@ -193,7 +193,7 @@ export default function ToDoList() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-neutral-500">Tasks persist in local storage and follow the same neutral card style as the rest of the app.</p>
+        <p className="text-center text-xs text-slate-500">Tasks persist in local storage and follow the same neutral card style as the rest of the app.</p>
       </div>
 
       <style jsx global>{`
@@ -202,3 +202,5 @@ export default function ToDoList() {
     </div>
   );
 }
+
+

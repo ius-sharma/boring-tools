@@ -258,6 +258,31 @@ Features:
 Route:
 - `/markdown-previewer`
 
+### Day 18: Video Transcriber
+
+Transcribe video audio to text quickly and accurately.
+
+Features:
+- Upload or provide video URL
+- Automatic speech-to-text transcription
+- Downloadable transcript and simple timestamping
+- Copy transcript to clipboard
+
+Route:
+- `/video-transcriber`
+
+### Day 19: Base Converter
+
+Convert between Binary, Decimal, Octal, and Hex instantly.
+
+Features:
+- Convert values across bases (2, 8, 10, 16)
+- Copy results and example conversions
+- Clean responsive UI matching project theme
+
+Route:
+- `/base-converter`
+
 ---
 
 ## UI/UX Updates
@@ -331,7 +356,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ### Live + Upcoming Releases
 
 - Day 18 ✅ Video Transcriber
-- Day 19 ⏳ Base Converter — Coming Soon
+- Day 19 ✅ Base Converter
 - Day 20 ⏳ Aspect Ratio Calculator — Coming Soon
 - Day 21 ⏳ Distance Between Cities — Coming Soon
 - Day 22 ⏳ Currency Converter — Coming Soon

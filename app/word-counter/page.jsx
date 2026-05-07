@@ -16,15 +16,15 @@ export default function WordCounter() {
   const stats = getStats();
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-      <div className="bg-white/80 backdrop-blur shadow-xl rounded-2xl p-8 w-full max-w-xl border border-neutral-200 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-1 items-center">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 mb-1">Word Counter</h1>
-          <p className="text-neutral-500 text-base">Count words, characters and sentences instantly</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Word Counter</h1>
+          <p className="text-slate-500 text-base">Count words, characters and sentences instantly</p>
         </div>
 
         <textarea
-          className="w-full p-4 border border-neutral-200 rounded-xl mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition resize-none text-base text-black placeholder:text-neutral-300"
+          className="w-full p-4 border border-slate-200 rounded-xl mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition resize-none text-base text-slate-900 placeholder:text-slate-300"
           rows="6"
           placeholder="Type or paste your text here..."
           value={text}
@@ -33,24 +33,24 @@ export default function WordCounter() {
         />
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-            <p className="text-2xl font-semibold text-neutral-900">{stats.words}</p>
-            <p className="text-sm text-neutral-500">Words</p>
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <p className="text-2xl font-semibold text-slate-900">{stats.words}</p>
+            <p className="text-sm text-slate-500">Words</p>
           </div>
 
-          <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-            <p className="text-2xl font-semibold text-neutral-900">{stats.characters}</p>
-            <p className="text-sm text-neutral-500">Characters</p>
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <p className="text-2xl font-semibold text-slate-900">{stats.characters}</p>
+            <p className="text-sm text-slate-500">Characters</p>
           </div>
 
-          <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-            <p className="text-2xl font-semibold text-neutral-900">{stats.noSpaces}</p>
-            <p className="text-sm text-neutral-500">No Spaces</p>
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <p className="text-2xl font-semibold text-slate-900">{stats.noSpaces}</p>
+            <p className="text-sm text-slate-500">No Spaces</p>
           </div>
 
-          <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl text-center">
-            <p className="text-2xl font-semibold text-neutral-900">{stats.sentences}</p>
-            <p className="text-sm text-neutral-500">Sentences</p>
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+            <p className="text-2xl font-semibold text-slate-900">{stats.sentences}</p>
+            <p className="text-sm text-slate-500">Sentences</p>
           </div>
         </div>
       </div>
@@ -61,3 +61,5 @@ export default function WordCounter() {
     </div>
   );
 }
+
+

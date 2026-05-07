@@ -202,11 +202,11 @@ export default function ImageCompressor() {
 	const triggerFilePicker = () => fileInputRef.current?.click();
 
 	return (
-		<div className="ic-shell min-h-screen bg-neutral-50 flex items-center justify-center p-4 font-sans">
-			<div className="ic-card bg-white/80 backdrop-blur shadow-xl rounded-2xl p-5 sm:p-8 w-full max-w-6xl border border-neutral-200 flex flex-col gap-5 sm:gap-6">
+		<div className="ic-shell min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+			<div className="ic-card bg-white shadow-lg rounded-2xl p-5 sm:p-8 w-full max-w-6xl border border-slate-200 flex flex-col gap-5 sm:gap-6">
 				<div className="flex flex-col gap-1 items-center text-center">
-					<h1 className="ic-title text-3xl font-bold tracking-tight text-neutral-900 mb-1">Image Compressor / Resizer</h1>
-					<p className="ic-subtitle text-neutral-500 text-base">Drop an image, fine-tune the size and quality, then download the optimized version</p>
+					<h1 className="ic-title text-3xl font-bold tracking-tight text-slate-900 mb-1">Image Compressor / Resizer</h1>
+					<p className="ic-subtitle text-slate-500 text-base">Drop an image, fine-tune the size and quality, then download the optimized version</p>
 				</div>
 
 				<input
@@ -230,22 +230,22 @@ export default function ImageCompressor() {
 							}}
 							onDragLeave={() => setIsDragging(false)}
 							onDrop={handleDrop}
-							className={`ic-dropzone rounded-2xl border-2 border-dashed p-5 sm:p-6 text-center transition ${isDragging ? "border-neutral-900 bg-neutral-100" : "border-neutral-200 bg-neutral-50"}`}
+							className={`ic-dropzone rounded-2xl border-2 border-dashed p-5 sm:p-6 text-center transition ${isDragging ? "border-slate-900 bg-slate-100" : "border-slate-200 bg-slate-50"}`}
 						>
 							<div className="flex flex-col items-center gap-3">
-								<div className="ic-icon h-14 w-14 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-700 shadow-sm">
+								<div className="ic-icon h-14 w-14 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-700 shadow-sm">
 									<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
 										<path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.5h16.5A1.5 1.5 0 0121.75 6v12a1.5 1.5 0 01-1.5 1.5H3.75A1.5 1.5 0 012.25 18V6A1.5 1.5 0 013.75 4.5zm3 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm12.5 11.25-4.75-6-3.25 4.25-2.25-3-4 4.75" />
 									</svg>
 								</div>
 								<div>
-									<p className="ic-heading text-lg font-semibold text-neutral-900">Drop your image here</p>
-									<p className="ic-muted text-sm text-neutral-500">or browse from your device</p>
+									<p className="ic-heading text-lg font-semibold text-slate-900">Drop your image here</p>
+									<p className="ic-muted text-sm text-slate-500">or browse from your device</p>
 								</div>
 								<button
 									type="button"
 									onClick={triggerFilePicker}
-									className="ic-primary-btn w-full sm:w-auto border border-neutral-900 text-neutral-900 py-2.5 px-5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+									className="ic-primary-btn w-full sm:w-auto border border-slate-900 text-slate-900 py-2.5 px-5 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
 								>
 									Choose Image
 								</button>
@@ -253,55 +253,55 @@ export default function ImageCompressor() {
 						</div>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-							<div className="ic-info-card rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-								<p className="text-sm text-neutral-500">1. Resize</p>
-								<p className="ic-heading text-base font-semibold text-neutral-900">Set max width or height</p>
-								<p className="ic-muted text-sm text-neutral-600">The image will keep its aspect ratio.</p>
+							<div className="ic-info-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
+								<p className="text-sm text-slate-500">1. Resize</p>
+								<p className="ic-heading text-base font-semibold text-slate-900">Set max width or height</p>
+								<p className="ic-muted text-sm text-slate-700">The image will keep its aspect ratio.</p>
 							</div>
-							<div className="ic-info-card rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-								<p className="text-sm text-neutral-500">2. Compress</p>
-								<p className="ic-heading text-base font-semibold text-neutral-900">Choose quality and format</p>
-								<p className="ic-muted text-sm text-neutral-600">JPEG and WebP usually give the best savings.</p>
+							<div className="ic-info-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
+								<p className="text-sm text-slate-500">2. Compress</p>
+								<p className="ic-heading text-base font-semibold text-slate-900">Choose quality and format</p>
+								<p className="ic-muted text-sm text-slate-700">JPEG and WebP usually give the best savings.</p>
 							</div>
 						</div>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-							<label className="flex flex-col gap-2 text-sm text-neutral-600">
-								<span className="font-medium text-neutral-700">Max Width</span>
+							<label className="flex flex-col gap-2 text-sm text-slate-700">
+								<span className="font-medium text-slate-700">Max Width</span>
 								<input
 									type="number"
 									min="1"
 									value={maxWidth}
 									onChange={(e) => setMaxWidth(Number(e.target.value) || 0)}
-									className="ic-input w-full p-4 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black placeholder:text-neutral-300"
+									className="ic-input w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900 placeholder:text-slate-300"
 								/>
 							</label>
 
-							<label className="flex flex-col gap-2 text-sm text-neutral-600">
-								<span className="font-medium text-neutral-700">Max Height</span>
+							<label className="flex flex-col gap-2 text-sm text-slate-700">
+								<span className="font-medium text-slate-700">Max Height</span>
 								<input
 									type="number"
 									min="1"
 									value={maxHeight}
 									onChange={(e) => setMaxHeight(Number(e.target.value) || 0)}
-									className="ic-input w-full p-4 border border-neutral-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 transition text-base text-black placeholder:text-neutral-300"
+									className="ic-input w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900 placeholder:text-slate-300"
 								/>
 							</label>
 
-							<label className="flex flex-col gap-2 text-sm text-neutral-600">
-								<span className="font-medium text-neutral-700">Quality: {quality}%</span>
+							<label className="flex flex-col gap-2 text-sm text-slate-700">
+								<span className="font-medium text-slate-700">Quality: {quality}%</span>
 								<input
 									type="range"
 									min="10"
 									max="100"
 									value={quality}
 									onChange={(e) => setQuality(Number(e.target.value))}
-									className="w-full accent-neutral-900"
+									className="w-full accent-slate-900"
 								/>
 							</label>
 
-							<label className="flex flex-col gap-2 text-sm text-neutral-600">
-								<span className="font-medium text-neutral-700">Output Format</span>
+							<label className="flex flex-col gap-2 text-sm text-slate-700">
+								<span className="font-medium text-slate-700">Output Format</span>
 								<ThemedDropdown
 									ariaLabel="Select output image format"
 									value={outputType}
@@ -316,7 +316,7 @@ export default function ImageCompressor() {
 								type="button"
 								onClick={processImage}
 								disabled={!file || isProcessing}
-								className={`ic-primary-btn w-full border border-neutral-900 text-neutral-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900 ${( !file || isProcessing ) ? "opacity-50 cursor-not-allowed" : ""}`}
+								className={`ic-primary-btn w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${( !file || isProcessing ) ? "opacity-50 cursor-not-allowed" : ""}`}
 							>
 								{isProcessing ? "Processing..." : "Compress / Resize"}
 							</button>
@@ -324,7 +324,7 @@ export default function ImageCompressor() {
 							<button
 								type="button"
 								onClick={clearAll}
-								className="ic-secondary-btn w-full border border-neutral-300 text-neutral-700 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-neutral-100 transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+								className="ic-secondary-btn w-full border border-slate-300 text-slate-700 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
 							>
 								Clear
 							</button>
@@ -333,47 +333,47 @@ export default function ImageCompressor() {
 						{error && <p className="ic-error text-red-600 text-sm -mt-1">{error}</p>}
 
 						{file && !error && (
-							<p className="ic-muted text-sm text-neutral-500 -mt-1">Image ready. Adjust the settings above, then compress it.</p>
+							<p className="ic-muted text-sm text-slate-500 -mt-1">Image ready. Adjust the settings above, then compress it.</p>
 						)}
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-							<div className="ic-stats-card p-4 border border-neutral-200 rounded-xl bg-neutral-50">
-								<p className="text-sm text-neutral-500">Original</p>
-								<p className="ic-heading text-base font-semibold text-neutral-900">{file ? file.name : "No file selected"}</p>
-								<p className="ic-muted text-sm text-neutral-600">{originalSize}</p>
+							<div className="ic-stats-card p-4 border border-slate-200 rounded-xl bg-slate-50">
+								<p className="text-sm text-slate-500">Original</p>
+								<p className="ic-heading text-base font-semibold text-slate-900">{file ? file.name : "No file selected"}</p>
+								<p className="ic-muted text-sm text-slate-700">{originalSize}</p>
 							</div>
 
-							<div className="ic-stats-card p-4 border border-neutral-200 rounded-xl bg-neutral-50">
-								<p className="text-sm text-neutral-500">Compressed</p>
-								<p className="ic-heading text-base font-semibold text-neutral-900">{resultBlob ? `${resultBlob.type.split("/")[1].toUpperCase()} ready` : "Waiting for output"}</p>
-								<p className="ic-muted text-sm text-neutral-600">{resultBlob ? resultSize : "0 B"}</p>
+							<div className="ic-stats-card p-4 border border-slate-200 rounded-xl bg-slate-50">
+								<p className="text-sm text-slate-500">Compressed</p>
+								<p className="ic-heading text-base font-semibold text-slate-900">{resultBlob ? `${resultBlob.type.split("/")[1].toUpperCase()} ready` : "Waiting for output"}</p>
+								<p className="ic-muted text-sm text-slate-700">{resultBlob ? resultSize : "0 B"}</p>
 							</div>
 						</div>
 
 						{resultBlob && (
-							<div className="ic-stats-card rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-								<p className="text-sm text-neutral-500">Savings</p>
-								<p className="ic-heading text-base font-semibold text-neutral-900">
+							<div className="ic-stats-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
+								<p className="text-sm text-slate-500">Savings</p>
+								<p className="ic-heading text-base font-semibold text-slate-900">
 									{formatFileSize(savings.saved)} saved ({savings.percent}%)
 								</p>
-								<p className="ic-muted text-sm text-neutral-600">A smaller file is easier to share and upload.</p>
+								<p className="ic-muted text-sm text-slate-700">A smaller file is easier to share and upload.</p>
 							</div>
 						)}
 					</div>
 
 					<div className="flex flex-col gap-4">
-						<div className="ic-sticky sticky top-4 z-10 rounded-2xl border border-neutral-200 bg-white/90 backdrop-blur p-4 shadow-sm">
+						<div className="ic-sticky sticky top-4 z-10 rounded-2xl border border-slate-200 bg-white/90 backdrop-blur p-4 shadow-sm">
 							<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 								<div>
-									<p className="ic-muted text-sm text-neutral-500">Ready when you are</p>
-									<p className="ic-heading text-base font-semibold text-neutral-900">Compress image and download it here</p>
+									<p className="ic-muted text-sm text-slate-500">Ready when you are</p>
+									<p className="ic-heading text-base font-semibold text-slate-900">Compress image and download it here</p>
 								</div>
 
 								{resultUrl ? (
 									<a
 										href={resultUrl}
 										download={`compressed-image.${outputType.split("/")[1]}`}
-										className="ic-download-btn w-full sm:w-auto border border-neutral-900 text-neutral-900 py-2.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-neutral-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-neutral-900"
+										className="ic-download-btn w-full sm:w-auto border border-slate-900 text-slate-900 py-2.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
 									>
 										Download
 									</a>
@@ -381,52 +381,52 @@ export default function ImageCompressor() {
 									<button
 										type="button"
 										disabled
-										className="ic-download-btn w-full sm:w-auto border border-neutral-300 text-neutral-400 py-2.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 cursor-not-allowed"
+										className="ic-download-btn w-full sm:w-auto border border-slate-300 text-slate-400 py-2.5 px-4 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 cursor-not-allowed"
 									>
 										Download
 									</button>
 								)}
 							</div>
-							<p className="ic-muted mt-2 text-sm text-neutral-500">The generated image will appear below after compression.</p>
+							<p className="ic-muted mt-2 text-sm text-slate-500">The generated image will appear below after compression.</p>
 						</div>
 
-						<div className="ic-preview-label rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+						<div className="ic-preview-label rounded-2xl border border-slate-200 bg-slate-50 p-4">
 							<div className="flex items-center justify-between gap-3">
 								<div>
-									<p className="text-sm text-neutral-500">Preview</p>
-									<p className="ic-heading text-base font-semibold text-neutral-900">Original image</p>
+									<p className="text-sm text-slate-500">Preview</p>
+									<p className="ic-heading text-base font-semibold text-slate-900">Original image</p>
 								</div>
-								<span className="text-sm text-neutral-500">Before</span>
+								<span className="text-sm text-slate-500">Before</span>
 							</div>
 						</div>
 
-						<div className="ic-preview-box p-4 border border-neutral-200 rounded-xl bg-neutral-50 min-h-[320px] flex items-center justify-center">
+						<div className="ic-preview-box p-4 border border-slate-200 rounded-xl bg-slate-50 min-h-[320px] flex items-center justify-center">
 							{originalUrl ? (
 								<img src={originalUrl} alt="Original preview" className="max-h-[420px] w-full object-contain rounded-lg" />
 							) : (
-								<p className="text-neutral-300 text-base select-none">Original preview will appear here</p>
+								<p className="text-slate-300 text-base select-none">Original preview will appear here</p>
 							)}
 						</div>
 
-						<div className="ic-preview-label rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+						<div className="ic-preview-label rounded-2xl border border-slate-200 bg-slate-50 p-4">
 							<div className="flex items-center justify-between gap-3">
 								<div>
-									<p className="text-sm text-neutral-500">Preview</p>
-									<p className="ic-heading text-base font-semibold text-neutral-900">Compressed image</p>
+									<p className="text-sm text-slate-500">Preview</p>
+									<p className="ic-heading text-base font-semibold text-slate-900">Compressed image</p>
 								</div>
-								<span className="text-sm text-neutral-500">After</span>
+								<span className="text-sm text-slate-500">After</span>
 							</div>
 						</div>
 
-						<div ref={resultSectionRef} className="ic-result-box p-4 border border-neutral-200 rounded-xl bg-neutral-50 min-h-[320px] flex flex-col items-center justify-center gap-4">
+						<div ref={resultSectionRef} className="ic-result-box p-4 border border-slate-200 rounded-xl bg-slate-50 min-h-[320px] flex flex-col items-center justify-center gap-4">
 							{resultUrl ? (
 								<>
 									<img src={resultUrl} alt="Compressed preview" className="max-h-[320px] w-full object-contain rounded-lg" />
 
-									<p className="ic-muted text-sm text-neutral-500">Your processed image is ready to save.</p>
+									<p className="ic-muted text-sm text-slate-500">Your processed image is ready to save.</p>
 								</>
 							) : (
-								<p className="text-neutral-300 text-base select-none">Compressed preview will appear here</p>
+								<p className="text-slate-300 text-base select-none">Compressed preview will appear here</p>
 							)}
 						</div>
 					</div>
@@ -440,3 +440,5 @@ export default function ImageCompressor() {
 		</div>
 	);
 }
+
+
