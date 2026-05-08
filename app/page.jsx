@@ -32,6 +32,8 @@ const tools = [
 const liveToolIds = new Set(["text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "base-converter"]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
+const liveToolCount = availableTools.length;
+const upcomingToolCount = tools.filter((t) => t.status === "Upcoming").length;
 const categories = ["Text", "Developer", "Utility", "Security", "Productivity", "Media", "Career", "Time & Date", "Finance", "Fun"];
 
 const suggestionCategoryOptions = [
@@ -155,11 +157,11 @@ export default function Home() {
             </p>
             <div className="mb-8 flex justify-center gap-6 text-sm sm:text-base">
               <span className="text-slate-700 font-semibold">
-                <span className="text-orange-600 font-bold">18</span> Tools Live
+                <span className="text-orange-600 font-bold">{liveToolCount}</span> Tools Live
               </span>
               <span className="text-slate-400">•</span>
               <span className="text-slate-700 font-semibold">
-                <span className="text-orange-600 font-bold">4</span> Coming Soon
+                <span className="text-orange-600 font-bold">{upcomingToolCount}</span> Coming Soon
               </span>
             </div>
             <a
