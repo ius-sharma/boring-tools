@@ -23,7 +23,7 @@ const tools = [
   { id: "roast-my-todo-list", name: "Roast My To-Do List", href: "/roast-my-todo-list", category: "Fun + Productivity", description: "Playful roast with practical next steps.", status: "Live", isNew: true },
   { id: "markdown-previewer", name: "Markdown Previewer", href: "/markdown-previewer", category: "Developer", description: "Write markdown and preview instantly.", status: "Live", isNew: true },
   { id: "video-transcriber", name: "Video Transcriber", href: "/video-transcriber", category: "Media", description: "Transcribe video audio to text quickly and accurately.", status: "Live", isNew: true },
-  { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Upcoming" },
+  { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
   { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Upcoming" },
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Upcoming" },
   { id: "currency-converter", name: "Currency Converter", href: "/currency-converter", category: "Finance", description: "Quick currency conversions with optional historical rates.", status: "Upcoming" },
