@@ -283,6 +283,20 @@ Features:
 Route:
 - `/base-converter`
 
+### Day 20: Aspect Ratio Calculator
+
+Resize images while preserving aspect ratio with ease.
+
+Features:
+- Calculate target dimensions based on original aspect ratio
+- Common aspect ratio presets (16:9, 4:3, 1:1)
+- Custom width and height inputs
+- Real-time preview and copy results
+- Clean responsive UI matching project theme
+
+Route:
+- `/aspect-ratio-calculator`
+
 ---
 
 ## UI/UX Updates
@@ -357,7 +371,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 - Day 18 ✅ Video Transcriber
 - Day 19 ✅ Base Converter
-- Day 20 ⏳ Aspect Ratio Calculator — Coming Soon
+- Day 20 ✅ Aspect Ratio Calculator
 - Day 21 ⏳ Distance Between Cities — Coming Soon
 - Day 22 ⏳ Currency Converter — Coming Soon
 
