@@ -297,6 +297,21 @@ Features:
 Route:
 - `/aspect-ratio-calculator`
 
+### Day 21: Distance Between Cities
+
+Compute straight-line distance and travel estimates between cities.
+
+Features:
+- Geocode city names using Nominatim API
+- Calculate haversine distance (straight-line)
+- Road distance estimates via OSRM
+- Travel time estimates for flight, road, and train
+- Unit conversion (Kilometers/Miles)
+- Clean responsive UI matching project theme
+
+Route:
+- `/distance-between-cities`
+
 ---
 
 ## UI/UX Updates
@@ -372,7 +387,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 18 ✅ Video Transcriber
 - Day 19 ✅ Base Converter
 - Day 20 ✅ Aspect Ratio Calculator
-- Day 21 ⏳ Distance Between Cities — Coming Soon
+- Day 21 ✅ Distance Between Cities
 - Day 22 ⏳ Currency Converter — Coming Soon
 
 > Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
