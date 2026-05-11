@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "Boring Tools",
   description: "100 Days. 100 Boring Tools.",
   other: {
-    "google-adsense-account": "ca-pub-7528581776466991",
+    "google-adsense-account": "ca-pub-7528581776456991",
   },
 };
 
@@ -35,10 +35,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <meta name="google-adsense-account" content="ca-pub-7528581776466991" />
+        <meta name="google-adsense-account" content="ca-pub-7528581776456991" />
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7528581776466991"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7528581776456991"
           crossOrigin="anonymous"
         />
       </head>
