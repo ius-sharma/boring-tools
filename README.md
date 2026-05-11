@@ -312,6 +312,19 @@ Features:
 Route:
 - `/distance-between-cities`
 
+### Day 22: Currency Converter
+
+Quick currency conversions with optional historical rates.
+
+Features:
+- Convert between common global currencies
+- Live conversion with clear input/output totals
+- Optional historical-rate mode for past dates
+- Clean responsive UI matching project theme
+
+Route:
+- `/currency-converter`
+
 ---
 
 ## UI/UX Updates
@@ -388,7 +401,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 19 ✅ Base Converter
 - Day 20 ✅ Aspect Ratio Calculator
 - Day 21 ✅ Distance Between Cities
-- Day 22 ⏳ Currency Converter — Coming Soon
+- Day 22 ✅ Currency Converter
 
 > Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
