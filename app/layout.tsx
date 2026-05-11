@@ -31,6 +31,13 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7528581776466991"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <NavBar />
         <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-end gap-3 p-3 sm:p-4 pointer-events-none">
