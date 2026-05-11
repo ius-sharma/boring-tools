@@ -129,7 +129,7 @@ export default function YouTubeTitleGenerator() {
     <div className="min-h-screen bg-slate-50 text-slate-900 px-4 py-10 sm:py-14">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600 mb-3">Day 23 • Content Creator Tool</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600 mb-3">Content Creator Tool</p>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900">YouTube Title Generator</h1>
           <p className="mt-4 text-slate-600 max-w-2xl mx-auto">
             Turn a rough video idea into clickable title options with Groq-powered suggestions.
