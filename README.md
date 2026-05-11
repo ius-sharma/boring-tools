@@ -325,6 +325,19 @@ Features:
 Route:
 - `/currency-converter`
 
+### Day 23: YouTube Title Generator
+
+Generate clickable YouTube title ideas with Groq-powered suggestions.
+
+Features:
+- Generate title ideas from a video topic
+- Control tone, style, audience, and keywords
+- Copy single titles or the full list instantly
+- Groq-backed generation with a safe local fallback
+
+Route:
+- `/youtube-title-generator`
+
 ---
 
 ## UI/UX Updates
@@ -402,6 +415,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 20 ✅ Aspect Ratio Calculator
 - Day 21 ✅ Distance Between Cities
 - Day 22 ✅ Currency Converter
+- Day 23 ✅ YouTube Title Generator
 
 > Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 

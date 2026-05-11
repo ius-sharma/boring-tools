@@ -23,13 +23,14 @@ const tools = [
   { id: "roast-my-todo-list", name: "Roast My To-Do List", href: "/roast-my-todo-list", category: "Fun + Productivity", description: "Playful roast with practical next steps.", status: "Live", isNew: true },
   { id: "markdown-previewer", name: "Markdown Previewer", href: "/markdown-previewer", category: "Developer", description: "Write markdown and preview instantly.", status: "Live", isNew: true },
   { id: "video-transcriber", name: "Video Transcriber", href: "/video-transcriber", category: "Media", description: "Transcribe video audio to text quickly and accurately.", status: "Live", isNew: true },
+  { id: "youtube-title-generator", name: "YouTube Title Generator", href: "/youtube-title-generator", category: "Media", description: "Generate clickable title ideas for your next video.", status: "Live", isNew: true, isFeatured: true },
   { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
    { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Live", isNew: true },
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Live", isNew: true },
   { id: "currency-converter", name: "Currency Converter", href: "/currency-converter", category: "Finance", description: "Quick currency conversions with optional historical rates.", status: "Live", isNew: true },
 ];
 
-const liveToolIds = new Set(["text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter"]);
+const liveToolIds = new Set(["text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter"]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 const liveToolCount = availableTools.length;
@@ -70,8 +71,10 @@ export default function Home() {
   }, [query]);
 
   const featuredTools = useMemo(() => {
-    const newTools = availableTools.filter((t) => t.isNew);
-    return newTools.slice(0, 3).length > 0 ? newTools.slice(0, 3) : availableTools.slice(0, 3);
+    const featuredPinned = availableTools.filter((t) => t.isFeatured);
+    const newTools = availableTools.filter((t) => t.isNew && !t.isFeatured);
+    const combined = [...featuredPinned, ...newTools];
+    return combined.slice(0, 3).length > 0 ? combined.slice(0, 3) : availableTools.slice(0, 3);
   }, []);
 
   useEffect(() => {
@@ -204,7 +207,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Featured Tools</h2>
-            <p className="text-slate-600">Try these popular utilities</p>
+            <p className="text-slate-600">Try these popular and newly added utilities</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredTools.map((tool) => (
