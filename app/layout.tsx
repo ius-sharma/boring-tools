@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Boring Tools",
   description: "100 Days. 100 Boring Tools.",
+  other: {
+    "google-adsense-account": "ca-pub-7528581776466991",
+  },
 };
 
 export default function RootLayout({
