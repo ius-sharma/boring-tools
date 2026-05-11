@@ -83,7 +83,7 @@ export default function YouTubeTitleGenerator() {
 
       const payload = await response.json();
 
-      if (response.ok && Array.isArray(payload.titles) && payload.titles.length) {
+      if (Array.isArray(payload.titles) && payload.titles.length) {
         setTitles(payload.titles);
         setSource(payload.source === "Groq API" ? "Groq API" : "Local fallback");
         if (payload.error) {
