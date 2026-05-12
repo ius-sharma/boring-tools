@@ -13,8 +13,8 @@ const tools = [
   { id: "qr-generator", name: "QR Generator", href: "/qr-generator", category: "Developer", description: "Generate downloadable QR from text.", status: "Live" },
   { id: "unit-converter", name: "Unit Converter", href: "/unit-converter", category: "Utility", description: "Convert length, weight, temperature.", status: "Live" },
   { id: "file-name-sanitizer", name: "File Name Sanitizer", href: "/file-name-sanitizer", category: "Utility", description: "Clean unsafe or messy filenames.", status: "Live" },
-  { id: "image-compressor", name: "Image Compressor / Resizer", href: "/image-compressor", category: "Media", description: "Compress and resize images quickly.", status: "Live", isNew: true },
-  { id: "resume-bullet-rewriter", name: "Resume Bullet Rewriter", href: "/resume-bullet-rewriter", category: "Career", description: "Turn rough notes into strong resume bullets.", status: "Live", isNew: true },
+  { id: "image-compressor", name: "Image Compressor / Resizer", href: "/image-compressor", category: "Media", description: "Compress and resize images quickly.", status: "Live", isNew: true, isFeatured: true },
+  { id: "resume-bullet-rewriter", name: "Resume Bullet Rewriter", href: "/resume-bullet-rewriter", category: "Career", description: "Turn rough notes into strong resume bullets.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-zone-converter", name: "Time Zone Converter", href: "/time-zone-converter", category: "Time & Date", description: "Convert meeting times across time zones.", status: "Live", isNew: true },
   { id: "to-do-list", name: "To-Do List", href: "/to-do-list", category: "Productivity", description: "Track tasks locally with saved progress.", status: "Live", isNew: true },
   { id: "gst-calculator", name: "GST Calculator", href: "/gst-calculator", category: "Finance", description: "Calculate GST-inclusive and exclusive totals.", status: "Live", isNew: true },
@@ -24,6 +24,8 @@ const tools = [
   { id: "markdown-previewer", name: "Markdown Previewer", href: "/markdown-previewer", category: "Developer", description: "Write markdown and preview instantly.", status: "Live", isNew: true },
   { id: "video-transcriber", name: "Video Transcriber", href: "/video-transcriber", category: "Media", description: "Transcribe video audio to text quickly and accurately.", status: "Live", isNew: true },
   { id: "youtube-title-generator", name: "YouTube Title Generator", href: "/youtube-title-generator", category: "Media", description: "Generate clickable title ideas for your next video.", status: "Live", isNew: true, isFeatured: true },
+  { id: "linkedin-post-formatter", name: "LinkedIn Post Formatter", href: "/linkedin-post-formatter", category: "Professional", description: "Create engaging LinkedIn posts tailored to your audience.", status: "Upcoming" },
+  { id: "what-happened-today", name: "What Happened Today In History", href: "/what-happened-today", category: "Learning", description: "Discover major historical events that happened on this day.", status: "Upcoming" },
   { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
    { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Live", isNew: true },
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Live", isNew: true },
@@ -35,7 +37,9 @@ const liveToolIds = new Set(["text-formatter", "json-formatter", "word-counter",
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 const liveToolCount = availableTools.length;
 const upcomingToolCount = tools.filter((t) => t.status === "Upcoming").length;
-const categories = ["Text", "Developer", "Utility", "Security", "Productivity", "Media", "Career", "Time & Date", "Finance", "Fun"];
+// Categories will be computed from the live tools inside the component to keep counts accurate
+// (computed with `useMemo` below)
+const categories = [];
 
 const suggestionCategoryOptions = [
   { value: "New Tool Idea", label: "New Tool Idea" },
@@ -74,8 +78,13 @@ export default function Home() {
     const featuredPinned = availableTools.filter((t) => t.isFeatured);
     const newTools = availableTools.filter((t) => t.isNew && !t.isFeatured);
     const combined = [...featuredPinned, ...newTools];
-    return combined.slice(0, 3).length > 0 ? combined.slice(0, 3) : availableTools.slice(0, 3);
-  }, []);
+    return combined.length > 0 ? combined.slice(0, 3) : availableTools.slice(0, 3);
+  }, [availableTools]);
+
+  const categories = useMemo(() => {
+    const set = new Set(availableTools.map((t) => t.category));
+    return Array.from(set).sort();
+  }, [availableTools]);
 
   useEffect(() => {
     const onKeyDown = (event) => {

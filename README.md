@@ -338,6 +338,22 @@ Features:
 Route:
 - `/youtube-title-generator`
 
+### Day 24: LinkedIn Post Formatter
+
+Turn your ideas into engaging LinkedIn posts with the right tone and format.
+
+Features:
+- Generate posts from a topic or main message
+- Choose tone: Professional, Inspirational, Casual, Thought-Provoking, Storytelling
+- Select format: Engagement-Boosting, Announcement, Advice, Question, Story, Celebration
+- Target audience: Recruiters, Entrepreneurs, Employees, Job Seekers, General Professionals
+- Optional keywords to shape suggestions
+- Copy individual posts or all at once
+- Groq-powered generation with local fallback
+
+Route:
+- `/linkedin-post-formatter`
+
 ---
 
 ## UI/UX Updates
@@ -416,6 +432,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 - Day 21 ✅ Distance Between Cities
 - Day 22 ✅ Currency Converter
 - Day 23 ✅ YouTube Title Generator
+- Day 24 ✅ LinkedIn Post Formatter
 
 > Upcoming tools are in progress and will be released one-by-one. Unreleased tools are not linked from the GitHub home page.
 
