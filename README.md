@@ -34,6 +34,7 @@ Featured tools
 - Image Compressor / Resizer — `/image-compressor` — Compress & resize images in the browser.
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
+
 Live tools (23)
 
 1. Text Formatter — `/text-formatter`
@@ -58,10 +59,14 @@ Live tools (23)
 20. Base Converter — `/base-converter`
 21. Aspect Ratio Calculator — `/aspect-ratio-calculator`
 22. Distance Between Cities — `/distance-between-cities`
+
 23. Currency Converter — `/currency-converter`
+
 
 Upcoming tools
 
+- Math Formula Calculator — `/math-formula-calculator` (Coming Soon)
+- Science Formulas Calculator — `/science-formulas-calculator` (Coming Soon)
 - LinkedIn Post Formatter — `/linkedin-post-formatter`
 - What Happened Today In History — `/what-happened-today`
 
@@ -126,11 +131,15 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ## Progress
 
+
 - Live: **23 tools** (listed on the homepage)
-- Upcoming: **2 tools**
+- Upcoming: **4 tools**
+
 
 Upcoming tools
 
+- Math Formula Calculator — `/math-formula-calculator` (Coming Soon)
+- Science Formulas Calculator — `/science-formulas-calculator` (Coming Soon)
 - LinkedIn Post Formatter — `/linkedin-post-formatter`
 - What Happened Today In History — `/what-happened-today`
 
