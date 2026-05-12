@@ -18,354 +18,44 @@ BoringTools is a collection of simple and useful micro-tools built daily to solv
 
 Quick text cleanup and transformation utility.
 
-Features:
-- Convert text to UPPERCASE
-- Convert text to lowercase
-- Capitalize each word
-- Clean extra spaces
-- Copy formatted output
+## BoringTools — Quick Reference
 
-Route:
-- `/text-formatter`
+Lightweight collection of small, browser-first utilities. Built daily to solve practical problems — no signup, no tracking.
 
-### Day 2: JSON Formatter
+Live demo: https://boring-tools-nine.vercel.app/
 
-Fast JSON validation and formatting utility.
+What you'll find here
+- Short summary of the project and links to try tools locally or online.
+- Three featured tools to try right now.
 
-Features:
-- Pretty print JSON
-- Minify JSON
-- Detect invalid JSON
-- Copy formatted output
+Featured tools
 
-Route:
-- `/json-formatter`
+- YouTube Title Generator — `/youtube-title-generator` — Generate clickable title ideas from a topic.
+- Image Compressor / Resizer — `/image-compressor` — Compress & resize images in the browser.
+- Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
-### Day 3: Word Counter
+Run locally
 
-Instant writing stats for input text.
+```bash
+npm install
+npm run dev
+```
 
-Features:
-- Word count
-- Character count
-- Characters without spaces
-- Sentence count
+Open `http://localhost:3000` and click any tool from the homepage.
 
-Route:
-- `/word-counter`
+Project notes
+- This repository contains many small tools under `app/` built with Next.js + Tailwind.
+- The homepage lists Live and Upcoming tools; tools marked `Upcoming` are not yet linked from the homepage.
 
-### Day 4: Password Generator
+Contributing
+- Open an issue or submit a PR. If adding a new tool, add a small `page.jsx` under `app/` and update the homepage registry (`app/page.jsx`).
 
-Generate secure passwords with custom options.
-
-Features:
-- Adjustable password length
-- Uppercase letters
-- Lowercase letters
-- Numbers
-- Symbols
-- Copy generated password
-
-Route:
-- `/password-generator`
-
-### Day 5: Age Calculator
-
-Calculate exact age from date of birth.
-
-Features:
-- Exact age in years, months, and days
-- Simple date picker input
-- Input validation for empty and future dates
-
-Route:
-- `/age-calculator`
-
-### Day 6: Unit Converter
-
-Convert common units instantly with a cleaner UI.
-
-Features:
-- Convert Length, Weight, and Temperature
-- Swap input/output units quickly
-- Precision control for output value
-- One-click copy for converted result
-- Improved responsive layout and themed custom dropdowns
-
-Route:
-- `/unit-converter`
-
-### Day 7: QR Generator
-
-Generate downloadable QR codes instantly from text or links.
-
-Features:
-- Generate QR code from plain text or URL
-- Input validation with user-friendly error handling
-- Instant preview of generated QR code
-- One-click PNG download
-- Clean responsive UI matching project theme
-
-Route:
-- `/qr-generator`
-
-### Day 8: File Name Sanitizer
-
-Sanitize and standardize file names for safer sharing and storage.
-
-Features:
-- Clean unsafe characters from file names
-- Support kebab-case, snake_case, and readable naming styles
-- Preserve file extensions safely
-- Handle reserved Windows file names automatically
-- Batch preview and one-click copy for sanitized output
-
-Route:
-- `/file-name-sanitizer`
-
-### Day 9: Pomodoro Timer
-
-Boost productivity with time-based work and break cycles.
-
-Features:
-- 25-minute focused work sessions
-- 5-minute break periods
-- Start, Pause, and Reset controls
-- Automatic session cycling
-- Browser notifications when focus or break sessions finish
-- Session counter to track productivity
-
-Enhancements (UI & Background):
-- Sound notifications (optional beep) on session transitions
-- Visual progress ring and pulsing countdown for imminent transitions
-- Customizable timers and presets (Standard, Long, Short) with settings modal
-- Daily statistics (focus sessions, break sessions, total focus minutes) saved to localStorage
-- Keyboard shortcuts: Space (Start/Pause), R (Reset), Esc (Close settings)
-- Automatic long break after every 4 focus sessions
-- Background Service Worker handles timer when tab is inactive so system notifications still fire
-
-Route:
-- `/pomodoro-timer`
-
-### Day 10: Image Compressor / Resizer
-
-Compress and resize images with a clean, browser-based workflow.
-
-Features:
-- Drop or browse image uploads
-- Resize by max width and height
-- Adjust output quality
-- Export in JPEG, WebP, or PNG formats
-- See file size savings after processing
-
-Route:
-- `/image-compressor`
-
-### Day 11: Resume Bullet Rewriter
-
-Turn rough notes into polished, resume-ready bullets with AI-assisted rewriting.
-
-Features:
-- Rewrite messy notes into cleaner resume bullets
-- Choose tone presets like Impact-focused, ATS-friendly, Leadership, and Technical
-- Select how many bullets to generate
-- Copy the rewritten bullets in one click
-- Clean responsive layout with side-by-side input and output panels
-
-Route:
-- `/resume-bullet-rewriter`
-
-### Day 12: GST Calculator
-
-Calculate GST-inclusive and GST-exclusive totals in seconds.
-
-Features:
-- Handle before-GST and including-GST calculations
-- Use common GST presets or a custom rate
-- Show base amount, GST amount, and total amount clearly
-- Keep the UI clean and finance-friendly
-
-Route:
-- `/gst-calculator`
-
-### Day 13: To-Do List
-
-Simple, lightweight to-do list manager to track tasks and priorities.
-
-Features:
-- Add, edit, and delete tasks
-- Mark tasks complete/incomplete
-- Simple localStorage persistence
-- Filter by all/active/completed
-- Clean responsive UI matching project theme
-
-Route:
-- `/to-do-list`
-
-### Day 14: Time Zone Converter
-
-Convert meeting times across time zones quickly and accurately.
-
-Features:
-- Convert between time zones using common cities and IANA zone names
-- Quick presets for UTC, local, and major time zones
-- Copy and share converted time with one click
-- Clean responsive UI with optional 12/24-hour toggle
-
-Route:
-- `/time-zone-converter`
-
-### Day 15: Truth or Dare Play
-
-Playful party game to play with friends and break the ice.
-
-Features:
-- Switch between truth, dare, and random modes
-- Play new rounds instantly with fresh prompts
-- Keep a short history of recent rounds
-- Stay inside the same minimal black-and-white layout
-- Simple responsive UI matching project theme
-
-Route:
-- `/truth-or-dare-play`
-
-### Day 16: Roast My To-Do List
-
-Playful roast with practical next steps for your tasks.
-
-Features:
-- Input your to-do list and get a humorous roast
-- Receive practical suggestions to tackle each task
-- Fun + productivity blend for motivation
-- Copy roasted output for sharing
-- Clean responsive UI matching project theme
-
-Route:
-- `/roast-my-todo-list`
-
-### Day 17: Markdown Previewer
-
-Write markdown and preview instantly with live rendering.
-
-Features:
-- Real-time markdown to HTML preview
-- Split-pane layout (editor + preview)
-- Support for headers, lists, links, code blocks, and more
-- Dark/light theme toggle
-- Copy rendered HTML output
-- Clean responsive UI matching project theme
-
-Route:
-- `/markdown-previewer`
-
-### Day 18: Video Transcriber
-
-Transcribe video audio to text quickly and accurately.
-
-Features:
-- Upload or provide video URL
-- Automatic speech-to-text transcription
-- Downloadable transcript and simple timestamping
-- Copy transcript to clipboard
-
-Route:
-- `/video-transcriber`
-
-### Day 19: Base Converter
-
-Convert between Binary, Decimal, Octal, and Hex instantly.
-
-Features:
-- Convert values across bases (2, 8, 10, 16)
-- Copy results and example conversions
-- Clean responsive UI matching project theme
-
-Route:
-- `/base-converter`
-
-### Day 20: Aspect Ratio Calculator
-
-Resize images while preserving aspect ratio with ease.
-
-Features:
-- Calculate target dimensions based on original aspect ratio
-- Common aspect ratio presets (16:9, 4:3, 1:1)
-- Custom width and height inputs
-- Real-time preview and copy results
-- Clean responsive UI matching project theme
-
-Route:
-- `/aspect-ratio-calculator`
-
-### Day 21: Distance Between Cities
-
-Compute straight-line distance and travel estimates between cities.
-
-Features:
-- Geocode city names using Nominatim API
-- Calculate haversine distance (straight-line)
-- Road distance estimates via OSRM
-- Travel time estimates for flight, road, and train
-- Unit conversion (Kilometers/Miles)
-- Clean responsive UI matching project theme
-
-Route:
-- `/distance-between-cities`
-
-### Day 22: Currency Converter
-
-Quick currency conversions with optional historical rates.
-
-Features:
-- Convert between common global currencies
-- Live conversion with clear input/output totals
-- Optional historical-rate mode for past dates
-- Clean responsive UI matching project theme
-
-Route:
-- `/currency-converter`
-
-### Day 23: YouTube Title Generator
-
-Generate clickable YouTube title ideas with Groq-powered suggestions.
-
-Features:
-- Generate title ideas from a video topic
-- Control tone, style, audience, and keywords
-- Copy single titles or the full list instantly
-- Groq-backed generation with a safe local fallback
-
-Route:
-- `/youtube-title-generator`
-
-### Day 24: LinkedIn Post Formatter
-
-Turn your ideas into engaging LinkedIn posts with the right tone and format.
-
-Features:
-- Generate posts from a topic or main message
-- Choose tone: Professional, Inspirational, Casual, Thought-Provoking, Storytelling
-- Select format: Engagement-Boosting, Announcement, Advice, Question, Story, Celebration
-- Target audience: Recruiters, Entrepreneurs, Employees, Job Seekers, General Professionals
-- Optional keywords to shape suggestions
-- Copy individual posts or all at once
-- Groq-powered generation with local fallback
-
-Route:
-- `/linkedin-post-formatter`
+License & author
+- MIT • Ayush Sharma
 
 ---
 
-## UI/UX Updates
-
-- Unified card-based UI across all tools
-- Theme switcher (Light/Dark) with saved preference
-- Persistent top controls for quick navigation
-- Home button on tool pages for one-click return
-- Responsive layout for desktop, tablet, and mobile
-- Enhanced home discovery: fast search, quick filters, and custom category dropdown
-- Suggestion intake panel now captures ideas and syncs them to Google Sheets
-
+For full change history and per-day tool notes, see the repository history (git log) — this README intentionally stays high-level.
 ---
 
 ## Tech Stack
