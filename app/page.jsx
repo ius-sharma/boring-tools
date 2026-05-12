@@ -37,9 +37,6 @@ const liveToolIds = new Set(["text-formatter", "json-formatter", "word-counter",
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 const liveToolCount = availableTools.length;
 const upcomingToolCount = tools.filter((t) => t.status === "Upcoming").length;
-// Categories will be computed from the live tools inside the component to keep counts accurate
-// (computed with `useMemo` below)
-const categories = [];
 
 const suggestionCategoryOptions = [
   { value: "New Tool Idea", label: "New Tool Idea" },
@@ -57,6 +54,11 @@ export default function Home() {
   const [toolsToShow, setToolsToShow] = useState(6);
   const searchRef = useRef(null);
   const findToolsRef = useRef(null);
+
+  const categories = useMemo(() => {
+    const set = new Set(availableTools.map((t) => t.category));
+    return Array.from(set).sort();
+  }, [availableTools]);
 
   const filteredTools = useMemo(() => {
     if (!query.trim()) return availableTools;
@@ -79,11 +81,6 @@ export default function Home() {
     const newTools = availableTools.filter((t) => t.isNew && !t.isFeatured);
     const combined = [...featuredPinned, ...newTools];
     return combined.length > 0 ? combined.slice(0, 3) : availableTools.slice(0, 3);
-  }, [availableTools]);
-
-  const categories = useMemo(() => {
-    const set = new Set(availableTools.map((t) => t.category));
-    return Array.from(set).sort();
   }, [availableTools]);
 
   useEffect(() => {
