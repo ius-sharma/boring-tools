@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
 
 export default function PomodoroTimer() {
@@ -12,21 +13,44 @@ export default function PomodoroTimer() {
   const [sessions, setSessions] = useState(0);
   const [dailyStats, setDailyStats] = useState({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
   const [showSettings, setShowSettings] = useState(false);
-  const [scheduledSessions, setScheduledSessions] = useState(0);
-  const [workPreset, setWorkPreset] = useState(25);
-  const [breakPreset, setBreakPreset] = useState(5);
   const [customWorkTime, setCustomWorkTime] = useState(25);
   const [customBreakTime, setCustomBreakTime] = useState(5);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [sessionsUntilLongBreak, setSessionsUntilLongBreak] = useState(4);
 
   const notificationPermissionRequestedRef = useRef(false);
-  const transitionLockRef = useRef(false);
-  const workerRef = useRef(null);
-  const [workerReady, setWorkerReady] = useState(false);
   const audioContextRef = useRef(null);
+  const timerIntervalRef = useRef(null);
 
-  // Load stats from localStorage
+  // Timer state stored in localStorage
+  const TIMER_STORAGE_KEY = "pomodoroTimerState";
+
+  // Helper: Save timer state to localStorage
+  const saveTimerState = (state) => {
+    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
+  };
+
+  // Helper: Load timer state from localStorage
+  const loadTimerState = () => {
+    try {
+      const saved = localStorage.getItem(TIMER_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Helper: Get remaining time based on wall clock
+  const getRemainingTime = (timerState) => {
+    if (!timerState.isRunning || !timerState.startTime || !timerState.duration) {
+      return timerState.secondsLeft || timerState.duration;
+    }
+
+    const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+    const remaining = Math.max(0, timerState.duration - elapsed);
+    return remaining;
+  };
+
+  // Load stats and timer state on mount
   useEffect(() => {
     const today = new Date().toDateString();
     const saved = localStorage.getItem("pomodoroStats");
@@ -37,45 +61,19 @@ export default function PomodoroTimer() {
       } else {
         localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: { focusSessions: 0, breakSessions: 0, focusMinutes: 0 } }));
       }
-    } else {
-      localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: { focusSessions: 0, breakSessions: 0, focusMinutes: 0 } }));
-    }
-  }, []);
-
-  // Register Service Worker
-  const registerServiceWorker = async () => {
-    if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-      return;
     }
 
-    try {
-      const registration = await navigator.serviceWorker.register("/service-worker.js", {
-        scope: "/",
-      });
-      workerRef.current = registration;
-      setWorkerReady(true);
-
-      const handleMessage = (event) => {
-        if (event.data.action === "TIMER_UPDATE") {
-          const { seconds: newSeconds, isBreak: newIsBreak, sessions: newSessions } = event.data.payload;
-          setSeconds(newSeconds);
-          setIsBreak(newIsBreak);
-          setSessions(newSessions);
-        }
-      };
-
-      navigator.serviceWorker.addEventListener("message", handleMessage);
-
-      return () => {
-        navigator.serviceWorker.removeEventListener("message", handleMessage);
-      };
-    } catch (error) {
-      console.log("Service Worker registration skipped (dev mode is ok)");
+    // Load timer state if exists
+    const timerState = loadTimerState();
+    if (timerState) {
+      const remaining = getRemainingTime(timerState);
+      setSeconds(remaining);
+      setRunning(timerState.isRunning);
+      setIsBreak(timerState.isBreak);
+      setSessions(timerState.sessions);
+      setCustomWorkTime(timerState.customWorkTime || 25);
+      setCustomBreakTime(timerState.customBreakTime || 5);
     }
-  };
-
-  useEffect(() => {
-    registerServiceWorker();
   }, []);
 
   // Keyboard shortcuts
@@ -99,10 +97,16 @@ export default function PomodoroTimer() {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [running]);
 
-  const formatTime = (secs) => {
-    const mins = Math.floor(secs / 60);
-    const sec = secs % 60;
-    return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  // Request notification permission
+  const requestNotificationPermission = async () => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+    if (Notification.permission === "default") {
+      try {
+        await Notification.requestPermission();
+      } catch {
+        // Ignore
+      }
+    }
   };
 
   // Play beep sound
@@ -126,133 +130,170 @@ export default function PomodoroTimer() {
     }
   };
 
+  // Send notification
   const sendNotification = (title, body) => {
-    if (typeof window === "undefined" || typeof Notification === "undefined") {
-      return;
-    }
-
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
     if (Notification.permission === "granted") {
       playBeep();
       new Notification(title, { body });
     }
   };
 
-  const requestNotificationPermission = async () => {
-    if (typeof window === "undefined" || typeof Notification === "undefined") {
-      return;
-    }
-
-    if (Notification.permission === "default") {
-      try {
-        await Notification.requestPermission();
-      } catch {
-        // Ignore
-      }
-    }
-  };
-
-  // Main countdown timer
+  // Main timer loop - uses wall clock for accuracy
   useEffect(() => {
-    let timer;
+    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
-    if (running) {
-      timer = setInterval(() => {
-        setSeconds((prev) => {
-          if (prev > 1) {
-            transitionLockRef.current = false;
-            return prev - 1;
+    timerIntervalRef.current = setInterval(() => {
+      const timerState = loadTimerState();
+      if (!timerState) return;
+
+      // Calculate remaining time based on wall clock
+      const remaining = getRemainingTime(timerState);
+
+      // Update UI
+      setSeconds(remaining);
+      setRunning(timerState.isRunning);
+      setIsBreak(timerState.isBreak);
+      setSessions(timerState.sessions);
+
+      // If timer finished and still running
+      if (remaining === 0 && timerState.isRunning) {
+        let newIsBreak, newDuration, newSeconds;
+        let newSessions = timerState.sessions;
+
+        if (!timerState.isBreak) {
+          // Work session completed
+          newSessions = timerState.sessions + 1;
+          newIsBreak = true;
+          newDuration = timerState.customBreakTime * 60;
+          newSeconds = newDuration;
+
+          // Update daily stats
+          const newStats = {
+            ...dailyStats,
+            focusSessions: dailyStats.focusSessions + 1,
+            focusMinutes: dailyStats.focusMinutes + timerState.customWorkTime,
+          };
+          setDailyStats(newStats);
+          const today = new Date().toDateString();
+          localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
+
+          if (newSessions % 4 === 0) {
+            sendNotification("4 sessions completed!", `Time for a 15 min long break. Great work!`);
+          } else {
+            sendNotification("Focus session complete", `Break time started. Take ${timerState.customBreakTime} minutes to reset.`);
           }
-
-          if (transitionLockRef.current) {
-            return prev;
-          }
-
-          transitionLockRef.current = true;
-
-          if (!isBreak) {
-            // Work session completed
-            const newSessions = sessions + 1;
-            setSessions(newSessions);
-            setIsBreak(true);
-
-            // Update daily stats
-            const newStats = { ...dailyStats, focusSessions: dailyStats.focusSessions + 1, focusMinutes: dailyStats.focusMinutes + customWorkTime };
-            setDailyStats(newStats);
-            const today = new Date().toDateString();
-            localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
-
-            // Check if long break needed
-            if (newSessions % 4 === 0 && newSessions > 0) {
-              sendNotification("4 sessions completed!", `Time for a 15 min long break. Great work!`);
-              return LONG_BREAK_TIME;
-            }
-
-            sendNotification("Focus session complete", `Break time started. Take ${customBreakTime} minutes to reset.`);
-            return customBreakTime * 60;
-          }
-
+        } else {
           // Break session completed
-          setIsBreak(false);
+          newIsBreak = false;
+          newDuration = timerState.customWorkTime * 60;
+          newSeconds = newDuration;
+
+          // Update daily stats
           const newStats = { ...dailyStats, breakSessions: dailyStats.breakSessions + 1 };
           setDailyStats(newStats);
           const today = new Date().toDateString();
           localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
 
           sendNotification("Break finished", `Focus time started. Back to work.`);
-          return customWorkTime * 60;
-        });
-      }, 1000);
-    }
+        }
 
-    return () => clearInterval(timer);
-  }, [running, isBreak, customWorkTime, customBreakTime, sessions, dailyStats]);
+        // Save new state
+        const newTimerState = {
+          isRunning: true,
+          startTime: Date.now(),
+          duration: newDuration,
+          secondsLeft: newSeconds,
+          isBreak: newIsBreak,
+          sessions: newSessions,
+          customWorkTime: timerState.customWorkTime,
+          customBreakTime: timerState.customBreakTime,
+        };
+        saveTimerState(newTimerState);
+      }
+    }, 500); // Update every 500ms for smooth updates
 
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [dailyStats, soundEnabled]);
+
+  // Handle visibility change (tab switch)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) return; // Tab is hidden, do nothing
+
+      // Tab became visible - resync timer state
+      const timerState = loadTimerState();
+      if (timerState) {
+        const remaining = getRemainingTime(timerState);
+        setSeconds(remaining);
+        setRunning(timerState.isRunning);
+        setIsBreak(timerState.isBreak);
+        setSessions(timerState.sessions);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  // Start timer
   const handleStart = async () => {
     if (!notificationPermissionRequestedRef.current) {
       notificationPermissionRequestedRef.current = true;
       await requestNotificationPermission();
     }
+
+    const duration = isBreak ? customBreakTime * 60 : customWorkTime * 60;
+    const newTimerState = {
+      isRunning: true,
+      startTime: Date.now(),
+      duration,
+      secondsLeft: seconds,
+      isBreak,
+      sessions,
+      customWorkTime,
+      customBreakTime,
+    };
+    saveTimerState(newTimerState);
     setRunning(true);
-
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      const channel = new MessageChannel();
-      navigator.serviceWorker.controller.postMessage(
-        {
-          action: "START_TIMER",
-          payload: { seconds, isBreak, sessions },
-        },
-        [channel.port2]
-      );
-    }
   };
 
+  // Pause timer
   const handlePause = () => {
-    setRunning(false);
-
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      const channel = new MessageChannel();
-      navigator.serviceWorker.controller.postMessage(
-        { action: "PAUSE_TIMER" },
-        [channel.port2]
-      );
+    const timerState = loadTimerState();
+    if (timerState) {
+      const remaining = getRemainingTime(timerState);
+      timerState.isRunning = false;
+      timerState.secondsLeft = remaining;
+      timerState.startTime = null;
+      saveTimerState(timerState);
     }
+    setRunning(false);
   };
 
+  // Reset timer
   const resetTimer = () => {
+    const duration = customWorkTime * 60;
+    const newTimerState = {
+      isRunning: false,
+      startTime: null,
+      duration,
+      secondsLeft: duration,
+      isBreak: false,
+      sessions: 0,
+      customWorkTime,
+      customBreakTime,
+    };
+    saveTimerState(newTimerState);
     setRunning(false);
     setIsBreak(false);
-    setSeconds(customWorkTime * 60);
-    transitionLockRef.current = false;
-
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      const channel = new MessageChannel();
-      navigator.serviceWorker.controller.postMessage(
-        { action: "RESET_TIMER" },
-        [channel.port2]
-      );
-    }
+    setSeconds(duration);
+    setSessions(0);
   };
 
+  // Apply preset
   const applyPreset = (preset) => {
     if (preset === "standard") {
       setCustomWorkTime(25);
@@ -265,22 +306,26 @@ export default function PomodoroTimer() {
       setCustomBreakTime(3);
     }
     setShowSettings(false);
-    resetTimer();
+    setTimeout(() => resetTimer(), 0);
   };
 
+  // Apply custom settings
   const applyCustom = () => {
     setShowSettings(false);
-    resetTimer();
+    setTimeout(() => resetTimer(), 0);
   };
 
-  // Check if last 3 seconds for pulsing effect
-  const isLastThreeSeconds = seconds <= 3 && seconds > 0 && running;
+  // Format time
+  const formatTime = (secs) => {
+    const mins = Math.floor(secs / 60);
+    const sec = secs % 60;
+    return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
 
-  // Get current max time
+  // Calculate progress
   const maxTime = isBreak ? customBreakTime * 60 : customWorkTime * 60;
   const progress = ((maxTime - seconds) / maxTime) * 100;
-
-  // Next phase text
+  const isLastThreeSeconds = seconds <= 3 && seconds > 0 && running;
   const nextPhaseText = isBreak ? `Next: ${customWorkTime} min focus` : `Next: ${customBreakTime} min break`;
 
   return (
@@ -306,7 +351,7 @@ export default function PomodoroTimer() {
                 stroke="#171717"
                 strokeWidth="3"
                 strokeDasharray={`${(progress / 100) * 345.6} 345.6`}
-                style={{ transition: "stroke-dasharray 1s linear" }}
+                style={{ transition: "stroke-dasharray 0.5s linear" }}
               />
             </svg>
           </div>
@@ -469,7 +514,7 @@ export default function PomodoroTimer() {
         )}
 
         <p className="text-center text-xs text-slate-500">
-          Background notifications enabled • Service Worker active
+          Wall-clock based timer for accurate background tracking
         </p>
       </div>
 
