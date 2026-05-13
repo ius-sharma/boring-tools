@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (23)
+Live tools (24)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -59,16 +59,15 @@ Live tools (23)
 20. Base Converter — `/base-converter`
 21. Aspect Ratio Calculator — `/aspect-ratio-calculator`
 22. Distance Between Cities — `/distance-between-cities`
-
 23. Currency Converter — `/currency-converter`
+24. LinkedIn Post Formatter — `/linkedin-post-formatter`
 
 
 Upcoming tools
 
 - Math Formula Calculator — `/math-formula-calculator` (Coming Soon)
 - Science Formulas Calculator — `/science-formulas-calculator` (Coming Soon)
-- LinkedIn Post Formatter — `/linkedin-post-formatter`
-- What Happened Today In History — `/what-happened-today`
+- What Happened Today In History — `/what-happened-today` (Coming Soon)
 
 Run locally
 
@@ -132,16 +131,15 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **23 tools** (listed on the homepage)
-- Upcoming: **4 tools**
+- Live: **24 tools** (listed on the homepage)
+- Upcoming: **3 tools**
 
 
 Upcoming tools
 
 - Math Formula Calculator — `/math-formula-calculator` (Coming Soon)
 - Science Formulas Calculator — `/science-formulas-calculator` (Coming Soon)
-- LinkedIn Post Formatter — `/linkedin-post-formatter`
-- What Happened Today In History — `/what-happened-today`
+- What Happened Today In History — `/what-happened-today` (Coming Soon)
 
 Visit the homepage to browse Live tools and try them in your browser.
 

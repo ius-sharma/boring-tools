@@ -45,7 +45,6 @@ const normalizeKeywords = (value) =>
     .slice(0, 4);
 
 export default function LinkedInPostFormatter() {
-  notFound();
 
   const [topic, setTopic] = useState("");
   const [tone, setTone] = useState("professional");
