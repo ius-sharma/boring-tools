@@ -132,7 +132,7 @@ async function transcribeWithGroq(audioUrl) {
   }
 }
 
-// Helper: Extract audio URL from Instagram video using yt-dlp
+// Helper: Extract audio from Instagram/video URL using yt-dlp (local only)
 async function getInstagramTranscript(instagramUrl) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
@@ -142,106 +142,106 @@ async function getInstagramTranscript(instagramUrl) {
     );
   }
 
-    try {
-      // Discover yt-dlp command (allow override via YT_DLP_PATH env var)
-      const finder = await findYtDlpCommand();
-      if (!finder) {
-        throw new Error(
-          "yt-dlp is not installed or not found in PATH. Install it (npm install -g yt-dlp or winget install yt-dlp) or set YT_DLP_PATH in your environment to the yt-dlp command."
-        );
-      }
-
-      // Extract audio from Instagram video
-      const { execFile } = await import("child_process");
-      const { promisify } = await import("util");
-      const execFileAsync = promisify(execFile);
-
-      const os = await import("os");
-      const path = await import("path");
-      const fs = await import("fs/promises");
-
-      const tempDir = os.tmpdir();
-      const baseName = `insta-audio-${Date.now()}`;
-      const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
-
-      try {
-        // Download audio using discovered yt-dlp command
-        const ytArgs = [
-          "-f",
-          "bestaudio",
-          "-x",
-          "--audio-format",
-          "mp3",
-          "-o",
-          outputTemplate,
-          instagramUrl,
-        ];
-
-        // If finder has prefix args (like ['-m','yt_dlp'] for python), include them
-        const cmd = finder.cmd;
-        const args = [...(finder.argsPrefix || []), ...ytArgs];
-
-        await execFileAsync(cmd, args);
-
-        // Find the downloaded file (match by baseName)
-        const files = await fs.readdir(tempDir);
-        const match = files.find((f) => f.startsWith(baseName));
-        if (!match) {
-          throw new Error("Failed to find audio file produced by yt-dlp");
-        }
-
-        const audioPath = path.join(tempDir, match);
-        const audioBuffer = await fs.readFile(audioPath);
-
-        // Send to Groq Whisper
-        const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
-        const formData = new FormData();
-        formData.append("file", audioBlob, "audio.mp3");
-        formData.append("model", "whisper-large-v3-turbo");
-
-        const groqResponse = await fetch(
-          "https://api.groq.com/openai/v1/audio/transcriptions",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${groqApiKey}`,
-            },
-            body: formData,
-          }
-        );
-
-        if (!groqResponse.ok) {
-          const error = await groqResponse.json();
-          throw new Error(error.error?.message || "Groq transcription failed");
-        }
-
-        const result = await groqResponse.json();
-
-        // Cleanup temp file
-        try {
-          await fs.unlink(audioPath);
-        } catch {}
-
-        return result.text;
-      } catch (error) {
-        // Cleanup any matching temp files on error
-        try {
-          const files = await fs.readdir(tempDir);
-          for (const f of files) {
-            if (f.startsWith(baseName)) {
-              try {
-                await fs.unlink(path.join(tempDir, f));
-              } catch {}
-            }
-          }
-        } catch {}
-        throw error;
-      }
-    } catch (error) {
+  try {
+    // Discover yt-dlp command (allow override via YT_DLP_PATH env var)
+    const finder = await findYtDlpCommand();
+    if (!finder) {
       throw new Error(
-        `Instagram processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
+        "yt-dlp is not installed or not found in PATH. Install it (npm install -g yt-dlp or winget install yt-dlp) or set YT_DLP_PATH in your environment to the yt-dlp command."
       );
     }
+
+    // Extract audio from Instagram video
+    const { execFile } = await import("child_process");
+    const { promisify } = await import("util");
+    const execFileAsync = promisify(execFile);
+
+    const os = await import("os");
+    const path = await import("path");
+    const fs = await import("fs/promises");
+
+    const tempDir = os.tmpdir();
+    const baseName = `insta-audio-${Date.now()}`;
+    const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
+
+    try {
+      // Download audio using discovered yt-dlp command
+      const ytArgs = [
+        "-f",
+        "bestaudio",
+        "-x",
+        "--audio-format",
+        "mp3",
+        "-o",
+        outputTemplate,
+        instagramUrl,
+      ];
+
+      // If finder has prefix args (like ['-m','yt_dlp'] for python), include them
+      const cmd = finder.cmd;
+      const args = [...(finder.argsPrefix || []), ...ytArgs];
+
+      await execFileAsync(cmd, args);
+
+      // Find the downloaded file (match by baseName)
+      const files = await fs.readdir(tempDir);
+      const match = files.find((f) => f.startsWith(baseName));
+      if (!match) {
+        throw new Error("Failed to find audio file produced by yt-dlp");
+      }
+
+      const audioPath = path.join(tempDir, match);
+      const audioBuffer = await fs.readFile(audioPath);
+
+      // Send to Groq Whisper
+      const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
+      const formData = new FormData();
+      formData.append("file", audioBlob, "audio.mp3");
+      formData.append("model", "whisper-large-v3-turbo");
+
+      const groqResponse = await fetch(
+        "https://api.groq.com/openai/v1/audio/transcriptions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${groqApiKey}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!groqResponse.ok) {
+        const error = await groqResponse.json();
+        throw new Error(error.error?.message || "Groq transcription failed");
+      }
+
+      const result = await groqResponse.json();
+
+      // Cleanup temp file
+      try {
+        await fs.unlink(audioPath);
+      } catch {}
+
+      return result.text;
+    } catch (error) {
+      // Cleanup any matching temp files on error
+      try {
+        const files = await fs.readdir(tempDir);
+        for (const f of files) {
+          if (f.startsWith(baseName)) {
+            try {
+              await fs.unlink(path.join(tempDir, f));
+            } catch {}
+          }
+        }
+      } catch {}
+      throw error;
+    }
+  } catch (error) {
+    throw new Error(
+      `Instagram processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 }
 
 export async function POST(request) {
