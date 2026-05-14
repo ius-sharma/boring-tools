@@ -25,7 +25,7 @@ const tools = [
   { id: "video-transcriber", name: "Video Transcriber", href: "/video-transcriber", category: "Media", description: "Transcribe video audio to text quickly and accurately.", status: "Live", isNew: true },
   { id: "youtube-title-generator", name: "YouTube Title Generator", href: "/youtube-title-generator", category: "Media", description: "Generate clickable title ideas for your next video.", status: "Live", isNew: true, isFeatured: true },
   { id: "linkedin-post-formatter", name: "LinkedIn Post Formatter", href: "/linkedin-post-formatter", category: "Professional", description: "Create engaging LinkedIn posts tailored to your audience.", status: "Live", isNew: true },
-  { id: "what-happened-today", name: "What Happened Today In History", href: "/what-happened-today", category: "Learning", description: "Discover major historical events that happened on this day.", status: "Upcoming" },
+  { id: "what-happened-today", name: "What Happened Today In History", href: "/what-happened-today", category: "Learning", description: "Discover major historical events that happened on this day.", status: "Live", isNew: true },
   { id: "math-formula-calculator", name: "Math Formula Calculator", href: "/math-formula-calculator", category: "Education", description: "Calculate algebra, geometry, trigonometry, and statistics formulas.", status: "Upcoming" },
   { id: "science-formulas-calculator", name: "Science Formulas Calculator", href: "/science-formulas-calculator", category: "Education", description: "Physics, chemistry, and biology formulas with step-by-step solutions.", status: "Upcoming" },
   { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
@@ -35,7 +35,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
