@@ -3,43 +3,43 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-async function getWikipediaEvents(month, day) {
+/**
+ * Fetches historical data from byabbe.se API (which harvests Wikipedia)
+ * Supports categories: events, births, deaths
+ */
+async function fetchHistoricalData(month, day, category) {
+  const validCategories = ["events", "births", "deaths"];
+  const cat = validCategories.includes(category) ? category : "events";
+  
   try {
-    // Using Wikipedia API to get events on a specific date
-    const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&explaintext=true&titles=${month}_${day}`;
-    
+    const url = `https://byabbe.se/on-this-day/${month}/${day}/${cat}.json`;
     const response = await fetch(url, {
-      headers: { "User-Agent": "BoringTools/1.0" },
+      headers: { "User-Agent": "BoringTools/1.0 (https://github.com/ius-sharma/boring-tools)" },
+      next: { revalidate: 86400 } // Cache for 24 hours
     });
 
     if (!response.ok) {
-      return [];
+      throw new Error(`API responded with status: ${response.status}`);
     }
 
     const data = await response.json();
-    const pages = data.query?.pages || {};
-    const firstPage = Object.values(pages)[0];
     
-    if (!firstPage?.extract) {
-      return getLocalHistoricalEvents(month, day);
-    }
-
-    // Parse Wikipedia extract into events
-    const text = firstPage.extract;
-    const eventLines = text.split("\n").filter((line) => line.trim().length > 0);
+    // Map the response to a consistent format
+    // byabbe.se returns { month, day, events: [...] } or { births: [...] } etc.
+    const items = data[cat] || [];
     
-    return eventLines.slice(0, 10).map((line, idx) => ({
-      year: `${month}/${day}`,
-      text: line.substring(0, 150),
-      html: null,
+    return items.map(item => ({
+      year: item.year,
+      text: item.description,
+      wikipedia: item.wikipedia?.[0]?.wikipedia || ""
     }));
-  } catch {
-    return getLocalHistoricalEvents(month, day);
+  } catch (error) {
+    console.error("Error fetching historical data:", error);
+    return null;
   }
 }
 
 function getLocalHistoricalEvents(month, day) {
-  // Sample historical events database
   const historicalDB = {
     "1/1": [
       { year: "1970", text: "Unix epoch begins." },
@@ -50,6 +50,11 @@ function getLocalHistoricalEvents(month, day) {
       { year: "2008", text: "Sichuan earthquake in China kills tens of thousands." },
       { year: "1949", text: "Israel joins UN as a member state." },
       { year: "1520", text: "Pope Leo X excommunicates Martin Luther." },
+    ],
+    "5/14": [
+      { year: "1948", text: "Israel declares independence as the British Mandate for Palestine ends." },
+      { year: "1804", text: "The Lewis and Clark Expedition departs from Camp Dubois to begin their historic journey to the Pacific Ocean." },
+      { year: "1796", text: "Edward Jenner administers the first smallpox vaccination." },
     ],
     "7/4": [
       { year: "1776", text: "United States Declaration of Independence adopted." },
@@ -65,37 +70,52 @@ function getLocalHistoricalEvents(month, day) {
 
   const key = `${month}/${day}`;
   return historicalDB[key] || [
-    { year: `${month}/${day}`, text: "Historical events data for this date is not available." },
+    { year: `${month}/${day}`, text: "Historical events data for this date is not available in our local database." },
   ];
 }
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const month = Math.max(1, Math.min(12, parseInt(body?.month) || new Date().getMonth() + 1));
-    const day = Math.max(1, Math.min(31, parseInt(body?.day) || new Date().getDate()));
-    const category = body?.category || "all";
+    const now = new Date();
+    const month = Math.max(1, Math.min(12, parseInt(body?.month) || now.getMonth() + 1));
+    const day = Math.max(1, Math.min(31, parseInt(body?.day) || now.getDate()));
+    const category = body?.category || "events";
 
-    const events = await getWikipediaEvents(month, day);
+    let events = null;
+    
+    if (category === "all") {
+      // If "all" is requested, we'll fetch events as default or could fetch all 3 in parallel
+      // For performance and simplicity, let's fetch events but we could expand this
+      events = await fetchHistoricalData(month, day, "events");
+    } else {
+      events = await fetchHistoricalData(month, day, category);
+    }
 
     if (!events || events.length === 0) {
       return NextResponse.json(
         {
           events: getLocalHistoricalEvents(month, day),
-          error: "Using sample historical data",
+          source: "local",
+          error: "Could not fetch live data, showing sample events",
         },
         { status: 200 }
       );
     }
 
-    return NextResponse.json({ events, error: null }, { status: 200 });
+    return NextResponse.json({ 
+      events: events.slice(0, 50), // Limit to top 50 for performance
+      source: "wikipedia",
+      error: null 
+    }, { status: 200 });
+    
   } catch (error) {
-    const month = new Date().getMonth() + 1;
-    const day = new Date().getDate();
+    const now = new Date();
     return NextResponse.json(
       {
-        events: getLocalHistoricalEvents(month, day),
-        error: "Failed to fetch from Wikipedia, showing sample events",
+        events: getLocalHistoricalEvents(now.getMonth() + 1, now.getDate()),
+        source: "local",
+        error: "Failed to process request, showing sample events",
       },
       { status: 200 }
     );
