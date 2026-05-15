@@ -8,8 +8,11 @@ export async function POST(req) {
   }
 
   // If OPENAI_API_KEY is not set, return a simple heuristic fallback
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) {
+  const groqKey = process.env.GROQ_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
+
+  // If neither Groq nor OpenAI key is set, return a simple heuristic fallback
+  if (!groqKey && !openaiKey) {
     // simple fallback mirroring client-side logic
     const simple = {
       message: "OPENAI_API_KEY not set. Returning heuristic plan.",
@@ -24,39 +27,75 @@ export async function POST(req) {
     };
     return new Response(JSON.stringify(simple), { status: 200 });
   }
-
-  // Call OpenAI Chat Completion API
+  // Prefer Groq if available
   try {
-    const prompt = `You are a helpful planning assistant. Create a realistic, step-by-step milestone plan for the goal: "${goal}". Deadline: ${deadline || "none"}. Constraints: ${constraints || "none"}. Focus level (1-100): ${focusLevel || 50}.
+    const prompt = `You are a helpful planning assistant. Create a realistic, step-by-step milestone plan for the goal: "${goal}". Deadline: ${deadline || "none"}. Constraints: ${constraints || "none"}. Focus level (1-100): ${focusLevel || 50}.\n\nReturn a JSON object with keys: milestones (array of {title,tasks}), tips (array of strings). Keep tasks actionable and small.`;
 
-Return a JSON object with keys: milestones (array of {title,tasks}), tips (array of strings). Keep tasks actionable and small.`;
+    if (groqKey) {
+      const groqUrl = process.env.GROQ_API_URL || "https://api.groq.ai/v1";
+      const model = process.env.GROQ_MODEL || "groq-1";
+      const resp = await fetch(`${groqUrl}/models/${model}/outputs`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${groqKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: prompt,
+          parameters: { max_output_tokens: 800, temperature: 0.7 },
+        }),
+      });
 
-    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-        messages: [{ role: "system", content: "You are a concise planning assistant." }, { role: "user", content: prompt }],
-        temperature: 0.7,
-        max_tokens: 600,
-      }),
-    });
+      const data = await resp.json();
+      // Try to extract text from Groq response (varies by API)
+      let content = "";
+      if (data?.outputs && Array.isArray(data.outputs)) {
+        content = data.outputs.map((o) => {
+          if (typeof o === "string") return o;
+          if (o?.content) {
+            if (Array.isArray(o.content)) return o.content.map((c) => c?.text || c).join("");
+            if (typeof o.content === "string") return o.content;
+          }
+          return JSON.stringify(o);
+        }).join("\n");
+      } else if (data?.output_text) content = data.output_text;
+      else content = JSON.stringify(data);
 
-    const data = await resp.json();
-    // Try to parse assistant content as JSON
-    const content = data?.choices?.[0]?.message?.content || "";
-    let plan = null;
-    try {
-      plan = JSON.parse(content);
-    } catch (e) {
-      // If not valid JSON, return as text wrapped
-      plan = { raw: content };
+      let plan = null;
+      try {
+        plan = JSON.parse(content);
+      } catch (e) {
+        plan = { raw: content };
+      }
+      return new Response(JSON.stringify({ plan }), { status: 200 });
     }
 
-    return new Response(JSON.stringify({ plan }), { status: 200 });
+    // Fallback to OpenAI if available
+    if (openaiKey) {
+      const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${openaiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+          messages: [{ role: "system", content: "You are a concise planning assistant." }, { role: "user", content: prompt }],
+          temperature: 0.7,
+          max_tokens: 600,
+        }),
+      });
+
+      const data = await resp.json();
+      const content = data?.choices?.[0]?.message?.content || "";
+      let plan = null;
+      try {
+        plan = JSON.parse(content);
+      } catch (e) {
+        plan = { raw: content };
+      }
+      return new Response(JSON.stringify({ plan }), { status: 200 });
+    }
   } catch (err) {
     return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
   }
