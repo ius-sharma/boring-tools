@@ -3,9 +3,6 @@
 
 import { useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
-import dynamic from "next/dynamic";
-
-const ComingSoon = dynamic(() => import("./coming-soon"), { ssr: false });
 
 const formulaCategories = {
   Physics: [
@@ -176,10 +173,6 @@ const getStepByStepExplanation = (formula, inputs, values) => {
 };
 
 export default function ScienceFormulasCalculator() {
-  // If the env variable is not set, show Coming Soon
-  if (!process.env.NEXT_PUBLIC_SHOW_SCIENCE_FORMULAS_CALCULATOR) {
-    return <ComingSoon />;
-  }
   const [selectedCategory, setSelectedCategory] = useState("Physics");
   const [selectedFormula, setSelectedFormula] = useState("force");
   const [inputs, setInputs] = useState({});
