@@ -20,6 +20,26 @@ function extractYouTubeId(url) {
   }
 }
 
+// Helper: Extract Instagram media ID from URL
+function extractInstagramMediaId(url) {
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname.includes("instagram.com")) {
+      // Match patterns: /p/ID/, /reel/ID/, /tv/ID/
+      const match = url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
+      if (match) {
+        return {
+          id: match[2],
+          type: match[1], // 'p', 'reel', or 'tv'
+        };
+      }
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 // Helper: Check if URL is Instagram
 function isInstagramUrl(url) {
   try {
@@ -151,7 +171,7 @@ async function getInstagramTranscript(instagramUrl) {
       );
     }
 
-    // Extract audio from Instagram video
+    // Extract audio from Instagram video/reel
     const { execFile } = await import("child_process");
     const { promisify } = await import("util");
     const execFileAsync = promisify(execFile);
@@ -166,14 +186,19 @@ async function getInstagramTranscript(instagramUrl) {
 
     try {
       // Download audio using discovered yt-dlp command
+      // Enhanced options for better Instagram Reels support
       const ytArgs = [
         "-f",
         "bestaudio",
         "-x",
         "--audio-format",
         "mp3",
+        "--audio-quality",
+        "192",
         "-o",
         outputTemplate,
+        "--no-warnings",
+        "--quiet",
         instagramUrl,
       ];
 
@@ -244,6 +269,17 @@ async function getInstagramTranscript(instagramUrl) {
   }
 }
 
+// Helper: Extract Instagram media title from URL or metadata
+async function getInstagramTitle(mediaId, mediaType) {
+  try {
+    // Return a descriptive title based on media type
+    const typeLabel = mediaType === "reel" ? "Reel" : "Video";
+    return `Instagram ${typeLabel}-${mediaId.substring(0, 8)}`;
+  } catch {
+    return "Instagram Video";
+  }
+}
+
 export async function POST(request) {
   try {
     const { url } = await request.json();
@@ -275,14 +311,30 @@ export async function POST(request) {
       );
     }
 
-    // Check if Instagram URL
+    // Check if Instagram URL (posts, reels, TV)
     if (isInstagramUrl(url)) {
+      const mediaInfo = extractInstagramMediaId(url);
+      if (!mediaInfo) {
+        return NextResponse.json(
+          {
+            error:
+              "Invalid Instagram URL. Please provide a valid Instagram post, reel, or TV video URL.",
+          },
+          { status: 400 }
+        );
+      }
+
       try {
         const transcript = await getInstagramTranscript(url);
+        const title = await getInstagramTitle(
+          mediaInfo.id,
+          mediaInfo.type
+        );
         return NextResponse.json({
           transcript,
-          title: "Instagram Video",
+          title,
           source: "instagram",
+          mediaType: mediaInfo.type,
         });
       } catch (error) {
         return NextResponse.json(
@@ -290,7 +342,7 @@ export async function POST(request) {
             error:
               error instanceof Error
                 ? error.message
-                : "Failed to process Instagram video",
+                : "Failed to process Instagram video. Make sure the video is publicly accessible and contains audio.",
           },
           { status: 400 }
         );
@@ -299,7 +351,8 @@ export async function POST(request) {
 
     return NextResponse.json(
       {
-        error: "Unsupported URL. Please provide a YouTube (including Shorts) or Instagram video URL.",
+        error:
+          "Unsupported URL. Please provide a YouTube (including Shorts) or Instagram video URL (posts, reels, or TV).",
       },
       { status: 400 }
     );

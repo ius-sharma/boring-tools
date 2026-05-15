@@ -69,7 +69,7 @@ export default function VideoTranscriber() {
       <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-3xl border border-slate-200 flex flex-col gap-6">
         <div className="text-center flex flex-col gap-1">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Video Transcriber</h1>
-          <p className="text-slate-500 text-base">Extract captions from YouTube and Instagram videos instantly.</p>
+          <p className="text-slate-500 text-base">Extract captions and audio transcripts from YouTube, Instagram Reels, and video posts instantly.</p>
         </div>
 
         <form onSubmit={handleTranscribe} className="flex flex-col gap-4">
@@ -85,7 +85,7 @@ export default function VideoTranscriber() {
               placeholder="Paste YouTube, Shorts, or Instagram video URL here..."
               className="border border-slate-300 rounded-lg p-3 bg-slate-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
-            <p className="text-xs text-slate-500">Supports: YouTube videos, YouTube Shorts, Instagram Reels, and video posts</p>
+            <p className="text-xs text-slate-500">Supports: YouTube videos, YouTube Shorts, Instagram Reels, Instagram video posts, and Instagram TV</p>
           </div>
 
           <button
@@ -140,9 +140,10 @@ export default function VideoTranscriber() {
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">How it works</p>
           <ul className="mt-2 space-y-1 text-xs text-slate-700">
             <li>• YouTube videos, Shorts, and short links (youtu.be)</li>
-            <li>• Instagram Reels and video posts</li>
+            <li>• Instagram Reels, video posts, and TV videos</li>
             <li>• YouTube: Uses official captions if available</li>
-            <li>• Instagram: AI transcription (requires setup)</li>
+            <li>• Instagram: AI transcription via audio extraction</li>
+            <li>• Works with publicly accessible content</li>
             <li>• Results stored locally, never uploaded</li>
             <li>• Copy or download your transcript instantly</li>
           </ul>
