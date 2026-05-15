@@ -28,7 +28,7 @@ const tools = [
   { id: "linkedin-post-formatter", name: "LinkedIn Post Formatter", href: "/linkedin-post-formatter", category: "Professional", description: "Create engaging LinkedIn posts tailored to your audience.", status: "Live", isNew: true },
   { id: "what-happened-today", name: "What Happened Today In History", href: "/what-happened-today", category: "Learning", description: "Discover major historical events that happened on this day.", status: "Live", isNew: true },
   { id: "math-formula-calculator", name: "Math Formula Calculator", href: "/math-formula-calculator", category: "Education", description: "Calculate algebra, geometry, trigonometry, and statistics formulas.", status: "Upcoming" },
-  { id: "science-formulas-calculator", name: "Science Formulas Calculator", href: "/science-formulas-calculator", category: "Education", description: "Physics, chemistry, and biology formulas with step-by-step solutions.", status: "Upcoming" },
+  { id: "science-formulas-calculator", name: "Science Formulas Calculator", href: "/science-formulas-calculator", category: "Education", description: "Physics, chemistry, and biology formulas with step-by-step solutions.", status: "Live", isNew: true },
   { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
    { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Live", isNew: true },
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Live", isNew: true },
@@ -36,7 +36,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "science-formulas-calculator"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
