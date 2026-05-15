@@ -28,15 +28,15 @@ const tools = [
   { id: "linkedin-post-formatter", name: "LinkedIn Post Formatter", href: "/linkedin-post-formatter", category: "Professional", description: "Create engaging LinkedIn posts tailored to your audience.", status: "Live", isNew: true },
   { id: "what-happened-today", name: "What Happened Today In History", href: "/what-happened-today", category: "Learning", description: "Discover major historical events that happened on this day.", status: "Live", isNew: true },
   { id: "math-formula-calculator", name: "Math Formula Calculator", href: "/math-formula-calculator", category: "Education", description: "Calculate algebra, geometry, trigonometry, and statistics formulas.", status: "Upcoming" },
-  { id: "science-formulas-calculator", name: "Science Formulas Calculator", href: "/science-formulas-calculator", category: "Education", description: "Physics, chemistry, and biology formulas with step-by-step solutions.", status: "Live", isNew: true },
+  { id: "science-formulas-calculator", name: "Science Formulas Calculator", href: "/science-formulas-calculator", category: "Education", description: "Physics, chemistry, and biology formulas with step-by-step solutions.", status: "Upcoming" },
   { id: "base-converter", name: "Base Converter", href: "/base-converter", category: "Developer", description: "Convert Binary, Decimal, Octal, and Hex instantly.", status: "Live" },
-  { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Live", isNew: true },
+   { id: "aspect-ratio-calculator", name: "Aspect Ratio Calculator", href: "/aspect-ratio-calculator", category: "Developer", description: "Resize images while preserving aspect ratio.", status: "Live", isNew: true },
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Live", isNew: true },
   { id: "currency-converter", name: "Currency Converter", href: "/currency-converter", category: "Finance", description: "Quick currency conversions with optional historical rates.", status: "Live", isNew: true },
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "science-formulas-calculator"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "gst-calculator", "to-do-list", "time-zone-converter", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
@@ -193,70 +193,125 @@ export default function Home() {
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-              <div className="text-2xl mb-2">⚡</div>
-              <h3 className="font-bold text-slate-900 text-sm">Fast & Lightweight</h3>
-              <p className="text-xs text-slate-500 mt-1">No bloat. Just speed.</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
+              <p className="text-sm font-semibold text-orange-600 mb-1">No Signup</p>
+              <p className="text-slate-600 text-xs">Use instantly, no account needed</p>
             </div>
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-              <div className="text-2xl mb-2">🔒</div>
-              <h3 className="font-bold text-slate-900 text-sm">Privacy First</h3>
-              <p className="text-xs text-slate-500 mt-1">Your data stays with you.</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
+              <p className="text-sm font-semibold text-orange-600 mb-1">Free Forever</p>
+              <p className="text-slate-600 text-xs">All tools are completely free</p>
             </div>
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-              <div className="text-2xl mb-2">✨</div>
-              <h3 className="font-bold text-slate-900 text-sm">No Signup</h3>
-              <p className="text-xs text-slate-500 mt-1">Use instantly. No accounts.</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
+              <p className="text-sm font-semibold text-orange-600 mb-1">Fast & Simple</p>
+              <p className="text-slate-600 text-xs">Minimal UI, instant results</p>
             </div>
-            <div className="p-4 rounded-xl border border-slate-100 bg-slate-50/50">
-              <div className="text-2xl mb-2">🛠️</div>
-              <h3 className="font-bold text-slate-900 text-sm">100% Free</h3>
-              <p className="text-xs text-slate-500 mt-1">Open for everyone.</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
+              <p className="text-sm font-semibold text-orange-600 mb-1">Browser-Based</p>
+              <p className="text-slate-600 text-xs">Works offline, saves locally</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Section */}
-      <section id="featured" className="bg-white py-12 sm:py-16 border-t border-slate-100">
+      {/* Featured Tools */}
+      <section id="featured" className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Fresh Tools</h2>
-              <p className="text-slate-600">The latest additions to the collection</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {categories.slice(0, 5).map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setQuery(cat);
-                    document.getElementById("find-tools")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="px-4 py-1.5 rounded-full border border-slate-200 text-sm font-medium hover:border-orange-400 hover:text-orange-600 transition"
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+          <div className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Featured Tools</h2>
+            <p className="text-slate-600">Try these popular and newly added utilities</p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredTools.map((tool) => (
               <a
                 key={tool.id}
                 href={tool.href}
-                className="group relative p-8 rounded-3xl border border-slate-200 bg-white hover:border-orange-400 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300"
+                className="block p-6 rounded-xl border border-slate-200 bg-white hover:border-orange-400 hover:shadow-lg transition"
               >
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-xs font-bold text-orange-600 uppercase tracking-widest">{tool.category}</span>
-                  <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition">
-                    →
-                  </div>
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-xs font-semibold text-orange-600 uppercase">{tool.category}</span>
+                  {tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{tool.name}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">{tool.description}</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{tool.name}</h3>
+                <p className="text-sm text-slate-600">{tool.description}</p>
               </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="bg-slate-50 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Browse by Category</h2>
+            <p className="text-slate-600">Find tools for your needs</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {categories.map((cat) => {
+              const count = availableTools.filter((t) => t.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setQuery(cat);
+                    setTimeout(() => findToolsRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+                  }}
+                  className="p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-400 hover:bg-orange-50 transition text-center"
+                >
+                  <p className="font-semibold text-slate-900 mb-1">{cat}</p>
+                  <p className="text-xs text-slate-500">{count} tools</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">How It Works</h2>
+            <p className="text-slate-600">Three simple steps</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg mx-auto mb-4">1</div>
+              <h3 className="font-bold text-slate-900 mb-2">Search or Browse</h3>
+              <p className="text-sm text-slate-600">Find a tool by searching or browsing categories</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg mx-auto mb-4">2</div>
+              <h3 className="font-bold text-slate-900 mb-2">Use Instantly</h3>
+              <p className="text-sm text-slate-600">No signup required, use immediately in your browser</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg mx-auto mb-4">3</div>
+              <h3 className="font-bold text-slate-900 mb-2">Copy & Go</h3>
+              <p className="text-sm text-slate-600">Copy results or save to local storage instantly</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases */}
+      <section className="bg-slate-50 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Built For</h2>
+            <p className="text-slate-600">All kinds of users</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[
+              { title: "Students", desc: "Convert units, format code, check grammar" },
+              { title: "Developers", desc: "Format JSON, convert bases, generate QR codes" },
+              { title: "Creators", desc: "Compress images, write better resumes, count words" },
+              { title: "Everyone", desc: "Daily utilities, productivity tools, fun games" },
+            ].map((use, i) => (
+              <div key={i} className="p-6 rounded-lg border border-slate-200 bg-white">
+                <h3 className="font-bold text-slate-900 mb-2">For {use.title}</h3>
+                <p className="text-sm text-slate-600">{use.desc}</p>
+              </div>
             ))}
           </div>
         </div>
