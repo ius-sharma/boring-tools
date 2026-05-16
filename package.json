@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postinstall": "node scripts/ensure-yt-dlp.mjs",
-    "prebuild": "node scripts/ensure-yt-dlp.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -17,8 +15,7 @@
     "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "youtube-transcript": "^1.3.1",
-    "yt-dlp-exec": "^1.0.2"
+    "youtube-transcript": "^1.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

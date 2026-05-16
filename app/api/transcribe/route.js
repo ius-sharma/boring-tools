@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
+
+const execFileAsync = promisify(execFile);
+const YTDLP_RELEASE_TAG = process.env.YTDLP_RELEASE_TAG || "2026.03.17";
 
 // Helper: Extract YouTube video ID from URL (including Shorts)
 function extractYouTubeId(url) {
@@ -76,6 +81,44 @@ async function getYouTubeTitle(videoId) {
   }
 }
 
+async function ensureYtDlpBinary() {
+  const os = await import("os");
+  const path = await import("path");
+  const fs = await import("fs/promises");
+
+  const tempDir = path.join(os.tmpdir(), "boring-tools-ytdlp");
+  const binaryName = process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp";
+  const binaryPath = path.join(tempDir, binaryName);
+
+  try {
+    await fs.access(binaryPath);
+    return binaryPath;
+  } catch {}
+
+  await fs.mkdir(tempDir, { recursive: true });
+
+  const assetName = process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp";
+  const downloadUrl = `https://github.com/yt-dlp/yt-dlp/releases/download/${YTDLP_RELEASE_TAG}/${assetName}`;
+  const response = await fetch(downloadUrl, {
+    headers: {
+      "User-Agent": "boring-tools-transcriber",
+      Accept: "application/octet-stream",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to download yt-dlp (${response.status}) from ${downloadUrl}`);
+  }
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  await fs.writeFile(binaryPath, buffer, { mode: 0o755 });
+  if (process.platform !== "win32") {
+    await fs.chmod(binaryPath, 0o755);
+  }
+
+  return binaryPath;
+}
+
 async function transcribeAudioBufferWithGroq(audioBuffer) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
@@ -109,21 +152,26 @@ async function downloadAudioBufferWithYtDlp(videoUrl, baseNamePrefix) {
   const os = await import("os");
   const path = await import("path");
   const fs = await import("fs/promises");
-  const ytdlp = (await import("yt-dlp-exec")).default;
 
   const tempDir = os.tmpdir();
   const baseName = `${baseNamePrefix}-${Date.now()}`;
   const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
 
-  await ytdlp.exec(videoUrl, {
-    format: "bestaudio",
-    extractAudio: true,
-    audioFormat: "mp3",
-    audioQuality: 192,
-    output: outputTemplate,
-    noWarnings: true,
-    quiet: true,
-  });
+  const binaryPath = await ensureYtDlpBinary();
+  await execFileAsync(binaryPath, [
+    "-f",
+    "bestaudio",
+    "-x",
+    "--audio-format",
+    "mp3",
+    "--audio-quality",
+    "192",
+    "-o",
+    outputTemplate,
+    "--no-warnings",
+    "--quiet",
+    videoUrl,
+  ], { windowsHide: true, maxBuffer: 20 * 1024 * 1024 });
 
   const files = await fs.readdir(tempDir);
   const match = files.find((f) => f.startsWith(baseName));
