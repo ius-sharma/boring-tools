@@ -6,6 +6,56 @@ export const maxDuration = 300;
 const YTDL_CORE_PROMISE = import("@distube/ytdl-core");
 const INSTAGRAM_DIRECT_PROMISE = import("instagram-url-direct");
 
+function parseYoutubeCookies() {
+  const jsonRaw = process.env.YOUTUBE_COOKIES_JSON || process.env.YOUTUBE_COOKIES;
+  const stringRaw = process.env.YOUTUBE_COOKIES_STRING;
+
+  if (jsonRaw) {
+    try {
+      const parsed = JSON.parse(jsonRaw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // ignore json parse error and try string format
+    }
+  }
+
+  if (stringRaw && typeof stringRaw === "string") {
+    return stringRaw
+      .split(";")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((item) => {
+        const eq = item.indexOf("=");
+        if (eq <= 0) return null;
+        const name = item.slice(0, eq).trim();
+        const value = item.slice(eq + 1).trim();
+        return {
+          name,
+          value,
+          domain: ".youtube.com",
+          path: "/",
+          secure: true,
+          httpOnly: false,
+          hostOnly: false,
+          sameSite: "lax",
+        };
+      })
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function isYoutubeBotChallenge(error) {
+  const message = String(error?.message || error || "").toLowerCase();
+  return (
+    message.includes("sign in to confirm you're not a bot") ||
+    message.includes("confirm you\u2019re not a bot") ||
+    message.includes("status code: 403") ||
+    message.includes("could not extract functions")
+  );
+}
+
 // Helper: Extract YouTube video ID from URL (including Shorts)
 function extractYouTubeId(url) {
   try {
@@ -119,13 +169,39 @@ async function streamToBuffer(stream) {
 
 async function getYouTubeAudioBuffer(videoUrl) {
   const ytdl = (await YTDL_CORE_PROMISE).default;
-  const audioStream = ytdl(videoUrl, {
+  const baseOptions = {
     filter: "audioonly",
     quality: "highestaudio",
     highWaterMark: 1 << 25,
-  });
+    playerClients: ["WEB_EMBEDDED", "IOS", "ANDROID", "TV"],
+    requestOptions: {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    },
+  };
 
-  return streamToBuffer(Readable.from(audioStream));
+  try {
+    const audioStream = ytdl(videoUrl, baseOptions);
+    return await streamToBuffer(Readable.from(audioStream));
+  } catch (error) {
+    if (!isYoutubeBotChallenge(error)) {
+      throw error;
+    }
+
+    const cookies = parseYoutubeCookies();
+    if (!cookies.length) {
+      throw new Error(
+        "Sign in to confirm you're not a bot. Add YOUTUBE_COOKIES_JSON (cookie array) in Vercel env to unlock YouTube audio extraction."
+      );
+    }
+
+    const agent = ytdl.createAgent(cookies);
+    const audioStream = ytdl(videoUrl, { ...baseOptions, agent });
+    return await streamToBuffer(Readable.from(audioStream));
+  }
 }
 
 async function fetchBinaryFromUrl(url, options = {}) {
