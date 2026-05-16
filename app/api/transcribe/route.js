@@ -76,52 +76,69 @@ async function getYouTubeTitle(videoId) {
   }
 }
 
-// Helper: Transcribe using Groq Whisper API
-async function transcribeWithGroq(audioUrl) {
+async function transcribeAudioBufferWithGroq(audioBuffer) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
   if (!groqApiKey) {
-    throw new Error(
-      "Groq API key not configured. Please set GROQ_API_KEY in environment variables."
-    );
+    throw new Error("Groq API key not configured. Please set GROQ_API_KEY in environment variables.");
   }
+
+  const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
+  const formData = new FormData();
+  formData.append("file", audioBlob, "audio.mp3");
+  formData.append("model", "whisper-large-v3-turbo");
+
+  const groqResponse = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${groqApiKey}`,
+    },
+    body: formData,
+  });
+
+  if (!groqResponse.ok) {
+    const error = await groqResponse.json();
+    throw new Error(error.error?.message || "Groq transcription failed");
+  }
+
+  const result = await groqResponse.json();
+  return result.text;
+}
+
+async function downloadAudioBufferWithYtDlp(videoUrl, baseNamePrefix) {
+  const os = await import("os");
+  const path = await import("path");
+  const fs = await import("fs/promises");
+  const ytdlp = (await import("yt-dlp-exec")).default;
+
+  const tempDir = os.tmpdir();
+  const baseName = `${baseNamePrefix}-${Date.now()}`;
+  const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
+
+  await ytdlp.exec(videoUrl, {
+    format: "bestaudio",
+    extractAudio: true,
+    audioFormat: "mp3",
+    audioQuality: 192,
+    output: outputTemplate,
+    noWarnings: true,
+    quiet: true,
+  });
+
+  const files = await fs.readdir(tempDir);
+  const match = files.find((f) => f.startsWith(baseName));
+  if (!match) {
+    throw new Error("Failed to find audio file produced by yt-dlp");
+  }
+
+  const audioPath = path.join(tempDir, match);
+  const audioBuffer = await fs.readFile(audioPath);
 
   try {
-    const audioResponse = await fetch(audioUrl);
-    if (!audioResponse.ok) {
-      throw new Error("Failed to fetch audio from video");
-    }
+    await fs.unlink(audioPath);
+  } catch {}
 
-    const audioBuffer = await audioResponse.arrayBuffer();
-    const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
-
-    const formData = new FormData();
-    formData.append("file", audioBlob, "audio.mp3");
-    formData.append("model", "whisper-large-v3-turbo");
-
-    const groqResponse = await fetch(
-      "https://api.groq.com/openai/v1/audio/transcriptions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${groqApiKey}`,
-        },
-        body: formData,
-      }
-    );
-
-    if (!groqResponse.ok) {
-      const error = await groqResponse.json();
-      throw new Error(error.error?.message || "Groq transcription failed");
-    }
-
-    const result = await groqResponse.json();
-    return result.text;
-  } catch (error) {
-    throw new Error(
-      `Groq transcription error: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  return audioBuffer;
 }
 
 // Helper: Extract audio from Instagram/video URL using bundled yt-dlp
@@ -135,84 +152,22 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   try {
-    const os = await import("os");
-    const path = await import("path");
-    const fs = await import("fs/promises");
-    const ytdlp = (await import("yt-dlp-exec")).default;
-
-    const tempDir = os.tmpdir();
-    const baseName = `insta-audio-${Date.now()}`;
-    const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
-
-    try {
-      // Download audio using the bundled yt-dlp binary that ships with the app.
-      await ytdlp.exec(instagramUrl, {
-        format: "bestaudio",
-        extractAudio: true,
-        audioFormat: "mp3",
-        audioQuality: 192,
-        output: outputTemplate,
-        noWarnings: true,
-        quiet: true,
-      });
-
-      // Find the downloaded file (match by baseName)
-      const files = await fs.readdir(tempDir);
-      const match = files.find((f) => f.startsWith(baseName));
-      if (!match) {
-        throw new Error("Failed to find audio file produced by yt-dlp");
-      }
-
-      const audioPath = path.join(tempDir, match);
-      const audioBuffer = await fs.readFile(audioPath);
-
-      // Send to Groq Whisper
-      const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
-      const formData = new FormData();
-      formData.append("file", audioBlob, "audio.mp3");
-      formData.append("model", "whisper-large-v3-turbo");
-
-      const groqResponse = await fetch(
-        "https://api.groq.com/openai/v1/audio/transcriptions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${groqApiKey}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!groqResponse.ok) {
-        const error = await groqResponse.json();
-        throw new Error(error.error?.message || "Groq transcription failed");
-      }
-
-      const result = await groqResponse.json();
-
-      // Cleanup temp file
-      try {
-        await fs.unlink(audioPath);
-      } catch {}
-
-      return result.text;
-    } catch (error) {
-      // Cleanup any matching temp files on error
-      try {
-        const files = await fs.readdir(tempDir);
-        for (const f of files) {
-          if (f.startsWith(baseName)) {
-            try {
-              await fs.unlink(path.join(tempDir, f));
-            } catch {}
-          }
-        }
-      } catch {}
-      throw error;
-    }
+    const audioBuffer = await downloadAudioBufferWithYtDlp(instagramUrl, "insta-audio");
+    return await transcribeAudioBufferWithGroq(audioBuffer);
   } catch (error) {
     throw new Error(
       `Instagram processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
+}
+
+async function getYouTubeAudioTranscript(videoUrl) {
+  try {
+    const audioBuffer = await downloadAudioBufferWithYtDlp(videoUrl, "yt-audio");
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (error) {
+    throw new Error(
+      `YouTube audio transcription failed: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 }
@@ -249,14 +204,27 @@ export async function POST(request) {
           source: "youtube",
         });
       }
-      // If no transcript available
-      return NextResponse.json(
-        {
-          error:
-            "This YouTube video doesn't have available captions. AI transcription for YouTube requires additional setup.",
-        },
-        { status: 400 }
-      );
+
+      // If captions are unavailable, fall back to audio transcription.
+      try {
+        const transcript = await getYouTubeAudioTranscript(url);
+        const title = await getYouTubeTitle(youtubeId);
+        return NextResponse.json({
+          transcript,
+          title,
+          source: "youtube-audio",
+        });
+      } catch (error) {
+        return NextResponse.json(
+          {
+            error:
+              error instanceof Error
+                ? error.message
+                : "This YouTube video doesn't have available captions and audio transcription failed.",
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Check if Instagram URL (posts, reels, TV)
