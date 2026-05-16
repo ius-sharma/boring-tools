@@ -56,6 +56,78 @@ function isYoutubeBotChallenge(error) {
   );
 }
 
+async function getInvidiousAudioUrl(videoId) {
+  const instanceListUrl = "https://api.invidious.io/instances.json?sort_by=type,users";
+  const preferredHosts = ["inv.thepixora.com", "invidious.nerdvpn.de", "yewtu.be"];
+  let hosts = [];
+
+  try {
+    const listResponse = await fetch(instanceListUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+    if (listResponse.ok) {
+      const instances = await listResponse.json();
+      hosts = instances
+        .filter((item) => item?.[1]?.api === true && item?.[1]?.type === "https")
+        .map((item) => item[0])
+        .slice(0, 120);
+    }
+  } catch {
+    // fall back to static hosts
+  }
+
+  const prioritizedHosts = [
+    ...preferredHosts,
+    ...hosts.filter((host) => !preferredHosts.includes(host)),
+  ];
+
+  for (const host of prioritizedHosts) {
+    const url = `https://${host}/api/v1/videos/${videoId}?local=true`;
+    try {
+      const response = await fetch(url, {
+        headers: { "User-Agent": "Mozilla/5.0" },
+        redirect: "follow",
+      });
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const formats = (payload?.adaptiveFormats || [])
+        .filter(
+          (format) =>
+            String(format?.type || "").startsWith("audio") &&
+            Number.isFinite(Number(format?.itag))
+        )
+        .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+      const fallbackItags = [251, 250, 249, 140];
+      const candidateItags = [
+        ...formats.map((format) => Number(format.itag)).filter(Boolean),
+        ...fallbackItags,
+      ];
+      const uniqueItags = [...new Set(candidateItags)].slice(0, 6);
+
+      for (const itag of uniqueItags) {
+        const candidateUrl = `https://${host}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+        const probe = await fetch(candidateUrl, {
+          headers: {
+            "User-Agent": "Mozilla/5.0",
+            Referer: `https://${host}/`,
+            Range: "bytes=0-65535",
+          },
+        });
+        if (probe.ok) {
+          probe.body?.cancel();
+          return candidateUrl;
+        }
+        probe.body?.cancel();
+      }
+    } catch {
+      // try next instance
+    }
+  }
+
+  throw new Error("No working Invidious instance returned an audio stream");
+}
+
 // Helper: Extract YouTube video ID from URL (including Shorts)
 function extractYouTubeId(url) {
   try {
@@ -167,27 +239,71 @@ async function streamToBuffer(stream) {
   return Buffer.concat(chunks);
 }
 
-async function getYouTubeAudioBuffer(videoUrl) {
-  const ytdl = (await YTDL_CORE_PROMISE).default;
-  const baseOptions = {
-    filter: "audioonly",
-    quality: "highestaudio",
-    highWaterMark: 1 << 25,
-    playerClients: ["WEB_EMBEDDED", "IOS", "ANDROID", "TV"],
-    requestOptions: {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9",
-      },
+function hasDirectPlayableUrl(format) {
+  return typeof format?.url === "string" && /^https?:\/\//.test(format.url);
+}
+
+function pickBestYouTubeFormat(ytdl, info) {
+  const directFormats = (info?.formats || []).filter(hasDirectPlayableUrl);
+  const audioOnly = ytdl
+    .filterFormats(directFormats, "audioonly")
+    .sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
+
+  if (audioOnly.length) return audioOnly[0];
+
+  // Some bot-checked videos only expose muxed formats. These still contain audio for Whisper.
+  const muxedWithAudio = directFormats
+    .filter((format) => format?.hasAudio)
+    .sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
+
+  return muxedWithAudio[0] || null;
+}
+
+async function getPlayableYouTubeInfo(ytdl, videoUrl, agent) {
+  const requestOptions = {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "Accept-Language": "en-US,en;q=0.9",
     },
   };
 
+  const clientSets = [["WEB"], ["WEB_EMBEDDED", "WEB"], ["IOS", "WEB"], ["ANDROID", "WEB"]];
+  let lastError = null;
+
+  for (const playerClients of clientSets) {
+    try {
+      const info = await ytdl.getInfo(videoUrl, {
+        requestOptions,
+        playerClients,
+        ...(agent ? { agent } : {}),
+      });
+
+      const selectedFormat = pickBestYouTubeFormat(ytdl, info);
+      if (selectedFormat) {
+        return { info, selectedFormat, requestOptions };
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (lastError) throw lastError;
+  throw new Error("Failed to find any playable formats");
+}
+
+async function getYouTubeAudioBuffer(videoUrl) {
+  const ytdl = (await YTDL_CORE_PROMISE).default;
+
   try {
-    const audioStream = ytdl(videoUrl, baseOptions);
+    const { info, selectedFormat } = await getPlayableYouTubeInfo(ytdl, videoUrl);
+    const audioStream = ytdl.downloadFromInfo(info, {
+      format: selectedFormat,
+      highWaterMark: 1 << 25,
+    });
     return await streamToBuffer(Readable.from(audioStream));
   } catch (error) {
-    if (!isYoutubeBotChallenge(error)) {
+    if (!isYoutubeBotChallenge(error) && !String(error?.message || "").includes("playable formats")) {
       throw error;
     }
 
@@ -199,18 +315,53 @@ async function getYouTubeAudioBuffer(videoUrl) {
     }
 
     const agent = ytdl.createAgent(cookies);
-    const audioStream = ytdl(videoUrl, { ...baseOptions, agent });
+    const { info, selectedFormat } = await getPlayableYouTubeInfo(ytdl, videoUrl, agent);
+    const audioStream = ytdl.downloadFromInfo(info, {
+      format: selectedFormat,
+      highWaterMark: 1 << 25,
+      agent,
+    });
     return await streamToBuffer(Readable.from(audioStream));
   }
 }
 
-async function fetchBinaryFromUrl(url, options = {}) {
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch media (${response.status})`);
+async function getYouTubeAudioBufferViaInvidious(videoUrl) {
+  const videoId = extractYouTubeId(videoUrl);
+  if (!videoId) {
+    throw new Error("Unable to extract YouTube video ID for fallback");
   }
-  const arrayBuffer = await response.arrayBuffer();
-  return Buffer.from(arrayBuffer);
+
+  const audioUrl = await getInvidiousAudioUrl(videoId);
+  const audioOrigin = new URL(audioUrl).origin;
+  return fetchBinaryFromUrl(
+    audioUrl,
+    {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        Referer: `${audioOrigin}/`,
+      },
+    },
+    3
+  );
+}
+
+async function fetchBinaryFromUrl(url, options = {}, retries = 1) {
+  let lastError = null;
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch media (${response.status})`);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Failed to fetch media");
 }
 
 // Helper: Extract audio from Instagram/video URL using pure JS fetch/streams
@@ -255,9 +406,14 @@ async function getYouTubeAudioTranscript(videoUrl) {
     const audioBuffer = await getYouTubeAudioBuffer(videoUrl);
     return await transcribeAudioBufferWithGroq(audioBuffer);
   } catch (error) {
-    throw new Error(
-      `YouTube audio transcription failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
+    try {
+      const audioBuffer = await getYouTubeAudioBufferViaInvidious(videoUrl);
+      return await transcribeAudioBufferWithGroq(audioBuffer);
+    } catch (fallbackError) {
+      throw new Error(
+        `YouTube audio transcription failed: ${error instanceof Error ? error.message : "Unknown error"}. Invidious fallback failed: ${fallbackError instanceof Error ? fallbackError.message : "Unknown error"}`
+      );
+    }
   }
 }
 
