@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
-import { execFile } from "child_process";
-import { promisify } from "util";
+import { Readable } from "stream";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
-
-const execFileAsync = promisify(execFile);
-const YTDLP_RELEASE_TAG = process.env.YTDLP_RELEASE_TAG || "2026.03.17";
+const YTDL_CORE_PROMISE = import("@distube/ytdl-core");
+const INSTAGRAM_DIRECT_PROMISE = import("instagram-url-direct");
 
 // Helper: Extract YouTube video ID from URL (including Shorts)
 function extractYouTubeId(url) {
@@ -74,49 +72,12 @@ async function getYouTubeTranscript(videoId) {
 // Helper: Get video title from YouTube
 async function getYouTubeTitle(videoId) {
   try {
-    // This would require YouTube Data API key, skipping for now
-    return `Video-${videoId.substring(0, 8)}`;
+    const ytdl = (await YTDL_CORE_PROMISE).default;
+    const info = await ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`);
+    return info?.videoDetails?.title || `Video-${videoId.substring(0, 8)}`;
   } catch {
-    return "Video";
+    return `Video-${videoId.substring(0, 8)}`;
   }
-}
-
-async function ensureYtDlpBinary() {
-  const os = await import("os");
-  const path = await import("path");
-  const fs = await import("fs/promises");
-
-  const tempDir = path.join(os.tmpdir(), "boring-tools-ytdlp");
-  const binaryName = process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp";
-  const binaryPath = path.join(tempDir, binaryName);
-
-  try {
-    await fs.access(binaryPath);
-    return binaryPath;
-  } catch {}
-
-  await fs.mkdir(tempDir, { recursive: true });
-
-  const assetName = process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp";
-  const downloadUrl = `https://github.com/yt-dlp/yt-dlp/releases/download/${YTDLP_RELEASE_TAG}/${assetName}`;
-  const response = await fetch(downloadUrl, {
-    headers: {
-      "User-Agent": "boring-tools-transcriber",
-      Accept: "application/octet-stream",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to download yt-dlp (${response.status}) from ${downloadUrl}`);
-  }
-
-  const buffer = Buffer.from(await response.arrayBuffer());
-  await fs.writeFile(binaryPath, buffer, { mode: 0o755 });
-  if (process.platform !== "win32") {
-    await fs.chmod(binaryPath, 0o755);
-  }
-
-  return binaryPath;
 }
 
 async function transcribeAudioBufferWithGroq(audioBuffer) {
@@ -148,48 +109,35 @@ async function transcribeAudioBufferWithGroq(audioBuffer) {
   return result.text;
 }
 
-async function downloadAudioBufferWithYtDlp(videoUrl, baseNamePrefix) {
-  const os = await import("os");
-  const path = await import("path");
-  const fs = await import("fs/promises");
-
-  const tempDir = os.tmpdir();
-  const baseName = `${baseNamePrefix}-${Date.now()}`;
-  const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
-
-  const binaryPath = await ensureYtDlpBinary();
-  await execFileAsync(binaryPath, [
-    "-f",
-    "bestaudio",
-    "-x",
-    "--audio-format",
-    "mp3",
-    "--audio-quality",
-    "192",
-    "-o",
-    outputTemplate,
-    "--no-warnings",
-    "--quiet",
-    videoUrl,
-  ], { windowsHide: true, maxBuffer: 20 * 1024 * 1024 });
-
-  const files = await fs.readdir(tempDir);
-  const match = files.find((f) => f.startsWith(baseName));
-  if (!match) {
-    throw new Error("Failed to find audio file produced by yt-dlp");
+async function streamToBuffer(stream) {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
-
-  const audioPath = path.join(tempDir, match);
-  const audioBuffer = await fs.readFile(audioPath);
-
-  try {
-    await fs.unlink(audioPath);
-  } catch {}
-
-  return audioBuffer;
+  return Buffer.concat(chunks);
 }
 
-// Helper: Extract audio from Instagram/video URL using bundled yt-dlp
+async function getYouTubeAudioBuffer(videoUrl) {
+  const ytdl = (await YTDL_CORE_PROMISE).default;
+  const audioStream = ytdl(videoUrl, {
+    filter: "audioonly",
+    quality: "highestaudio",
+    highWaterMark: 1 << 25,
+  });
+
+  return streamToBuffer(Readable.from(audioStream));
+}
+
+async function fetchBinaryFromUrl(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch media (${response.status})`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
+
+// Helper: Extract audio from Instagram/video URL using pure JS fetch/streams
 async function getInstagramTranscript(instagramUrl) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
@@ -200,7 +148,24 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   try {
-    const audioBuffer = await downloadAudioBufferWithYtDlp(instagramUrl, "insta-audio");
+    const { instagramGetUrl } = await INSTAGRAM_DIRECT_PROMISE;
+    const mediaData = await instagramGetUrl(instagramUrl);
+    const mediaUrl =
+      mediaData?.media_details?.find((item) => item?.type === "video")?.url ||
+      mediaData?.media_details?.[0]?.url ||
+      mediaData?.url_list?.find(Boolean);
+
+    if (!mediaUrl) {
+      throw new Error("Instagram media URL not found");
+    }
+
+    const audioBuffer = await fetchBinaryFromUrl(mediaUrl, {
+      headers: {
+        Referer: instagramUrl,
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      },
+    });
     return await transcribeAudioBufferWithGroq(audioBuffer);
   } catch (error) {
     throw new Error(
@@ -211,7 +176,7 @@ async function getInstagramTranscript(instagramUrl) {
 
 async function getYouTubeAudioTranscript(videoUrl) {
   try {
-    const audioBuffer = await downloadAudioBufferWithYtDlp(videoUrl, "yt-audio");
+    const audioBuffer = await getYouTubeAudioBuffer(videoUrl);
     return await transcribeAudioBufferWithGroq(audioBuffer);
   } catch (error) {
     throw new Error(

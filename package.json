@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.12",
     "@vercel/analytics": "^2.0.1",
+    "instagram-url-direct": "^2.0.7",
     "marked": "^14.1.2",
     "next": "16.2.4",
     "qrcode": "^1.5.4",
