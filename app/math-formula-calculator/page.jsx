@@ -3,9 +3,6 @@
 
 import { useState, useMemo } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
-import dynamic from "next/dynamic";
-
-const ComingSoon = dynamic(() => import("./coming-soon"), { ssr: false });
 
 const formulaCategories = {
   Algebra: [
@@ -199,10 +196,6 @@ const getStepByStepExplanation = (formula, inputs, values) => {
 };
 
 export default function MathFormulaCalculator() {
-  // If the env variable is not set, show Coming Soon
-  if (!process.env.NEXT_PUBLIC_SHOW_MATH_FORMULA_CALCULATOR) {
-    return <ComingSoon />;
-  }
   const [selectedCategory, setSelectedCategory] = useState("Algebra");
   const [selectedFormula, setSelectedFormula] = useState("quadratic");
   const [inputs, setInputs] = useState({});
