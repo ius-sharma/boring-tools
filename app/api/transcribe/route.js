@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+export const maxDuration = 300;
+
 // Helper: Extract YouTube video ID from URL (including Shorts)
 function extractYouTubeId(url) {
   try {
@@ -48,37 +51,6 @@ function isInstagramUrl(url) {
   } catch {
     return false;
   }
-}
-
-// Helper: Find a usable yt-dlp command. Tries env override and several fallbacks.
-async function findYtDlpCommand() {
-  const { execSync } = await import("child_process");
-  const candidates = [
-    { raw: process.env.YT_DLP_PATH },
-    { raw: "yt-dlp" },
-    { raw: "yt-dlp.exe" },
-    { raw: "npx yt-dlp" },
-    { raw: "python -m yt_dlp" },
-    { raw: "python3 -m yt_dlp" },
-  ];
-
-  for (const c of candidates) {
-    if (!c.raw) continue;
-    try {
-      // Test the candidate by asking for its version
-      // execSync with a string will run in a shell which allows compound commands like 'python -m yt_dlp'
-      execSync(`${c.raw} --version`, { stdio: "pipe" });
-      // Split into command and prefix args
-      const parts = c.raw.split(/\s+/).filter(Boolean);
-      const cmd = parts.shift();
-      const argsPrefix = parts;
-      return { cmd, argsPrefix };
-    } catch (_) {
-      // try next candidate
-    }
-  }
-
-  return null;
 }
 
 // Helper: Fetch YouTube transcript using youtube-transcript-api
@@ -152,7 +124,7 @@ async function transcribeWithGroq(audioUrl) {
   }
 }
 
-// Helper: Extract audio from Instagram/video URL using yt-dlp (local only)
+// Helper: Extract audio from Instagram/video URL using bundled yt-dlp
 async function getInstagramTranscript(instagramUrl) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
@@ -163,50 +135,26 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   try {
-    // Discover yt-dlp command (allow override via YT_DLP_PATH env var)
-    const finder = await findYtDlpCommand();
-    if (!finder) {
-      throw new Error(
-        "yt-dlp is not installed or not found in PATH. Install it (npm install -g yt-dlp or winget install yt-dlp) or set YT_DLP_PATH in your environment to the yt-dlp command."
-      );
-    }
-
-    // Extract audio from Instagram video/reel
-    const { execFile } = await import("child_process");
-    const { promisify } = await import("util");
-    const execFileAsync = promisify(execFile);
-
     const os = await import("os");
     const path = await import("path");
     const fs = await import("fs/promises");
+    const ytdlp = (await import("yt-dlp-exec")).default;
 
     const tempDir = os.tmpdir();
     const baseName = `insta-audio-${Date.now()}`;
     const outputTemplate = path.join(tempDir, `${baseName}.%(ext)s`);
 
     try {
-      // Download audio using discovered yt-dlp command
-      // Enhanced options for better Instagram Reels support
-      const ytArgs = [
-        "-f",
-        "bestaudio",
-        "-x",
-        "--audio-format",
-        "mp3",
-        "--audio-quality",
-        "192",
-        "-o",
-        outputTemplate,
-        "--no-warnings",
-        "--quiet",
-        instagramUrl,
-      ];
-
-      // If finder has prefix args (like ['-m','yt_dlp'] for python), include them
-      const cmd = finder.cmd;
-      const args = [...(finder.argsPrefix || []), ...ytArgs];
-
-      await execFileAsync(cmd, args);
+      // Download audio using the bundled yt-dlp binary that ships with the app.
+      await ytdlp.exec(instagramUrl, {
+        format: "bestaudio",
+        extractAudio: true,
+        audioFormat: "mp3",
+        audioQuality: 192,
+        output: outputTemplate,
+        noWarnings: true,
+        quiet: true,
+      });
 
       // Find the downloaded file (match by baseName)
       const files = await fs.readdir(tempDir);
