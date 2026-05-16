@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "node scripts/ensure-yt-dlp.mjs",
+    "prebuild": "node scripts/ensure-yt-dlp.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
