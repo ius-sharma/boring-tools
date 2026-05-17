@@ -64,7 +64,7 @@ Live tools (28)
 25. What Happened Today In History — `/what-happened-today`
 26. Math Formula Calculator — `/math-formula-calculator`
 27. Science Formulas Calculator — `/science-formulas-calculator`
-28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
+28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28) ✅
 
 
 Upcoming tools

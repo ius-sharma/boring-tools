@@ -37,25 +37,7 @@ function levelLabel(score) {
   return "High Risk";
 }
 
-function ComingSoon() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12 text-slate-900">
-      <div className="w-full max-w-xl rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-600">Upcoming</p>
-        <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Can I Trust This Website?</h1>
-        <p className="mt-4 text-sm leading-6 text-slate-600 sm:text-base">
-          This tool is coming soon. It will check website trust signals like HTTPS, headers, transparency clues, and suspicious content patterns.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default function CanITrustThisWebsitePage() {
-  if (!process.env.NEXT_PUBLIC_SHOW_TRUST_CHECKER) {
-    return <ComingSoon />;
-  }
-
   const [url, setUrl] = useState("");
   const [context, setContext] = useState("");
   const [scanMode, setScanMode] = useState("balanced");
