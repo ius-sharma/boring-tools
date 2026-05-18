@@ -1,27 +1,28 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
-import ytdl from "ytdl-core";
+import { DisTube } from "distube";
+
+const distube = new DisTube();
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-async function getVideoInfoViaYtdl(url) {
+async function getVideoInfoViaDistube(url) {
   try {
-    const info = await ytdl.getInfo(url);
-    const videoDetails = info.videoDetails;
+    const video = await distube.getVideo(url);
 
-    const formats = info.formats
+    const formats = video.formats
       .filter((f) => f.hasVideo || f.hasAudio)
       .map((f) => ({
-        itag: String(f.itag),
+        itag: String(f.itag || f.format_id),
         quality: f.qualityLabel || `${f.height}p` || "Unknown",
         hasVideo: f.hasVideo,
         hasAudio: f.hasAudio,
         mimeType: f.mimeType || "video/mp4",
         fps: f.fps || 30,
         bitrate: f.bitrate || 0,
-        filesize: f.contentLength ? parseInt(f.contentLength) : 0,
-        filesizeApprox: f.contentLength ? parseInt(f.contentLength) : 0,
+        filesize: f.filesize ? parseInt(f.filesize) : 0,
+        filesizeApprox: f.filesize_approx ? parseInt(f.filesize_approx) : 0,
         audioBitrate: f.audioBitrate || 0,
       }))
       .filter((f, i, arr) => arr.findIndex((x) => x.quality === f.quality) === i)
@@ -33,18 +34,18 @@ async function getVideoInfoViaYtdl(url) {
       .slice(0, 8);
 
     return {
-      videoId: videoDetails.videoId,
-      title: videoDetails.title,
-      description: videoDetails.shortDescription || "",
-      duration: parseInt(videoDetails.lengthSeconds) || 0,
-      channelName: videoDetails.author?.name || "Unknown",
-      thumbnail: videoDetails.thumbnails?.[videoDetails.thumbnails.length - 1]?.url || "",
+      videoId: video.id,
+      title: video.name || video.title,
+      description: video.description || "",
+      duration: video.duration || 0,
+      channelName: video.uploader?.name || video.channel || "Unknown",
+      thumbnail: video.thumbnail || "",
       formats: formats,
-      captions: info.captions && info.captions.length > 0 ? "Available" : "Not Available",
-      isLiveContent: videoDetails.isLiveContent || false,
+      captions: video.subtitles && video.subtitles.length > 0 ? "Available" : "Not Available",
+      isLiveContent: video.isLiveContent || false,
     };
   } catch (err) {
-    console.error("ytdl-core error:", err.message);
+    console.error("DisTube error:", err.message);
     throw new Error(`Failed to fetch video: ${err.message}`);
   }
 }
@@ -68,7 +69,7 @@ export async function POST(request) {
 
     if (action === "getInfo") {
       try {
-        const videoInfo = await getVideoInfoViaYtdl(url);
+        const videoInfo = await getVideoInfoViaDistube(url);
         return NextResponse.json(videoInfo);
       } catch (err) {
         console.error("Failed to get video info:", err.message);
@@ -87,16 +88,17 @@ export async function POST(request) {
       }
 
       try {
-        const info = await ytdl.getInfo(url);
-        const format = info.formats.find((f) => String(f.itag) === String(itag));
+        const video = await distube.getVideo(url);
+        const format = video.formats.find((f) => String(f.itag || f.format_id) === String(itag));
 
         if (!format) {
           return NextResponse.json({ error: "Format not found" }, { status: 400 });
         }
 
-        const stream = ytdl.downloadFromInfo(info, { format });
+        // DisTube stream download
+        const stream = await distube.getStream(video, { quality: itag });
+
         let body = stream;
-        
         try {
           body = Readable.toWeb(stream);
         } catch (e) {
@@ -146,14 +148,14 @@ export async function GET(request) {
     const id = videoIdMatch ? videoIdMatch[1] : "video";
 
     try {
-      const info = await ytdl.getInfo(url);
-      const format = info.formats.find((f) => String(f.itag) === String(itag));
+      const video = await distube.getVideo(url);
+      const format = video.formats.find((f) => String(f.itag || f.format_id) === String(itag));
 
       if (!format) {
         return NextResponse.json({ error: "Format not found" }, { status: 400 });
       }
 
-      const stream = ytdl.downloadFromInfo(info, { format });
+      const stream = await distube.getStream(video, { quality: itag });
       let body = stream;
       
       try {
