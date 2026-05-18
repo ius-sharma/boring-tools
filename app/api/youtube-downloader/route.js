@@ -30,7 +30,7 @@ function extractVideoId(url) {
   return match ? match[1] : null;
 }
 
-// Reliable metadata via YouTube oEmbed (works everywhere, no auth needed)
+// Reliable metadata via YouTube oEmbed (works everywhere)
 async function getOembedData(videoId) {
   try {
     const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
@@ -42,15 +42,14 @@ async function getOembedData(videoId) {
     return {
       title: data.title || null,
       channelName: data.author_name || null,
-      thumbnail: data.thumbnail_url || null,
     };
   } catch {
     return null;
   }
 }
 
-// Scrape YouTube page for description and duration (fallback)
-async function scrapeYouTubePageMeta(videoId) {
+// Scrape YouTube page for ALL data: metadata + formats + streaming data
+async function scrapeYouTubePageData(videoId) {
   try {
     const res = await fetch(
       `https://www.youtube.com/watch?v=${videoId}`,
@@ -65,44 +64,89 @@ async function scrapeYouTubePageMeta(videoId) {
     if (!res.ok) return {};
     const html = await res.text();
 
-    let result = {};
+    let result = { formats: [] };
 
-    // Extract from ytInitialPlayerResponse
+    // Extract ytInitialPlayerResponse (contains videoDetails + streamingData)
     const playerMatch = html.match(
-      /var\s+ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*<\/script/s
+      /var\s+ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s
     );
     if (playerMatch) {
       try {
         const playerData = JSON.parse(playerMatch[1]);
+
+        // Video details (title, author, description, duration)
         const vd = playerData?.videoDetails;
         if (vd) {
           result.title = vd.title || null;
           result.channelName = vd.author || null;
           result.description = vd.shortDescription || null;
           result.duration = parseInt(vd.lengthSeconds) || 0;
-          result.thumbnail =
-            vd.thumbnail?.thumbnails?.[vd.thumbnail.thumbnails.length - 1]
-              ?.url || null;
+          result.isLiveContent = vd.isLiveContent || false;
         }
-      } catch {}
+
+        // Captions
+        const captionTracks =
+          playerData?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+        if (captionTracks && captionTracks.length > 0) {
+          result.hasCaptions = true;
+        }
+
+        // Streaming data - extract format info
+        const sd = playerData?.streamingData;
+        if (sd) {
+          const allRawFormats = [
+            ...(sd.formats || []),
+            ...(sd.adaptiveFormats || []),
+          ];
+
+          result.formats = allRawFormats
+            .filter((f) => f.width && f.height) // video formats only
+            .map((f) => ({
+              itag: String(f.itag),
+              quality: f.qualityLabel || `${f.height}p` || "Unknown",
+              hasVideo: true,
+              hasAudio: !!f.audioQuality,
+              mimeType: f.mimeType || "video/mp4",
+              fps: f.fps || 30,
+              bitrate: f.bitrate || 0,
+              filesize: f.contentLength
+                ? parseInt(f.contentLength)
+                : 0,
+              filesizeApprox: f.contentLength
+                ? parseInt(f.contentLength)
+                : f.approxDurationMs && f.bitrate
+                  ? Math.floor(
+                      (f.bitrate * parseInt(f.approxDurationMs)) / 8000
+                    )
+                  : 0,
+            }))
+            .filter(
+              (f, i, arr) =>
+                arr.findIndex((x) => x.quality === f.quality) === i
+            )
+            .sort((a, b) => {
+              const aRes = parseInt(a.quality) || 0;
+              const bRes = parseInt(b.quality) || 0;
+              return bRes - aRes;
+            })
+            .slice(0, 8);
+        }
+      } catch (e) {
+        console.error("Failed to parse ytInitialPlayerResponse:", e.message);
+      }
     }
 
-    // Fallback: extract from meta tags
+    // Fallback: extract title from meta tags
     if (!result.title) {
       const titleMatch = html.match(
         /<meta\s+name="title"\s+content="([^"]*?)"/
       );
       if (titleMatch) result.title = titleMatch[1];
     }
-    if (!result.description) {
-      const descMatch = html.match(
-        /<meta\s+name="description"\s+content="([^"]*?)"/
-      );
-      if (descMatch) result.description = descMatch[1];
-    }
 
     return result;
-  } catch {
+  } catch (e) {
+    console.error("Page scrape error:", e.message);
     return {};
   }
 }
@@ -123,11 +167,11 @@ async function isYtdlpAvailable() {
   return ytdlpAvailable;
 }
 
-async function getVideoInfoViaYoutubei(videoId) {
-  // Always fetch oEmbed + page scrape in parallel for reliable metadata
-  const [oembed, pageMeta, innertubeResult] = await Promise.allSettled([
+async function getVideoInfo(videoId) {
+  // Fetch oEmbed + page scrape + innertube ALL in parallel
+  const [oembed, pageScrape, innertubeResult] = await Promise.allSettled([
     getOembedData(videoId),
-    scrapeYouTubePageMeta(videoId),
+    scrapeYouTubePageData(videoId),
     (async () => {
       const yt = await getInnertubeClient();
       return await yt.getInfo(videoId);
@@ -135,15 +179,14 @@ async function getVideoInfoViaYoutubei(videoId) {
   ]);
 
   const oembedData = oembed.status === "fulfilled" ? oembed.value : null;
-  const pageData = pageMeta.status === "fulfilled" ? pageMeta.value : {};
+  const pageData = pageScrape.status === "fulfilled" ? pageScrape.value : {};
 
-  let info = null;
-  let details = {};
-  let formats = [];
+  let innertubeDetails = {};
+  let innertubeFormats = [];
 
   if (innertubeResult.status === "fulfilled" && innertubeResult.value) {
-    info = innertubeResult.value;
-    details = info.basic_info || {};
+    const info = innertubeResult.value;
+    innertubeDetails = info.basic_info || {};
 
     // Extract formats from innertube
     const streamingData = info.streaming_data;
@@ -152,7 +195,7 @@ async function getVideoInfoViaYoutubei(videoId) {
       ...(streamingData?.adaptive_formats || []),
     ];
 
-    formats = allFormats
+    innertubeFormats = allFormats
       .filter((f) => f.has_video)
       .map((f) => ({
         itag: String(f.itag),
@@ -180,52 +223,59 @@ async function getVideoInfoViaYoutubei(videoId) {
       .slice(0, 8);
   } else {
     console.error(
-      "youtubei.js getInfo failed:",
+      "youtubei.js failed:",
       innertubeResult.reason?.message
     );
     innertube = null;
   }
 
-  // Merge data: prioritize innertube > pageScrape > oembed
+  // Merge metadata: innertube > pageScrape > oembed
   const title =
-    details.title || pageData.title || oembedData?.title || "Unknown";
+    innertubeDetails.title ||
+    pageData.title ||
+    oembedData?.title ||
+    "Unknown";
   const channelName =
-    details.author ||
-    details.channel?.name ||
+    innertubeDetails.author ||
+    innertubeDetails.channel?.name ||
     pageData.channelName ||
     oembedData?.channelName ||
     "Unknown";
   const description =
-    details.short_description || pageData.description || "";
-  const duration = details.duration || pageData.duration || 0;
+    innertubeDetails.short_description || pageData.description || "";
+  const duration =
+    innertubeDetails.duration || pageData.duration || 0;
 
-  // Best thumbnail
-  const thumbnails = details.thumbnail || [];
+  // Use innertube formats first, fallback to page scrape formats
+  const formats =
+    innertubeFormats.length > 0
+      ? innertubeFormats
+      : pageData.formats || [];
+
+  // Best thumbnail: try innertube first (highest res), then known URL patterns
   let bestThumbnail = "";
-  if (Array.isArray(thumbnails) && thumbnails.length > 0) {
-    const sorted = [...thumbnails].sort(
+  const innertubeThumb = innertubeDetails.thumbnail || [];
+  if (Array.isArray(innertubeThumb) && innertubeThumb.length > 0) {
+    const sorted = [...innertubeThumb].sort(
       (a, b) => (b.width || 0) - (a.width || 0)
     );
     bestThumbnail = sorted[0]?.url || "";
   }
   if (!bestThumbnail) {
-    bestThumbnail =
-      pageData.thumbnail ||
-      oembedData?.thumbnail ||
-      `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+    // Use hqdefault (always exists) rather than maxresdefault (may 404)
+    bestThumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
   }
 
   // Captions
-  const hasCaptions =
-    info?.captions?.caption_tracks && info.captions.caption_tracks.length > 0;
+  const hasCaptions = pageData.hasCaptions || false;
 
-  // If we have no title from ANY source, the video is truly unavailable
+  // If no title from ANY source, video is unavailable
   if (title === "Unknown" && !oembedData && !pageData.title) {
     throw new Error("This video is unavailable or private.");
   }
 
   return {
-    videoId: details.id || videoId,
+    videoId,
     title,
     description,
     duration,
@@ -233,7 +283,7 @@ async function getVideoInfoViaYoutubei(videoId) {
     thumbnail: bestThumbnail,
     formats,
     captions: hasCaptions ? "Available" : "Not Available",
-    isLiveContent: details.is_live || false,
+    isLiveContent: innertubeDetails.is_live || pageData.isLiveContent || false,
   };
 }
 
@@ -295,7 +345,7 @@ async function downloadViaYtdlp(videoId, itag) {
   });
 }
 
-// Download via youtubei.js decipher (fallback for Vercel)
+// Download via youtubei.js decipher (fallback)
 async function downloadViaYoutubei(videoId, itag) {
   const yt = await getInnertubeClient();
   const info = await yt.getInfo(videoId);
@@ -378,7 +428,7 @@ export async function POST(request) {
 
     if (action === "getInfo") {
       try {
-        const videoInfo = await getVideoInfoViaYoutubei(videoId);
+        const videoInfo = await getVideoInfo(videoId);
         return NextResponse.json(videoInfo);
       } catch (err) {
         console.error("Failed to get video info:", err.message);

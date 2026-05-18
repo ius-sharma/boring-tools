@@ -1,61 +1,43 @@
-const { Innertube, Platform } = require('youtubei.js');
-const { generate } = require('youtube-po-token-generator');
-
-Platform.shim.eval = async (data) => {
-  return new Function(data.output)();
-};
-
+// Test regex patterns for ytInitialPlayerResponse
 (async () => {
-  console.log('Generating PoToken...');
-  const { visitorData, poToken } = await generate();
-  console.log('visitorData:', visitorData?.substring(0, 30) + '...');
-  console.log('poToken:', poToken?.substring(0, 30) + '...');
+  const videoId = 'dQw4w9WgXcQ';
   
-  const yt = await Innertube.create({
-    lang: 'en',
-    location: 'US',
-    retrieve_player: true,
-    visitor_data: visitorData,
-    po_token: poToken,
+  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept-Language': 'en-US,en;q=0.9',
+    },
   });
+  const html = await res.text();
   
-  const info = await yt.getInfo('dQw4w9WgXcQ');
-  console.log('\nTitle:', info.basic_info.title);
+  // Try different regex patterns
+  const patterns = [
+    { name: 'strict', regex: /var\s+ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s },
+    { name: 'lenient', regex: /ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s },
+    { name: 'very-lenient', regex: /ytInitialPlayerResponse\s*=\s*(\{.+?\});/s },
+  ];
   
-  const fmts = [...(info.streaming_data?.formats || []), ...(info.streaming_data?.adaptive_formats || [])];
-  const fmt = fmts.find(f => f.itag === 18);
-  
-  if (fmt) {
-    console.log('Format:', fmt.quality_label, 'URL present:', !!fmt.url);
-    
-    const url = fmt.url || await fmt.decipher(yt.session?.player);
-    console.log('Deciphered URL:', !!url);
-    
-    // Test fetch
-    const res = await fetch(url);
-    console.log('Fetch status:', res.status);
-    console.log('Content-Type:', res.headers.get('content-type'));
-    console.log('Content-Length:', res.headers.get('content-length'));
-    
-    if (res.status === 200) {
-      console.log('SUCCESS! Download works!');
+  for (const p of patterns) {
+    const m = html.match(p.regex);
+    if (m) {
+      try {
+        const data = JSON.parse(m[1]);
+        const fmts = data?.streamingData?.formats?.length || 0;
+        const adaptive = data?.streamingData?.adaptiveFormats?.length || 0;
+        console.log(`${p.name}: MATCH, formats:${fmts} adaptive:${adaptive}`);
+      } catch {
+        console.log(`${p.name}: MATCH but JSON parse failed`);
+      }
+    } else {
+      console.log(`${p.name}: NO MATCH`);
     }
   }
   
-  // Also try yt.download
-  console.log('\nTrying yt.download...');
-  try {
-    const stream = await yt.download('dQw4w9WgXcQ', {
-      type: 'video+audio',
-      quality: '360p',
-    });
-    const reader = stream.getReader();
-    const { value } = await reader.read();
-    console.log('First chunk:', value?.length, 'bytes');
-    reader.releaseLock();
-    console.log('yt.download WORKS!');
-  } catch(e) {
-    console.log('yt.download error:', e.message);
+  // Also check: what does the page actually contain around ytInitialPlayerResponse
+  const idx = html.indexOf('ytInitialPlayerResponse');
+  if (idx >= 0) {
+    const around = html.substring(idx - 20, idx + 40);
+    console.log('\nContext around ytInitialPlayerResponse:', JSON.stringify(around));
   }
   
-})().catch(e => console.error('FATAL:', e.message));
+})();
