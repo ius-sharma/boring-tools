@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (29)
+Live tools (30)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -66,6 +66,7 @@ Live tools (29)
 27. Science Formulas Calculator — `/science-formulas-calculator`
 28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
 29. Social Account Analyzer — `/social-account-analyzer` (Day 29)
+30. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
 
 
 Upcoming tools
