@@ -49,8 +49,8 @@ export default function YouTubeDownloader() {
     setDownloadingFormat(itag);
 
     try {
-      // play-dl handles format selection automatically, so we just need the URL
-      const params = new URLSearchParams({ url: url.trim() });
+      // Use a direct GET URL with format selection
+      const params = new URLSearchParams({ url: url.trim(), itag });
       const downloadUrl = `/api/youtube-downloader?${params.toString()}`;
 
       // Create an anchor and click it to start native download
@@ -208,7 +208,7 @@ export default function YouTubeDownloader() {
               <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Available Formats</p>
                 <div className="flex flex-col gap-2">
-                  {videoInfo.formats.slice(0, 5).map((format, idx) => (
+                  {videoInfo.formats.map((format) => (
                     <div key={format.itag} className="border border-slate-200 rounded-lg p-3 flex justify-between items-center">
                       <div className="text-sm">
                         <p className="font-semibold text-slate-900">{format.quality}</p>
