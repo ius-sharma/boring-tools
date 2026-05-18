@@ -139,6 +139,20 @@ export default function YouTubeDownloader() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
       <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-3xl border border-slate-200 flex flex-col gap-6">
+        {/* Online Limitation Notice */}
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 flex flex-col gap-3">
+          <div className="flex gap-3 items-start">
+            <div className="flex-shrink-0 text-lg">⚠️</div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-amber-900">Limited online — Download recommended locally</p>
+              <p className="text-xs text-amber-800 mt-1">Video downloads work best when run locally. Online downloads have server-side rate limits and bandwidth restrictions.</p>
+              <a href="/setup-guide" className="text-xs font-semibold text-amber-700 hover:text-amber-900 underline mt-2 inline-block">
+                📖 View local setup guide (2 min install)
+              </a>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center flex flex-col gap-1">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">YouTube Downloader</h1>

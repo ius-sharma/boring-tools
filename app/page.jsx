@@ -34,6 +34,7 @@ const tools = [
   { id: "distance-between-cities", name: "Distance Between Cities", href: "/distance-between-cities", category: "Utility", description: "Compute straight-line distance and travel estimates.", status: "Live", isNew: true },
   { id: "currency-converter", name: "Currency Converter", href: "/currency-converter", category: "Finance", description: "Quick currency conversions with optional historical rates.", status: "Live", isNew: true },
   { id: "social-account-analyzer", name: "Social Account Analyzer", href: "/social-account-analyzer", category: "Creator Tools", description: "Check Instagram or YouTube account health — spam followers, consistency & growth.", status: "Live", isNew: true },
+  { id: "youtube-downloader", name: "YouTube Downloader", href: "/youtube-downloader", category: "Media", description: "Download videos, captions, and thumbnails from YouTube. Best used locally for full functionality.", status: "Upcoming", isNew: true },
 ];
 
 const liveToolIds = new Set([

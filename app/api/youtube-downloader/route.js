@@ -136,11 +136,6 @@ async function scrapeYouTubePageData(videoId) {
       }
     }
 
-      // Detect Google's bot/verification challenge page and return a flag
-      if (html && /confirm you\u2019re not a bot|sign in to confirm you'?re not a bot/i.test(html)) {
-        return { botChallenge: true };
-      }
-
     // Fallback: extract title from meta tags
     if (!result.title) {
       const titleMatch = html.match(
@@ -185,11 +180,6 @@ async function getVideoInfo(videoId) {
 
   const oembedData = oembed.status === "fulfilled" ? oembed.value : null;
   const pageData = pageScrape.status === "fulfilled" ? pageScrape.value : {};
-
-  // If the page scrape detected a bot challenge, surface a clear error
-  if (pageData && pageData.botChallenge) {
-    throw new Error("Sign in to confirm you're not a bot");
-  }
 
   let innertubeDetails = {};
   let innertubeFormats = [];
@@ -261,10 +251,6 @@ async function getVideoInfo(videoId) {
     innertubeFormats.length > 0
       ? innertubeFormats
       : pageData.formats || [];
-
-  if (!formats || formats.length === 0) {
-    throw new Error("Failed to find any playable formats");
-  }
 
   // Best thumbnail: try innertube first (highest res), then known URL patterns
   let bestThumbnail = "";

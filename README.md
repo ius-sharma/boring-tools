@@ -70,7 +70,7 @@ Live tools (29)
 
 Upcoming tools
 
-*None at the moment!*
+- YouTube Downloader — `/youtube-downloader` — Download videos, captions, and thumbnails from YouTube. **Recommended for local use** — see [Setup Guide](/SETUP_GUIDE.md) for full functionality.
 
 Run locally
 
@@ -80,6 +80,15 @@ npm run dev
 ```
 
 Open `http://localhost:3000` and click any tool from the homepage.
+
+### Local vs Online
+
+Most tools work perfectly in your browser. However, some tools like **YouTube Downloader** work better when run locally due to server-side limitations.
+
+**For full YouTube Downloader functionality:**
+- See [Setup Guide](/SETUP_GUIDE.md) for step-by-step local installation
+- Local setup enables unlimited downloads, full quality support, and no rate limits
+- Takes only 2 minutes to set up
 
 Project notes
 - This repository contains many small tools under `app/` built with Next.js + Tailwind.

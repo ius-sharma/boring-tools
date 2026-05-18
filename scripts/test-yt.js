@@ -1,43 +1,65 @@
-// Test regex patterns for ytInitialPlayerResponse
+// Test Invidious API for video info + formats + downloads
 (async () => {
   const videoId = 'dQw4w9WgXcQ';
   
-  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Accept-Language': 'en-US,en;q=0.9',
-    },
+  // Get Invidious instances
+  const listRes = await fetch('https://api.invidious.io/instances.json?sort_by=type,users', {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
   });
-  const html = await res.text();
+  const instances = await listRes.json();
+  const hosts = instances
+    .filter(item => item?.[1]?.api === true && item?.[1]?.type === 'https')
+    .map(item => item[0])
+    .slice(0, 20);
   
-  // Try different regex patterns
-  const patterns = [
-    { name: 'strict', regex: /var\s+ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s },
-    { name: 'lenient', regex: /ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s },
-    { name: 'very-lenient', regex: /ytInitialPlayerResponse\s*=\s*(\{.+?\});/s },
-  ];
+  console.log('Found', hosts.length, 'Invidious instances');
   
-  for (const p of patterns) {
-    const m = html.match(p.regex);
-    if (m) {
-      try {
-        const data = JSON.parse(m[1]);
-        const fmts = data?.streamingData?.formats?.length || 0;
-        const adaptive = data?.streamingData?.adaptiveFormats?.length || 0;
-        console.log(`${p.name}: MATCH, formats:${fmts} adaptive:${adaptive}`);
-      } catch {
-        console.log(`${p.name}: MATCH but JSON parse failed`);
+  // Try each host
+  for (const host of hosts.slice(0, 5)) {
+    console.log(`\n--- ${host} ---`);
+    try {
+      const url = `https://${host}/api/v1/videos/${videoId}?local=true`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) {
+        console.log('FAIL:', res.status);
+        continue;
       }
-    } else {
-      console.log(`${p.name}: NO MATCH`);
+      const data = await res.json();
+      
+      console.log('Title:', data.title);
+      console.log('Author:', data.author);
+      console.log('Duration:', data.lengthSeconds, 'sec');
+      console.log('Description:', data.description?.substring(0, 80));
+      
+      // Thumbnails
+      if (data.videoThumbnails?.length) {
+        const best = data.videoThumbnails.sort((a, b) => (b.width || 0) - (a.width || 0))[0];
+        console.log('Best thumb:', best.quality, best.width + 'x' + best.height, best.url?.substring(0, 80));
+      }
+      
+      // Formats
+      const videoFormats = (data.formatStreams || []);
+      const adaptiveFormats = (data.adaptiveFormats || []).filter(f => f.type?.startsWith('video/'));
+      console.log('Format streams:', videoFormats.length, 'Adaptive video:', adaptiveFormats.length);
+      
+      videoFormats.forEach(f => {
+        console.log(`  ${f.qualityLabel || f.quality} (${f.container}) url:${f.url ? 'YES' : 'NO'}`);
+      });
+      
+      // Test download URL
+      if (videoFormats[0]?.url) {
+        const dlRes = await fetch(videoFormats[0].url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+        console.log('Download test:', dlRes.status, dlRes.headers.get('content-type'));
+      }
+      
+      console.log('SUCCESS!');
+      break;
+    } catch (e) {
+      console.log('ERROR:', e.message);
     }
   }
   
-  // Also check: what does the page actually contain around ytInitialPlayerResponse
-  const idx = html.indexOf('ytInitialPlayerResponse');
-  if (idx >= 0) {
-    const around = html.substring(idx - 20, idx + 40);
-    console.log('\nContext around ytInitialPlayerResponse:', JSON.stringify(around));
-  }
-  
-})();
+})().catch(e => console.error('FATAL:', e.message));
