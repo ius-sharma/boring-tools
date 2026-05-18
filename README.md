@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (28)
+Live tools (29)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -64,12 +64,13 @@ Live tools (28)
 25. What Happened Today In History — `/what-happened-today`
 26. Math Formula Calculator — `/math-formula-calculator`
 27. Science Formulas Calculator — `/science-formulas-calculator`
-28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28) ✅
+28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
+29. Social Account Analyzer — `/social-account-analyzer` (Day 29)
 
 
 Upcoming tools
 
-- Social Account Analyzer — `/social-account-analyzer` (Coming Soon)
+*None at the moment!*
 
 Run locally
 
@@ -133,13 +134,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **28 tools** (listed on the homepage)
-- Upcoming: **1 tool**
-
-
-Upcoming tools
-
-- Social Account Analyzer — `/social-account-analyzer` (Coming Soon)
+- Live: **29 tools** (listed on the homepage)
+- Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
 
