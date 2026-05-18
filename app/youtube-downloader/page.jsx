@@ -47,18 +47,37 @@ export default function YouTubeDownloader() {
     if (!videoInfo) return;
 
     setDownloadingFormat(itag);
+    setError("");
 
     try {
-      // Use a direct GET URL with format selection
       const params = new URLSearchParams({ url: url.trim(), itag });
       const downloadUrl = `/api/youtube-downloader?${params.toString()}`;
 
-      // Create an anchor and click it to start native download
+      // Use fetch to check if download is available before triggering
+      const response = await fetch(downloadUrl);
+
+      if (!response.ok) {
+        // Try to parse error JSON
+        try {
+          const errData = await response.json();
+          throw new Error(errData.error || "Download failed");
+        } catch (jsonErr) {
+          if (jsonErr.message && jsonErr.message !== "Download failed") {
+            throw jsonErr;
+          }
+          throw new Error(`Download failed (HTTP ${response.status})`);
+        }
+      }
+
+      // Download is available - create blob and trigger download
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = downloadUrl;
+      a.href = blobUrl;
       a.download = `${videoInfo.title}-${quality}.mp4`;
       document.body.appendChild(a);
       a.click();
+      window.URL.revokeObjectURL(blobUrl);
       document.body.removeChild(a);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Download failed");

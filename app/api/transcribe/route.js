@@ -1,10 +1,27 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
+import { Innertube, Platform } from "youtubei.js";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
-const YTDL_CORE_PROMISE = import("@distube/ytdl-core");
 const INSTAGRAM_DIRECT_PROMISE = import("instagram-url-direct");
+
+// Provide JS evaluator for youtubei.js URL deciphering
+Platform.shim.eval = async (data) => {
+  return new Function(data.output)();
+};
+
+let innertube = null;
+async function getInnertubeClient() {
+  if (!innertube) {
+    innertube = await Innertube.create({
+      lang: "en",
+      location: "US",
+      retrieve_player: true,
+    });
+  }
+  return innertube;
+}
 
 function parseYoutubeCookies() {
   const jsonRaw = process.env.YOUTUBE_COOKIES_JSON || process.env.YOUTUBE_COOKIES;
@@ -194,9 +211,9 @@ async function getYouTubeTranscript(videoId) {
 // Helper: Get video title from YouTube
 async function getYouTubeTitle(videoId) {
   try {
-    const ytdl = (await YTDL_CORE_PROMISE).default;
-    const info = await ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`);
-    return info?.videoDetails?.title || `Video-${videoId.substring(0, 8)}`;
+    const yt = await getInnertubeClient();
+    const info = await yt.getInfo(videoId);
+    return info?.basic_info?.title || `Video-${videoId.substring(0, 8)}`;
   } catch {
     return `Video-${videoId.substring(0, 8)}`;
   }
@@ -239,89 +256,53 @@ async function streamToBuffer(stream) {
   return Buffer.concat(chunks);
 }
 
-function hasDirectPlayableUrl(format) {
-  return typeof format?.url === "string" && /^https?:\/\//.test(format.url);
-}
-
-function pickBestYouTubeFormat(ytdl, info) {
-  const directFormats = (info?.formats || []).filter(hasDirectPlayableUrl);
-  const audioOnly = ytdl
-    .filterFormats(directFormats, "audioonly")
-    .sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
-
-  if (audioOnly.length) return audioOnly[0];
-
-  // Some bot-checked videos only expose muxed formats. These still contain audio for Whisper.
-  const muxedWithAudio = directFormats
-    .filter((format) => format?.hasAudio)
-    .sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
-
-  return muxedWithAudio[0] || null;
-}
-
-async function getPlayableYouTubeInfo(ytdl, videoUrl, agent) {
-  const requestOptions = {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Accept-Language": "en-US,en;q=0.9",
-    },
-  };
-
-  const clientSets = [["WEB"], ["WEB_EMBEDDED", "WEB"], ["IOS", "WEB"], ["ANDROID", "WEB"]];
-  let lastError = null;
-
-  for (const playerClients of clientSets) {
-    try {
-      const info = await ytdl.getInfo(videoUrl, {
-        requestOptions,
-        playerClients,
-        ...(agent ? { agent } : {}),
-      });
-
-      const selectedFormat = pickBestYouTubeFormat(ytdl, info);
-      if (selectedFormat) {
-        return { info, selectedFormat, requestOptions };
-      }
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  if (lastError) throw lastError;
-  throw new Error("Failed to find any playable formats");
-}
-
 async function getYouTubeAudioBuffer(videoUrl) {
-  const ytdl = (await YTDL_CORE_PROMISE).default;
+  const videoId = extractYouTubeId(videoUrl);
+  if (!videoId) throw new Error("Invalid YouTube URL");
 
   try {
-    const { info, selectedFormat } = await getPlayableYouTubeInfo(ytdl, videoUrl);
-    const audioStream = ytdl.downloadFromInfo(info, {
-      format: selectedFormat,
-      highWaterMark: 1 << 25,
-    });
-    return await streamToBuffer(Readable.from(audioStream));
+    const yt = await getInnertubeClient();
+    const info = await yt.getInfo(videoId);
+
+    const streamingData = info.streaming_data;
+    const allFormats = [
+      ...(streamingData?.formats || []),
+      ...(streamingData?.adaptive_formats || []),
+    ];
+
+    // Find best audio format
+    const audioFormats = allFormats
+      .filter((f) => f.has_audio)
+      .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+    // Prefer audio-only, then muxed
+    const audioOnly = audioFormats.filter((f) => !f.has_video);
+    const selectedFormat = audioOnly[0] || audioFormats[0];
+
+    if (!selectedFormat) {
+      throw new Error("No audio format found");
+    }
+
+    // Try to decipher the URL
+    let downloadUrl = selectedFormat.url;
+    if (!downloadUrl && typeof selectedFormat.decipher === "function") {
+      downloadUrl = await selectedFormat.decipher(yt.session?.player);
+    }
+
+    if (!downloadUrl) {
+      throw new Error("Could not decipher audio URL");
+    }
+
+    const response = await fetch(downloadUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch audio (HTTP ${response.status})`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   } catch (error) {
-    if (!isYoutubeBotChallenge(error) && !String(error?.message || "").includes("playable formats")) {
-      throw error;
-    }
-
-    const cookies = parseYoutubeCookies();
-    if (!cookies.length) {
-      throw new Error(
-        "Sign in to confirm you're not a bot. Add YOUTUBE_COOKIES_JSON (cookie array) in Vercel env to unlock YouTube audio extraction."
-      );
-    }
-
-    const agent = ytdl.createAgent(cookies);
-    const { info, selectedFormat } = await getPlayableYouTubeInfo(ytdl, videoUrl, agent);
-    const audioStream = ytdl.downloadFromInfo(info, {
-      format: selectedFormat,
-      highWaterMark: 1 << 25,
-      agent,
-    });
-    return await streamToBuffer(Readable.from(audioStream));
+    innertube = null;
+    throw error;
   }
 }
 
