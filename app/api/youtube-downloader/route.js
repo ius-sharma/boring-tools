@@ -1,29 +1,26 @@
 import { NextResponse } from "next/server";
 import { Readable } from "stream";
-import { DisTube } from "distube";
-
-const distube = new DisTube();
+import play from "play-dl";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-async function getVideoInfoViaDistube(url) {
+async function getVideoInfoViaPlayDl(url) {
   try {
-    const video = await distube.getVideo(url);
+    const video = await play.video_info(url);
 
-    const formats = video.formats
-      .filter((f) => f.hasVideo || f.hasAudio)
-      .map((f) => ({
-        itag: String(f.itag || f.format_id),
-        quality: f.qualityLabel || `${f.height}p` || "Unknown",
-        hasVideo: f.hasVideo,
-        hasAudio: f.hasAudio,
-        mimeType: f.mimeType || "video/mp4",
+    // Extract available formats/qualities
+    const formats = (video.format || [])
+      .map((f, idx) => ({
+        itag: String(idx),
+        quality: f.quality_label || `${f.height}p` || "Unknown",
+        hasVideo: !!f.video_codec,
+        hasAudio: !!f.audio_codec,
+        mimeType: f.mime_type || "video/mp4",
         fps: f.fps || 30,
         bitrate: f.bitrate || 0,
-        filesize: f.filesize ? parseInt(f.filesize) : 0,
-        filesizeApprox: f.filesize_approx ? parseInt(f.filesize_approx) : 0,
-        audioBitrate: f.audioBitrate || 0,
+        filesize: f.content_length ? parseInt(f.content_length) : 0,
+        filesizeApprox: f.content_length ? parseInt(f.content_length) : 0,
       }))
       .filter((f, i, arr) => arr.findIndex((x) => x.quality === f.quality) === i)
       .sort((a, b) => {
@@ -34,18 +31,18 @@ async function getVideoInfoViaDistube(url) {
       .slice(0, 8);
 
     return {
-      videoId: video.id,
-      title: video.name || video.title,
+      videoId: video.video_id,
+      title: video.title || "",
       description: video.description || "",
       duration: video.duration || 0,
-      channelName: video.uploader?.name || video.channel || "Unknown",
-      thumbnail: video.thumbnail || "",
+      channelName: video.channel?.name || "Unknown",
+      thumbnail: video.thumbnails?.length ? video.thumbnails[0].url : "",
       formats: formats,
-      captions: video.subtitles && video.subtitles.length > 0 ? "Available" : "Not Available",
-      isLiveContent: video.isLiveContent || false,
+      captions: video.live ? "Not Available" : "Available",
+      isLiveContent: video.live || false,
     };
   } catch (err) {
-    console.error("DisTube error:", err.message);
+    console.error("play-dl error:", err.message);
     throw new Error(`Failed to fetch video: ${err.message}`);
   }
 }
@@ -53,7 +50,7 @@ async function getVideoInfoViaDistube(url) {
 
 export async function POST(request) {
   try {
-    const { url, action, itag } = await request.json();
+    const { url, action } = await request.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -69,7 +66,7 @@ export async function POST(request) {
 
     if (action === "getInfo") {
       try {
-        const videoInfo = await getVideoInfoViaDistube(url);
+        const videoInfo = await getVideoInfoViaPlayDl(url);
         return NextResponse.json(videoInfo);
       } catch (err) {
         console.error("Failed to get video info:", err.message);
@@ -83,30 +80,19 @@ export async function POST(request) {
     }
 
     if (action === "download") {
-      if (!itag) {
-        return NextResponse.json({ error: "Format ID is required" }, { status: 400 });
-      }
-
       try {
-        const video = await distube.getVideo(url);
-        const format = video.formats.find((f) => String(f.itag || f.format_id) === String(itag));
+        // play-dl streams the video directly
+        const stream = await play.stream(url);
 
-        if (!format) {
-          return NextResponse.json({ error: "Format not found" }, { status: 400 });
-        }
-
-        // DisTube stream download
-        const stream = await distube.getStream(video, { quality: itag });
-
-        let body = stream;
+        let body = stream.stream;
         try {
-          body = Readable.toWeb(stream);
+          body = Readable.toWeb(body);
         } catch (e) {
           console.warn("Could not convert stream to web stream", e?.message);
         }
 
         const headers = {
-          "Content-Type": format.mimeType || "video/mp4",
+          "Content-Type": "video/mp4",
           "Content-Disposition": `attachment; filename="video-${videoIdMatch[1]}.mp4"`,
         };
 
@@ -135,37 +121,26 @@ export async function GET(request) {
     const reqUrl = new URL(request.url);
     const params = reqUrl.searchParams;
     const url = params.get("url");
-    const itag = params.get("itag");
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
-    }
-    if (!itag) {
-      return NextResponse.json({ error: "Format ID is required" }, { status: 400 });
     }
 
     const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
     const id = videoIdMatch ? videoIdMatch[1] : "video";
 
     try {
-      const video = await distube.getVideo(url);
-      const format = video.formats.find((f) => String(f.itag || f.format_id) === String(itag));
-
-      if (!format) {
-        return NextResponse.json({ error: "Format not found" }, { status: 400 });
-      }
-
-      const stream = await distube.getStream(video, { quality: itag });
-      let body = stream;
+      const stream = await play.stream(url);
+      let body = stream.stream;
       
       try {
-        body = Readable.toWeb(stream);
+        body = Readable.toWeb(body);
       } catch (e) {
         console.warn("Could not convert stream to web stream in GET", e?.message);
       }
 
       const headers = {
-        "Content-Type": format.mimeType || "video/mp4",
+        "Content-Type": "video/mp4",
         "Content-Disposition": `attachment; filename="video-${id}.mp4"`,
       };
 

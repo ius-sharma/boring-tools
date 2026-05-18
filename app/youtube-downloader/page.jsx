@@ -43,14 +43,14 @@ export default function YouTubeDownloader() {
     }
   };
 
-  const handleDownload = async (itag, quality, hasAudio) => {
+  const handleDownload = async (itag, quality) => {
     if (!videoInfo) return;
 
     setDownloadingFormat(itag);
 
     try {
-      // Use a direct GET URL so browser handles streaming/download natively.
-      const params = new URLSearchParams({ url: url.trim(), itag, hasAudio: !!hasAudio });
+      // play-dl handles format selection automatically, so we just need the URL
+      const params = new URLSearchParams({ url: url.trim() });
       const downloadUrl = `/api/youtube-downloader?${params.toString()}`;
 
       // Create an anchor and click it to start native download
@@ -208,7 +208,7 @@ export default function YouTubeDownloader() {
               <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Available Formats</p>
                 <div className="flex flex-col gap-2">
-                  {videoInfo.formats.map((format) => (
+                  {videoInfo.formats.slice(0, 5).map((format, idx) => (
                     <div key={format.itag} className="border border-slate-200 rounded-lg p-3 flex justify-between items-center">
                       <div className="text-sm">
                         <p className="font-semibold text-slate-900">{format.quality}</p>
@@ -217,7 +217,7 @@ export default function YouTubeDownloader() {
                         <p className="text-xs text-slate-500">{formatBytes(format.filesize || format.filesizeApprox)}</p>
                       </div>
                       <button
-                        onClick={() => handleDownload(format.itag, format.quality, format.hasAudio)}
+                        onClick={() => handleDownload(format.itag, format.quality)}
                         disabled={downloadingFormat === format.itag}
                         className="border border-slate-900 text-slate-900 rounded-lg px-3 py-1 text-xs font-semibold hover:bg-slate-900 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ml-2"
                       >
