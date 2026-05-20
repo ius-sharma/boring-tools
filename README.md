@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (30)
+Live tools (31)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -67,11 +67,12 @@ Live tools (30)
 28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
 29. Social Account Analyzer — `/social-account-analyzer` (Day 29)
 30. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
+31. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
 
 
 Upcoming tools
 
-- YouTube Downloader — `/youtube-downloader` — Download videos, captions, and thumbnails from YouTube. **Recommended for local use** — see [Setup Guide](/SETUP_GUIDE.md) for full functionality.
+- (None) All planned tools are currently live!
 
 Run locally
 
@@ -144,7 +145,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **29 tools** (listed on the homepage)
+- Live: **31 tools** (listed on the homepage)
 - Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
