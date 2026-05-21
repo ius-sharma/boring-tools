@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (31)
+Live tools (32)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -46,33 +46,35 @@ Live tools (31)
 7. Unit Converter — `/unit-converter`
 8. File Name Sanitizer — `/file-name-sanitizer`
 9. Image Compressor / Resizer — `/image-compressor`
-10. Resume Bullet Rewriter — `/resume-bullet-rewriter`
-11. Time Zone Converter — `/time-zone-converter`
-12. To-Do List — `/to-do-list`
-13. GST Calculator — `/gst-calculator`
-14. Truth or Dare Play — `/truth-or-dare-play`
-15. Pomodoro Timer — `/pomodoro-timer`
-16. Roast My To-Do List — `/roast-my-todo-list`
-17. Markdown Previewer — `/markdown-previewer`
-18. Video Transcriber — `/video-transcriber`
-19. YouTube Title Generator — `/youtube-title-generator`
-20. Base Converter — `/base-converter`
-21. Aspect Ratio Calculator — `/aspect-ratio-calculator`
-22. Distance Between Cities — `/distance-between-cities`
-23. Currency Converter — `/currency-converter`
-24. LinkedIn Post Formatter — `/linkedin-post-formatter`
-25. What Happened Today In History — `/what-happened-today`
-26. Math Formula Calculator — `/math-formula-calculator`
-27. Science Formulas Calculator — `/science-formulas-calculator`
-28. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
-29. Social Account Analyzer — `/social-account-analyzer` (Day 29)
-30. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
-31. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
+11. Resume Bullet Rewriter — `/resume-bullet-rewriter`
+12. Time Zone Converter — `/time-zone-converter`
+13. To-Do List — `/to-do-list`
+14. GST Calculator — `/gst-calculator`
+15. Truth or Dare Play — `/truth-or-dare-play`
+16. Pomodoro Timer — `/pomodoro-timer`
+17. Roast My To-Do List — `/roast-my-todo-list`
+18. Markdown Previewer — `/markdown-previewer`
+19. Video Transcriber — `/video-transcriber`
+20. YouTube Title Generator — `/youtube-title-generator`
+21. Base Converter — `/base-converter`
+22. Aspect Ratio Calculator — `/aspect-ratio-calculator`
+23. Distance Between Cities — `/distance-between-cities`
+24. Currency Converter — `/currency-converter`
+25. LinkedIn Post Formatter — `/linkedin-post-formatter`
+26. What Happened Today In History — `/what-happened-today`
+27. Math Formula Calculator — `/math-formula-calculator`
+28. Science Formulas Calculator — `/science-formulas-calculator`
+29. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
+30. Social Account Analyzer — `/social-account-analyzer` (Day 29)
+31. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
+32. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
+32. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
 
 
 Upcoming tools
 
-- (None) All planned tools are currently live!
+- Image to PDF Converter — `/image-to-pdf-converter` — Temporarily offline; will be re-enabled later.
+- Video to Audio Converter — `/video-to-audio-converter` — Temporarily offline; will be re-enabled later.
 
 Run locally
 
@@ -145,8 +147,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **31 tools** (listed on the homepage)
-- Upcoming: **0 tools**
+- Live: **32 tools** (listed on the homepage)
+ - Upcoming: **2 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
 

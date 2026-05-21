@@ -15,6 +15,8 @@ const tools = [
   { id: "unit-converter", name: "Unit Converter", href: "/unit-converter", category: "Utility", description: "Convert length, weight, temperature.", status: "Live" },
   { id: "file-name-sanitizer", name: "File Name Sanitizer", href: "/file-name-sanitizer", category: "Utility", description: "Clean unsafe or messy filenames.", status: "Live" },
   { id: "image-compressor", name: "Image Compressor / Resizer", href: "/image-compressor", category: "Media", description: "Compress and resize images quickly.", status: "Live", isNew: true, isFeatured: true },
+  { id: "image-to-pdf-converter", name: "Image to PDF Converter", href: "/image-to-pdf-converter", category: "Media", description: "Upload one or more images and convert them into a downloadable PDF.", status: "Upcoming", isNew: true },
+  { id: "doc-to-pdf-converter", name: "DOC to PDF Converter", href: "/doc-to-pdf-converter", category: "Documents", description: "Upload DOC or DOCX files and convert them into a downloadable PDF.", status: "Live", isNew: true },
   { id: "resume-bullet-rewriter", name: "Resume Bullet Rewriter", href: "/resume-bullet-rewriter", category: "Career", description: "Turn rough notes into strong resume bullets.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-zone-converter", name: "Time Zone Converter", href: "/time-zone-converter", category: "Time & Date", description: "Convert meeting times across time zones.", status: "Live", isNew: true },
   { id: "to-do-list", name: "To-Do List", href: "/to-do-list", category: "Productivity", description: "Track tasks locally with saved progress.", status: "Live", isNew: true },
@@ -36,10 +38,11 @@ const tools = [
   { id: "social-account-analyzer", name: "Social Account Analyzer", href: "/social-account-analyzer", category: "Creator Tools", description: "Check Instagram or YouTube account health — spam followers, consistency & growth.", status: "Live", isNew: true },
   { id: "attendance-calculator", name: "Attendance Calculator", href: "/attendance-calculator", category: "Education", description: "Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage. Plan strategically, skip smartly.", status: "Live", isNew: true },
   { id: "youtube-downloader", name: "YouTube Downloader", href: "/youtube-downloader", category: "Media", description: "Download videos, captions, and thumbnails from YouTube. Best used locally for full functionality.", status: "Live", isNew: true },
+  { id: "video-to-audio-converter", name: "Video to Audio Converter", href: "/video-to-audio-converter", category: "Media", description: "Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.", status: "Upcoming", isNew: true, isFeatured: true },
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "resume-bullet-rewriter", "time-zone-converter", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "doc-to-pdf-converter", "resume-bullet-rewriter", "time-zone-converter", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
