@@ -89,6 +89,8 @@ Open `http://localhost:3000` and click any tool from the homepage.
 
 Most tools work perfectly in your browser. However, some tools like **YouTube Downloader** work better when run locally due to server-side limitations.
 
+The **Video to Audio Converter** is live, but the hosted version accepts uploads up to about 4 MB. Larger files should be converted locally to avoid request-size limits.
+
 **For full YouTube Downloader functionality:**
 - See [Setup Guide](/SETUP_GUIDE.md) for step-by-step local installation
 - Local setup enables unlimited downloads, full quality support, and no rate limits

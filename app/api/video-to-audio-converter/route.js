@@ -11,7 +11,9 @@ import { spawn } from "child_process";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-const ENABLED = false; // feature flag: set true to re-enable the API
+const ENABLED = true;
+const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+const MAX_UPLOAD_SIZE_LABEL = "4 MB";
 
 const SUPPORTED_FORMATS = {
   mp3: {
@@ -55,6 +57,20 @@ function getErrorMessage(error) {
   if (typeof error === "string") return error;
   if (error instanceof Error) return error.message;
   return "Unable to process the uploaded video.";
+}
+
+function isPayloadTooLargeError(error) {
+  const message = getErrorMessage(error).toLowerCase();
+  return (
+    message.includes("payload too large") ||
+    message.includes("function_payload_too_large") ||
+    message.includes("413") ||
+    message.includes("request entity too large")
+  );
+}
+
+function getUploadTooLargeMessage() {
+  return `File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`;
 }
 
 async function saveUploadedFile(file, targetPath) {
@@ -122,6 +138,14 @@ export async function POST(request) {
   let streamCreated = false;
 
   try {
+    const contentLength = Number(request.headers.get("content-length") || 0);
+    if (contentLength > MAX_UPLOAD_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: getUploadTooLargeMessage() },
+        { status: 413 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
     const requestedFormat = String(formData.get("format") || "mp3").toLowerCase();
@@ -138,6 +162,13 @@ export async function POST(request) {
       return NextResponse.json(
         { error: "Please upload a valid video or audio file." },
         { status: 400 }
+      );
+    }
+
+    if (typeof file.size === "number" && file.size > MAX_UPLOAD_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: getUploadTooLargeMessage() },
+        { status: 413 }
       );
     }
 
@@ -186,8 +217,26 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Video to audio conversion failed:", error);
+
+    if (isPayloadTooLargeError(error)) {
+      return NextResponse.json(
+        { error: getUploadTooLargeMessage() },
+        { status: 413 }
+      );
+    }
+
+    const message = getErrorMessage(error);
+    if (message.includes("matches no streams") || message.includes("does not contain any stream")) {
+      return NextResponse.json(
+        {
+          error: "No audio track was found in this file. Try a different video or extract from a file that contains audio.",
+        },
+        { status: 422 }
+      );
+    }
+
     return NextResponse.json(
-      { error: getErrorMessage(error) },
+      { error: message },
       { status: 500 }
     );
   } finally {

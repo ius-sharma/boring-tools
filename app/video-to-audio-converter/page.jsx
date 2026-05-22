@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import ComingSoon from "@/app/components/ComingSoon";
+
+const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+const MAX_UPLOAD_SIZE_LABEL = "4 MB";
 
 const FORMAT_OPTIONS = [
   {
@@ -70,8 +72,6 @@ function parseDownloadName(contentDisposition, fallbackName) {
 }
 
 export default function VideoToAudioConverter() {
-  const ENABLED = true;
-  if (!ENABLED) return <ComingSoon toolName="Video to Audio Converter" />;
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [activeTab, setActiveTab] = useState("extract");
@@ -90,12 +90,7 @@ export default function VideoToAudioConverter() {
   );
 
   const isLossless = outputFormat === "wav" || outputFormat === "flac";
-
-  useEffect(() => {
-    if (isLossless) {
-      setBitrate("192");
-    }
-  }, [isLossless]);
+  const effectiveBitrate = isLossless ? "192" : bitrate;
 
   useEffect(() => {
     return () => {
@@ -107,6 +102,16 @@ export default function VideoToAudioConverter() {
 
   const handleFile = (file) => {
     if (!file) return;
+
+    if (typeof file.size === "number" && file.size > MAX_UPLOAD_SIZE_BYTES) {
+      setSelectedFile(null);
+      setDownloadName("");
+      setError(`File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`);
+      setStatusLabel("File exceeds the hosted upload limit");
+      setActiveTab("extract");
+      return;
+    }
+
     setSelectedFile(file);
     setError("");
     setStatusLabel("File loaded and ready");
@@ -130,6 +135,12 @@ export default function VideoToAudioConverter() {
       return;
     }
 
+    if (typeof selectedFile.size === "number" && selectedFile.size > MAX_UPLOAD_SIZE_BYTES) {
+      setError(`File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`);
+      setStatusLabel("File exceeds the hosted upload limit");
+      return;
+    }
+
     setProcessing(true);
     setStatusLabel("Uploading and extracting audio...");
 
@@ -137,7 +148,7 @@ export default function VideoToAudioConverter() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("format", outputFormat);
-      formData.append("bitrate", bitrate);
+      formData.append("bitrate", effectiveBitrate);
 
       const response = await fetch("/api/video-to-audio-converter", {
         method: "POST",
@@ -146,11 +157,16 @@ export default function VideoToAudioConverter() {
 
       if (!response.ok) {
         let message = "Conversion failed";
+        if (response.status === 413) {
+          message = `File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`;
+        }
         try {
           const data = await response.json();
           message = data.error || message;
         } catch {
-          message = `Conversion failed (HTTP ${response.status})`;
+          if (response.status !== 413) {
+            message = `Conversion failed (HTTP ${response.status})`;
+          }
         }
         throw new Error(message);
       }
@@ -300,7 +316,7 @@ export default function VideoToAudioConverter() {
                           <div className="min-w-0">
                             <p className="text-base font-bold text-slate-900">Drop your video here</p>
                             <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-slate-500 break-words">
-                              Or browse your device. Supports common video files like MP4, MOV, MKV, and WEBM.
+                              Or browse your device. Supports common video files like MP4, MOV, MKV, and WEBM. Hosted uploads are capped at {MAX_UPLOAD_SIZE_LABEL}.
                             </p>
                           </div>
 
@@ -399,7 +415,7 @@ export default function VideoToAudioConverter() {
 
                         <div className="mt-4 flex flex-wrap gap-2">
                           {BITRATE_OPTIONS.map((option) => {
-                            const active = bitrate === option;
+                            const active = effectiveBitrate === option;
                             const disabled = isLossless;
                             return (
                               <button
@@ -478,7 +494,7 @@ export default function VideoToAudioConverter() {
                       <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                         <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">Quick notes</p>
                         <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
-                          <li className="break-words">• Best used locally for large files or frequent conversions.</li>
+                          <li className="break-words">• Hosted uploads are capped at {MAX_UPLOAD_SIZE_LABEL}; larger files are best processed locally.</li>
                           <li className="break-words">• Keeps the experience simple: one extract step, one download step, no clutter.</li>
                           <li className="break-words">• Works with common video formats and existing audio files too.</li>
                           <li className="break-words">• Lossless formats ignore bitrate controls because quality is preserved.</li>
