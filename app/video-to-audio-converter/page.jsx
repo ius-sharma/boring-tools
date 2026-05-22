@@ -70,7 +70,7 @@ function parseDownloadName(contentDisposition, fallbackName) {
 }
 
 export default function VideoToAudioConverter() {
-  const ENABLED = false; // feature flag: set true to re-enable the full tool
+  const ENABLED = true;
   if (!ENABLED) return <ComingSoon toolName="Video to Audio Converter" />;
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
