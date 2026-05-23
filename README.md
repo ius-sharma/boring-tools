@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (33)
+Live tools (34)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -70,11 +70,12 @@ Live tools (33)
 31. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
 32. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
 33. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
+34. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
 
 
 Upcoming tools
 
-- Image to PDF Converter — `/image-to-pdf-converter` — Temporarily offline; will be re-enabled later.
+None.
 
 Run locally
 
@@ -149,8 +150,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **33 tools** (listed on the homepage)
- - Upcoming: **1 tool**
+- Live: **34 tools** (listed on the homepage)
+ - Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
 

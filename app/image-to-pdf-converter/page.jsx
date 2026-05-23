@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import ComingSoon from "@/app/components/ComingSoon";
 import { PDFDocument } from "pdf-lib";
 
 const PAPER_SIZES = {
@@ -101,8 +100,6 @@ function getPageDimensions(paperSize, orientation) {
 }
 
 export default function ImageToPdfConverter() {
-  const ENABLED = false; // feature flag: set true to re-enable the full tool
-  if (!ENABLED) return <ComingSoon toolName="Image to PDF Converter" />;
   const fileInputRef = useRef(null);
   const downloadUrlRef = useRef("");
   const fileEntriesRef = useRef([]);
