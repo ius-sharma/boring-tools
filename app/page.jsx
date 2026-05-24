@@ -17,6 +17,7 @@ const tools = [
   { id: "image-compressor", name: "Image Compressor / Resizer", href: "/image-compressor", category: "Media", description: "Compress and resize images quickly.", status: "Live", isNew: true, isFeatured: true },
   { id: "image-to-pdf-converter", name: "Image to PDF Converter", href: "/image-to-pdf-converter", category: "Media", description: "Upload one or more images and convert them into a downloadable PDF.", status: "Live", isNew: true },
   { id: "doc-to-pdf-converter", name: "DOC to PDF Converter", href: "/doc-to-pdf-converter", category: "Documents", description: "Upload DOC or DOCX files and convert them into a downloadable PDF.", status: "Live", isNew: true },
+  { id: "pdf-intelligence-tool", name: "PDF Intelligence Tool", href: "/pdf-intelligence-tool", category: "Documents", description: "Upload PDFs and extract summaries, key points, contacts, links, and document stats.", status: "Live", isNew: true },
   { id: "resume-bullet-rewriter", name: "Resume Bullet Rewriter", href: "/resume-bullet-rewriter", category: "Career", description: "Turn rough notes into strong resume bullets.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-zone-converter", name: "Time Zone Converter", href: "/time-zone-converter", category: "Time & Date", description: "Convert meeting times across time zones.", status: "Live", isNew: true },
   { id: "to-do-list", name: "To-Do List", href: "/to-do-list", category: "Productivity", description: "Track tasks locally with saved progress.", status: "Live", isNew: true },
@@ -42,7 +43,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "resume-bullet-rewriter", "time-zone-converter", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "resume-bullet-rewriter", "time-zone-converter", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));

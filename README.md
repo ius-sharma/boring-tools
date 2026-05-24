@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (34)
+Live tools (35)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -71,6 +71,7 @@ Live tools (34)
 32. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
 33. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
 34. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
+35. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
 
 
 Upcoming tools
@@ -150,7 +151,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **34 tools** (listed on the homepage)
+- Live: **35 tools** (listed on the homepage)
  - Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
