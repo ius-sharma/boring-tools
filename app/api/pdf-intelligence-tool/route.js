@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { extractPhones, validatePhoneList } from "../../pdf-intelligence-tool/phone-utils";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -158,16 +159,6 @@ function extractEmails(text) {
   return unique((text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).map((item) => item.trim()));
 }
 
-function extractPhones(text) {
-  const matches = text.match(/(?:\+?\d[\d()\s.-]{7,}\d)/g) || [];
-  return unique(
-    matches
-      .map((item) => item.trim())
-      .filter((item) => (item.match(/\d/g) || []).length >= 8)
-      .map((item) => item.replace(/\s+/g, " "))
-  );
-}
-
 function extractUrls(text) {
   const matches = text.match(/(?:https?:\/\/|www\.)[\w\-._~:/?#@!$&'()*+,;=%]+/gi) || [];
   return unique(matches.map((item) => item.replace(/[),.;!?]+$/g, "")));
@@ -317,7 +308,7 @@ function buildAiResult(parsed, fallback) {
   const keyPoints = normalizeArray(parsed?.keyPoints).slice(0, 8);
   const dates = normalizeArray(parsed?.dates);
   const emails = normalizeArray(parsed?.emails);
-  const phones = normalizeArray(parsed?.phones);
+  const phones = validatePhoneList(normalizeArray(parsed?.phones), fallback.phones);
   const links = normalizeArray(parsed?.links);
   const keywords = normalizeArray(parsed?.keywords);
 

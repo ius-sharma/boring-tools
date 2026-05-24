@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { extractPhones } from "./phone-utils";
 
 let pdfWorkerConfigured = false;
 
@@ -256,16 +257,6 @@ function uniqueValues(values) {
 
 function extractEmails(text) {
   return uniqueValues((text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).map((item) => item.trim()));
-}
-
-function extractPhones(text) {
-  const matches = text.match(/(?:\+?\d[\d()\s.-]{7,}\d)/g) || [];
-  return uniqueValues(
-    matches
-      .map((item) => item.trim())
-      .filter((item) => (item.match(/\d/g) || []).length >= 8)
-      .map((item) => item.replace(/\s+/g, " "))
-  );
 }
 
 function extractUrls(text) {
@@ -765,7 +756,7 @@ export default function PdfIntelligenceTool() {
                         The parser extracts text page by page, then sends a compact analysis packet to the AI refinement layer.
                       </p>
                     </div>
-                    <div className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white">
+                    <div className="inline-flex w-fit self-start rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white">
                       {analysis ? `${analysis.pageCount} pages` : "PDF ready"}
                     </div>
                   </div>
@@ -982,7 +973,7 @@ export default function PdfIntelligenceTool() {
                       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                         <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Summary</p>
                         <p className="mt-3 break-words text-sm leading-7 text-slate-700">{analysis.summary}</p>
-                        <p className="mt-3 rounded-full bg-amber-50 px-3 py-2 text-xs font-semibold leading-relaxed text-amber-800 ring-1 ring-amber-200">
+                        <p className="mt-3 rounded-2xl bg-amber-50 px-3 py-2 text-xs font-semibold leading-relaxed text-amber-800 ring-1 ring-amber-200">
                           This content was generated with the help of AI. Please recheck and verify important information.
                         </p>
                       </div>
