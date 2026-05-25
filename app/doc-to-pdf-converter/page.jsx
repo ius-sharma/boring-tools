@@ -134,6 +134,11 @@ export default function DocToPdfConverter() {
     document.body.removeChild(anchor);
   };
 
+  const downloadLatestPdf = () => {
+    if (!downloadUrl || !downloadName) return;
+    downloadPdf(downloadUrl, downloadName);
+  };
+
   const convertDocument = async () => {
     if (!file) {
       setError("Please upload a DOC or DOCX file first.");
@@ -197,7 +202,7 @@ export default function DocToPdfConverter() {
             <div className="text-center">
               <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">DOC to PDF Converter</h1>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                Upload a DOC or DOCX file, convert it into a clean PDF instantly, and download it in one smooth flow.
+                Upload a DOC or DOCX file and convert it to a PDF while preserving formatting, layout, tables, images, and structure as closely as possible.
               </p>
             </div>
 
@@ -276,7 +281,7 @@ export default function DocToPdfConverter() {
                     <div className="min-w-0">
                       <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">PDF settings</p>
                       <p className="mt-1 break-words text-sm leading-relaxed text-slate-600">
-                        Pick a paper size. The document text is automatically wrapped and laid out into readable pages.
+                        Conversion is handled by a native document engine for high-fidelity output, so original pagination and styling are retained.
                       </p>
                     </div>
                     <div className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white">
@@ -340,6 +345,19 @@ export default function DocToPdfConverter() {
                 </button>
 
                 <p className="text-center text-xs font-medium text-slate-500 break-words">{status}</p>
+
+                {downloadUrl && downloadName && !isProcessing && (
+                  <button
+                    type="button"
+                    onClick={downloadLatestPdf}
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-900 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+                  >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.25" d="M4 16.5V19a2 2 0 002 2h12a2 2 0 002-2v-2.5M12 3v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                    Download latest PDF
+                  </button>
+                )}
               </div>
 
               <aside className="flex min-w-0 flex-col gap-4">
@@ -352,7 +370,7 @@ export default function DocToPdfConverter() {
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
                       <p className="font-semibold text-white">2. Convert to PDF</p>
-                      <p className="mt-1 break-words text-slate-300">The converter extracts readable text and lays it out into a clean PDF.</p>
+                      <p className="mt-1 break-words text-slate-300">The converter uses a native Office conversion pipeline to preserve the original structure and styling.</p>
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
                       <p className="font-semibold text-white">3. Download instantly</p>

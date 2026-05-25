@@ -1,21 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { createRequire } from "node:module";
 import { randomUUID } from "node:crypto";
+import { spawn } from "node:child_process";
 import { NextResponse } from "next/server";
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 export const runtime = "nodejs";
-
-const require = createRequire(import.meta.url);
-const mammoth = require("mammoth");
-const WordExtractor = require("word-extractor");
-
-const PAPER_SIZES = {
-  A4: [595.28, 841.89],
-  Letter: [612, 792],
-};
 
 function safeBaseName(name) {
   return String(name || "document")
@@ -28,118 +18,133 @@ function getOutputName(fileName) {
   return `${safeBaseName(fileName)}.pdf`;
 }
 
-function normalizePdfText(value) {
-  const replacements = new Map([
-    ["→", "->"],
-    ["←", "<-"],
-    ["↔", "<->"],
-    ["⇒", "=>"],
-    ["⇐", "<="],
-    ["⇔", "<=>"],
-    ["“", '"'],
-    ["”", '"'],
-    ["‘", "'"],
-    ["’", "'"],
-    ["‚", ","],
-    ["„", '"'],
-    ["—", "-"],
-    ["–", "-"],
-    ["−", "-"],
-    ["…", "..."],
-    ["•", "-"],
-    ["·", "."],
-    ["×", "x"],
-    ["÷", "/"],
-    ["✓", "[x]"],
-    ["✔", "[x]"],
-    ["✕", "x"],
-    ["✖", "x"],
-    ["©", "(c)"],
-    ["®", "(r)"],
-    ["™", "TM"],
-    ["°", "deg"],
-    ["µ", "u"],
-    ["∞", "infinity"],
-    ["§", "section"],
-    ["¶", "paragraph"],
-    ["€", "EUR"],
-    ["£", "GBP"],
-    ["¥", "JPY"],
-    ["₹", "INR"],
-  ]);
+async function runCommand(command, args, options = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      stdio: ["ignore", "pipe", "pipe"],
+      windowsHide: true,
+      ...options,
+    });
 
-  const normalized = String(value || "")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "");
+    let stdout = "";
+    let stderr = "";
 
-  let sanitized = "";
+    child.stdout.on("data", (chunk) => {
+      stdout += String(chunk || "");
+    });
 
-  for (const character of normalized) {
-    if (replacements.has(character)) {
-      sanitized += replacements.get(character);
-      continue;
-    }
+    child.stderr.on("data", (chunk) => {
+      stderr += String(chunk || "");
+    });
 
-    const codePoint = character.codePointAt(0) || 0;
-    if (codePoint === 9 || codePoint === 10 || codePoint === 13 || (codePoint >= 32 && codePoint <= 126)) {
-      sanitized += character;
-      continue;
-    }
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve({ stdout, stderr });
+        return;
+      }
 
-    if (/\s/u.test(character)) {
-      sanitized += " ";
-      continue;
-    }
-
-    sanitized += "?";
-  }
-
-  return sanitized;
+      reject(new Error(stderr || stdout || `Command failed: ${command} ${args.join(" ")}`));
+    });
+  });
 }
 
-function wrapText(text, font, fontSize, maxWidth) {
-  const safeText = normalizePdfText(text);
-  const words = safeText.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return [""];
+function getLibreOfficeCandidates() {
+  const envPath = process.env.LIBREOFFICE_PATH;
+  const candidates = [];
 
-  const lines = [];
-  let currentLine = "";
+  if (envPath) {
+    candidates.push(envPath);
+  }
 
-  for (const word of words) {
-    const nextLine = currentLine ? `${currentLine} ${word}` : word;
-    if (font.widthOfTextAtSize(nextLine, fontSize) <= maxWidth) {
-      currentLine = nextLine;
-      continue;
-    }
+  if (process.platform === "win32") {
+    candidates.push(
+      "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
+      "C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe",
+      "soffice.exe",
+      "soffice"
+    );
+  } else {
+    candidates.push("soffice", "libreoffice");
+  }
 
-    if (currentLine) {
-      lines.push(currentLine);
-    }
+  return candidates;
+}
 
-    if (font.widthOfTextAtSize(word, fontSize) <= maxWidth) {
-      currentLine = word;
-      continue;
-    }
+function toPdfPath(inputPath) {
+  return `${inputPath.replace(/\.[^.]+$/, "")}.pdf`;
+}
 
-    let fragment = "";
-    for (const character of word) {
-      const nextFragment = fragment + character;
-      if (font.widthOfTextAtSize(nextFragment, fontSize) <= maxWidth || fragment.length === 0) {
-        fragment = nextFragment;
-      } else {
-        lines.push(fragment);
-        fragment = character;
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function convertViaLibreOffice({ inputPath, outputDir }) {
+  const candidates = getLibreOfficeCandidates();
+  const expectedPdfPath = path.join(outputDir, path.basename(toPdfPath(inputPath)));
+
+  for (const executable of candidates) {
+    try {
+      await runCommand(executable, [
+        "--headless",
+        "--nologo",
+        "--nolockcheck",
+        "--nodefault",
+        "--nofirststartwizard",
+        "--convert-to",
+        "pdf:writer_pdf_Export",
+        "--outdir",
+        outputDir,
+        inputPath,
+      ]);
+
+      if (await fileExists(expectedPdfPath)) {
+        return { pdfPath: expectedPdfPath, engine: `LibreOffice (${path.basename(executable)})` };
       }
+    } catch {
+      // Try next candidate.
     }
-
-    currentLine = fragment;
   }
 
-  if (currentLine) {
-    lines.push(currentLine);
+  throw new Error("LibreOffice conversion unavailable.");
+}
+
+function escapePowerShell(value) {
+  return String(value || "").replace(/'/g, "''");
+}
+
+async function convertViaWordAutomation({ inputPath, outputDir }) {
+  if (process.platform !== "win32") {
+    throw new Error("MS Word automation is only available on Windows.");
   }
 
-  return lines;
+  const expectedPdfPath = path.join(outputDir, path.basename(toPdfPath(inputPath)));
+  const psScript = [
+    "$ErrorActionPreference = 'Stop'",
+    "$word = New-Object -ComObject Word.Application",
+    "$word.Visible = $false",
+    "$word.DisplayAlerts = 0",
+    `$inputPath = '${escapePowerShell(inputPath)}'`,
+    `$outputPath = '${escapePowerShell(expectedPdfPath)}'`,
+    "$doc = $word.Documents.Open($inputPath, $false, $true)",
+    "$wdFormatPDF = 17",
+    "$doc.SaveAs([ref]$outputPath, [ref]$wdFormatPDF)",
+    "$doc.Close()",
+    "$word.Quit()",
+  ].join("; ");
+
+  await runCommand("powershell", ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", psScript]);
+
+  if (!(await fileExists(expectedPdfPath))) {
+    throw new Error("MS Word did not produce a PDF output.");
+  }
+
+  return { pdfPath: expectedPdfPath, engine: "Microsoft Word Automation" };
 }
 
 async function saveTempUpload(file) {
@@ -148,131 +153,28 @@ async function saveTempUpload(file) {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   await fs.writeFile(tempPath, buffer);
-  return { tempDir, tempPath, buffer };
+  return { tempDir, tempPath };
 }
 
-async function extractTextFromDocument({ file, tempPath, buffer }) {
-  const fileName = String(file.name || "").toLowerCase();
-  const mimeType = String(file.type || "").toLowerCase();
+async function convertDocToPdf({ inputPath, outputDir }) {
+  const failures = [];
 
-  if (fileName.endsWith(".docx") || mimeType.includes("officedocument.wordprocessingml.document")) {
-    const result = await mammoth.extractRawText({ buffer });
-    return result.value || "";
+  try {
+    return await convertViaLibreOffice({ inputPath, outputDir });
+  } catch (error) {
+    failures.push(`LibreOffice: ${error instanceof Error ? error.message : "failed"}`);
   }
 
-  if (fileName.endsWith(".doc") || mimeType.includes("msword")) {
-    const extractor = new WordExtractor();
-    const document = await extractor.extract(tempPath);
-    if (typeof document?.getBody === "function") {
-      return document.getBody() || "";
-    }
-    return String(document?.body || document?.text || "");
+  try {
+    return await convertViaWordAutomation({ inputPath, outputDir });
+  } catch (error) {
+    failures.push(`MS Word: ${error instanceof Error ? error.message : "failed"}`);
   }
 
-  throw new Error("Please upload a DOC or DOCX file.");
-}
-
-async function buildPdf({ text, title, paperSize }) {
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const safeTitle = normalizePdfText(title);
-  const pageSize = PAPER_SIZES[paperSize] || PAPER_SIZES.A4;
-  const margin = 48;
-  const fontSize = 11;
-  const lineHeight = 16;
-  const contentWidth = pageSize[0] - margin * 2;
-  const contentTop = pageSize[1] - margin - 40;
-  const contentBottom = margin + 28;
-  const accent = rgb(0.95, 0.52, 0.17);
-
-  let page = pdfDoc.addPage(pageSize);
-
-  const drawHeader = () => {
-    page.drawText("DOC to PDF Converter", {
-      x: margin,
-      y: pageSize[1] - margin + 6,
-      size: 9,
-      font: boldFont,
-      color: accent,
-    });
-
-    page.drawText(safeTitle, {
-      x: margin,
-      y: pageSize[1] - margin - 10,
-      size: 15,
-      font: boldFont,
-      color: rgb(0.08, 0.11, 0.16),
-    });
-
-    page.drawText("Generated from Word document text", {
-      x: margin,
-      y: pageSize[1] - margin - 26,
-      size: 8.5,
-      font,
-      color: rgb(0.42, 0.48, 0.58),
-    });
-
-    page.drawLine({
-      start: { x: margin, y: pageSize[1] - margin - 34 },
-      end: { x: pageSize[0] - margin, y: pageSize[1] - margin - 34 },
-      thickness: 1,
-      color: rgb(0.92, 0.92, 0.95),
-    });
-  };
-
-  const addNewPage = () => {
-    page = pdfDoc.addPage(pageSize);
-    drawHeader();
-    return pageSize[1] - margin - 40;
-  };
-
-  let cursorY = contentTop;
-  drawHeader();
-
-  const paragraphs = String(text || "").replace(/\r\n/g, "\n").split("\n");
-  const safeParagraphs = paragraphs.map((paragraph) => normalizePdfText(paragraph));
-
-  if (safeParagraphs.length === 1 && !safeParagraphs[0].trim()) {
-    page.drawText("No readable text was found in this document.", {
-      x: margin,
-      y: cursorY,
-      size: fontSize,
-      font,
-      color: rgb(0.25, 0.3, 0.38),
-    });
-  } else {
-    for (const paragraph of safeParagraphs) {
-      if (!paragraph.trim()) {
-        cursorY -= lineHeight * 0.7;
-        if (cursorY < contentBottom) {
-          cursorY = addNewPage();
-        }
-        continue;
-      }
-
-      const lines = wrapText(paragraph, font, fontSize, contentWidth);
-
-      for (const line of lines) {
-        if (cursorY < contentBottom) {
-          cursorY = addNewPage();
-        }
-
-        page.drawText(line, {
-          x: margin,
-          y: cursorY,
-          size: fontSize,
-          font,
-          color: rgb(0.14, 0.17, 0.22),
-        });
-
-        cursorY -= lineHeight;
-      }
-    }
-  }
-
-  const pdfBytes = await pdfDoc.save();
-  return Buffer.from(pdfBytes);
+  const details = failures.join(" | ");
+  throw new Error(
+    `High-fidelity DOC/DOCX conversion is unavailable on this server. Install LibreOffice or run on Windows with Microsoft Word installed. Details: ${details}`
+  );
 }
 
 export async function POST(request) {
@@ -281,7 +183,6 @@ export async function POST(request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
-    const paperSize = String(formData.get("paperSize") || "A4");
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "Please upload a DOC or DOCX file." }, { status: 400 });
@@ -295,8 +196,8 @@ export async function POST(request) {
     const saved = await saveTempUpload(file);
     tempDir = saved.tempDir;
 
-    const text = await extractTextFromDocument({ file, tempPath: saved.tempPath, buffer: saved.buffer });
-    const pdfBuffer = await buildPdf({ text, title: safeBaseName(file.name), paperSize });
+    const converted = await convertDocToPdf({ inputPath: saved.tempPath, outputDir: saved.tempDir });
+    const pdfBuffer = await fs.readFile(converted.pdfPath);
     const pdfName = getOutputName(file.name);
 
     return new NextResponse(pdfBuffer, {
@@ -304,6 +205,7 @@ export async function POST(request) {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${pdfName}"`,
         "Cache-Control": "no-store",
+        "X-Conversion-Engine": converted.engine,
       },
     });
   } catch (error) {
