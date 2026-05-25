@@ -35,7 +35,7 @@ Featured tools
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
 
-Live tools (35)
+Live tools (36)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -72,6 +72,7 @@ Live tools (35)
 33. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
 34. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
 35. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
+36. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
 
 
 Upcoming tools
@@ -140,6 +141,14 @@ GOOGLE_DIRECTIONS_KEY=your_key_here
 
 Keep `/.env.local` out of git and set the same variable in your deployment secrets.
 
+For the DOC to PDF Converter, add a CloudConvert API key so high-fidelity DOC/DOCX conversion works reliably in production:
+
+```bash
+CLOUDCONVERT_API_KEY=your_key_here
+```
+
+Keep it in your deployment secrets so online conversions use the hosted conversion pipeline instead of local Office software.
+
 ---
 
 ## Goal
@@ -151,7 +160,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 
-- Live: **35 tools** (listed on the homepage)
+- Live: **36 tools** (listed on the homepage)
  - Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
