@@ -1,8 +1,14 @@
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 export const runtime = "nodejs";
+
+const converterConfigSchema = z.object({
+  wasmPath: z.string().min(1),
+  verbose: z.boolean(),
+});
 
 function safeBaseName(name) {
   return String(name || "document")
@@ -23,20 +29,14 @@ function getWasmPath() {
 
 async function getConverter() {
   if (!converterPromise) {
-    const converterModulePath = path.join(
-      process.cwd(),
-      "node_modules",
-      "@matbee",
-      "libreoffice-converter",
-      "dist",
-      "server.cjs"
-    );
+    const converterModulePath = path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "dist", "server.cjs");
     converterPromise = (async () => {
       const { createWorkerConverter } = await import(/* webpackIgnore: true */ pathToFileURL(converterModulePath).href);
-      return createWorkerConverter({
+      const converterConfig = converterConfigSchema.parse({
         wasmPath: getWasmPath(),
         verbose: false,
       });
+      return createWorkerConverter(converterConfig);
     })();
   }
 

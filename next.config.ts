@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "4mb",
   },
-  serverExternalPackages: ["ffmpeg-static", "@matbee/libreoffice-converter"],
+  serverExternalPackages: ["ffmpeg-static"],
 };
 
 export default nextConfig;
