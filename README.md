@@ -141,24 +141,6 @@ GOOGLE_DIRECTIONS_KEY=your_key_here
 
 Keep `/.env.local` out of git and set the same variable in your deployment secrets.
 
-For the DOC to PDF Converter, add a CloudConvert API key so high-fidelity DOC/DOCX conversion works reliably in production:
-
-```bash
-CLOUDCONVERT_API_KEY=your_key_here
-```
-
-How to get the key:
-1. Create or sign in to your CloudConvert account at https://cloudconvert.com/
-2. Open the CloudConvert dashboard.
-3. Go to API Keys.
-4. Create a new API key and copy it once it is generated.
-
-Where to configure it:
-- Local development: create or update `.env.local` in the project root with `CLOUDCONVERT_API_KEY=...`
-- Deployed environments: add `CLOUDCONVERT_API_KEY` in your hosting provider's environment variable settings and redeploy
-
-Keep the key server-side only. The DOC to PDF converter reads it from the server environment so online conversions use the hosted conversion pipeline instead of local Office software.
-
 ---
 
 ## Goal
