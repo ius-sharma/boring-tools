@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "postinstall": "node scripts/ensure-converter-zod.js"
+    "lint": "eslint"
   },
   "dependencies": {
     "@matbee/libreoffice-converter": "^2.6.0",
