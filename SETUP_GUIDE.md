@@ -172,6 +172,39 @@ Create a `.env.local` file in the root directory for any API keys or configurati
 
 Currently, the YouTube downloader doesn't require API keys as it uses web scraping.
 
+### DOC to PDF Converter setup
+
+The DOC to PDF Converter uses CloudConvert in deployed environments so it can convert DOC and DOCX files without depending on local Office software.
+
+#### Get a CloudConvert API key
+
+1. Create or sign in to your CloudConvert account at https://cloudconvert.com/
+2. Open the CloudConvert dashboard.
+3. Go to **API Keys**.
+4. Create a new API key and copy it when it is generated.
+
+#### Configure it locally
+
+Add the key to `.env.local`:
+
+```env
+CLOUDCONVERT_API_KEY=your_key_here
+```
+
+Restart `npm run dev` after saving the file.
+
+#### Configure it in production
+
+Add `CLOUDCONVERT_API_KEY` in your hosting provider's environment variable settings, then redeploy the app.
+
+For Vercel:
+1. Open your project in the Vercel dashboard.
+2. Go to **Settings** > **Environment Variables**.
+3. Add `CLOUDCONVERT_API_KEY` for the environments you use.
+4. Redeploy the project.
+
+Keep the key server-side only. Do not paste it into client-side code.
+
 ---
 
 ## Project Structure
