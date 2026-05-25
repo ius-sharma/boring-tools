@@ -1,5 +1,5 @@
 import path from "node:path";
-import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -22,8 +22,6 @@ function getOutputName(fileName) {
 }
 
 let converterPromise;
-const require = createRequire(import.meta.url);
-const converterModulePath = path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "dist", "server.cjs");
 
 function getWasmPath() {
   return process.env.LIBREOFFICE_WASM_PATH || path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "wasm");
@@ -32,7 +30,8 @@ function getWasmPath() {
 async function getConverter() {
   if (!converterPromise) {
     converterPromise = (async () => {
-      const { createWorkerConverter } = require(converterModulePath);
+      const converterModulePath = path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "dist", "server.cjs");
+      const { createWorkerConverter } = await import(/* webpackIgnore: true */ pathToFileURL(converterModulePath).href);
       const converterConfig = converterConfigSchema.parse({
         wasmPath: getWasmPath(),
         verbose: false,
