@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "4mb",
   },
+  outputFileTracingIncludes: {
+    "/api/doc-to-pdf-converter": ["./node_modules/zod/**/*", "./node_modules/@matbee/libreoffice-converter/**/*"],
+  },
   serverExternalPackages: ["ffmpeg-static"],
 };
 
