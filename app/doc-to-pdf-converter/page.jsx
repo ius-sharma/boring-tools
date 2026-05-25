@@ -366,7 +366,7 @@ export default function DocToPdfConverter() {
                   <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-200">
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
                       <p className="font-semibold text-white">1. Upload document</p>
-                      <p className="mt-1 break-words text-slate-300">The converter uses CloudConvert in production for reliable online conversion and preserves structure and styling as closely as possible.</p>
+                      <p className="mt-1 break-words text-slate-300">Select a DOC or DOCX file from your device.</p>
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
                       <p className="font-semibold text-white">2. Convert to PDF</p>
