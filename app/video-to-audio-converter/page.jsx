@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 const MAX_UPLOAD_SIZE_LABEL = "4 MB";
+const FFMPEG_CORE_VERSION = "0.12.10";
+const FFMPEG_CORE_BASE_URL = `https://cdn.jsdelivr.net/npm/@ffmpeg/core@${FFMPEG_CORE_VERSION}/dist/umd`;
 
 const FORMAT_OPTIONS = [
   {
@@ -62,13 +64,28 @@ function getSafeFilename(fileName, outputFormat) {
   return `${base}.${outputFormat}`;
 }
 
-function parseDownloadName(contentDisposition, fallbackName) {
-  if (!contentDisposition) return fallbackName;
+function getInputExtension(fileName) {
+  const match = String(fileName || "").match(/\.[^.]+$/);
+  return match ? match[0].toLowerCase() : ".mp4";
+}
 
-  const match = contentDisposition.match(/filename="?([^";]+)"?/i);
-  if (!match) return fallbackName;
+function buildFfmpegArgs(inputName, outputName, outputFormat, bitrate) {
+  const outputArgs = {
+    mp3: ["-c:a", "libmp3lame", "-b:a", `${bitrate}k`],
+    m4a: ["-c:a", "aac", "-movflags", "+faststart", "-b:a", `${bitrate}k`],
+    wav: ["-c:a", "pcm_s16le"],
+    flac: ["-c:a", "flac"],
+  };
 
-  return match[1];
+  return [
+    "-i",
+    inputName,
+    "-map",
+    "0:a:0",
+    "-vn",
+    ...outputArgs[outputFormat],
+    outputName,
+  ];
 }
 
 export default function VideoToAudioConverter() {
@@ -79,10 +96,12 @@ export default function VideoToAudioConverter() {
   const [bitrate, setBitrate] = useState("192");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
-  const [statusLabel, setStatusLabel] = useState("Ready to upload");
+  const [statusLabel, setStatusLabel] = useState("Ready to convert");
   const [downloadName, setDownloadName] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const fileInputRef = useRef(null);
+  const ffmpegRef = useRef(null);
+  const ffmpegLoadPromiseRef = useRef(null);
 
   const selectedFormatMeta = useMemo(
     () => FORMAT_OPTIONS.find((option) => option.id === outputFormat) || FORMAT_OPTIONS[0],
@@ -97,8 +116,46 @@ export default function VideoToAudioConverter() {
       if (downloadUrl) {
         window.URL.revokeObjectURL(downloadUrl);
       }
+
+      ffmpegRef.current?.terminate?.();
     };
   }, [downloadUrl]);
+
+  const loadFfmpeg = async () => {
+    if (!ffmpegRef.current) {
+      const { FFmpeg } = await import("@ffmpeg/ffmpeg");
+      ffmpegRef.current = new FFmpeg();
+    }
+
+    if (!ffmpegLoadPromiseRef.current) {
+      ffmpegLoadPromiseRef.current = (async () => {
+        try {
+          const { toBlobURL } = await import("@ffmpeg/util");
+          const ffmpeg = ffmpegRef.current;
+
+          ffmpeg.on("log", ({ message }) => {
+            if (message) {
+              console.log("ffmpeg:", message);
+            }
+          });
+
+          await ffmpeg.load({
+            coreURL: await toBlobURL(`${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`, "text/javascript"),
+            wasmURL: await toBlobURL(`${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`, "application/wasm"),
+          });
+
+          return ffmpeg;
+        } catch (error) {
+          ffmpegLoadPromiseRef.current = null;
+          ffmpegRef.current?.terminate?.();
+          ffmpegRef.current = null;
+          throw error;
+        }
+      })();
+    }
+
+    return ffmpegLoadPromiseRef.current;
+  };
 
   const handleFile = (file) => {
     if (!file) return;
@@ -106,8 +163,8 @@ export default function VideoToAudioConverter() {
     if (typeof file.size === "number" && file.size > MAX_UPLOAD_SIZE_BYTES) {
       setSelectedFile(null);
       setDownloadName("");
-      setError(`File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`);
-      setStatusLabel("File exceeds the hosted upload limit");
+      setError(`File too large for smooth browser conversion. Try a file up to ${MAX_UPLOAD_SIZE_LABEL} or use a local desktop FFmpeg setup for larger uploads.`);
+      setStatusLabel("File exceeds the recommended browser limit");
       setActiveTab("extract");
       return;
     }
@@ -136,48 +193,38 @@ export default function VideoToAudioConverter() {
     }
 
     if (typeof selectedFile.size === "number" && selectedFile.size > MAX_UPLOAD_SIZE_BYTES) {
-      setError(`File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`);
-      setStatusLabel("File exceeds the hosted upload limit");
+      setError(`File too large for smooth browser conversion. Try a file up to ${MAX_UPLOAD_SIZE_LABEL} or use a local desktop FFmpeg setup for larger uploads.`);
+      setStatusLabel("File exceeds the recommended browser limit");
       return;
     }
 
     setProcessing(true);
-    setStatusLabel("Uploading and extracting audio...");
+    setStatusLabel("Loading local FFmpeg runtime...");
 
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("format", outputFormat);
-      formData.append("bitrate", effectiveBitrate);
+      const ffmpeg = await loadFfmpeg();
+      const { fetchFile } = await import("@ffmpeg/util");
 
-      const response = await fetch("/api/video-to-audio-converter", {
-        method: "POST",
-        body: formData,
+      setStatusLabel("Transcoding audio locally...");
+
+      const inputExtension = getInputExtension(selectedFile.name);
+      const inputName = `input-${Date.now()}${inputExtension}`;
+      const outputName = `output-${Date.now()}.${outputFormat}`;
+      const finalName = getSafeFilename(selectedFile.name, outputFormat);
+
+      await ffmpeg.writeFile(inputName, await fetchFile(selectedFile));
+      await ffmpeg.exec(buildFfmpegArgs(inputName, outputName, outputFormat, effectiveBitrate));
+
+      const data = await ffmpeg.readFile(outputName);
+      const blob = new Blob([data], {
+        type: selectedFormatMeta.id === "mp3"
+          ? "audio/mpeg"
+          : selectedFormatMeta.id === "m4a"
+            ? "audio/mp4"
+            : selectedFormatMeta.id === "wav"
+              ? "audio/wav"
+              : "audio/flac",
       });
-
-      if (!response.ok) {
-        let message = "Conversion failed";
-        if (response.status === 413) {
-          message = `File too large. The hosted converter accepts files up to ${MAX_UPLOAD_SIZE_LABEL}. Use a smaller file or run the app locally for larger uploads.`;
-        }
-        try {
-          const data = await response.json();
-          message = data.error || message;
-        } catch {
-          if (response.status !== 413) {
-            message = `Conversion failed (HTTP ${response.status})`;
-          }
-        }
-        throw new Error(message);
-      }
-
-      setStatusLabel("Creating your download...");
-      const blob = await response.blob();
-      const disposition = response.headers.get("content-disposition");
-      const finalName = parseDownloadName(
-        disposition,
-        getSafeFilename(selectedFile.name, outputFormat)
-      );
 
       if (downloadUrl) {
         window.URL.revokeObjectURL(downloadUrl);
@@ -209,7 +256,7 @@ export default function VideoToAudioConverter() {
 
   const handleReset = () => {
     setError("");
-    setStatusLabel("Ready to upload");
+    setStatusLabel("Ready to convert");
     setActiveTab("extract");
     if (downloadUrl) {
       window.URL.revokeObjectURL(downloadUrl);
@@ -316,7 +363,7 @@ export default function VideoToAudioConverter() {
                           <div className="min-w-0">
                             <p className="text-base font-bold text-slate-900">Drop your video here</p>
                             <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-slate-500 break-words">
-                              Or browse your device. Supports common video files like MP4, MOV, MKV, and WEBM. Hosted uploads are capped at {MAX_UPLOAD_SIZE_LABEL}.
+                              Or browse your device. Supports common video files like MP4, MOV, MKV, and WEBM. Smaller files convert faster in the browser.
                             </p>
                           </div>
 
@@ -353,7 +400,7 @@ export default function VideoToAudioConverter() {
                                   onClick={() => {
                                     setSelectedFile(null);
                                     setDownloadName("");
-                                    setStatusLabel("Ready to upload");
+                                    setStatusLabel("Ready to convert");
                                   }}
                                   className="self-start text-xs font-semibold text-slate-500 underline decoration-slate-300 underline-offset-4 transition hover:text-slate-900"
                                 >
@@ -494,7 +541,7 @@ export default function VideoToAudioConverter() {
                       <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
                         <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">Quick notes</p>
                         <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
-                          <li className="break-words">• Hosted uploads are capped at {MAX_UPLOAD_SIZE_LABEL}; larger files are best processed locally.</li>
+                          <li className="break-words">• Smaller files convert faster in the browser; larger files may take longer or hit memory limits.</li>
                           <li className="break-words">• Keeps the experience simple: one extract step, one download step, no clutter.</li>
                           <li className="break-words">• Works with common video formats and existing audio files too.</li>
                           <li className="break-words">• Lossless formats ignore bitrate controls because quality is preserved.</li>
