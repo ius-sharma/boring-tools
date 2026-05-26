@@ -104,7 +104,18 @@ Project notes
 - The homepage lists Live and Upcoming tools; tools marked `Upcoming` are not yet linked from the homepage.
 
 Contributing
-- Open an issue or submit a PR. If adding a new tool, add a small `page.jsx` under `app/` and update the homepage registry (`app/page.jsx`).
+
+Boring Tools is open source and welcomes community contributions.
+
+Users can:
+- Suggest tools
+- Report bugs
+- Submit pull requests
+- Improve documentation
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to contribute to this project.
+
+Keep project structure clean and maintain consistency with existing project architecture.
 
 License & author
 - MIT • Ayush Sharma
@@ -151,11 +162,14 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ## Progress
 
-
 - Live: **36 tools** (listed on the homepage)
  - Upcoming: **0 tools**
 
 Visit the homepage to browse Live tools and try them in your browser.
+
+## FAQ
+
+Added searchable FAQ section with collapsible questions and tool request functionality.
 
 ## Suggestions
 

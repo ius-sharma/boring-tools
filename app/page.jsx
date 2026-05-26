@@ -68,6 +68,12 @@ export default function Home() {
   const [toolsToShow, setToolsToShow] = useState(6);
   const searchRef = useRef(null);
   const findToolsRef = useRef(null);
+  
+  // FAQ state
+  const [faqSearch, setFaqSearch] = useState("");
+  const [activeFaq, setActiveFaq] = useState(null);
+  
+  
 
   const categories = useMemo(() => {
     const set = new Set(availableTools.map((t) => t.category));
@@ -127,9 +133,65 @@ export default function Home() {
     } catch (e) {}
   }, []);
 
-  const handleSuggestionChange = (field, value) => {
-    setSuggestionForm((current) => ({ ...current, [field]: value }));
-  };
+   const handleSuggestionChange = (field, value) => {
+     setSuggestionForm((current) => ({ ...current, [field]: value }));
+   };
+
+   // FAQ data
+   const faqs = [
+     {
+       id: 1,
+       question: "What is Boring Tools?",
+       answer: "Boring Tools is a collection of simple tools designed to solve everyday problems quickly and efficiently."
+     },
+     {
+       id: 2,
+       question: "Is Boring Tools free to use?",
+       answer: "Yes, all currently available tools are free to use."
+     },
+     {
+       id: 3,
+       question: "Do I need an account?",
+       answer: "No, most tools work instantly without requiring sign-up."
+     },
+     {
+       id: 4,
+       question: "Are my uploaded files safe?",
+       answer: "User privacy matters. Files should only be processed temporarily and should not be stored unnecessarily."
+     },
+     {
+       id: 5,
+       question: "Can I contribute my own tools?",
+       answer: "Yes. Community contributions are welcome if the project is open source."
+     },
+     {
+       id: 6,
+       question: "How can I request a tool?",
+       answer: "Users can submit feature requests or suggest new tools."
+     },
+     {
+       id: 7,
+       question: "Are my files permanently stored?",
+       answer: "No. Files should only be processed when necessary."
+     },
+     {
+       id: 8,
+       question: "Why is it called Boring Tools?",
+       answer: "Because boring problems still deserve smart solutions."
+     }
+   ];
+
+   const filteredFaqs = useMemo(() => {
+     if (!faqSearch.trim()) return faqs;
+     
+     const normalized = faqSearch.toLowerCase();
+     return faqs.filter((faq) => 
+       faq.question.toLowerCase().includes(normalized) || 
+       faq.answer.toLowerCase().includes(normalized)
+     );
+   }, [faqSearch]);
+
+  
 
   const handleSuggestionSubmit = async (event) => {
     event.preventDefault();
@@ -419,63 +481,122 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Suggestion Section */}
-      <section className="bg-slate-50 py-12 sm:py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Help Shape the Collection</h2>
-            <p className="text-slate-600">Got an idea? Send us your feedback and suggestions.</p>
-          </div>
+       {/* Suggestion Section */}
+       <section className="bg-slate-50 py-12 sm:py-16">
+         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+           <div className="mb-12">
+             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Help Shape the Collection</h2>
+             <p className="text-slate-600">Got an idea? Send us your feedback and suggestions.</p>
+           </div>
 
-          <form onSubmit={handleSuggestionSubmit} className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-slate-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="Your name (optional)"
-                value={suggestionForm.name}
-                onChange={(e) => handleSuggestionChange("name", e.target.value)}
-                className="px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              <input
-                type="email"
-                placeholder="Your email (optional)"
-                value={suggestionForm.email}
-                onChange={(e) => handleSuggestionChange("email", e.target.value)}
-                className="px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
+           <form onSubmit={handleSuggestionSubmit} className="max-w-2xl mx-auto bg-white p-8 rounded-xl border border-slate-200">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+               <input
+                 type="text"
+                 placeholder="Your name (optional)"
+                 value={suggestionForm.name}
+                 onChange={(e) => handleSuggestionChange("name", e.target.value)}
+                 className="px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+               />
+               <input
+                 type="email"
+                 placeholder="Your email (optional)"
+                 value={suggestionForm.email}
+                 onChange={(e) => handleSuggestionChange("email", e.target.value)}
+                 className="px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+               />
+             </div>
 
-            <div className="mb-4">
-              <ThemedDropdown
-                ariaLabel="Select suggestion type"
-                value={suggestionForm.category}
-                options={suggestionCategoryOptions}
-                onChange={(newCategory) => handleSuggestionChange("category", newCategory)}
-              />
-            </div>
+             <div className="mb-4">
+               <ThemedDropdown
+                 ariaLabel="Select suggestion type"
+                 value={suggestionForm.category}
+                 options={suggestionCategoryOptions}
+                 onChange={(newCategory) => handleSuggestionChange("category", newCategory)}
+               />
+             </div>
 
-            <textarea
-              placeholder="Tell us what tool you need or what we can improve..."
-              value={suggestionForm.suggestion}
-              onChange={(e) => handleSuggestionChange("suggestion", e.target.value)}
-              rows="5"
-              className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 mb-4"
-            />
+             <textarea
+               placeholder="Tell us what tool you need or what we can improve..."
+               value={suggestionForm.suggestion}
+               onChange={(e) => handleSuggestionChange("suggestion", e.target.value)}
+               rows="5"
+               className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 mb-4"
+             />
 
-            <button type="submit" className="w-full bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
-              Send Suggestion
-            </button>
+             <button type="submit" className="w-full bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
+               Send Suggestion
+             </button>
 
-            {suggestionState.message && (
-              <p className={`mt-3 text-sm ${suggestionState.status === "success" ? "text-green-600" : suggestionState.status === "error" ? "text-red-600" : "text-slate-600"}`}>
-                {suggestionState.message}
-              </p>
-            )}
-          </form>
-        </div>
-      </section>
+             {suggestionState.message && (
+               <p className={`mt-3 text-sm ${suggestionState.status === "success" ? "text-green-600" : suggestionState.status === "error" ? "text-red-600" : "text-slate-600"}`}>
+                 {suggestionState.message}
+               </p>
+             )}
+           </form>
+         </div>
+       </section>
 
-      {/* Footer */}
+       {/* FAQ Section */}
+       <section className="bg-white py-12 sm:py-16">
+         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+           <div className="mb-12">
+             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Frequently Asked Questions</h2>
+             <p className="text-slate-600">Find answers to common questions about Boring Tools</p>
+           </div>
+           
+           <div className="mb-8">
+             <div className="relative mb-4">
+               <input
+                 type="text"
+                 placeholder="Search FAQs..."
+                 value={faqSearch}
+                 onChange={(e) => setFaqSearch(e.target.value)}
+                 className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+               />
+             </div>
+           </div>
+           
+           <div className="space-y-2">
+             {filteredFaqs.map((faq, index) => (
+               <div key={faq.id} className="border border-slate-200 rounded-lg overflow-hidden">
+                 <div
+                   className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition"
+                   onClick={() => setActiveFaq(index)}
+                 >
+                   <h3 className="text-lg font-medium text-slate-900">{faq.question}</h3>
+                   <svg 
+                     className={`w-5 h-5 text-slate-500 transition-transform duration-200 ${activeFaq === index ? 'rotate-180' : ''}`}
+                     fill="none" 
+                     stroke="currentColor" 
+                     viewBox="0 0 24 24"
+                   >
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                   </svg>
+                 </div>
+                 
+                 {activeFaq === index && (
+                   <div className="border-t border-slate-200">
+                     <div className="p-5 text-slate-600">
+                       {faq.answer}
+                     </div>
+                   </div>
+                 )}
+               </div>
+             ))}
+             
+             {filteredFaqs.length === 0 && (
+               <div className="text-center py-12">
+                 <p className="text-slate-600">No FAQs match your search</p>
+               </div>
+             )}
+           </div>
+         </div>
+       </section>
+
+      
+
+       {/* Footer */}
       <footer className="bg-black text-slate-300 py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
