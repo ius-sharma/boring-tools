@@ -24,7 +24,16 @@ function getOutputName(fileName) {
 let converterPromise;
 
 function getWasmPath() {
-  return process.env.LIBREOFFICE_WASM_PATH || path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "wasm");
+  // Prefer an explicit environment override. If not provided, use the
+  // public CDN for @matbee/libreoffice-converter so the large WASM files
+  // are not packaged into serverless functions (prevents Vercel size limits).
+  // You can set `LIBREOFFICE_WASM_PATH` to a custom URL or filesystem path.
+  if (process.env.LIBREOFFICE_WASM_PATH) return process.env.LIBREOFFICE_WASM_PATH;
+
+  // Default to jsDelivr for the known package version. Update the version
+  // string here if you bump the converter dependency.
+  const DEFAULT_VERSION = "2.6.0";
+  return `https://cdn.jsdelivr.net/npm/@matbee/libreoffice-converter@${DEFAULT_VERSION}/wasm`;
 }
 
 async function getConverter() {
@@ -49,15 +58,6 @@ async function saveTempUpload(file) {
 
 export async function POST(request) {
   try {
-    // On Vercel serverless deployments the LibreOffice WASM runtime makes
-    // the serverless function exceed the unzipped 250 MB limit. To keep
-    // production deployments stable we return 503 by default when running
-    // on Vercel. You can override this by setting `ALLOW_LIBREOFFICE=1`
-    // in the Vercel environment if you deploy a custom build that can
-    // accommodate the runtime (not recommended on shared serverless).
-    if (process.env.VERCEL && process.env.ALLOW_LIBREOFFICE !== "1") {
-      return NextResponse.json({ error: "DOC-to-PDF conversion is disabled on this deployment to avoid Vercel serverless size limits." }, { status: 503 });
-    }
     const formData = await request.formData();
     const file = formData.get("file");
 
