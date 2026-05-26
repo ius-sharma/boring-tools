@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     proxyClientMaxBodySize: "4mb",
   },
   outputFileTracingIncludes: {
-    "/api/doc-to-pdf-converter": ["./node_modules/zod/**/*", "./node_modules/@matbee/libreoffice-converter/**/*"],
+    "/api/doc-to-pdf-converter": ["./node_modules/zod/**/*"],
   },
 };
 

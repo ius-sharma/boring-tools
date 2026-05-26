@@ -49,6 +49,15 @@ async function saveTempUpload(file) {
 
 export async function POST(request) {
   try {
+    // On Vercel serverless deployments the LibreOffice WASM runtime makes
+    // the serverless function exceed the unzipped 250 MB limit. To keep
+    // production deployments stable we return 503 by default when running
+    // on Vercel. You can override this by setting `ALLOW_LIBREOFFICE=1`
+    // in the Vercel environment if you deploy a custom build that can
+    // accommodate the runtime (not recommended on shared serverless).
+    if (process.env.VERCEL && process.env.ALLOW_LIBREOFFICE !== "1") {
+      return NextResponse.json({ error: "DOC-to-PDF conversion is disabled on this deployment to avoid Vercel serverless size limits." }, { status: 503 });
+    }
     const formData = await request.formData();
     const file = formData.get("file");
 
