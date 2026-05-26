@@ -21,6 +21,7 @@ const tools = [
   { id: "document-data-extractor", name: "Document Data Extractor", href: "/document-data-extractor", category: "Documents", description: "Upload documents or images and extract contacts, dates, financial data, links, keywords, and raw text.", status: "Live", isNew: true, isFeatured: true },
   { id: "resume-bullet-rewriter", name: "Resume Bullet Rewriter", href: "/resume-bullet-rewriter", category: "Career", description: "Turn rough notes into strong resume bullets.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-zone-converter", name: "Time Zone Converter", href: "/time-zone-converter", category: "Time & Date", description: "Convert meeting times across time zones.", status: "Live", isNew: true },
+  { id: "days-between-dates", name: "Days Between Dates", href: "/days-between-dates", category: "Time & Date", description: "Calculate the number of days between two dates.", status: "Live", isNew: true },
   { id: "to-do-list", name: "To-Do List", href: "/to-do-list", category: "Productivity", description: "Track tasks locally with saved progress.", status: "Live", isNew: true },
   { id: "gst-calculator", name: "GST Calculator", href: "/gst-calculator", category: "Finance", description: "Calculate GST-inclusive and exclusive totals.", status: "Live", isNew: true },
   { id: "truth-or-dare-play", name: "Truth or Dare Play", href: "/truth-or-dare-play", category: "Fun", description: "Spin up a clean truth-or-dare game quickly.", status: "Live", isNew: true },
@@ -44,7 +45,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
