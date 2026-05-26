@@ -34,6 +34,16 @@ Featured tools
 - Image Compressor / Resizer — `/image-compressor` — Compress & resize images in the browser.
 - Resume Bullet Rewriter — `/resume-bullet-rewriter` — Turn rough notes into resume-ready bullets.
 
+## Age Difference Calculator
+
+Compare two birth dates and instantly calculate exact age differences with useful statistics and insights.
+
+Features:
+- Exact age difference
+- Total days/weeks/months
+- Older person detection
+- Fun insights
+- Downloadable report
 
 Live tools (36)
 
@@ -77,7 +87,9 @@ Live tools (36)
 
 Upcoming tools
 
-None.
+- Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
+- Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
+- Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
 Run locally
 
@@ -163,7 +175,7 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 ## Progress
 
 - Live: **36 tools** (listed on the homepage)
- - Upcoming: **0 tools**
+- Upcoming: **3 tools** (listed on the homepage)
 
 Visit the homepage to browse Live tools and try them in your browser.
 
