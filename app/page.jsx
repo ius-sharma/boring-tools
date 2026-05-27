@@ -11,7 +11,7 @@ const tools = [
   { id: "password-generator", name: "Password Generator", href: "/password-generator", category: "Security", description: "Generate secure passwords with options.", status: "Live" },
   { id: "can-i-trust-this-website", name: "Can I Trust This Website?", href: "/can-i-trust-this-website", category: "Security", description: "Check website trust signals before you share anything sensitive.", status: "Live", isNew: true },
   { id: "age-calculator", name: "Age Calculator", href: "/age-calculator", category: "Utility", description: "Calculate age from date of birth.", status: "Live" },
-  { id: "birthday-countdown", name: "Birthday Countdown", href: "/birthday-countdown", category: "Time & Date", description: "Track time remaining until your next birthday.", status: "Upcoming", isNew: true },
+  { id: "birthday-countdown", name: "Birthday Countdown", href: "/birthday-countdown", category: "Time & Date", description: "Track time remaining until your next birthday.", status: "Live", isNew: true, isFeatured: true },
   { id: "age-difference-calculator", name: "Age Difference Calculator", href: "/age-difference-calculator", category: "Time & Date", description: "Compare two birth dates and calculate the exact age gap.", status: "Upcoming", isNew: true },
   { id: "discount-calculator", name: "Discount Calculator", href: "/discount-calculator", category: "Finance", description: "Calculate discounts, savings, taxes, and final payable amounts.", status: "Upcoming", isNew: true },
   { id: "qr-generator", name: "QR Generator", href: "/qr-generator", category: "Developer", description: "Generate downloadable QR from text.", status: "Live" },
@@ -48,7 +48,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "birthday-countdown", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));

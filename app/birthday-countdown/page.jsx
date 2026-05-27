@@ -1,6 +1,5 @@
 "use client";
 
-import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const DAY_MS = 86400000;
@@ -8,8 +7,6 @@ const HOUR_MS = 3600000;
 const MINUTE_MS = 60000;
 const SECOND_MS = 1000;
 const NUMBER_FORMAT = new Intl.NumberFormat("en-IN");
-const TOOL_STATUS = "upcoming";
-
 function parseDateInput(value) {
   if (!value) {
     return null;
@@ -164,10 +161,6 @@ function toDisplayAge(age) {
 }
 
 export default function BirthdayCountdownPage() {
-  if (TOOL_STATUS === "upcoming") {
-    return <ComingSoon toolName="Birthday Countdown" />;
-  }
-
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [now, setNow] = useState(() => new Date());
