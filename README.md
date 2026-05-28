@@ -32,7 +32,7 @@ Featured tools
 
 - YouTube Title Generator — `/youtube-title-generator` — Generate clickable title ideas from a topic.
 - Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
-- Image Compressor / Resizer — `/image-compressor` — Compress & resize images in the browser.
+- Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
 
 ## Age Difference Calculator
 
@@ -53,42 +53,42 @@ Live tools (37)
 4. Password Generator — `/password-generator`
 5. Age Calculator — `/age-calculator`
 6. Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
-7. QR Generator — `/qr-generator`
-8. Unit Converter — `/unit-converter`
-9. File Name Sanitizer — `/file-name-sanitizer`
-10. Image Compressor / Resizer — `/image-compressor`
-11. Resume Bullet Rewriter — `/resume-bullet-rewriter`
-12. Time Zone Converter — `/time-zone-converter`
-13. To-Do List — `/to-do-list`
-14. GST Calculator — `/gst-calculator`
-15. Truth or Dare Play — `/truth-or-dare-play`
-16. Pomodoro Timer — `/pomodoro-timer`
-17. Roast My To-Do List — `/roast-my-todo-list`
-18. Markdown Previewer — `/markdown-previewer`
-19. Video Transcriber — `/video-transcriber`
-20. YouTube Title Generator — `/youtube-title-generator`
-21. Base Converter — `/base-converter`
-22. Aspect Ratio Calculator — `/aspect-ratio-calculator`
-23. Distance Between Cities — `/distance-between-cities`
-24. Currency Converter — `/currency-converter`
-25. LinkedIn Post Formatter — `/linkedin-post-formatter`
-26. What Happened Today In History — `/what-happened-today`
-27. Math Formula Calculator — `/math-formula-calculator`
-28. Science Formulas Calculator — `/science-formulas-calculator`
-29. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
-30. Social Account Analyzer — `/social-account-analyzer` (Day 29)
-31. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
-32. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
-33. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
-34. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
-35. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
-36. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
-37. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
+7. Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
+8. QR Generator — `/qr-generator`
+9. Unit Converter — `/unit-converter`
+10. File Name Sanitizer — `/file-name-sanitizer`
+11. Image Compressor / Resizer — `/image-compressor`
+12. Resume Bullet Rewriter — `/resume-bullet-rewriter`
+13. Time Zone Converter — `/time-zone-converter`
+14. To-Do List — `/to-do-list`
+15. GST Calculator — `/gst-calculator`
+16. Truth Or Dare Play — `/truth-or-dare-play`
+17. Pomodoro Timer — `/pomodoro-timer`
+18. Roast My To-Do List — `/roast-my-todo-list`
+19. Markdown Previewer — `/markdown-previewer`
+20. Video Transcriber — `/video-transcriber`
+21. YouTube Title Generator — `/youtube-title-generator`
+22. Base Converter — `/base-converter`
+23. Aspect Ratio Calculator — `/aspect-ratio-calculator`
+24. Distance Between Cities — `/distance-between-cities`
+25. Currency Converter — `/currency-converter`
+26. LinkedIn Post Formatter — `/linkedin-post-formatter`
+27. What Happened Today In History — `/what-happened-today`
+28. Math Formula Calculator — `/math-formula-calculator`
+29. Science Formulas Calculator — `/science-formulas-calculator`
+30. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
+31. Social Account Analyzer — `/social-account-analyzer` (Day 29)
+32. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
+33. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
+34. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
+35. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
+36. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
+37. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
+38. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
 
 
 Upcoming tools
 
-- Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
 - Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
 Run locally
@@ -174,8 +174,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ## Progress
 
-- Live: **37 tools** (listed on the homepage)
-- Upcoming: **2 tools** (listed on the homepage)
+- Live: **38 tools** (listed on the homepage)
+- Upcoming: **1 tool** (listed on the homepage)
 
 Visit the homepage to browse Live tools and try them in your browser.
 

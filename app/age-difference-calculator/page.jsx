@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 const DAY_MS = 86400000;
 const NUMBER_FORMAT = new Intl.NumberFormat("en-IN");
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 function parseDateInput(value) {
   if (!value) {
@@ -389,7 +389,7 @@ export default function AgeDifferenceCalculatorPage() {
   const skeletonVisible = Boolean(canUseResults && isAnimating);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
+    <div className="min-h-screen bg-slate-50 flex items-start justify-center p-4 sm:py-8 font-sans">
       <div className="bg-white shadow-lg rounded-2xl p-5 sm:p-8 w-full max-w-6xl border border-slate-200 flex flex-col gap-6">
         <div className="flex flex-col gap-2 items-center text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-orange-600">Time & Date</p>

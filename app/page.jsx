@@ -12,7 +12,7 @@ const tools = [
   { id: "can-i-trust-this-website", name: "Can I Trust This Website?", href: "/can-i-trust-this-website", category: "Security", description: "Check website trust signals before you share anything sensitive.", status: "Live", isNew: true },
   { id: "age-calculator", name: "Age Calculator", href: "/age-calculator", category: "Utility", description: "Calculate age from date of birth.", status: "Live" },
   { id: "birthday-countdown", name: "Birthday Countdown", href: "/birthday-countdown", category: "Time & Date", description: "Track time remaining until your next birthday.", status: "Live", isNew: true, isFeatured: true },
-  { id: "age-difference-calculator", name: "Age Difference Calculator", href: "/age-difference-calculator", category: "Time & Date", description: "Compare two birth dates and calculate the exact age gap.", status: "Upcoming", isNew: true },
+  { id: "age-difference-calculator", name: "Age Difference Calculator", href: "/age-difference-calculator", category: "Time & Date", description: "Compare two birth dates and calculate the exact age gap.", status: "Live", isNew: true, isFeatured: true },
   { id: "discount-calculator", name: "Discount Calculator", href: "/discount-calculator", category: "Finance", description: "Calculate discounts, savings, taxes, and final payable amounts.", status: "Upcoming", isNew: true },
   { id: "qr-generator", name: "QR Generator", href: "/qr-generator", category: "Developer", description: "Generate downloadable QR from text.", status: "Live" },
   { id: "unit-converter", name: "Unit Converter", href: "/unit-converter", category: "Utility", description: "Convert length, weight, temperature.", status: "Live" },
@@ -253,7 +253,7 @@ export default function Home() {
               </span>
             </div>
             <a
-              href="#explore"
+              href="#featured"
               onClick={() => document.getElementById("featured")?.scrollIntoView({ behavior: "smooth" })}
               className="inline-block bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
             >
