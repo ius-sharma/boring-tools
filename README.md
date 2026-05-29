@@ -33,6 +33,7 @@ Featured tools
 - YouTube Title Generator — `/youtube-title-generator` — Generate clickable title ideas from a topic.
 - Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
 - Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
+- Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
 ## Age Difference Calculator
 
@@ -45,7 +46,7 @@ Features:
 - Fun insights
 - Downloadable report
 
-Live tools (37)
+Live tools (38)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -85,11 +86,7 @@ Live tools (37)
 36. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
 37. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
 38. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
-
-
-Upcoming tools
-
-- Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
+39. Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
 Run locally
 
@@ -113,7 +110,7 @@ The **Video to Audio Converter** is live, but the hosted version accepts uploads
 
 Project notes
 - This repository contains many small tools under `app/` built with Next.js + Tailwind.
-- The homepage lists Live and Upcoming tools; tools marked `Upcoming` are not yet linked from the homepage.
+- The homepage lists Live tools only; the live registry drives featured cards, tool listings, and navigation.
 
 Contributing
 
@@ -174,8 +171,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ## Progress
 
-- Live: **38 tools** (listed on the homepage)
-- Upcoming: **1 tool** (listed on the homepage)
+- Live: **39 tools** (listed on the homepage)
+- Upcoming: **0 tools** (listed on the homepage)
 
 Visit the homepage to browse Live tools and try them in your browser.
 

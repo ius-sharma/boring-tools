@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import ThemedDropdown from "./components/ThemedDropdown";
 
 const tools = [
@@ -13,7 +12,7 @@ const tools = [
   { id: "age-calculator", name: "Age Calculator", href: "/age-calculator", category: "Utility", description: "Calculate age from date of birth.", status: "Live" },
   { id: "birthday-countdown", name: "Birthday Countdown", href: "/birthday-countdown", category: "Time & Date", description: "Track time remaining until your next birthday.", status: "Live", isNew: true, isFeatured: true },
   { id: "age-difference-calculator", name: "Age Difference Calculator", href: "/age-difference-calculator", category: "Time & Date", description: "Compare two birth dates and calculate the exact age gap.", status: "Live", isNew: true, isFeatured: true },
-  { id: "discount-calculator", name: "Discount Calculator", href: "/discount-calculator", category: "Finance", description: "Calculate discounts, savings, taxes, and final payable amounts.", status: "Upcoming", isNew: true },
+  { id: "discount-calculator", name: "Discount Calculator", href: "/discount-calculator", category: "Finance", description: "Calculate discounts, savings, taxes, and final payable amounts.", status: "Live", isNew: true, isFeatured: true },
   { id: "qr-generator", name: "QR Generator", href: "/qr-generator", category: "Developer", description: "Generate downloadable QR from text.", status: "Live" },
   { id: "unit-converter", name: "Unit Converter", href: "/unit-converter", category: "Utility", description: "Convert length, weight, temperature.", status: "Live" },
   { id: "file-name-sanitizer", name: "File Name Sanitizer", href: "/file-name-sanitizer", category: "Utility", description: "Clean unsafe or messy filenames.", status: "Live" },
@@ -48,7 +47,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "birthday-countdown", "age-difference-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
+  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "birthday-countdown", "age-difference-calculator", "discount-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
@@ -65,10 +64,12 @@ const suggestionCategoryOptions = [
 const initialSuggestionForm = { name: "", email: "", category: "New Tool Idea", suggestion: "" };
 
 export default function Home() {
+  const sectionOrder = ["hero", "trust", "featured", "how-it-works", "find-tools", "faq", "final-cta"];
   const [query, setQuery] = useState("");
   const [suggestionForm, setSuggestionForm] = useState(initialSuggestionForm);
   const [suggestionState, setSuggestionState] = useState({ status: "idle", message: "" });
   const [toolsToShow, setToolsToShow] = useState(6);
+  const [activeSection, setActiveSection] = useState("hero");
   const searchRef = useRef(null);
   const findToolsRef = useRef(null);
   
@@ -122,6 +123,10 @@ export default function Home() {
   }, [query]);
 
   useEffect(() => {
+    setActiveFaq(null);
+  }, [faqSearch]);
+
+  useEffect(() => {
     try {
       if (typeof window !== "undefined") {
         const params = new URLSearchParams(window.location.search);
@@ -135,6 +140,77 @@ export default function Home() {
       }
     } catch (e) {}
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const supportsObserver = typeof IntersectionObserver !== "undefined";
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const prefersReducedMotion = motionQuery.matches;
+    const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
+
+    if (!supportsObserver || prefersReducedMotion) {
+      revealItems.forEach((item) => item.classList.add("is-visible"));
+      return;
+    }
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px -8% 0px",
+      }
+    );
+
+    revealItems.forEach((item) => revealObserver.observe(item));
+
+    const sectionElements = sectionOrder
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]?.target?.id) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      {
+        threshold: [0.15, 0.35, 0.6],
+        rootMargin: "-20% 0px -55% 0px",
+      }
+    );
+
+    sectionElements.forEach((section) => sectionObserver.observe(section));
+
+    return () => {
+      revealObserver.disconnect();
+      sectionObserver.disconnect();
+    };
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    if (typeof window === "undefined") return;
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const goToNextSection = () => {
+    const currentIndex = sectionOrder.indexOf(activeSection);
+    const nextIndex = currentIndex === -1 ? 1 : Math.min(currentIndex + 1, sectionOrder.length - 1);
+    scrollToSection(sectionOrder[nextIndex]);
+  };
 
    const handleSuggestionChange = (field, value) => {
      setSuggestionForm((current) => ({ ...current, [field]: value }));

@@ -1,6 +1,5 @@
 "use client";
 
-import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
 
@@ -15,7 +14,7 @@ const currencies = [
   { value: "AED", label: "UAE Dirham (AED)" },
 ];
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 function parseNumber(value) {
   if (value === "" || value === null || value === undefined) {
@@ -90,10 +89,6 @@ function buildReport({ originalPrice, discountPercentage, additionalDiscountPerc
 }
 
 export default function DiscountCalculatorPage() {
-  if (TOOL_STATUS === "upcoming") {
-    return <ComingSoon toolName="Discount Calculator" />;
-  }
-
   const [originalPrice, setOriginalPrice] = useState("2499");
   const [discountPercentage, setDiscountPercentage] = useState("20");
   const [additionalDiscountPercentage, setAdditionalDiscountPercentage] = useState("");
