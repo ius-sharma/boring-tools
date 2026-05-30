@@ -35,6 +35,14 @@ Featured tools
 - Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
 - Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
+Upcoming tools
+
+- Terms & Conditions Simplifier — `/terms-conditions-simplifier` — Simplify legal text into plain language with a summary, obligations, risks, permissions, and reading time.
+- Water Intake Calculator — `/water-intake-calculator` — Estimate recommended daily water intake from age, weight, gender, activity, and climate.
+- Percentage Calculator — `/percentage-calculator` — Solve common percentage calculations with formulas and breakdowns.
+- Text to Morse Code — `/text-to-morse-code` — Convert text into Morse code and Morse code back into text, with optional local Morse audio playback.
+- SIP Calculator — `/sip-calculator` — Estimate future SIP returns with monthly compounding and growth chart.
+
 ## Age Difference Calculator
 
 Compare two birth dates and instantly calculate exact age differences with useful statistics and insights.
@@ -57,6 +65,68 @@ Features:
 - Real-world examples
 - Learn next suggestions
 - Client-side knowledge system
+
+## SIP Calculator
+
+Estimate the future value of your SIP using standard monthly compounding calculations, with an investment breakdown and growth projection chart.
+
+Features:
+- Monthly investment, expected return, and duration inputs
+- Total investment, wealth gained, and maturity value cards
+- Client-side growth chart visualization
+- Copy results, download report, and reset actions
+- Fully browser-based (no backend)
+
+## BMI Calculator
+
+Calculate Body Mass Index (BMI) instantly with unit support and practical health insights, fully in the browser.
+
+Features:
+- Height and weight input with metric/imperial unit selector
+- Instant BMI score and category (Underweight, Normal, Overweight, Obese)
+- Healthy weight range based on BMI 18.5 to 24.9
+- Difference from ideal range guidance
+- BMI scale visualization with live position marker
+- Copy results, download report, and reset actions
+- 100% client-side processing
+
+## Water Intake Calculator (Upcoming)
+
+Estimate a recommended daily water target based on age, weight, gender, activity level, and climate, fully in the browser.
+
+Features:
+- Age, weight, gender, activity level, and climate inputs
+- Recommended daily water intake in liters
+- Daily water intake in glasses
+- Hourly hydration target for steady pacing
+- Water progress visualization with daily target cards
+- Hydration tips, activity adjustment, and weather adjustment insights
+- Copy results, download report, and reset actions
+- 100% client-side processing
+
+## Terms & Conditions Simplifier
+
+Paste terms, privacy policies, agreements, or other legal text and get a plain-language breakdown entirely in the browser.
+
+Features:
+- Large legal text input area
+- Short summary and important points
+- User obligations and potential risks
+- Key permissions and estimated reading time
+- Copy results and download report
+- Clear all and responsive empty/loading/error states
+
+## Text to Morse Code
+
+Convert plain text into Morse code and decode Morse code back into text instantly, fully in the browser.
+
+Features:
+- Dual mode conversion: Text to Morse and Morse to Text
+- Real-time converted output
+- Output character count and word count
+- Copy result, download TXT, and clear actions
+- Local Morse audio playback with sound on/off toggle
+- Mobile-responsive interface
 
 Live tools (40)
 
@@ -100,8 +170,6 @@ Live tools (40)
 38. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
 39. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
 40. Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
-
-Run locally
 
 ```bash
 npm install
@@ -184,8 +252,8 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ## Progress
 
-- Live: **39 tools** (listed on the homepage)
-- Upcoming: **0 tools** (listed on the homepage)
+- Live: **40 tools** (listed on the homepage)
+- Upcoming: **2 tools** (listed on the homepage)
 
 Visit the homepage to browse Live tools and try them in your browser.
 
