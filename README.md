@@ -46,7 +46,19 @@ Features:
 - Fun insights
 - Downloadable report
 
-Live tools (38)
+## QuickLearn
+
+Type any topic and understand it in under a minute with simple explanations, key concepts, real-world examples, and guided learning paths.
+
+Features:
+- One-line explanation
+- Explain Like I'm 10
+- Key concepts
+- Real-world examples
+- Learn next suggestions
+- Client-side knowledge system
+
+Live tools (40)
 
 1. Text Formatter — `/text-formatter`
 2. JSON Formatter — `/json-formatter`
@@ -77,16 +89,17 @@ Live tools (38)
 27. What Happened Today In History — `/what-happened-today`
 28. Math Formula Calculator — `/math-formula-calculator`
 29. Science Formulas Calculator — `/science-formulas-calculator`
-30. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
-31. Social Account Analyzer — `/social-account-analyzer` (Day 29)
-32. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
-33. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
-34. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
-35. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
-36. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
-37. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
-38. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
-39. Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
+30. QuickLearn — `/concept-explorer` — Type any topic and understand it in under a minute with simple explanations, key concepts, real-world examples, and guided learning paths.
+31. Can I Trust This Website? — `/can-i-trust-this-website` (Day 28)
+32. Social Account Analyzer — `/social-account-analyzer` (Day 29)
+33. Attendance Calculator — `/attendance-calculator` (Day 30) — Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage.
+34. YouTube Downloader — `/youtube-downloader` (Day 31) — Download videos, captions, and thumbnails from YouTube. Recommended for local use (see [Setup Guide](/SETUP_GUIDE.md)).
+35. DOC to PDF Converter — `/doc-to-pdf-converter` (Day 32) — Upload DOC or DOCX files and convert them into a downloadable PDF.
+36. Video to Audio Converter — `/video-to-audio-converter` (Day 33) — Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.
+37. Image to PDF Converter — `/image-to-pdf-converter` (Day 34) — Upload one or more images and convert them into a downloadable PDF.
+38. PDF Intelligence Tool — `/pdf-intelligence-tool` (Day 35) — Analyze PDFs instantly and extract meaningful information such as summaries, key points, important dates, contacts, links, and document statistics.
+39. Document Data Extractor — `/document-data-extractor` (Day 36) — Upload documents or images and automatically extract structured information including contacts, dates, financial details, links, keywords, and raw text.
+40. Discount Calculator — `/discount-calculator` — Instantly calculate discounts, savings, taxes, and final payable amounts.
 
 Run locally
 
