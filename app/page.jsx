@@ -5,7 +5,7 @@ import ThemedDropdown from "./components/ThemedDropdown";
 
 const tools = [
   { id: "text-formatter", name: "Text Formatter", href: "/text-formatter", category: "Text", description: "Clean and transform text instantly.", status: "Live" },
-  { id: "text-to-morse-code", name: "Text to Morse Code", href: "/text-to-morse-code", category: "Text", description: "Convert text to Morse Code and Morse back to text instantly.", status: "Upcoming", isNew: true },
+  { id: "text-to-morse-code", name: "Text to Morse Code", href: "/text-to-morse-code", category: "Text", description: "Convert text to Morse Code and Morse back to text instantly.", status: "Live", isNew: true, isFeatured: true },
   { id: "json-formatter", name: "JSON Formatter", href: "/json-formatter", category: "Developer", description: "Format and validate JSON in one click.", status: "Live" },
   { id: "word-counter", name: "Word Counter", href: "/word-counter", category: "Text", description: "Count words and characters quickly.", status: "Live" },
   { id: "password-generator", name: "Password Generator", href: "/password-generator", category: "Security", description: "Generate secure passwords with options.", status: "Live" },
@@ -54,7 +54,7 @@ const tools = [
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "json-formatter", "word-counter", "password-generator", "age-calculator", "birthday-countdown", "age-difference-calculator", "discount-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "concept-explorer", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
+  "text-formatter", "text-to-morse-code", "json-formatter", "word-counter", "password-generator", "age-calculator", "birthday-countdown", "age-difference-calculator", "discount-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "concept-explorer", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter"
 ]);
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));

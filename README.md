@@ -26,10 +26,11 @@ Live demo: https://boring-tools-nine.vercel.app/
 
 What you'll find here
 - Short summary of the project and links to try tools locally or online.
-- Three featured tools to try right now.
+- Featured tools to try right now.
 
 Featured tools
 
+- Text to Morse Code — `/text-to-morse-code` — Convert text into Morse code and Morse code back into text, with optional local Morse audio playback.
 - YouTube Title Generator — `/youtube-title-generator` — Generate clickable title ideas from a topic.
 - Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
 - Age Difference Calculator — `/age-difference-calculator` — Compare two birth dates and calculate the exact age gap.
@@ -40,7 +41,6 @@ Upcoming tools
 - Terms & Conditions Simplifier — `/terms-conditions-simplifier` — Simplify legal text into plain language with a summary, obligations, risks, permissions, and reading time.
 - Water Intake Calculator — `/water-intake-calculator` — Estimate recommended daily water intake from age, weight, gender, activity, and climate.
 - Percentage Calculator — `/percentage-calculator` — Solve common percentage calculations with formulas and breakdowns.
-- Text to Morse Code — `/text-to-morse-code` — Convert text into Morse code and Morse code back into text, with optional local Morse audio playback.
 - SIP Calculator — `/sip-calculator` — Estimate future SIP returns with monthly compounding and growth chart.
 
 ## Age Difference Calculator
@@ -50,45 +50,6 @@ Compare two birth dates and instantly calculate exact age differences with usefu
 Features:
 - Exact age difference
 - Total days/weeks/months
-- Older person detection
-- Fun insights
-- Downloadable report
-
-## QuickLearn
-
-Type any topic and understand it in under a minute with simple explanations, key concepts, real-world examples, and guided learning paths.
-
-Features:
-- One-line explanation
-- Explain Like I'm 10
-- Key concepts
-- Real-world examples
-- Learn next suggestions
-- Client-side knowledge system
-
-## SIP Calculator
-
-Estimate the future value of your SIP using standard monthly compounding calculations, with an investment breakdown and growth projection chart.
-
-Features:
-- Monthly investment, expected return, and duration inputs
-- Total investment, wealth gained, and maturity value cards
-- Client-side growth chart visualization
-- Copy results, download report, and reset actions
-- Fully browser-based (no backend)
-
-## BMI Calculator
-
-Calculate Body Mass Index (BMI) instantly with unit support and practical health insights, fully in the browser.
-
-Features:
-- Height and weight input with metric/imperial unit selector
-- Instant BMI score and category (Underweight, Normal, Overweight, Obese)
-- Healthy weight range based on BMI 18.5 to 24.9
-- Difference from ideal range guidance
-- BMI scale visualization with live position marker
-- Copy results, download report, and reset actions
-- 100% client-side processing
 
 ## Water Intake Calculator (Upcoming)
 
@@ -128,11 +89,12 @@ Features:
 - Local Morse audio playback with sound on/off toggle
 - Mobile-responsive interface
 
-Live tools (40)
+Live tools (41)
 
 1. Text Formatter — `/text-formatter`
-2. JSON Formatter — `/json-formatter`
-3. Word Counter — `/word-counter`
+2. Text to Morse Code — `/text-to-morse-code` — Convert text into Morse code and decode Morse code back into text, with optional local Morse audio playback.
+3. JSON Formatter — `/json-formatter`
+4. Word Counter — `/word-counter`
 4. Password Generator — `/password-generator`
 5. Age Calculator — `/age-calculator`
 6. Birthday Countdown — `/birthday-countdown` — Track time remaining until your next birthday.
@@ -250,10 +212,11 @@ Build 100 small tools in 100 days and turn them into a useful ecosystem.
 
 ---
 
+
 ## Progress
 
-- Live: **40 tools** (listed on the homepage)
-- Upcoming: **2 tools** (listed on the homepage)
+- Live: **41 tools** (listed on the homepage)
+- Upcoming: **4 tools** (listed on the homepage)
 
 Visit the homepage to browse Live tools and try them in your browser.
 

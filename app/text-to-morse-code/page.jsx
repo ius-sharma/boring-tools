@@ -1,9 +1,6 @@
 "use client";
 
-import ComingSoon from "@/app/components/ComingSoon";
 import { useMemo, useRef, useState } from "react";
-
-const TOOL_STATUS = "upcoming";
 
 const MORSE_MAP = {
   A: ".-",
@@ -133,10 +130,6 @@ function countWords(output, mode) {
 }
 
 export default function TextToMorseCodePage() {
-  if (TOOL_STATUS !== "live") {
-    return <ComingSoon toolName="Text to Morse Code" />;
-  }
-
   const [mode, setMode] = useState("text-to-morse");
   const [input, setInput] = useState("");
   const [copied, setCopied] = useState(false);
