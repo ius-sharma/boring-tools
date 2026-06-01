@@ -4,7 +4,7 @@ import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const HEIGHT_UNIT_OPTIONS = [
   { value: "cm", label: "cm" },
