@@ -51,6 +51,8 @@ const tools = [
   { id: "attendance-calculator", name: "Attendance Calculator", href: "/attendance-calculator", category: "Education", description: "Stress-free semester planning. Know exactly how many classes you can skip and still maintain your attendance percentage. Plan strategically, skip smartly.", status: "Live", isNew: true },
   { id: "youtube-downloader", name: "YouTube Downloader", href: "/youtube-downloader", category: "Media", description: "Download videos, captions, and thumbnails from YouTube. Best used locally for full functionality.", status: "Live", isNew: true },
   { id: "video-to-audio-converter", name: "Video to Audio Converter", href: "/video-to-audio-converter", category: "Media", description: "Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.", status: "Live", isNew: true, isFeatured: true },
+  { id: "typing-speed-tester", name: "Typing Speed Tester", href: "/typing-speed-tester", category: "Productivity", description: "Measure your typing speed and accuracy in real-time.", status: "Upcoming", isNew: true, isFeatured: true },
+  { id: "calorie-calculator", name: "Calorie Calculator", href: "/calorie-calculator", category: "Health", description: "Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.", status: "Upcoming", isNew: true, isFeatured: true },
 ];
 
 const liveToolIds = new Set([
