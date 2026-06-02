@@ -85,7 +85,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (42 Live)
+## 🗂️ Live Tools Directory (43 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
