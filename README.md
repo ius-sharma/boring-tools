@@ -28,10 +28,10 @@ Access all live tools instantly:
 ---
 
 ## ⭐ Featured Tools
-Try some of the most popular utilities built so far:
+Try some of the most popular utilities and newest additions:
+* **Water Intake Calculator** (`/water-intake-calculator`) — Estimate personalized hydration targets using body weight, age, activity level, and climate factors.
 * **Discount Calculator** (`/discount-calculator`) — Instantly calculate discounts, taxes, savings, and effective discount percentages.
 * **BMI Calculator** (`/bmi-calculator`) — Compute BMI score, categories, healthy weight ranges, and ideal weight gaps.
-* **Water Intake Calculator** (`/water-intake-calculator`) — Estimate personalized hydration targets using body weight, age, activity level, and climate factors.
 * **Text to Morse Code** (`/text-to-morse-code`) — Real-time Morse converter with audio playback synthesized locally.
 * **Age Difference Calculator** (`/age-difference-calculator`) — Compare two birth dates to see exact age gaps in days, weeks, or months.
 * **Birthday Countdown** (`/birthday-countdown`) — Precision timer tracking time remaining until your next birthday.
