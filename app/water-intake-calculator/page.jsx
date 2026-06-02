@@ -1,10 +1,9 @@
 "use client";
 
-import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const GENDER_OPTIONS = [
   { value: "female", label: "Female" },
@@ -272,10 +271,6 @@ function WaterGauge({ dailyLiters, fillPercent }) {
 }
 
 export default function WaterIntakeCalculatorPage() {
-  if (TOOL_STATUS === "upcoming") {
-    return <ComingSoon toolName="Water Intake Calculator" />;
-  }
-
   const [age, setAge] = useState(DEFAULTS.age);
   const [weight, setWeight] = useState(DEFAULTS.weight);
   const [gender, setGender] = useState(DEFAULTS.gender);
