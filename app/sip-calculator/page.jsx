@@ -4,7 +4,7 @@ import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const MONTHS_IN_YEAR = 12;
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 function toNumber(value) {
   if (value === "" || value === null || value === undefined) {

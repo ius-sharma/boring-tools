@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `43` (accessible online or via local setup)
-* **Upcoming Tools**: `5` (currently in development)
+* **Live Tools**: `44` (accessible online or via local setup)
+* **Upcoming Tools**: `4` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -29,13 +29,13 @@ Access all live tools instantly:
 
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
+* **SIP Calculator** (`/sip-calculator`) — Estimate future systematic investment plan returns with monthly compounding, investment breakdown, and growth visualization.
 * **Water Intake Calculator** (`/water-intake-calculator`) — Estimate personalized hydration targets using body weight, age, activity level, and climate factors.
 * **Discount Calculator** (`/discount-calculator`) — Instantly calculate discounts, taxes, savings, and effective discount percentages.
 * **BMI Calculator** (`/bmi-calculator`) — Compute BMI score, categories, healthy weight ranges, and ideal weight gaps.
 * **Text to Morse Code** (`/text-to-morse-code`) — Real-time Morse converter with audio playback synthesized locally.
 * **Age Difference Calculator** (`/age-difference-calculator`) — Compare two birth dates to see exact age gaps in days, weeks, or months.
 * **Birthday Countdown** (`/birthday-countdown`) — Precision timer tracking time remaining until your next birthday.
-* **YouTube Title Generator** (`/youtube-title-generator`) — Generate click-worthy title ideas based on target topics.
 
 ---
 
@@ -44,40 +44,47 @@ The following utilities are in development:
 1. **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed (WPM) and accuracy with second-by-second performance charts.
 2. **Terms & Conditions Simplifier** (`/terms-conditions-simplifier`) — Convert long legal texts into plain-English summaries, obligation lists, and risks.
 3. **Percentage Calculator** (`/percentage-calculator`) — Solve common percentage problems and see calculation steps.
-4. **SIP Calculator** (`/sip-calculator`) — Estimate future systematic investment plan returns with monthly compounding tables.
-5. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
+4. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
 
 ---
 
 ## 📖 Selected Feature Spotlights
 
-### 1. Typing Speed Tester (Upcoming)
+### 1. SIP Calculator (Live)
+Estimate your systematic investment plan returns with precise calculations and visual growth tracking.
+* **Monthly Compounding**: Accurate SIP future value calculations using compound interest formulas.
+* **Investment Breakdown**: Clear cards showing total investment, wealth gained, and estimated maturity value.
+* **Growth Visualization**: SVG line chart displaying projected portfolio growth over your investment period.
+* **Export & Download**: Copy results to clipboard or download detailed reports as text files.
+* **Real-time Calculations**: All computations run in your browser with instant updates as you adjust inputs.
+
+### 2. Typing Speed Tester (Upcoming)
 Measure your typing skills with real-time feedback and detailed performance analytics.
 * **Adjustable Durations**: 15s, 30s, 60s, and 120s test runs.
 * **Tactile Audio Feedback**: Audio synthesis playing keyboard clicks on correct characters and buzzes on mistakes (toggleable).
 * **SVG Line Charts**: Second-by-second analytics graphing WPM, Raw WPM, and Accuracy.
 * **Personal Best & History**: Local storage logs to save high scores and track recent attempts.
 
-### 2. Water Intake Calculator (Live)
+### 3. Water Intake Calculator (Live)
 Generate personalized daily hydration targets using climate and active profile adjustments.
 * **Profile Variables**: Inputs for weight, age, gender, activity levels, and environment climate.
 * **Hydration Guidance**: Hourly targets showing glasses of water to consume to space hydration evenly.
 * **Visual Progress Bottle**: A custom bottle gauge showing recommended daily targets relative to a standard 5 L capacity.
 
-### 3. Terms & Conditions Simplifier (Upcoming)
+### 4. Terms & Conditions Simplifier (Upcoming)
 Scan through legalese instantly without reading pages of terms.
 * **Summarization**: Extracts core summaries and permissions.
 * **Risk Identifiers**: Spots potential privacy concerns, user obligations, and binding terms.
 * **Export Options**: Quickly copy simplified results or download text reports.
 
-### 4. Calorie Calculator (Upcoming)
+### 5. Calorie Calculator (Upcoming)
 Estimate daily calorie needs using science-backed formulas.
 * **Mifflin-St Jeor Equation**: Accurate BMR estimation based on age, gender, height, and weight.
 * **TDEE Targets**: Maintenance, weight loss, extreme loss, lean bulk, and aggressive gain calorie targets.
 * **Macro Breakdown**: Visual protein, carbs, and fat split for your maintenance calories.
 * **Dual Unit System**: Switch between Metric (kg/cm) and Imperial (lbs/ft-in) seamlessly.
 
-### 5. Text to Morse Code (Live)
+### 6. Text to Morse Code (Live)
 An instant converter between plain text and Morse code.
 * **Dual Conversion Mode**: Convert Text to Morse and decode Morse back into standard text.
 * **Synthesized Audio Playback**: Plays standard Morse sounds inside your browser.
@@ -85,7 +92,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (43 Live)
+## 🗂️ Live Tools Directory (44 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -130,6 +137,7 @@ An instant converter between plain text and Morse code.
 41. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
 42. **Document Data Extractor** — `/document-data-extractor`
 43. **Water Intake Calculator** — `/water-intake-calculator`
+44. **SIP Calculator** — `/sip-calculator`
 
 ---
 
