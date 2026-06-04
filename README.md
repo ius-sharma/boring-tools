@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `44` (accessible online or via local setup)
-* **Upcoming Tools**: `4` (currently in development)
+* **Live Tools**: `45` (accessible online or via local setup)
+* **Upcoming Tools**: `3` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -42,9 +42,8 @@ Try some of the most popular utilities and newest additions:
 ## 🛠️ Upcoming Tools (Roadmap)
 The following utilities are in development:
 1. **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed (WPM) and accuracy with second-by-second performance charts.
-2. **Terms & Conditions Simplifier** (`/terms-conditions-simplifier`) — Convert long legal texts into plain-English summaries, obligation lists, and risks.
-3. **Percentage Calculator** (`/percentage-calculator`) — Solve common percentage problems and see calculation steps.
-4. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
+2. **Percentage Calculator** (`/percentage-calculator`) — Solve common percentage problems and see calculation steps.
+3. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
 
 ---
 
@@ -71,7 +70,7 @@ Generate personalized daily hydration targets using climate and active profile a
 * **Hydration Guidance**: Hourly targets showing glasses of water to consume to space hydration evenly.
 * **Visual Progress Bottle**: A custom bottle gauge showing recommended daily targets relative to a standard 5 L capacity.
 
-### 4. Terms & Conditions Simplifier (Upcoming)
+### 4. Terms & Conditions Simplifier (Live)
 Scan through legalese instantly without reading pages of terms.
 * **Summarization**: Extracts core summaries and permissions.
 * **Risk Identifiers**: Spots potential privacy concerns, user obligations, and binding terms.
@@ -92,7 +91,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (44 Live)
+## 🗂️ Live Tools Directory (45 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -138,6 +137,7 @@ An instant converter between plain text and Morse code.
 42. **Document Data Extractor** — `/document-data-extractor`
 43. **Water Intake Calculator** — `/water-intake-calculator`
 44. **SIP Calculator** — `/sip-calculator`
+45. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
 
 ---
 

@@ -4,7 +4,7 @@ import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const WORDS_PER_MINUTE = 220;
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const LEGAL_PHRASE_REPLACEMENTS = [
   [/\bshall\b/gi, "must"],
