@@ -3,7 +3,7 @@
 import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const MODES = [
   {
