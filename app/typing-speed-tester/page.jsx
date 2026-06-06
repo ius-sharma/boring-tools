@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ComingSoon from "../components/ComingSoon";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const PARAGRAPHS = [
   "The art of life lies in a constant readjustment to our surroundings. We must learn to flow like water, adapting to the shapes of the channels we pass through, yet retaining our essential nature and moving steadily toward our destination.",

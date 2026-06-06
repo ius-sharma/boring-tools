@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `46` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+* **Live Tools**: `47` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -41,8 +41,7 @@ Try some of the most popular utilities and newest additions:
 
 ## 🛠️ Upcoming Tools (Roadmap)
 The following utilities are in development:
-1. **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed (WPM) and accuracy with second-by-second performance charts.
-2. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
+1. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
 
 ---
 
@@ -56,7 +55,7 @@ Estimate your systematic investment plan returns with precise calculations and v
 * **Export & Download**: Copy results to clipboard or download detailed reports as text files.
 * **Real-time Calculations**: All computations run in your browser with instant updates as you adjust inputs.
 
-### 2. Typing Speed Tester (Upcoming)
+### 2. Typing Speed Tester (Live)
 Measure your typing skills with real-time feedback and detailed performance analytics.
 * **Adjustable Durations**: 15s, 30s, 60s, and 120s test runs.
 * **Tactile Audio Feedback**: Audio synthesis playing keyboard clicks on correct characters and buzzes on mistakes (toggleable).
@@ -90,7 +89,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (46 Live)
+## 🗂️ Live Tools Directory (47 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -138,6 +137,7 @@ An instant converter between plain text and Morse code.
 44. **SIP Calculator** — `/sip-calculator`
 45. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
 46. **Percentage Calculator** — `/percentage-calculator`
+47. **Typing Speed Tester** — `/typing-speed-tester`
 
 ---
 
