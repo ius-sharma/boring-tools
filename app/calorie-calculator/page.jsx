@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
 import ComingSoon from "../components/ComingSoon";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const genderOptions = [
   { value: "male", label: "Male" },

@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `47` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Live Tools**: `48` (accessible online or via local setup)
+* **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -41,7 +41,7 @@ Try some of the most popular utilities and newest additions:
 
 ## 🛠️ Upcoming Tools (Roadmap)
 The following utilities are in development:
-1. **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
+1. **Stay Tuned** — More boring tools are on the way!
 
 ---
 
@@ -74,7 +74,7 @@ Scan through legalese instantly without reading pages of terms.
 * **Risk Identifiers**: Spots potential privacy concerns, user obligations, and binding terms.
 * **Export Options**: Quickly copy simplified results or download text reports.
 
-### 5. Calorie Calculator (Upcoming)
+### 5. Calorie Calculator (Live)
 Estimate daily calorie needs using science-backed formulas.
 * **Mifflin-St Jeor Equation**: Accurate BMR estimation based on age, gender, height, and weight.
 * **TDEE Targets**: Maintenance, weight loss, extreme loss, lean bulk, and aggressive gain calorie targets.
@@ -89,7 +89,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (47 Live)
+## 🗂️ Live Tools Directory (48 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -138,6 +138,7 @@ An instant converter between plain text and Morse code.
 45. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
 46. **Percentage Calculator** — `/percentage-calculator`
 47. **Typing Speed Tester** — `/typing-speed-tester`
+48. **Calorie Calculator** — `/calorie-calculator`
 
 ---
 
