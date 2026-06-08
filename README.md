@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `48` (accessible online or via local setup)
-* **Upcoming Tools**: `0` (currently in development)
+* **Live Tools**: `49` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -36,12 +36,15 @@ Try some of the most popular utilities and newest additions:
 * **Text to Morse Code** (`/text-to-morse-code`) — Real-time Morse converter with audio playback synthesized locally.
 * **Age Difference Calculator** (`/age-difference-calculator`) — Compare two birth dates to see exact age gaps in days, weeks, or months.
 * **Birthday Countdown** (`/birthday-countdown`) — Precision timer tracking time remaining until your next birthday.
+* **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content. (Upcoming)
+* **Sleep Cycle Calculator** (`/sleep-cycle-calculator`) — Time your sleep with natural 90-minute cycles to wake up feeling refreshed.
 
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
 The following utilities are in development:
-1. **Stay Tuned** — More boring tools are on the way!
+1. **Hook Generator** — `/hook-generator` (upcoming, temporarily disabled for users)
+2. **Stay Tuned** — More boring tools are on the way!
 
 ---
 
@@ -89,7 +92,7 @@ An instant converter between plain text and Morse code.
 
 ---
 
-## 🗂️ Live Tools Directory (48 Live)
+## 🗂️ Live Tools Directory (50 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -139,6 +142,7 @@ An instant converter between plain text and Morse code.
 46. **Percentage Calculator** — `/percentage-calculator`
 47. **Typing Speed Tester** — `/typing-speed-tester`
 48. **Calorie Calculator** — `/calorie-calculator`
+49. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
 
 ---
 
