@@ -53,13 +53,15 @@ const tools = [
   { id: "video-to-audio-converter", name: "Video to Audio Converter", href: "/video-to-audio-converter", category: "Media", description: "Upload a video and extract audio in MP3, M4A, WAV, or FLAC format.", status: "Live", isNew: true, isFeatured: true },
   { id: "typing-speed-tester", name: "Typing Speed Tester", href: "/typing-speed-tester", category: "Productivity", description: "Measure your typing speed and accuracy in real-time.", status: "Live", isNew: true, isFeatured: true },
   { id: "calorie-calculator", name: "Calorie Calculator", href: "/calorie-calculator", category: "Health", description: "Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.", status: "Live", isNew: true, isFeatured: true },
-  { id: "hook-generator", name: "Hook Generator", href: "/hook-generator", category: "Creator Tools", description: "Generate punchy, attention-grabbing opening lines for social media and content.", status: "Upcoming", isNew: true, isFeatured: true },
+  { id: "hook-generator", name: "Hook Generator", href: "/hook-generator", category: "Creator Tools", description: "Generate punchy, attention-grabbing opening lines for social media and content.", status: "Live", isNew: true, isFeatured: true },
   { id: "sleep-cycle-calculator", name: "Sleep Cycle Calculator", href: "/sleep-cycle-calculator", category: "Health", description: "Time your sleep with natural 90-minute cycles to wake up refreshed.", status: "Live", isNew: true, isFeatured: true },
 ];
 
 const liveToolIds = new Set([
-  "text-formatter", "text-to-morse-code", "json-formatter", "word-counter", "password-generator", "age-calculator", "bmi-calculator", "water-intake-calculator", "birthday-countdown", "age-difference-calculator", "discount-calculator", "sip-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "concept-explorer", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter", "terms-conditions-simplifier", "percentage-calculator", "typing-speed-tester", "calorie-calculator", "sleep-cycle-calculator"
+  "text-formatter", "text-to-morse-code", "json-formatter", "word-counter", "password-generator", "age-calculator", "bmi-calculator", "water-intake-calculator", "birthday-countdown", "age-difference-calculator", "discount-calculator", "sip-calculator", "unit-converter", "qr-generator", "file-name-sanitizer", "pomodoro-timer", "image-compressor", "image-to-pdf-converter", "doc-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor", "resume-bullet-rewriter", "time-zone-converter", "days-between-dates", "to-do-list", "gst-calculator", "truth-or-dare-play", "roast-my-todo-list", "markdown-previewer", "video-transcriber", "youtube-title-generator", "base-converter", "aspect-ratio-calculator", "distance-between-cities", "currency-converter", "linkedin-post-formatter", "what-happened-today", "math-formula-calculator", "science-formulas-calculator", "concept-explorer", "can-i-trust-this-website", "social-account-analyzer", "attendance-calculator", "youtube-downloader", "video-to-audio-converter", "terms-conditions-simplifier", "percentage-calculator", "typing-speed-tester", "calorie-calculator", "hook-generator", "sleep-cycle-calculator"
 ]);
+
+const featuredToolIds = ["hook-generator", "sleep-cycle-calculator", "calorie-calculator"];
 
 const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 const liveToolCount = availableTools.length;
@@ -112,6 +114,14 @@ export default function Home() {
   }, [query]);
 
   const featuredTools = useMemo(() => {
+    const curated = featuredToolIds
+      .map((toolId) => availableTools.find((tool) => tool.id === toolId))
+      .filter(Boolean);
+
+    if (curated.length > 0) {
+      return curated.slice(0, 3);
+    }
+
     const featuredPinned = availableTools.filter((t) => t.isFeatured);
     const newTools = availableTools.filter((t) => t.isNew && !t.isFeatured);
     const combined = [...featuredPinned, ...newTools];

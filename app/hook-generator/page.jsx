@@ -1,10 +1,9 @@
 "use client";
 
-import ComingSoon from "@/app/components/ComingSoon";
 import { useState, useRef } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 const TONE_OPTIONS = [
   { value: "curious", label: "Curious" },
@@ -22,10 +21,6 @@ const PLATFORM_OPTIONS = [
 ];
 
 export default function HookGenerator() {
-  if (TOOL_STATUS === "upcoming") {
-    return <ComingSoon toolName="Hook Generator" />;
-  }
-
   const [topic, setTopic] = useState("");
   const [tone, setTone] = useState("curious");
   const [platform, setPlatform] = useState("twitter");

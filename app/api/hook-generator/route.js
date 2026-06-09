@@ -53,10 +53,6 @@ function buildPrompt({ topic, tone, platform }) {
 }
 
 export async function POST(request) {
-  const ENABLED = process.env.HOOK_GENERATOR_ENABLED === "true";
-  if (!ENABLED) {
-    return NextResponse.json({ error: "Hook Generator is temporarily disabled" }, { status: 403 });
-  }
   try {
     const body = await request.json();
     const topic = normalize(body?.topic);

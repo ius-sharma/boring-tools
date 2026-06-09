@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `49` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Live Tools**: `50` (accessible online or via local setup)
+* **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -29,22 +29,19 @@ Access all live tools instantly:
 
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
-* **SIP Calculator** (`/sip-calculator`) — Estimate future systematic investment plan returns with monthly compounding, investment breakdown, and growth visualization.
-* **Water Intake Calculator** (`/water-intake-calculator`) — Estimate personalized hydration targets using body weight, age, activity level, and climate factors.
-* **Discount Calculator** (`/discount-calculator`) — Instantly calculate discounts, taxes, savings, and effective discount percentages.
-* **BMI Calculator** (`/bmi-calculator`) — Compute BMI score, categories, healthy weight ranges, and ideal weight gaps.
-* **Text to Morse Code** (`/text-to-morse-code`) — Real-time Morse converter with audio playback synthesized locally.
-* **Age Difference Calculator** (`/age-difference-calculator`) — Compare two birth dates to see exact age gaps in days, weeks, or months.
-* **Birthday Countdown** (`/birthday-countdown`) — Precision timer tracking time remaining until your next birthday.
-* **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content. (Upcoming)
+* **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
 * **Sleep Cycle Calculator** (`/sleep-cycle-calculator`) — Time your sleep with natural 90-minute cycles to wake up feeling refreshed.
+* **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
+* **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed and accuracy in real time.
+* **Video to Audio Converter** (`/video-to-audio-converter`) — Extract audio from uploaded videos in common formats.
+* **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
 
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
-The following utilities are in development:
-1. **Hook Generator** — `/hook-generator` (upcoming, temporarily disabled for users)
-2. **Stay Tuned** — More boring tools are on the way!
+No tools are currently marked as upcoming.
+
+More boring tools are on the way!
 
 ---
 
@@ -142,7 +139,8 @@ An instant converter between plain text and Morse code.
 46. **Percentage Calculator** — `/percentage-calculator`
 47. **Typing Speed Tester** — `/typing-speed-tester`
 48. **Calorie Calculator** — `/calorie-calculator`
-49. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
+49. **Hook Generator** — `/hook-generator`
+50. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
 
 ---
 
