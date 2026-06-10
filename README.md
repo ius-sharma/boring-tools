@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `50` (accessible online or via local setup)
+* **Live Tools**: `51` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -87,9 +87,17 @@ An instant converter between plain text and Morse code.
 * **Synthesized Audio Playback**: Plays standard Morse sounds inside your browser.
 * **Quick Tools**: Copy results, download TXT files, and view statistics.
 
+### 7. Color Palette Generator (Live)
+Generate and customize beautiful color harmonies instantly and export them.
+* **Color Harmony Algorithms**: Generate analogous, monochromatic, complementary, triadic, split-complementary, and tetradic palettes client-side.
+* **Dynamic Controls**: Customize palette size (3, 5, or 7 colors) and enforce style presets (Pastel, Neon, Vintage, Dark, Warm, Cool).
+* **Interactive Details**: Edit colors directly with a native visual color picker, lock individual colors, and explore 10 similar shades/tints.
+* **Multiple Formats & Export**: Copy HEX/RGB color codes instantly, download full palettes as structured JSON, or export them as a clean PNG image.
+* **Keyboard Shortcuts**: Quickly generate new palettes by tapping the spacebar.
+
 ---
 
-## 🗂️ Live Tools Directory (50 Live)
+## 🗂️ Live Tools Directory (51 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -141,6 +149,7 @@ An instant converter between plain text and Morse code.
 48. **Calorie Calculator** — `/calorie-calculator`
 49. **Hook Generator** — `/hook-generator`
 50. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
+51. **Color Palette Generator** — `/color-palette-generator`
 
 ---
 
