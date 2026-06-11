@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `51` (accessible online or via local setup)
+* **Live Tools**: `52` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -95,9 +95,16 @@ Generate and customize beautiful color harmonies instantly and export them.
 * **Multiple Formats & Export**: Copy HEX/RGB color codes instantly, download full palettes as structured JSON, or export them as a clean PNG image.
 * **Keyboard Shortcuts**: Quickly generate new palettes by tapping the spacebar.
 
+### 8. Invoice Generator (Live)
+Generate professional invoices instantly, all within your browser.
+* **100% Client-Side**: No signup, no login, and no server-side storage. Your business and client details remain completely private.
+* **Interactive Line Items**: Add, update, or remove invoice items dynamically with quantities, unit prices, and custom tax rates.
+* **Automatic Calculations**: Automatically computes subtotal, itemized tax rates, and grand total in real-time.
+* **Actions**: Instantly download professional PDF invoices, print them with specialized layouts, or copy the formatted text summary to your clipboard.
+
 ---
 
-## 🗂️ Live Tools Directory (51 Live)
+## 🗂️ Live Tools Directory (52 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -150,6 +157,7 @@ Generate and customize beautiful color harmonies instantly and export them.
 49. **Hook Generator** — `/hook-generator`
 50. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
 51. **Color Palette Generator** — `/color-palette-generator`
+52. **Invoice Generator** — `/invoice-generator`
 
 ---
 
