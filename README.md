@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `52` (accessible online or via local setup)
+* **Live Tools**: `53` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -102,9 +102,17 @@ Generate professional invoices instantly, all within your browser.
 * **Automatic Calculations**: Automatically computes subtotal, itemized tax rates, and grand total in real-time.
 * **Actions**: Instantly download professional PDF invoices, print them with specialized layouts, or copy the formatted text summary to your clipboard.
 
+### 9. EMI Calculator (Live)
+Calculate loan Equated Monthly Installments (EMI) instantly with repayment share breakdown and trend visualization.
+* **Instant Computations**: Accurate monthly amortized loan calculations based on principal, rate, and tenure.
+* **Interactive Charts**: Responsive custom SVGs including a principal vs interest donut chart and a repayment trend line chart.
+* **Flexible Tenure**: Toggle between years and months for loan repayment periods.
+* **Amortization Breakdown**: View a yearly repayment schedule table showing principal, interest, and remaining balance.
+* **Export Utilities**: Copy detailed text summary reports to the clipboard or download month-by-month amortization schedule documents.
+
 ---
 
-## 🗂️ Live Tools Directory (52 Live)
+## 🗂️ Live Tools Directory (53 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -158,6 +166,7 @@ Generate professional invoices instantly, all within your browser.
 50. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
 51. **Color Palette Generator** — `/color-palette-generator`
 52. **Invoice Generator** — `/invoice-generator`
+53. **EMI Calculator** — `/emi-calculator`
 
 ---
 
