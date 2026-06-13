@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `53` (accessible online or via local setup)
+* **Live Tools**: `54` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -110,9 +110,16 @@ Calculate loan Equated Monthly Installments (EMI) instantly with repayment share
 * **Amortization Breakdown**: View a yearly repayment schedule table showing principal, interest, and remaining balance.
 * **Export Utilities**: Copy detailed text summary reports to the clipboard or download month-by-month amortization schedule documents.
 
+### 10. Should I Reply? (Live)
+Evaluate if, when, and how you should reply to a message based on relationship, tone, and context.
+* **Context-Aware Heuristics**: Analyze the message text and optional context using dropdown parameters (sender relationship, vibe, urgency, and current mood).
+* **Actionable Recommendations**: Categorizes outcomes into Reply Now, Reply Later, Ignore, or Needs Clarification.
+* **Copyable Templates**: Generates tailored canned response templates (Polite/Professional, Casual, or Boundary) copyable in one click.
+* **100% Client-Side**: No backend, no login, and no user data storage. Your messages stay entirely private.
+
 ---
 
-## 🗂️ Live Tools Directory (53 Live)
+## 🗂️ Live Tools Directory (54 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -167,6 +174,7 @@ Calculate loan Equated Monthly Installments (EMI) instantly with repayment share
 51. **Color Palette Generator** — `/color-palette-generator`
 52. **Invoice Generator** — `/invoice-generator`
 53. **EMI Calculator** — `/emi-calculator`
+54. **Should I Reply?** — `/should-i-reply`
 
 ---
 
