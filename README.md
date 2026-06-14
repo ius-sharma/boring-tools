@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `54` (accessible online or via local setup)
+* **Live Tools**: `55` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -117,9 +117,16 @@ Evaluate if, when, and how you should reply to a message based on relationship, 
 * **Copyable Templates**: Generates tailored canned response templates (Polite/Professional, Casual, or Boundary) copyable in one click.
 * **100% Client-Side**: No backend, no login, and no user data storage. Your messages stay entirely private.
 
+### 11. Resignation Letter Generator (Live)
+Generate professional resignation letters client-side instantly.
+* **Tailored Styles**: Choose between Formal, Professional, Short, and Friendly styles.
+* **Fully Editable Preview**: Edit the generated letter directly in the browser to add personalized notes.
+* **100% Client-Side Exports**: Instantly download professional PDF resignation letters, copy to clipboard, or print with custom print-ready styling.
+* **Zero Storage**: All processing happens entirely within your browser for absolute privacy.
+
 ---
 
-## 🗂️ Live Tools Directory (54 Live)
+## 🗂️ Live Tools Directory (55 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -175,6 +182,7 @@ Evaluate if, when, and how you should reply to a message based on relationship, 
 52. **Invoice Generator** — `/invoice-generator`
 53. **EMI Calculator** — `/emi-calculator`
 54. **Should I Reply?** — `/should-i-reply`
+55. **Resignation Letter Generator** — `/resignation-letter-generator`
 
 ---
 

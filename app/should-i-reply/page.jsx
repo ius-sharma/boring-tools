@@ -86,6 +86,8 @@ export default function ShouldIReply() {
   const [result, setResult] = useState(null);
   const [copiedText, setCopiedText] = useState("");
   const [copiedTemplateIdx, setCopiedTemplateIdx] = useState(null);
+  const [error, setError] = useState("");
+  const [source, setSource] = useState("Local fallback");
 
   const loadPreset = (preset) => {
     setMessage(preset.message);
@@ -95,6 +97,7 @@ export default function ShouldIReply() {
     setUrgency(preset.urgency);
     setMood(preset.mood);
     setResult(null);
+    setError("");
   };
 
   const handleClear = () => {
@@ -107,20 +110,51 @@ export default function ShouldIReply() {
     setResult(null);
     setCopiedText("");
     setCopiedTemplateIdx(null);
+    setError("");
+    setSource("Local fallback");
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     if (!message.trim()) return;
 
     setIsLoading(true);
     setResult(null);
+    setError("");
 
-    // Simulate analysis loading for visual feedback
-    setTimeout(() => {
-      const evaluation = runAnalysisEngine();
-      setResult(evaluation);
+    try {
+      const response = await fetch("/api/should-i-reply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message,
+          context,
+          relationship,
+          vibe,
+          urgency,
+          mood,
+        }),
+      });
+
+      const payload = await response.json();
+
+      if (response.ok && payload.recommendation) {
+        setResult(payload);
+        setSource("Groq API");
+        return;
+      }
+
+      const fallback = runAnalysisEngine();
+      setResult(fallback);
+      setSource("Local fallback");
+      setError(payload?.error ? `Groq is not configured yet (${payload.error}), so local fallback was used.` : "Local fallback was used.");
+    } catch {
+      const fallback = runAnalysisEngine();
+      setResult(fallback);
+      setSource("Local fallback");
+      setError("Groq request failed, so local fallback was used.");
+    } finally {
       setIsLoading(false);
-    }, 600);
+    }
   };
 
   const runAnalysisEngine = () => {
@@ -193,15 +227,15 @@ export default function ShouldIReply() {
       templates = [
         {
           title: "Quick Acknowledgment",
-          text: "Hi [Name], I received your message. I'm on it right now and will get back to you with an update in [Time]."
+          text: "Hi, I received your message. I'm looking into this right now and will send you an update as soon as possible."
         },
         {
           title: "Direct Answer",
-          text: "Hi [Name], regarding that: [Direct Answer]. Let me know if you need me to jump on a quick call to align."
+          text: "Hi, regarding your request: I'm on it and will send the details shortly. Let me know if we should jump on a quick call to align."
         },
         {
           title: "Weekend/Off-hours Boundary",
-          text: "Hi [Name], got it. I'm currently away from my desk, but I've noted this down and will address it first thing when I log back in on [Day] morning."
+          text: "Got it. I'm currently away from my desk, but I have noted this down and will address it first thing in the morning."
         }
       ];
     } else if (relationship === "friend" && vibe === "urgent" && urgency === "request") {
@@ -219,11 +253,11 @@ export default function ShouldIReply() {
         },
         {
           title: "Unavailable but Supportive",
-          text: "Hey! I'm tied up right now and can't jump in immediately, but I can assist in [Time] if that still helps?"
+          text: "Hey! I'm tied up right now but I can help you out in a little bit if that still works?"
         },
         {
           title: "Quick Action Coordination",
-          text: "Got it! [Action details, e.g., 'Key is under the mat / I will call them now']."
+          text: "Got it! I will jump on this right away."
         }
       ];
     } else if (relationship === "crush" && vibe === "urgent") {
@@ -265,7 +299,7 @@ export default function ShouldIReply() {
         },
         {
           title: "Professional Clarification",
-          text: "Hi [Name], how can I help you today? Let me know the details and I'll get back to you as soon as I can."
+          text: "Hi, how can I help you today? Let me know the details and I'll get back to you as soon as I can."
         },
         {
           title: "Friendly & Short",
@@ -287,15 +321,15 @@ export default function ShouldIReply() {
         templates = [
           {
             title: "Calm & Professional",
-            text: "Hi [Name], I hear your concerns. Let me review the details of what happened so I can provide a constructive solution. I will follow up with you by [Time]."
+            text: "Hi, I understand your concern. Let me review the details of what happened so we can find a constructive way forward. I'll follow up with you shortly."
           },
           {
             title: "Request for Call",
-            text: "Hi [Name], thank you for sharing your feedback. I want to make sure we resolve this properly. Let's jump on a brief phone call tomorrow at [Time] to align."
+            text: "Hi, thank you for the feedback. I want to make sure we address this properly—let's schedule a brief call tomorrow to discuss and align."
           },
           {
             title: "Polite Acknowledgment",
-            text: "Hi [Name], I've received your note. I'm investigating this issue and will follow up shortly once I have the facts."
+            text: "Hi, I've received your message. I'm looking into this and will follow up once I have all the details."
           }
         ];
       } else if (vibe === "passive") {
@@ -308,11 +342,11 @@ export default function ShouldIReply() {
         templates = [
           {
             title: "Factual & Brief",
-            text: "Hi [Name], thanks for the update. Regarding [Task], the current status is [Status]. Let me know if we need to adjust the plan."
+            text: "Hi, thanks for the update. I'm currently tracking this task and it is in progress. Let me know if we need to adjust the plan."
           },
           {
             title: "Neutral Alignment",
-            text: "Hi [Name], happy to address this. To make sure we are both on the same page, I'll proceed with [Action]. Let me know if that works."
+            text: "Hi, happy to address this. To ensure we are on the same page, I will proceed with the next steps we discussed. Let me know if that works."
           },
           {
             title: "Minimal Receipt",
@@ -329,11 +363,11 @@ export default function ShouldIReply() {
         templates = [
           {
             title: "Polite Work Delay",
-            text: "Hi [Name], I received your note. I'm currently focused on a time-sensitive task but will review this and respond fully by [Time / Tomorrow]."
+            text: "Hi, I received your note. I'm currently wrapping up a time-sensitive task but will review this and get back to you later today."
           },
           {
             title: "Casual Friendly Delay",
-            text: "Hey! Got your text. I'm tied up at the moment but will look into this and ping you back later tonight!"
+            text: "Hey! Got your text. I'm tied up at the moment but will look into this and ping you back later today!"
           },
           {
             title: "Quick Holding Note",
@@ -429,6 +463,7 @@ export default function ShouldIReply() {
           <p className="text-slate-500 text-base max-w-xl mx-auto">
             Evaluate if, when, and how you should reply to a message based on relationship, tone, and context.
           </p>
+          <p className="text-xs text-slate-400 mt-1">Source: {source}</p>
         </div>
 
         {/* Presets Bar */}
@@ -565,6 +600,13 @@ export default function ShouldIReply() {
 
           {/* Right Side: Verdict / Results */}
           <div className="flex flex-col gap-4">
+            
+            {error && (
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-xl flex items-start gap-2 shadow-sm">
+                <span className="shrink-0">⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
             
             {!result && !isLoading && (
               <div className="h-full rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 flex flex-col items-center justify-center text-center gap-3">
