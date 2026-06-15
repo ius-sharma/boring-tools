@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `55` (accessible online or via local setup)
+* **Live Tools**: `56` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -124,9 +124,17 @@ Generate professional resignation letters client-side instantly.
 * **100% Client-Side Exports**: Instantly download professional PDF resignation letters, copy to clipboard, or print with custom print-ready styling.
 * **Zero Storage**: All processing happens entirely within your browser for absolute privacy.
 
+### 12. Subscription Tracker (Live)
+Track and analyze all your recurring subscriptions and payments client-side.
+* **Cost Breakdown**: View total monthly and yearly costs dynamically calculated (monthly prices, or yearly prices divided by 12).
+* **Interactive Dashboard**: Modern statistics cards indicating total spend, subscription count, and most expensive item.
+* **Schedule Timeline**: Chronological lists of upcoming renewals with automatic days-remaining counters.
+* **Data Backup (Export/Import)**: Securely download your list as a JSON file, or restore/upload data in one click.
+* **Local Storage Storage**: Zero servers or database tracking. All subscription logs and currency settings are stored entirely on your device.
+
 ---
 
-## 🗂️ Live Tools Directory (55 Live)
+## 🗂️ Live Tools Directory (56 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -183,6 +191,7 @@ Generate professional resignation letters client-side instantly.
 53. **EMI Calculator** — `/emi-calculator`
 54. **Should I Reply?** — `/should-i-reply`
 55. **Resignation Letter Generator** — `/resignation-letter-generator`
+56. **Subscription Tracker** — `/subscription-tracker`
 
 ---
 
