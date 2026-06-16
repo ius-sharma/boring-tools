@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `56` (accessible online or via local setup)
+* **Live Tools**: `57` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -35,6 +35,7 @@ Try some of the most popular utilities and newest additions:
 * **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed and accuracy in real time.
 * **Video to Audio Converter** (`/video-to-audio-converter`) — Extract audio from uploaded videos in common formats.
 * **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
+* **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 
 ---
 
@@ -132,9 +133,17 @@ Track and analyze all your recurring subscriptions and payments client-side.
 * **Data Backup (Export/Import)**: Securely download your list as a JSON file, or restore/upload data in one click.
 * **Local Storage Storage**: Zero servers or database tracking. All subscription logs and currency settings are stored entirely on your device.
 
+### 13. Personal Admin Dashboard (Live)
+Manage passport, license, insurance, documents, and reminders in one browser-only hub.
+* **Important Dates Tracker**: Monitor expiration dates for passports, driver's licenses, memberships, and exam dates with dynamic urgency indicators.
+* **Important Documents Drawer**: Save document metadata and attach small documents (under 1.2MB) stored locally as Base64 strings.
+* **Quick Reminders Checklist**: Write down administrative tasks with priority rankings and custom due dates.
+* **Integrated Timeline & Stats**: Review unified timeline of expiries and deadlines, plus a localStorage storage capacity indicator.
+* **Import/Export Backups**: Securely download all stored administrative data as a JSON file or restore it with merge/replace capabilities.
+
 ---
 
-## 🗂️ Live Tools Directory (56 Live)
+## 🗂️ Live Tools Directory (57 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -192,6 +201,7 @@ Track and analyze all your recurring subscriptions and payments client-side.
 54. **Should I Reply?** — `/should-i-reply`
 55. **Resignation Letter Generator** — `/resignation-letter-generator`
 56. **Subscription Tracker** — `/subscription-tracker`
+57. **Personal Admin Dashboard** — `/personal-admin-dashboard`
 
 ---
 
