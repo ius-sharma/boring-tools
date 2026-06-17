@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `57` (accessible online or via local setup)
+* **Live Tools**: `58` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -141,9 +141,17 @@ Manage passport, license, insurance, documents, and reminders in one browser-onl
 * **Integrated Timeline & Stats**: Review unified timeline of expiries and deadlines, plus a localStorage storage capacity indicator.
 * **Import/Export Backups**: Securely download all stored administrative data as a JSON file or restore it with merge/replace capabilities.
 
+### 14. Email Decoder (Live)
+Decode subtext, detect tone, extract action items, and get response advice for any email.
+* **Tone Classifier**: Evaluates email vocabulary to determine the primary emotional tone (Professional, Friendly, Neutral, Urgent, Rejection, or Opportunity).
+* **Key Points Extraction**: Automatically extracts explicit requests, deadlines, and recommended action commands from sentences.
+* **Subtext Analysis**: Breaks down the hidden meanings and motivations behind specific email tones.
+* **Canned Templates**: Generates ready-to-use email templates corresponding to the recommended strategy, copyable in one click.
+* **100% Client-Side**: Safe and secure processing completely inside your web browser.
+
 ---
 
-## 🗂️ Live Tools Directory (57 Live)
+## 🗂️ Live Tools Directory (58 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -202,6 +210,7 @@ Manage passport, license, insurance, documents, and reminders in one browser-onl
 55. **Resignation Letter Generator** — `/resignation-letter-generator`
 56. **Subscription Tracker** — `/subscription-tracker`
 57. **Personal Admin Dashboard** — `/personal-admin-dashboard`
+58. **Email Decoder** — `/email-decoder`
 
 ---
 
