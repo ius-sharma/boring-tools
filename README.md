@@ -211,6 +211,7 @@ Decode subtext, detect tone, extract action items, and get response advice for a
 56. **Subscription Tracker** — `/subscription-tracker`
 57. **Personal Admin Dashboard** — `/personal-admin-dashboard`
 58. **Email Decoder** — `/email-decoder`
+59. **Link Intelligence** — `/link-intelligence`
 
 ---
 
