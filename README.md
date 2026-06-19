@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `58` (accessible online or via local setup)
+* **Live Tools**: `60` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -36,6 +36,7 @@ Try some of the most popular utilities and newest additions:
 * **Video to Audio Converter** (`/video-to-audio-converter`) — Extract audio from uploaded videos in common formats.
 * **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
+* **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
 
 ---
 
@@ -149,9 +150,17 @@ Decode subtext, detect tone, extract action items, and get response advice for a
 * **Canned Templates**: Generates ready-to-use email templates corresponding to the recommended strategy, copyable in one click.
 * **100% Client-Side**: Safe and secure processing completely inside your web browser.
 
+### 15. Learning OS (Live)
+Organize learning goals, track breakdown topics, and generate daily/weekly study targets.
+* **100% Client-Side**: No backend, no login, and no user data tracking. Your study logs and notes remain private on your device.
+* **Preset Templates**: Access curated roadmaps for React Developer, Python & Data Science, UI/UX Design, or SQL & Databases, or build a custom curriculum.
+* **Dynamic Planner**: Computes recommended daily study time and schedules remaining topics into weekly targets based on your time availability.
+* **Topic-Specific Notes**: Write down code snippets, flashcards, or key concepts in an integrated offline editor.
+* **Data Backup (Export/Import)**: Securely download your workspaces as a JSON file or restore them on another device.
+
 ---
 
-## 🗂️ Live Tools Directory (58 Live)
+## 🗂️ Live Tools Directory (60 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -212,6 +221,7 @@ Decode subtext, detect tone, extract action items, and get response advice for a
 57. **Personal Admin Dashboard** — `/personal-admin-dashboard`
 58. **Email Decoder** — `/email-decoder`
 59. **Link Intelligence** — `/link-intelligence`
+60. **Learning OS** — `/learning-os`
 
 ---
 
