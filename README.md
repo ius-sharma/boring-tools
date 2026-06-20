@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `60` (accessible online or via local setup)
+* **Live Tools**: `61` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -158,9 +158,17 @@ Organize learning goals, track breakdown topics, and generate daily/weekly study
 * **Topic-Specific Notes**: Write down code snippets, flashcards, or key concepts in an integrated offline editor.
 * **Data Backup (Export/Import)**: Securely download your workspaces as a JSON file or restore them on another device.
 
+### 16. Purchase Intelligence (Live)
+Evaluate purchases objectively to avoid buyer's remorse and make smarter spending decisions.
+* **Dual Scores**: Computes a Purchase Score (utility, necessity, alternatives) and a Usage Reality Score (planning fallacy, category risk adjustments) out of 100.
+* **Cost Per Use Estimate**: Calculates total expected lifetime uses and computes amortized cost per individual use.
+* **Spending Impact Breakdown**: View monthly and yearly amortized cost projections, along with a Labor Hour Equivalent (work hours required based on your hourly wage).
+* **Cooling Off Recommendation**: Suggests whether to Buy, Wait (cooling off period), or Reconsider based on scoring matrices.
+* **100% Client-Side**: All calculations occur in-browser. Your financial data stays private on your device.
+
 ---
 
-## 🗂️ Live Tools Directory (60 Live)
+## 🗂️ Live Tools Directory (61 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -222,6 +230,7 @@ Organize learning goals, track breakdown topics, and generate daily/weekly study
 58. **Email Decoder** — `/email-decoder`
 59. **Link Intelligence** — `/link-intelligence`
 60. **Learning OS** — `/learning-os`
+61. **Purchase Intelligence** — `/purchase-intelligence`
 
 ---
 
