@@ -166,9 +166,17 @@ Evaluate purchases objectively to avoid buyer's remorse and make smarter spendin
 * **Cooling Off Recommendation**: Suggests whether to Buy, Wait (cooling off period), or Reconsider based on scoring matrices.
 * **100% Client-Side**: All calculations occur in-browser. Your financial data stays private on your device.
 
+### 17. Leverage Finder (Live)
+Identify high-leverage actions and avoid low-value distractions to achieve your goals efficiently.
+* **100% Client-Side**: Run and evaluate action plans entirely locally in your browser with zero external server calls.
+* **Goal Category Heuristics**: Automatically classifies goal input into Career, Business, Study, Health, Creative, or Finance and applies specialized metrics.
+* **High-Leverage Top Actions**: Generates concrete next-step task breakdowns with estimated difficulty indicators.
+* **Distraction Avoidance Checklist**: Highlights common traps, low-value chores, and psychological pitfalls to ignore.
+* **Timeline Roadmap & Priorities**: Structure tasks into Today, This Week, and This Month milestones.
+
 ---
 
-## 🗂️ Live Tools Directory (61 Live)
+## 🗂️ Live Tools Directory (62 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -231,6 +239,7 @@ Evaluate purchases objectively to avoid buyer's remorse and make smarter spendin
 59. **Link Intelligence** — `/link-intelligence`
 60. **Learning OS** — `/learning-os`
 61. **Purchase Intelligence** — `/purchase-intelligence`
+62. **Leverage Finder** — `/leverage-finder`
 
 ---
 
