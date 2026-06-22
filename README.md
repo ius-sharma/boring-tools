@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `61` (accessible online or via local setup)
+* **Live Tools**: `63` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
@@ -174,9 +174,34 @@ Identify high-leverage actions and avoid low-value distractions to achieve your 
 * **Distraction Avoidance Checklist**: Highlights common traps, low-value chores, and psychological pitfalls to ignore.
 * **Timeline Roadmap & Priorities**: Structure tasks into Today, This Week, and This Month milestones.
 
+### 18. Clipboard History Manager (Live)
+Store, manage, and organize multiple copied texts offline in one private dashboard.
+* **100% Client-Side**: No backend, no login, and no server-side storage. Your clipboard history stays entirely on your device.
+* **Smart Detection**: Automatically identifies content types (URLs, Emails, Code snippets) and attaches quick actions.
+* **Quick Access & Search**: Features a dedicated "Recent Snippets" bar and instantaneous text filtering.
+* **Pin & Favorite**: Pin critical text snippets to the top of your list or star them for quick retrieval.
+* **Backup Utilities**: Export history as a TXT compilation or JSON backup, and easily restore/merge backup files.
+
+### 19. Digital Declutter Assistant (Upcoming)
+Analyze local directories and files recursively to identify digital clutter indicators 100% locally.
+* **100% Client-Side Traversal**: Uses HTML5 File System API to traverse folders recursively entirely in your browser with zero network requests.
+* **Redundancy Audits**: Identifies exact duplicate filenames and flags matching byte-size redundant copies.
+* **Similarity Heuristics**: Detects near-matching names, revision tags (e.g. `(1)`, ` - Copy`), or shared basenames.
+* **Custom Threshold Scanners**: Filters files exceeding size limits (e.g., >20MB) or age thresholds (e.g., >12 months) in real-time.
+* **Unorganized Content Flagging**: Flags placeholder names (e.g. `untitled`, `temp`), deep directory nesting, or missing/double extensions.
+* **Breakdown Visualizers**: Features horizontal stacked categorization bars and detailed markdown/text diagnostics exports.
+
+### 20. Drag & Drop Converter (Live)
+Quickly convert images, documents, and data formats directly in the browser 100% locally.
+* **100% Client-Side Conversion**: No server uploads or external API requests. Conversions are processed directly in the browser sandbox.
+* **Image Conversions**: Convert PNG to JPG, JPG to PNG, and WEBP to PNG or JPG using high-performance canvas rendering.
+* **Document Conversions**: Convert TXT files to professional PDF documents with automatic line-wrapping and Markdown files to plain text.
+* **Data Conversions**: Structural JSON to CSV and CSV to JSON data mapping.
+* **Batch Support**: Select, configure target extensions, and convert multiple files in a single click.
+
 ---
 
-## 🗂️ Live Tools Directory (62 Live)
+## 🗂️ Live Tools Directory (64 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -240,6 +265,8 @@ Identify high-leverage actions and avoid low-value distractions to achieve your 
 60. **Learning OS** — `/learning-os`
 61. **Purchase Intelligence** — `/purchase-intelligence`
 62. **Leverage Finder** — `/leverage-finder`
+63. **Clipboard History Manager** — `/clipboard-history-manager`
+64. **Drag & Drop Converter** — `/drag-drop-converter`
 
 ---
 
