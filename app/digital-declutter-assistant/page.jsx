@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import ComingSoon from "../components/ComingSoon";
 
 // Feature Release Toggle
-const IS_RELEASED = false;
+const IS_RELEASED = true;
 
 // File Category Mapping Rules
 const CATEGORIES = [

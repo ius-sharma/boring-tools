@@ -182,7 +182,7 @@ Store, manage, and organize multiple copied texts offline in one private dashboa
 * **Pin & Favorite**: Pin critical text snippets to the top of your list or star them for quick retrieval.
 * **Backup Utilities**: Export history as a TXT compilation or JSON backup, and easily restore/merge backup files.
 
-### 19. Digital Declutter Assistant (Upcoming)
+### 19. Digital Declutter Assistant (Live)
 Analyze local directories and files recursively to identify digital clutter indicators 100% locally.
 * **100% Client-Side Traversal**: Uses HTML5 File System API to traverse folders recursively entirely in your browser with zero network requests.
 * **Redundancy Audits**: Identifies exact duplicate filenames and flags matching byte-size redundant copies.
@@ -190,14 +190,6 @@ Analyze local directories and files recursively to identify digital clutter indi
 * **Custom Threshold Scanners**: Filters files exceeding size limits (e.g., >20MB) or age thresholds (e.g., >12 months) in real-time.
 * **Unorganized Content Flagging**: Flags placeholder names (e.g. `untitled`, `temp`), deep directory nesting, or missing/double extensions.
 * **Breakdown Visualizers**: Features horizontal stacked categorization bars and detailed markdown/text diagnostics exports.
-
-### 20. Drag & Drop Converter (Live)
-Quickly convert images, documents, and data formats directly in the browser 100% locally.
-* **100% Client-Side Conversion**: No server uploads or external API requests. Conversions are processed directly in the browser sandbox.
-* **Image Conversions**: Convert PNG to JPG, JPG to PNG, and WEBP to PNG or JPG using high-performance canvas rendering.
-* **Document Conversions**: Convert TXT files to professional PDF documents with automatic line-wrapping and Markdown files to plain text.
-* **Data Conversions**: Structural JSON to CSV and CSV to JSON data mapping.
-* **Batch Support**: Select, configure target extensions, and convert multiple files in a single click.
 
 ---
 
@@ -266,7 +258,7 @@ Quickly convert images, documents, and data formats directly in the browser 100%
 61. **Purchase Intelligence** — `/purchase-intelligence`
 62. **Leverage Finder** — `/leverage-finder`
 63. **Clipboard History Manager** — `/clipboard-history-manager`
-64. **Drag & Drop Converter** — `/drag-drop-converter`
+64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
 
 ---
 
