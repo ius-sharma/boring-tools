@@ -259,6 +259,7 @@ Analyze local directories and files recursively to identify digital clutter indi
 62. **Leverage Finder** — `/leverage-finder`
 63. **Clipboard History Manager** — `/clipboard-history-manager`
 64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
+65. **News Accuracy Checker** — `/news-accuracy-checker`
 
 ---
 
