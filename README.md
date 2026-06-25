@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
 
 * **Live Tools**: `66` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Upcoming Tools**: `2` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -42,6 +42,7 @@ Try some of the most popular utilities and newest additions:
 
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Second Mind** (`/second-mind`) — Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
+* **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 
 More boring tools are on the way!
 
@@ -199,8 +200,6 @@ Evaluate the true cost of purchases by converting price tags into the required w
 * **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
 * **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
 
-
-
 ## 🗂️ Live Tools Directory (66 Live)
 
 1. **Text Formatter** — `/text-formatter`
@@ -267,7 +266,6 @@ Evaluate the true cost of purchases by converting price tags into the required w
 62. **Leverage Finder** — `/leverage-finder`
 63. **Clipboard History Manager** — `/clipboard-history-manager`
 64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
-65. **News Accuracy Checker** — `/news-accuracy-checker`
 66. **Time Cost Calculator** — `/time-cost-calculator`
 
 ---

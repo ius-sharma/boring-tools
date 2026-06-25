@@ -70,7 +70,8 @@ const tools = [
   { id: "learning-os", name: "Learning OS", href: "/learning-os", category: "Productivity", description: "Organize learning goals, track breakdown topics, and generate daily/weekly study targets.", status: "Live", isNew: true, isFeatured: true },
   { id: "leverage-finder", name: "Leverage Finder", href: "/leverage-finder", category: "Productivity", description: "Identify high-leverage actions and avoid low-value distractions to achieve your goals efficiently.", status: "Live", isNew: true, isFeatured: true },
   { id: "clipboard-history-manager", name: "Clipboard History Manager", href: "/clipboard-history-manager", category: "Productivity", description: "Store and manage multiple copied texts in one place offline.", status: "Live", isNew: true, isFeatured: true },  { id: "digital-declutter-assistant", name: "Digital Declutter Assistant", href: "/digital-declutter-assistant", category: "Productivity", description: "Analyze your local files to find duplicates, similar names, large/old items, and unorganized folders 100% locally.", status: "Live", isNew: true, isFeatured: true },
-  { id: "second-mind", name: "Second Mind", href: "/second-mind", category: "Productivity", description: "Analyze situations from four distinct cognitive perspectives to overcome mental blocks.", status: "Upcoming", isNew: true, isFeatured: true }
+  { id: "second-mind", name: "Second Mind", href: "/second-mind", category: "Productivity", description: "Analyze situations from four distinct cognitive perspectives to overcome mental blocks.", status: "Upcoming", isNew: true, isFeatured: true },
+  { id: "fear-decomposer", name: "Fear Decomposer", href: "/fear-decomposer", category: "Productivity", description: "Deconstruct fears into real vs. imagined risks, identify controllable factors, and map your first step.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
 const liveToolIds = new Set([
