@@ -44,6 +44,7 @@ Try some of the most popular utilities and newest additions:
 * **Second Mind** (`/second-mind`) — Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
+* **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 
 More boring tools are on the way!
 
