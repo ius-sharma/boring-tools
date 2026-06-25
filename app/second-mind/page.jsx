@@ -736,9 +736,12 @@ Generated client-side via Boring Tools - Second Mind.
                     key={idx}
                     type="button"
                     onClick={() => handleLoadPreset(p)}
-                    className="text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-800 transition text-left cursor-pointer active:scale-[0.98]"
+                    className="text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:border-orange-350 hover:bg-orange-50 hover:text-orange-850 transition text-left cursor-pointer active:scale-[0.98] inline-flex items-center gap-1.5"
                   >
-                    💡 {p.title}
+                    <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v1.5m-3-1.5h6m-3-13.5v1.5m3.536.964l-1.06 1.06m-8.95 0l-1.06-1.06M21 12h-1.5m-15 0H3m16.536 4.536l-1.06-1.06m-8.95 1.06l-1.06-1.06M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{p.title}</span>
                   </button>
                 ))}
               </div>
@@ -787,13 +790,16 @@ Generated client-side via Boring Tools - Second Mind.
                   <button
                     type="button"
                     onClick={() => setSelectedCategory("auto")}
-                    className={`py-2 px-3 rounded-lg border font-semibold text-left transition ${
+                    className={`py-2 px-3 rounded-lg border font-semibold text-left transition flex items-center gap-1.5 ${
                       selectedCategory === "auto"
                         ? "border-orange-500 bg-orange-50 text-orange-800 animate-pulse"
                         : "border-slate-200 hover:bg-slate-50 text-slate-600"
                     }`}
                   >
-                    ✨ Auto-Detect {selectedCategory === "auto" && `(${CATEGORIES[detectedCategory].label})`}
+                    <svg className="w-3.5 h-3.5 text-orange-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.096-.813L9 9l.813 5.096L15 15l-5.187.904zM18 10.5l-.5 3-.5-3-3-.5 3-.5.5-3 .5 3 3 .5-3 .5zM19.07 4.93l-.21 1.25-.21-1.25-1.25-.21 1.25-.21.21-1.25.21 1.25 1.25.21-1.25.21z" />
+                    </svg>
+                    <span>Auto-Detect {selectedCategory === "auto" && `(${CATEGORIES[detectedCategory].label})`}</span>
                   </button>
                   {Object.entries(CATEGORIES).map(([catKey, catData]) => (
                     <button
@@ -857,21 +863,41 @@ Generated client-side via Boring Tools - Second Mind.
                   Input a situation on the left or load a preset. The engine will evaluate the scenario and structure four viewpoints.
                 </p>
                 <div className="grid grid-cols-2 gap-3 max-w-md mt-6 text-left">
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-indigo-600 text-sm font-bold block mb-1">🧠 Logical Mind</span>
-                    <span className="text-slate-500 text-xs leading-normal">Fact-based assessments, trade-offs, biases.</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-indigo-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364.364l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      <span className="text-indigo-600 text-sm font-bold">Logical Mind</span>
+                    </div>
+                    <span className="text-slate-500 text-xs leading-normal block">Fact-based assessments, trade-offs, biases.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-amber-600 text-sm font-bold block mb-1">⏳ Future Self</span>
-                    <span className="text-slate-500 text-xs leading-normal">10-year outlook, regrets, alignment.</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-amber-600 text-sm font-bold">Future Self</span>
+                    </div>
+                    <span className="text-slate-500 text-xs leading-normal block">10-year outlook, regrets, alignment.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-rose-600 text-sm font-bold block mb-1">🛡️ Risk Perspective</span>
-                    <span className="text-slate-500 text-xs leading-normal">Worst-case outcomes, Plan B, reversible gates.</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                      </svg>
+                      <span className="text-rose-600 text-sm font-bold">Risk Perspective</span>
+                    </div>
+                    <span className="text-slate-500 text-xs leading-normal block">Worst-case outcomes, Plan B, reversible gates.</span>
                   </div>
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-emerald-600 text-sm font-bold block mb-1">🚀 Opportunity</span>
-                    <span className="text-slate-500 text-xs leading-normal">Upside, learning loops, asymmetric pays.</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.63 8.41a14.98 14.98 0 00-6.16 12.12c2.47-.3 4.8-1.5 6.58-3.41" />
+                      </svg>
+                      <span className="text-emerald-600 text-sm font-bold">Opportunity</span>
+                    </div>
+                    <span className="text-slate-500 text-xs leading-normal block">Upside, learning loops, asymmetric pays.</span>
                   </div>
                 </div>
               </div>
@@ -899,9 +925,27 @@ Generated client-side via Boring Tools - Second Mind.
                 {/* Results Header */}
                 <div className="bg-orange-50 border border-orange-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-orange-700">
-                      Perspective Core Loaded • {source === "Groq API" ? "🤖 AI Generated" : "📴 Local Fallback"}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-700">
+                      <span>Perspective Core Loaded</span>
+                      <span>•</span>
+                      <span className="inline-flex items-center gap-1">
+                        {source === "Groq API" ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-orange-700 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+                            </svg>
+                            AI Generated
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            Local Fallback
+                          </>
+                        )}
+                      </span>
+                    </div>
                     <h3 className="text-base font-bold text-slate-950 mt-1">
                       Reframing: "{result.problemText.slice(0, 50)}{result.problemText.length > 50 ? '...' : ''}"
                     </h3>

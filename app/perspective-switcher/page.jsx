@@ -684,8 +684,10 @@ Generated client-side via Boring Tools.
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 overflow-hidden flex flex-col border-t-4 border-t-indigo-500">
                 <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-indigo-50/30">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                      🔮
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-700">
+                      <svg className="w-5 h-5 text-indigo-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l-.813-5.096L3 15l5.096-.813L9 9l.813 5.096L15 15l-5.187.904zM18 10.5l-.5 3-.5-3-3-.5 3-.5.5-3 .5 3 3 .5-3 .5z" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-950 text-sm">Your Future Self</h4>
@@ -717,8 +719,10 @@ Generated client-side via Boring Tools.
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 overflow-hidden flex flex-col border-t-4 border-t-sky-500">
                 <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-sky-50/30">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-700 font-bold">
-                      🤝
+                    <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center text-sky-700">
+                      <svg className="w-5 h-5 text-sky-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-950 text-sm">Your Best Friend</h4>
@@ -750,8 +754,10 @@ Generated client-side via Boring Tools.
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 overflow-hidden flex flex-col border-t-4 border-t-emerald-500">
                 <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-emerald-50/30">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
-                      🏡
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700">
+                      <svg className="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-950 text-sm">Your Parent</h4>
@@ -783,8 +789,10 @@ Generated client-side via Boring Tools.
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 overflow-hidden flex flex-col border-t-4 border-t-amber-500 md:col-span-1 lg:col-span-1">
                 <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-amber-50/30">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 font-bold">
-                      👴
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+                      <svg className="w-5 h-5 text-amber-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-950 text-sm">Your Older Self</h4>
@@ -816,8 +824,10 @@ Generated client-side via Boring Tools.
               <div className="bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 overflow-hidden flex flex-col border-t-4 border-t-slate-500 md:col-span-2 lg:col-span-2">
                 <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-slate-100/50">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700 font-bold">
-                      ⚖️
+                    <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700">
+                      <svg className="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17m0-17L4 7m8-4l8 4m-8 6h8M4 7v10m0-10l-2 3h4L4 7zm16 0v10m0-10l-2 3h4l-2-3zM4 17h16" />
+                      </svg>
                     </div>
                     <div>
                       <h4 className="font-bold text-slate-950 text-sm">Neutral Observer</h4>

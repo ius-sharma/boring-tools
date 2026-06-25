@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
 
 * **Live Tools**: `66` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+* **Upcoming Tools**: `5` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -45,6 +45,7 @@ Try some of the most popular utilities and newest additions:
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
+* **Empire Simulator** (`/empire-simulator`) — Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
 
 More boring tools are on the way!
 
@@ -201,6 +202,15 @@ Evaluate the true cost of purchases by converting price tags into the required w
 * **Savings Projections**: Computes the duration of dedicated savings needed to buy the product cash without affecting other funds.
 * **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
 * **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
+
+### 21. Empire Simulator (Upcoming)
+Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
+* **10-Index Configurator**: Sliders to customize indices like economy, corruption, happiness, military strength, external threats, and resources.
+* **Timeline Simulation Engine**: Run simulations for 10, 25, 50, or 100 years. Computes year-by-year natural drifts, feedback loops, and potential dynastic collapse.
+* **Random Event System**: Triggers random occurrences (war, famine, plague, rebellion, tech breakthrough, trade boom) that dynamically alter state statistics.
+* **Historical Similarity Metrics**: Dynamically computes Manhattan-distance similarity matching your empire to Pax Romana, late Rome, Victorian Britain, zenith/decline Ottomans, and the Mongol Horde.
+* **Trajectory Charting**: Generates multi-line SVG line charts mapping stability, military strength, and economy alongside scrollable event consoles.
+* **Local Privacy**: Runs 100% client-side in the browser. No data leaves your machine.
 
 ## 🗂️ Live Tools Directory (66 Live)
 

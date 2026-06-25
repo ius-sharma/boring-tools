@@ -73,7 +73,8 @@ const tools = [
   { id: "second-mind", name: "Second Mind", href: "/second-mind", category: "Productivity", description: "Analyze situations from four distinct cognitive perspectives to overcome mental blocks.", status: "Upcoming", isNew: true, isFeatured: true },
   { id: "fear-decomposer", name: "Fear Decomposer", href: "/fear-decomposer", category: "Productivity", description: "Deconstruct fears into real vs. imagined risks, identify controllable factors, and map your first step.", status: "Upcoming", isNew: true, isFeatured: true },
   { id: "perspective-switcher", name: "Perspective Switcher", href: "/perspective-switcher", category: "Productivity", description: "Reframe your dilemmas and view problems from five distinct personal and objective viewpoints.", status: "Upcoming", isNew: true, isFeatured: true },
-  { id: "history-repeats", name: "History Repeats", href: "/history-repeats", category: "Learning", description: "Compare modern situations to historical events, revealing patterns, similarities, differences, and key lessons.", status: "Upcoming", isNew: true, isFeatured: true }
+  { id: "history-repeats", name: "History Repeats", href: "/history-repeats", category: "Learning", description: "Compare modern situations to historical events, revealing patterns, similarities, differences, and key lessons.", status: "Upcoming", isNew: true, isFeatured: true },
+  { id: "empire-simulator", name: "Empire Simulator", href: "/empire-simulator", category: "Learning", description: "Build and manage a fictional empire to simulate growth, random historical events, and collapse risks.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
 const liveToolIds = new Set([

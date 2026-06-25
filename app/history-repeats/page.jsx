@@ -907,9 +907,27 @@ ${divider}
                 {/* Results Header Panel */}
                 <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-700">
-                      Historical Analogy Loaded • {source === "Groq API" ? "🤖 AI Generated" : "📴 Local Fallback"}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-700">
+                      <span>Historical Analogy Loaded</span>
+                      <span>•</span>
+                      <span className="inline-flex items-center gap-1">
+                        {source === "Groq API" ? (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-amber-700 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+                            </svg>
+                            AI Generated
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-3.5 h-3.5 text-slate-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            Local Fallback
+                          </>
+                        )}
+                      </span>
+                    </div>
                     <h3 className="text-base font-bold text-slate-955 mt-1">
                       Modern Topic: &ldquo;{activeQuery}&rdquo;
                     </h3>
@@ -1083,9 +1101,14 @@ ${divider}
                           
                           {/* Historical Node */}
                           <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 space-y-1">
-                            <span className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
-                              <span>📜 Historical Event</span> • <span className="text-slate-500">{item.historyYear}</span>
-                            </span>
+                            <div className="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1.5">
+                              <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                              </svg>
+                              <span>Historical Event</span>
+                              <span>•</span>
+                              <span className="text-slate-500">{item.historyYear}</span>
+                            </div>
                             <p className="text-xs text-slate-600 leading-relaxed font-medium">
                               {item.historyText}
                             </p>
@@ -1093,9 +1116,14 @@ ${divider}
 
                           {/* Modern Counterpart Node */}
                           <div className="p-3.5 rounded-xl border border-amber-100 bg-amber-50/10 space-y-1">
-                            <span className="text-[10px] uppercase font-bold text-amber-600 flex items-center gap-1">
-                              <span>⚡ Modern Counterpart</span> • <span className="text-amber-700">{item.modernYear}</span>
-                            </span>
+                            <div className="text-[10px] uppercase font-bold text-amber-600 flex items-center gap-1.5">
+                              <svg className="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                              </svg>
+                              <span>Modern Counterpart</span>
+                              <span>•</span>
+                              <span className="text-amber-700">{item.modernYear}</span>
+                            </div>
                             <p className="text-xs text-slate-700 leading-relaxed font-medium">
                               {item.modernText}
                             </p>
