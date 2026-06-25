@@ -191,9 +191,17 @@ Analyze local directories and files recursively to identify digital clutter indi
 * **Unorganized Content Flagging**: Flags placeholder names (e.g. `untitled`, `temp`), deep directory nesting, or missing/double extensions.
 * **Breakdown Visualizers**: Features horizontal stacked categorization bars and detailed markdown/text diagnostics exports.
 
+### 20. Time Cost Calculator (Live)
+Evaluate the true cost of purchases by converting price tags into the required work hours, career days, and saving months.
+* **100% Client-Side**: No backend or server processing. All income and savings statistics remain private on your device.
+* **Dual Time Metrics**: Calculates the exact number of active work hours and career working days required to afford an item.
+* **Savings Projections**: Computes the duration of dedicated savings needed to buy the product cash without affecting other funds.
+* **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
+* **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
+
 ---
 
-## 🗂️ Live Tools Directory (64 Live)
+## 🗂️ Live Tools Directory (66 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -260,6 +268,7 @@ Analyze local directories and files recursively to identify digital clutter indi
 63. **Clipboard History Manager** — `/clipboard-history-manager`
 64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
 65. **News Accuracy Checker** — `/news-accuracy-checker`
+66. **Time Cost Calculator** — `/time-cost-calculator`
 
 ---
 
