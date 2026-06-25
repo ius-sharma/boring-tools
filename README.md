@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `63` (accessible online or via local setup)
-* **Upcoming Tools**: `0` (currently in development)
+* **Live Tools**: `66` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -41,7 +41,7 @@ Try some of the most popular utilities and newest additions:
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
-No tools are currently marked as upcoming.
+* **Second Mind** (`/second-mind`) — Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
 
 More boring tools are on the way!
 
@@ -199,7 +199,7 @@ Evaluate the true cost of purchases by converting price tags into the required w
 * **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
 * **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
 
----
+
 
 ## 🗂️ Live Tools Directory (66 Live)
 
