@@ -43,6 +43,7 @@ Try some of the most popular utilities and newest additions:
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Second Mind** (`/second-mind`) — Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
+* **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 
 More boring tools are on the way!
 
@@ -266,6 +267,7 @@ Evaluate the true cost of purchases by converting price tags into the required w
 62. **Leverage Finder** — `/leverage-finder`
 63. **Clipboard History Manager** — `/clipboard-history-manager`
 64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
+65. **News Accuracy Checker** — `/news-accuracy-checker`
 66. **Time Cost Calculator** — `/time-cost-calculator`
 
 ---
