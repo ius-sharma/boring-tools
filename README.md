@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `66` (accessible online or via local setup)
-* **Upcoming Tools**: `5` (currently in development)
+* **Live Tools**: `67` (accessible online or via local setup)
+* **Upcoming Tools**: `4` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -41,7 +41,6 @@ Try some of the most popular utilities and newest additions:
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Second Mind** (`/second-mind`) — Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
@@ -212,7 +211,15 @@ Build and manage a fictional empire to simulate growth, random historical crises
 * **Trajectory Charting**: Generates multi-line SVG line charts mapping stability, military strength, and economy alongside scrollable event consoles.
 * **Local Privacy**: Runs 100% client-side in the browser. No data leaves your machine.
 
-## 🗂️ Live Tools Directory (66 Live)
+### 22. Second Mind (Live)
+Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
+* **100% Client-Side Fallback**: If the API key is not configured, all cognitive processing and formatting occurs entirely inside your browser. If configured, it connects to the Groq LLM API.
+* **Four Cognitive Perspectives**: Generates specialized insights for the Logical Mind, Future Self (10 years out), Risk Perspective (defensive Plan B), and Opportunity Perspective (asymmetric payoffs).
+* **Auto-Category Classification**: An offline keyword classification engine identifies whether a situation is related to Career, Finance, Relationships, Time/Productivity, or Health, tailoring the outputs dynamically.
+* **Clean Reading Experience**: View results in a highly readable card layout with simple expand/collapse toggle transitions.
+* **Text & Markdown Exports**: Export your complete structured report via clipboard copy or structured plain-text file download.
+
+## 🗂️ Live Tools Directory (67 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -280,6 +287,7 @@ Build and manage a fictional empire to simulate growth, random historical crises
 64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
 65. **News Accuracy Checker** — `/news-accuracy-checker`
 66. **Time Cost Calculator** — `/time-cost-calculator`
+67. **Second Mind** — `/second-mind`
 
 ---
 

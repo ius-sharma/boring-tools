@@ -67,7 +67,7 @@ const LOADING_STEPS = [
   "Structuring mental model outputs..."
 ];
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 export default function SecondMindPage() {
   if (TOOL_STATUS === "upcoming") {
