@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
 
-* **Live Tools**: `67` (accessible online or via local setup)
-* **Upcoming Tools**: `4` (currently in development)
+* **Live Tools**: `68` (accessible online or via local setup)
+* **Upcoming Tools**: `3` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
 
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
 
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
+* **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
 * **Sleep Cycle Calculator** (`/sleep-cycle-calculator`) — Time your sleep with natural 90-minute cycles to wake up feeling refreshed.
 * **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
@@ -41,7 +42,7 @@ Try some of the most popular utilities and newest additions:
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
+
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Empire Simulator** (`/empire-simulator`) — Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.

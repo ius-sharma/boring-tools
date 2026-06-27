@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ComingSoon from "@/app/components/ComingSoon";
 
 // Set to "live" to deploy and enable routing
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 // Presets data for the Fear Decomposer
 const PRESETS = [
