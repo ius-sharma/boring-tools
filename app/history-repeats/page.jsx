@@ -424,7 +424,7 @@ const LOADING_STEPS = [
   "Structuring comparative timeline..."
 ];
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 export default function HistoryRepeatsPage() {
   if (TOOL_STATUS === "upcoming") {

@@ -29,6 +29,7 @@ Access all live tools instantly:
 
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
+* **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
@@ -43,9 +44,6 @@ Try some of the most popular utilities and newest additions:
 ---
 
 ## 🛠️ Upcoming Tools (Roadmap)
-
-
-* **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Empire Simulator** (`/empire-simulator`) — Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
 
 More boring tools are on the way!
@@ -221,7 +219,35 @@ Reframe dilemmas, decisions, and personal situations by viewing them through fou
 * **Clean Reading Experience**: View results in a highly readable card layout with simple expand/collapse toggle transitions.
 * **Text & Markdown Exports**: Export your complete structured report via clipboard copy or structured plain-text file download.
 
-## 🗂️ Live Tools Directory (67 Live)
+### 23. Discount Calculator (Live)
+Calculate discounts, savings, taxes, and final payable amounts instantly with stacked discount tiers.
+* **Dual Discount Tiers**: Support for compounding a primary discount with an additional percentage off.
+* **Tax Calculations**: Computes final amounts with customizable tax rates (inclusive or exclusive).
+* **Detailed Breakdown**: Displays total original price, percentage saved, total discount cash value, tax amount, and the final payable total.
+* **100% Client-Side**: Safe, instant browser calculations that keep your spending data private.
+
+### 24. Fear Decomposer (Live)
+Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
+* **Risk Audit**: Systematically analyze real vs. imagined threat levels for any source of anxiety.
+* **Controllability Mapping**: Separate details you can influence from external factors you must accept, helping target effort effectively.
+* **Actionable Next Steps**: Formulate immediate, low-stakes micro-tasks to break psychological paralysis and build momentum.
+* **Local and Secure**: Runs completely client-side in the browser, protecting personal reflections.
+
+### 25. Perspective Switcher (Live)
+Reframing dilemmas and viewing problems from five distinct personal and objective viewpoints.
+* **Five Viewpoints**: Analyze dilemmas from the perspectives of the Rationalist, Optimist, Cynic, Future Self, and a Trusted Advisor.
+* **Pros and Cons Breakdown**: Structure decisions with detailed comparative assessments and key questions for each lens.
+* **Exports & Sharing**: Copy the full perspective analysis report to the clipboard or download it as a plain-text file.
+* **100% Client-Side**: Ensure complete confidentiality for personal reframing exercises.
+
+### 26. History Repeats (Live)
+Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
+* **Groq LLM API Integration**: Connect to Groq API for custom, hyper-tailored historical analogies.
+* **Local Database Fallback**: Automatically falls back to a rich offline database covering major analogies (AI, Economic Crisis, Remote Work, Social Media, Crypto, Green Transition) if API is unavailable.
+* **Milestone Timelines**: Displays a parallel chronological timeline comparing past stages against modern counterpart steps.
+* **Report Exports**: Copy structured analysis markdown to the clipboard or download as a text report.
+
+## 🗂️ Live Tools Directory (71 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -290,6 +316,10 @@ Reframe dilemmas, decisions, and personal situations by viewing them through fou
 65. **News Accuracy Checker** — `/news-accuracy-checker`
 66. **Time Cost Calculator** — `/time-cost-calculator`
 67. **Second Mind** — `/second-mind`
+68. **Discount Calculator** — `/discount-calculator`
+69. **Fear Decomposer** — `/fear-decomposer`
+70. **Perspective Switcher** — `/perspective-switcher`
+71. **History Repeats** — `/history-repeats`
 
 ---
 
