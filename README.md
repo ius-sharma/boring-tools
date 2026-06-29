@@ -13,20 +13,20 @@ Access all live tools instantly:
 ---
 
 ## 📊 Project Status & Roadmap
-
-* **Live Tools**: `69` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+ 
+* **Live Tools**: `71` (accessible online or via local setup)
+* **Upcoming Tools**: `3` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
-
+ 
 ---
-
+ 
 ## 💡 Core Philosophy
 * **Privacy First**: All calculations and file conversions happen client-side. Your data never leaves your browser.
 * **Instant Access**: No login, no accounts, and no banners. Just open the tool and get results.
 * **Sleek & Light**: Fast loading, responsive layouts, unified brand design system (white background with amber/orange accents), and keyboard shortcut support.
-
+ 
 ---
-
+ 
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
@@ -40,10 +40,11 @@ Try some of the most popular utilities and newest additions:
 * **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
-
+ 
 ---
-
+ 
 ## 🛠️ Upcoming Tools (Roadmap)
+* **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **Empire Simulator** (`/empire-simulator`) — Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
 
 More boring tools are on the way!
@@ -246,6 +247,13 @@ Compare modern topics or situations to historical events, revealing structural s
 * **Local Database Fallback**: Automatically falls back to a rich offline database covering major analogies (AI, Economic Crisis, Remote Work, Social Media, Crypto, Green Transition) if API is unavailable.
 * **Milestone Timelines**: Displays a parallel chronological timeline comparing past stages against modern counterpart steps.
 * **Report Exports**: Copy structured analysis markdown to the clipboard or download as a text report.
+
+### Before & After (Upcoming)
+Explore how major inventions, historical events, scientific discoveries, or technological breakthroughs changed the world by comparing life before and after.
+* **7 Comparison Categories**: Compares Daily Life, Communication, Education, Business & Economy, Transportation, Technology & Tools, and Society side-by-side.
+* **Quantitative Transitions**: 3 statistics cards showing how key metrics shifted.
+* **Timeline Flow**: Downward chronological timeline mapping Before, Major Event, Immediate Impact, and Long-Term Impact.
+* **Hybrid Database/AI**: Runs offline using local datasets, and queries a secure proxied API for custom topics.
 
 ## 🗂️ Live Tools Directory (71 Live)
 

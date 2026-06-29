@@ -76,6 +76,7 @@ const tools = [
 
 
   { id: "history-repeats", name: "History Repeats", href: "/history-repeats", category: "Learning", description: "Compare modern situations to historical events, revealing patterns, similarities, differences, and key lessons.", status: "Live", isNew: true, isFeatured: true },
+  { id: "before-after", name: "Before & After", href: "/before-after", category: "Learning", description: "Explore how life changed before and after major inventions, scientific discoveries, and historical breakthroughs.", status: "Upcoming", isNew: true, isFeatured: true },
   { id: "empire-simulator", name: "Empire Simulator", href: "/empire-simulator", category: "Learning", description: "Build and manage a fictional empire to simulate growth, random historical events, and collapse risks.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
