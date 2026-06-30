@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
  
 * **Live Tools**: `72` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Upcoming Tools**: `2` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -246,6 +246,14 @@ Compare modern topics or situations to historical events, revealing structural s
 * **Local Database Fallback**: Automatically falls back to a rich offline database covering major analogies (AI, Economic Crisis, Remote Work, Social Media, Crypto, Green Transition) if API is unavailable.
 * **Milestone Timelines**: Displays a parallel chronological timeline comparing past stages against modern counterpart steps.
 * **Report Exports**: Copy structured analysis markdown to the clipboard or download as a text report.
+
+### If This Never Happened (Upcoming)
+Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
+* **Groq LLM API Integration**: Connects to the Groq API for custom, hyper-tailored counterfactual simulations. Automatically falls back to a rich offline database of 20 predefined topics or a smart client-side procedural generator if the API key is not configured.
+* **Interactive Timeline Slider**: Walk through chronological changes at key eras (10 Years Later, 50 Years Later, 100 Years Later, and Present Day).
+* **Multi-Domain Impact Assessment**: Analyzes visual segments for Technology, Society, Economy, Science, Politics, and Culture.
+* **Advanced Visualizations**: Features custom Cause & Effect flows, Ripple Effect chains, and side-by-side Before vs. Alternate comparisons.
+* **Local and Private**: Runs 100% in-browser with no servers or tracking. Includes options to copy markdown or download text reports.
 
 ### Before & After (Upcoming)
 Explore how major inventions, historical events, scientific discoveries, or technological breakthroughs changed the world by comparing life before and after.
