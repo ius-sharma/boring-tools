@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `71` (accessible online or via local setup)
-* **Upcoming Tools**: `3` (currently in development)
+* **Live Tools**: `72` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -45,7 +45,6 @@ Try some of the most popular utilities and newest additions:
  
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
-* **Empire Simulator** (`/empire-simulator`) — Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
 
 More boring tools are on the way!
 
@@ -203,7 +202,7 @@ Evaluate the true cost of purchases by converting price tags into the required w
 * **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
 * **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
 
-### 21. Empire Simulator (Upcoming)
+### 21. Empire Simulator (Live)
 Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
 * **10-Index Configurator**: Sliders to customize indices like economy, corruption, happiness, military strength, external threats, and resources.
 * **Timeline Simulation Engine**: Run simulations for 10, 25, 50, or 100 years. Computes year-by-year natural drifts, feedback loops, and potential dynastic collapse.
@@ -255,7 +254,7 @@ Explore how major inventions, historical events, scientific discoveries, or tech
 * **Timeline Flow**: Downward chronological timeline mapping Before, Major Event, Immediate Impact, and Long-Term Impact.
 * **Hybrid Database/AI**: Runs offline using local datasets, and queries a secure proxied API for custom topics.
 
-## 🗂️ Live Tools Directory (71 Live)
+## 🗂️ Live Tools Directory (72 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -328,6 +327,7 @@ Explore how major inventions, historical events, scientific discoveries, or tech
 69. **Fear Decomposer** — `/fear-decomposer`
 70. **Perspective Switcher** — `/perspective-switcher`
 71. **History Repeats** — `/history-repeats`
+72. **Empire Simulator** — `/empire-simulator`
 
 ---
 
