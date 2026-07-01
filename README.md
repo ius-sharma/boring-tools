@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
  
 * **Live Tools**: `73` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Upcoming Tools**: `2` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -46,6 +46,7 @@ Try some of the most popular utilities and newest additions:
  
 ## 🛠️ Upcoming Tools (Roadmap)
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
+* **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.
  
 More boring tools are on the way!
  
@@ -262,6 +263,13 @@ Explore how major inventions, historical events, scientific discoveries, or tech
 * **Quantitative Transitions**: 3 statistics cards showing how key metrics shifted.
 * **Timeline Flow**: Downward chronological timeline mapping Before, Major Event, Immediate Impact, and Long-Term Impact.
 * **Hybrid Database/AI**: Runs offline using local datasets, and queries a secure proxied API for custom topics.
+
+### Timeline Comparison (Upcoming)
+Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side.
+* **12 Comparison Categories**: Compares started/peak/decline/end timelines, total/peak durations, geographical regions/areas, estimated populations, economies, military capabilities, societal aspects, greatest achievements, declines, legacies, and fun facts.
+* **Proportional Scaling**: Features relative progress bars comparing duration length, maximum coverage area, and peak population.
+* **Visual Timeline Flow**: Displays chronological steps from started ➔ peak ➔ decline ➔ end side-by-side.
+* **100% Client-Side**: Structured local database of 22 detailed items runs completely offline without any network or API dependencies.
 
 ## 🗂️ Live Tools Directory (73 Live)
 
