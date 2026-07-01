@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `72` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+* **Live Tools**: `73` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
+* **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
@@ -44,10 +45,10 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
-
+* **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
+ 
 More boring tools are on the way!
-
+ 
 ---
 
 ## 📖 Selected Feature Spotlights
@@ -255,14 +256,14 @@ Explore alternate history by simulating how the world would look today if a majo
 * **Advanced Visualizations**: Features custom Cause & Effect flows, Ripple Effect chains, and side-by-side Before vs. Alternate comparisons.
 * **Local and Private**: Runs 100% in-browser with no servers or tracking. Includes options to copy markdown or download text reports.
 
-### Before & After (Upcoming)
+### 27. Before & After (Live)
 Explore how major inventions, historical events, scientific discoveries, or technological breakthroughs changed the world by comparing life before and after.
 * **7 Comparison Categories**: Compares Daily Life, Communication, Education, Business & Economy, Transportation, Technology & Tools, and Society side-by-side.
 * **Quantitative Transitions**: 3 statistics cards showing how key metrics shifted.
 * **Timeline Flow**: Downward chronological timeline mapping Before, Major Event, Immediate Impact, and Long-Term Impact.
 * **Hybrid Database/AI**: Runs offline using local datasets, and queries a secure proxied API for custom topics.
 
-## 🗂️ Live Tools Directory (72 Live)
+## 🗂️ Live Tools Directory (73 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -336,6 +337,7 @@ Explore how major inventions, historical events, scientific discoveries, or tech
 70. **Perspective Switcher** — `/perspective-switcher`
 71. **History Repeats** — `/history-repeats`
 72. **Empire Simulator** — `/empire-simulator`
+73. **Before & After** — `/before-after`
 
 ---
 

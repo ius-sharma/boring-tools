@@ -1003,7 +1003,7 @@ const LOADING_STEPS = [
 ];
 
 export default function BeforeAfterPage() {
-  const IS_RELEASED = false;
+  const IS_RELEASED = true;
 
   useEffect(() => {
     if (!IS_RELEASED && typeof window !== "undefined") {
@@ -1179,7 +1179,7 @@ export default function BeforeAfterPage() {
 
   // Keyword lookup mapping client input to presets (for custom search entry)
   const handleSearchSubmit = async (inputTopic) => {
-    const topicToSearch = inputTopic !== undefined ? inputTopic : query;
+    const topicToSearch = (typeof inputTopic === "string") ? inputTopic : query;
     const normalized = topicToSearch.toLowerCase().trim();
     setShowSuggestions(false);
     
