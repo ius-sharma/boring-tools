@@ -76,6 +76,7 @@ const tools = [
 
 
   { id: "history-repeats", name: "History Repeats", href: "/history-repeats", category: "Learning", description: "Compare modern situations to historical events, revealing patterns, similarities, differences, and key lessons.", status: "Live", isNew: true, isFeatured: true },
+  { id: "historical-perspective", name: "Historical Perspective", href: "/historical-perspective", category: "Learning", description: "Analyze modern trends and situations through the lens of history, comparing patterns, timelines, and outcomes 100% locally.", status: "Upcoming", isNew: true, isFeatured: true },
   { id: "before-after", name: "Before & After", href: "/before-after", category: "Learning", description: "Explore how life changed before and after major inventions, scientific discoveries, and historical breakthroughs.", status: "Live", isNew: true, isFeatured: true },
   { id: "empire-simulator", name: "Empire Simulator", href: "/empire-simulator", category: "Learning", description: "Build and manage a fictional empire to simulate growth, random historical events, and collapse risks.", status: "Live", isNew: true, isFeatured: true },
   { id: "timeline-comparison", name: "Timeline Comparison", href: "/timeline-comparison", category: "Learning", description: "Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.", status: "Upcoming", isNew: true, isFeatured: true },

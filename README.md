@@ -48,6 +48,7 @@ Try some of the most popular utilities and newest additions:
 ## 🛠️ Upcoming Tools (Roadmap)
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
 * **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.
+* **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
  
 More boring tools are on the way!
  
