@@ -5,7 +5,7 @@ import Link from "next/link";
 import ComingSoon from "@/app/components/ComingSoon";
 
 // Set to "live" to deploy and enable routing
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 // 20 Predefined Historical Events Offline Database
 const ALTERNATE_HISTORY_DB = {
