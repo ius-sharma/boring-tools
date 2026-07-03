@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `74` (accessible online or via local setup)
+* **Live Tools**: `75` (accessible online or via local setup)
 * **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
@@ -31,6 +31,7 @@ Access all live tools instantly:
 Try some of the most popular utilities and newest additions:
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
+* **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
@@ -46,8 +47,6 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
-* **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.
 * **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
  
 More boring tools are on the way!
@@ -266,14 +265,14 @@ Explore alternate history by simulating how the world would look today if a majo
 * **Advanced Visualizations**: Features custom Cause & Effect flows, Ripple Effect chains, and side-by-side Before vs. Alternate comparisons.
 * **Local and Private**: Runs 100% in-browser with no servers or tracking. Includes options to copy markdown or download text reports.
 
-### Timeline Comparison (Upcoming)
+### 29. Timeline Comparison (Live)
 Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side.
 * **12 Comparison Categories**: Compares started/peak/decline/end timelines, total/peak durations, geographical regions/areas, estimated populations, economies, military capabilities, societal aspects, greatest achievements, declines, legacies, and fun facts.
 * **Proportional Scaling**: Features relative progress bars comparing duration length, maximum coverage area, and peak population.
 * **Visual Timeline Flow**: Displays chronological steps from started ➔ peak ➔ decline ➔ end side-by-side.
 * **100% Client-Side**: Structured local database of 22 detailed items runs completely offline without any network or API dependencies.
 
-## 🗂️ Live Tools Directory (74 Live)
+## 🗂️ Live Tools Directory (75 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -349,6 +348,7 @@ Visually compare two historical civilizations, empires, inventions, technologies
 72. **Empire Simulator** — `/empire-simulator`
 73. **Before & After** — `/before-after`
 74. **If This Never Happened** — `/if-this-never-happened`
+75. **Timeline Comparison** — `/timeline-comparison`
 
 ---
 

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { HISTORICAL_DATASET } from "./dataset";
 
-const IS_RELEASED = false;
+const IS_RELEASED = true;
 
 export default function TimelineComparison() {
   useEffect(() => {
