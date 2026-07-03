@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
  
 * **Live Tools**: `75` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Upcoming Tools**: `2` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -48,6 +48,7 @@ Try some of the most popular utilities and newest additions:
  
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
+* **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
  
 More boring tools are on the way!
  

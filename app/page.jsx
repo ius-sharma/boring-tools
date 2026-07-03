@@ -80,7 +80,8 @@ const tools = [
   { id: "before-after", name: "Before & After", href: "/before-after", category: "Learning", description: "Explore how life changed before and after major inventions, scientific discoveries, and historical breakthroughs.", status: "Live", isNew: true, isFeatured: true },
   { id: "empire-simulator", name: "Empire Simulator", href: "/empire-simulator", category: "Learning", description: "Build and manage a fictional empire to simulate growth, random historical events, and collapse risks.", status: "Live", isNew: true, isFeatured: true },
   { id: "timeline-comparison", name: "Timeline Comparison", href: "/timeline-comparison", category: "Learning", description: "Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.", status: "Live", isNew: true, isFeatured: true },
-  { id: "if-this-never-happened", name: "If This Never Happened", href: "/if-this-never-happened", category: "Learning", description: "Explore alternate history by simulating how the world would look today if a major event or invention never occurred.", status: "Live", isNew: true, isFeatured: true }
+  { id: "if-this-never-happened", name: "If This Never Happened", href: "/if-this-never-happened", category: "Learning", description: "Explore alternate history by simulating how the world would look today if a major event or invention never occurred.", status: "Live", isNew: true, isFeatured: true },
+  { id: "cosmic-calendar", name: "Cosmic Calendar", href: "/cosmic-calendar", category: "Learning", description: "Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
 const liveToolIds = new Set([
