@@ -48,6 +48,7 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
+* **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
 * **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
  
 More boring tools are on the way!
