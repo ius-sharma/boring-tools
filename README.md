@@ -33,6 +33,7 @@ Try some of the most popular utilities and newest additions:
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
+* **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
@@ -47,7 +48,6 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
 * **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
  
 More boring tools are on the way!
@@ -350,6 +350,7 @@ Visually compare two historical civilizations, empires, inventions, technologies
 73. **Before & After** — `/before-after`
 74. **If This Never Happened** — `/if-this-never-happened`
 75. **Timeline Comparison** — `/timeline-comparison`
+76. **Historical Perspective** — `/historical-perspective`
 
 ---
 
