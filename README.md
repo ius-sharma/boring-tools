@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
  
 * **Live Tools**: `77` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+* **Upcoming Tools**: `3` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -51,6 +51,7 @@ Try some of the most popular utilities and newest additions:
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
 * **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
+* **Cosmic Address** (`/cosmic-address`) — Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
  
 More boring tools are on the way!
  
