@@ -82,7 +82,8 @@ const tools = [
   { id: "timeline-comparison", name: "Timeline Comparison", href: "/timeline-comparison", category: "Learning", description: "Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side across time.", status: "Live", isNew: true, isFeatured: true },
   { id: "if-this-never-happened", name: "If This Never Happened", href: "/if-this-never-happened", category: "Learning", description: "Explore alternate history by simulating how the world would look today if a major event or invention never occurred.", status: "Live", isNew: true, isFeatured: true },
   { id: "your-weight-on-other-planets", name: "Your Weight on Other Planets", href: "/your-weight-on-other-planets", category: "Learning", description: "Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.", status: "Upcoming", isNew: true, isFeatured: true },
-  { id: "cosmic-calendar", name: "Cosmic Calendar", href: "/cosmic-calendar", category: "Learning", description: "Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.", status: "Live", isNew: true, isFeatured: true }
+  { id: "cosmic-calendar", name: "Cosmic Calendar", href: "/cosmic-calendar", category: "Learning", description: "Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.", status: "Live", isNew: true, isFeatured: true },
+  { id: "time-on-other-planets", name: "Time on Other Planets", href: "/time-on-other-planets", category: "Learning", description: "Compare planetary years, days, birthdays, and age across the Solar System with orbital maps and comparisons.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
 const liveToolIds = new Set([
