@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `75` (accessible online or via local setup)
-* **Upcoming Tools**: `2` (currently in development)
+* **Live Tools**: `77` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
+* **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
@@ -49,7 +50,6 @@ Try some of the most popular utilities and newest additions:
  
 ## 🛠️ Upcoming Tools (Roadmap)
 * **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
-* **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
  
 More boring tools are on the way!
  
@@ -274,7 +274,14 @@ Visually compare two historical civilizations, empires, inventions, technologies
 * **Visual Timeline Flow**: Displays chronological steps from started ➔ peak ➔ decline ➔ end side-by-side.
 * **100% Client-Side**: Structured local database of 22 detailed items runs completely offline without any network or API dependencies.
 
-## 🗂️ Live Tools Directory (75 Live)
+### 30. Cosmic Calendar (Live)
+Understand the scale of time by compressing the universe's 13.8 billion year history into a calendar year and comparing it to your life.
+* **Programmatic Calendar Map**: Compresses cosmic epochs dynamically so you can inspect where major events occur.
+* **December 31 Deep-Dive**: Zoom in on humanity's birth, the agricultural revolution, written history, and your own lifespan in the final cosmic seconds.
+* **Comparative Metrics**: Compare your age side-by-side with Earth, civilization, the Internet, and modern computing.
+* **Privacy First**: 100% client-side execution with copy/download options for your personal reports.
+
+## 🗂️ Live Tools Directory (77 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -352,6 +359,7 @@ Visually compare two historical civilizations, empires, inventions, technologies
 74. **If This Never Happened** — `/if-this-never-happened`
 75. **Timeline Comparison** — `/timeline-comparison`
 76. **Historical Perspective** — `/historical-perspective`
+77. **Cosmic Calendar** — `/cosmic-calendar`
 
 ---
 

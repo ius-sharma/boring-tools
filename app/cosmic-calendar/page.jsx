@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { COSMIC_EVENTS } from "./dataset";
 
-const IS_RELEASED = false;
+const IS_RELEASED = true;
 
 const UNIVERSE_AGE = 13.8e9; // 13.8 Billion Years
 const EARTH_AGE = 4.54e9; // 4.54 Billion Years
