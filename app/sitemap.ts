@@ -1,30 +1,51 @@
 import { MetadataRoute } from "next";
+import { tools } from "./tools-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
+  const baseUrl = "https://boringtools.vercel.app";
+
+  const staticPages = [
     {
-      url: "https://boringtools.vercel.app",
+      url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
+      changeFrequency: "daily" as const,
+      priority: 1.0,
     },
     {
-      url: "https://boringtools.vercel.app/concept-explorer",
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
     },
     {
-      url: "https://boringtools.vercel.app/purchase-intelligence",
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
     },
     {
-      url: "https://boringtools.vercel.app/leverage-finder",
+      url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/terms-of-service`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.3,
     },
   ];
+
+  // Map all "Live" tools to sitemap entries
+  const toolPages = tools
+    .filter((tool) => tool.status === "Live")
+    .map((tool) => ({
+      url: `${baseUrl}${tool.href}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+
+  return [...staticPages, ...toolPages];
 }
