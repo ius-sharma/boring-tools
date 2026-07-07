@@ -31,6 +31,7 @@ Access all live tools instantly:
 Try some of the most popular utilities and newest additions:
 * **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
 * **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
+* **CGPA Target Planner** (`/cgpa-target-planner`) — Calculate the required SGPA in remaining semesters to reach your target CGPA. Features a what-if simulator, custom semester targets, local storage support, and print-optimized PDF export.
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
@@ -364,6 +365,7 @@ Understand the scale of time by compressing the universe's 13.8 billion year his
 77. **Cosmic Calendar** — `/cosmic-calendar`
 78. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
 79. **Time on Other Planets** — `/time-on-other-planets`
+80. **CGPA Target Planner** — `/cgpa-target-planner`
 
 ---
 
