@@ -143,7 +143,7 @@ const PLANET_OPTIONS = PLANET_DATA.map(p => ({
   label: `${p.icon} ${p.name}`
 }));
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 export default function PlanetsWeightPage() {
   if (TOOL_STATUS === "upcoming") {

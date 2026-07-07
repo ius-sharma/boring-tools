@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import ThemedDropdown from "@/app/components/ThemedDropdown";
 import ComingSoon from "@/app/components/ComingSoon";
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 // Planetary orbital, rotational, and visual data
 const PLANET_DATA = [

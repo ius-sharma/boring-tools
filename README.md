@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `77` (accessible online or via local setup)
-* **Upcoming Tools**: `3` (currently in development)
+* **Live Tools**: `79` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -30,11 +30,13 @@ Access all live tools instantly:
 ## ⭐ Featured Tools
 Try some of the most popular utilities and newest additions:
 * **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
+* **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
 * **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
 * **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
+* **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
 * **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
 * **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
@@ -49,8 +51,6 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
-* **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
 * **Cosmic Address** (`/cosmic-address`) — Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
  
 More boring tools are on the way!
@@ -362,6 +362,8 @@ Understand the scale of time by compressing the universe's 13.8 billion year his
 75. **Timeline Comparison** — `/timeline-comparison`
 76. **Historical Perspective** — `/historical-perspective`
 77. **Cosmic Calendar** — `/cosmic-calendar`
+78. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
+79. **Time on Other Planets** — `/time-on-other-planets`
 
 ---
 
