@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `79` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Live Tools**: `81` (accessible online or via local setup)
+* **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -31,6 +31,7 @@ Access all live tools instantly:
 Try some of the most popular utilities and newest additions:
 * **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
 * **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
+* **Cosmic Address** (`/cosmic-address`) — Trace your exact coordinate in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
 * **CGPA Target Planner** (`/cgpa-target-planner`) — Calculate the required SGPA in remaining semesters to reach your target CGPA. Features a what-if simulator, custom semester targets, local storage support, and print-optimized PDF export.
 * **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
 * **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
@@ -48,12 +49,11 @@ Try some of the most popular utilities and newest additions:
 * **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
+* **Prompt Engineer** (`/prompt-engineer`) — Refine and optimize prompts for LLMs using structured frameworks (Chain of Thought, Few-Shot, Persona-based).
  
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Cosmic Address** (`/cosmic-address`) — Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
- 
 More boring tools are on the way!
  
 ---
@@ -284,7 +284,14 @@ Understand the scale of time by compressing the universe's 13.8 billion year his
 * **Comparative Metrics**: Compare your age side-by-side with Earth, civilization, the Internet, and modern computing.
 * **Privacy First**: 100% client-side execution with copy/download options for your personal reports.
 
-## 🗂️ Live Tools Directory (77 Live)
+### 31. Cosmic Address (Live)
+Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
+* **Interactive Zoom Experience**: Step through 9 cosmic layers (You ➔ Earth ➔ Solar System ➔ Orion Arm ➔ Milky Way Galaxy ➔ Local Group ➔ Virgo Cluster ➔ Laniakea Supercluster ➔ Observable Universe) with glowing nested SVG animations.
+* **Perspective Sizing Comparisons**: Compare Earth's size with the Sun, Solar System, Milky Way, and Observable Universe using intuitive scale analogies and graphics.
+* **Interactive Hierarchy Stepper**: Jump directly to any cosmic layer to inspect its estimated diameter, age, composition, distance, and interesting facts.
+* **Privacy Statement**: 100% client-side execution—your profile data is processed locally in your browser sandbox.
+
+## 🗂️ Live Tools Directory (81 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -366,6 +373,7 @@ Understand the scale of time by compressing the universe's 13.8 billion year his
 78. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
 79. **Time on Other Planets** — `/time-on-other-planets`
 80. **CGPA Target Planner** — `/cgpa-target-planner`
+81. **Cosmic Address** — `/cosmic-address`
 
 ---
 

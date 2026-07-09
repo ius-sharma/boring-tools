@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import ComingSoon from "@/app/components/ComingSoon";
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 const COSMIC_LEVELS = [
   {
