@@ -97,6 +97,6 @@ export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["perspective-switcher", "fear-decomposer", "hook-generator", "sleep-cycle-calculator", "calorie-calculator"];
+export const featuredToolIds = ["attendance-calculator", "perspective-switcher", "second-mind"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
