@@ -15,7 +15,7 @@ Access all live tools instantly:
 ## 📊 Project Status & Roadmap
  
 * **Live Tools**: `81` (accessible online or via local setup)
-* **Upcoming Tools**: `0` (currently in development)
+* **Upcoming Tools**: `1` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -54,7 +54,7 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-More boring tools are on the way!
+* **Placement Readiness Score** — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
  
 ---
 
