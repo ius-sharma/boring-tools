@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `81` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Live Tools**: `82` (accessible online or via local setup)
+* **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -50,11 +50,12 @@ Try some of the most popular utilities and newest additions:
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
 * **Prompt Engineer** (`/prompt-engineer`) — Refine and optimize prompts for LLMs using structured frameworks (Chain of Thought, Few-Shot, Persona-based).
+* **Placement Readiness Score** (`/placement-readiness-score`) — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
  
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-* **Placement Readiness Score** — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
+More boring tools are on the way!
  
 ---
 

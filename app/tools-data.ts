@@ -91,13 +91,13 @@ export const tools: Tool[] = [
   { id: "cosmic-calendar", name: "Cosmic Calendar", href: "/cosmic-calendar", category: "Learning", description: "Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.", status: "Live", isNew: true, isFeatured: true },
   { id: "cosmic-address", name: "Cosmic Address", href: "/cosmic-address", category: "Learning", description: "Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-on-other-planets", name: "Time on Other Planets", href: "/time-on-other-planets", category: "Learning", description: "Compare planetary years, days, birthdays, and age across the Solar System with orbital maps and comparisons.", status: "Live", isNew: true, isFeatured: true },
-  { id: "placement-readiness-score", name: "Placement Readiness Score", href: "/placement-readiness-score", category: "Career", description: "Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.", status: "Upcoming", isNew: true, isFeatured: true }
+  { id: "placement-readiness-score", name: "Placement Readiness Score", href: "/placement-readiness-score", category: "Career", description: "Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["attendance-calculator", "perspective-switcher", "time-on-other-planets"];
+export const featuredToolIds = ["attendance-calculator", "perspective-switcher", "placement-readiness-score"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));

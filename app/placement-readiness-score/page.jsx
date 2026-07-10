@@ -3,7 +3,7 @@
 import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useState, useMemo, useRef } from "react";
 
-const TOOL_STATUS = "upcoming";
+const TOOL_STATUS = "live";
 
 // Default input values representing a balanced intermediate student
 const defaultInputs = {
