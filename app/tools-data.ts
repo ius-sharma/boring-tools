@@ -92,7 +92,8 @@ export const tools: Tool[] = [
   { id: "cosmic-address", name: "Cosmic Address", href: "/cosmic-address", category: "Learning", description: "Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.", status: "Live", isNew: true, isFeatured: true },
   { id: "time-on-other-planets", name: "Time on Other Planets", href: "/time-on-other-planets", category: "Learning", description: "Compare planetary years, days, birthdays, and age across the Solar System with orbital maps and comparisons.", status: "Live", isNew: true, isFeatured: true },
   { id: "placement-readiness-score", name: "Placement Readiness Score", href: "/placement-readiness-score", category: "Career", description: "Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.", status: "Live", isNew: true, isFeatured: true },
-  { id: "study-material-finder", name: "Study Material Finder", href: "/study-material-finder", category: "Education", description: "Enter any topic and instantly get the best GitHub repos, YouTube playlists, documentation, and practice resources — all in one place.", status: "Live", isNew: true, isFeatured: true }
+  { id: "study-material-finder", name: "Study Material Finder", href: "/study-material-finder", category: "Education", description: "Enter any topic and instantly get the best GitHub repos, YouTube playlists, documentation, and practice resources — all in one place.", status: "Live", isNew: true, isFeatured: true },
+  { id: "suiii-counter", name: "SUIII Counter", href: "/suiii-counter", category: "Fun", description: "Celebrate every SUIII with sound effects, achievements, combos, statistics, and challenge modes.", status: "Upcoming", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
