@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `82` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development)
+* **Live Tools**: `83` (accessible online or via local setup)
+* **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -55,8 +55,7 @@ Try some of the most popular utilities and newest additions:
 ---
  
 ## 🛠️ Upcoming Tools (Roadmap)
-Here are the tools currently in active development:
-* **SUIII Counter** — `/suiii-counter` (Fun Celebration Counter)
+More boring tools are on the way!
  
 ---
 
@@ -293,7 +292,7 @@ Trace your exact location in the universe, zooming out from yourself to the edge
 * **Interactive Hierarchy Stepper**: Jump directly to any cosmic layer to inspect its estimated diameter, age, composition, distance, and interesting facts.
 * **Privacy Statement**: 100% client-side execution—your profile data is processed locally in your browser sandbox.
 
-## 🗂️ Live Tools Directory (81 Live)
+## 🗂️ Live Tools Directory (82 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -376,6 +375,7 @@ Trace your exact location in the universe, zooming out from yourself to the edge
 79. **Time on Other Planets** — `/time-on-other-planets`
 80. **CGPA Target Planner** — `/cgpa-target-planner`
 81. **Cosmic Address** — `/cosmic-address`
+82. **SUIII Counter** — `/suiii-counter`
 
 ---
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ComingSoon from "../components/ComingSoon";
 
-const TOOL_STATUS = "upcoming"; // Set to "live" to deploy and enable routing
+const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 /* ────────────────────────── constants ────────────────────────── */
 
