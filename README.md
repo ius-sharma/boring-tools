@@ -51,6 +51,7 @@ Try some of the most popular utilities and newest additions:
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
 * **Prompt Engineer** (`/prompt-engineer`) — Refine and optimize prompts for LLMs using structured frameworks (Chain of Thought, Few-Shot, Persona-based).
 * **Placement Readiness Score** (`/placement-readiness-score`) — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
+* **Cinematic AI Prompt Architect** (`/cinematic-ai-prompt-architect`) — Build production-quality cinematic AI prompts for image and video generation models like Midjourney, Stable Diffusion, Flux, Kling, Runway, and more. Features server-side Groq LLM enhancement, conflict detection, quality scoring, and one-click export.
  
 ---
  
@@ -292,7 +293,21 @@ Trace your exact location in the universe, zooming out from yourself to the edge
 * **Interactive Hierarchy Stepper**: Jump directly to any cosmic layer to inspect its estimated diameter, age, composition, distance, and interesting facts.
 * **Privacy Statement**: 100% client-side execution—your profile data is processed locally in your browser sandbox.
 
-## 🗂️ Live Tools Directory (82 Live)
+### 32. Cinematic AI Prompt Architect (Live)
+Build production-quality cinematic AI prompts for image and video generation models without needing prompt engineering knowledge.
+* **11 Platform Targets**: Generates optimized prompts for Midjourney, ChatGPT Images, Flux, Stable Diffusion, Imagen, Kling, Runway, Pika, Veo, Hailuo, and a generic fallback.
+* **Structured Prompt Builder**: Guided multi-section input for Subject (character, appearance, clothing, pose), Scene (location, weather, season, architecture), Camera (type, lens, shot type, movement), Lighting, Style, Color Grading, Mood, and Visual Details.
+* **AI-Enhanced Generation**: Connects to a secure server-side Groq LLM API for professionally rewritten prompts. Falls back to a smart local rules-based compiler if the API is unavailable.
+* **Contradiction & Redundancy Auditor**: Detects lighting/time-of-day conflicts, indoor/outdoor mismatches, and repeated words across fields, with quality score penalties.
+* **Platform-Specific Ordering**: Reorders prompt elements based on each platform's token weighting strategy (e.g., subject-first for Midjourney, camera-movement-first for video models).
+* **Quality Scoring Engine**: Computes a 0–100% quality score across 6 axes (Completeness, Visual Detail, Camera, Lighting, Composition, Storytelling) with auditor penalty deductions.
+* **Quick-Apply Suggestions**: Smart recommendations with one-click auto-fill buttons for missing fields.
+* **SD CLIP Token Alert**: Warns when Stable Diffusion prompts exceed the ~75-token CLIP encoder limit.
+* **Director Presets**: One-click presets inspired by Christopher Nolan, Denis Villeneuve, Zack Snyder, Studio Ghibli, Cyberpunk, Blade Runner, and Dune aesthetics.
+* **Negative Prompts**: Toggle common negative keywords (Low Quality, Blur, Bad Anatomy, Watermark, etc.) for platforms that support them.
+* **Favorites & Export**: Save unlimited prompt configurations to localStorage, copy to clipboard, or download as TXT/Markdown reports.
+
+## 🗂️ Live Tools Directory (83 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -376,6 +391,7 @@ Trace your exact location in the universe, zooming out from yourself to the edge
 80. **CGPA Target Planner** — `/cgpa-target-planner`
 81. **Cosmic Address** — `/cosmic-address`
 82. **SUIII Counter** — `/suiii-counter`
+83. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
 
 ---
 
@@ -403,6 +419,11 @@ Run the entire ecosystem locally on your computer in under a minute:
   ```env
   GOOGLE_DIRECTIONS_KEY=your_key_here
   ```
+* **Cinematic AI Prompt Architect (AI Enhancement)**: For server-side Groq LLM prompt enhancement, add your Groq API key to `.env.local`:
+  ```env
+  GROQ_API_KEY=your_groq_api_key_here
+  ```
+  The tool works fully without this key using a local rules-based compiler.
 
 ---
 
