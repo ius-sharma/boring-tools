@@ -14,7 +14,7 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `83` (accessible online or via local setup)
+* **Live Tools**: `86` (accessible online or via local setup)
 * **Upcoming Tools**: `0` (currently in development)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
@@ -49,9 +49,10 @@ Try some of the most popular utilities and newest additions:
 * **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
-* **Prompt Engineer** (`/prompt-engineer`) — Refine and optimize prompts for LLMs using structured frameworks (Chain of Thought, Few-Shot, Persona-based).
 * **Placement Readiness Score** (`/placement-readiness-score`) — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
 * **Cinematic AI Prompt Architect** (`/cinematic-ai-prompt-architect`) — Build production-quality cinematic AI prompts for image and video generation models like Midjourney, Stable Diffusion, Flux, Kling, Runway, and more. Features server-side Groq LLM enhancement, conflict detection, quality scoring, and one-click export.
+* **Study Material Finder** (`/study-material-finder`) — Enter any topic and instantly get the best GitHub repos, YouTube playlists, documentation, and practice resources — all in one place.
+* **Fake Data Generator** (`/fake-data-generator`) — Generate realistic fake names, emails, phone numbers, addresses, companies, products and SQL datasets instantly for testing and development. Runs completely client-side in your browser.
  
 ---
  
@@ -307,91 +308,94 @@ Build production-quality cinematic AI prompts for image and video generation mod
 * **Negative Prompts**: Toggle common negative keywords (Low Quality, Blur, Bad Anatomy, Watermark, etc.) for platforms that support them.
 * **Favorites & Export**: Save unlimited prompt configurations to localStorage, copy to clipboard, or download as TXT/Markdown reports.
 
-## 🗂️ Live Tools Directory (83 Live)
+## 🗂️ Live Tools Directory (86 Live)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
 3. **JSON Formatter** — `/json-formatter`
 4. **Word Counter** — `/word-counter`
 5. **Password Generator** — `/password-generator`
-6. **Age Calculator** — `/age-calculator`
-7. **BMI Calculator** — `/bmi-calculator`
-8. **Birthday Countdown** — `/birthday-countdown`
-9. **Age Difference Calculator** — `/age-difference-calculator`
-10. **QR Generator** — `/qr-generator`
-11. **Unit Converter** — `/unit-converter`
-12. **File Name Sanitizer** — `/file-name-sanitizer`
-13. **Image Compressor / Resizer** — `/image-compressor`
-14. **Resume Bullet Rewriter** — `/resume-bullet-rewriter`
-15. **Time Zone Converter** — `/time-zone-converter`
-16. **Days Between Dates** — `/days-between-dates`
-17. **To-Do List** — `/to-do-list`
-18. **GST Calculator** — `/gst-calculator`
-19. **Truth Or Dare Play** — `/truth-or-dare-play`
-20. **Pomodoro Timer** — `/pomodoro-timer`
-21. **Roast My To-Do List** — `/roast-my-todo-list`
-22. **Markdown Previewer** — `/markdown-previewer`
-23. **Video Transcriber** — `/video-transcriber`
-24. **YouTube Title Generator** — `/youtube-title-generator`
-25. **Base Converter** — `/base-converter`
-26. **Aspect Ratio Calculator** — `/aspect-ratio-calculator`
-27. **Distance Between Cities** — `/distance-between-cities`
-28. **Currency Converter** — `/currency-converter`
-29. **LinkedIn Post Formatter** — `/linkedin-post-formatter`
-30. **What Happened Today In History** — `/what-happened-today`
-31. **Math Formula Calculator** — `/math-formula-calculator`
-32. **Science Formulas Calculator** — `/science-formulas-calculator`
-33. **QuickLearn** — `/concept-explorer`
-34. **Can I Trust This Website?** — `/can-i-trust-this-website`
-35. **Social Account Analyzer** — `/social-account-analyzer`
-36. **Attendance Calculator** — `/attendance-calculator`
-37. **YouTube Downloader** — `/youtube-downloader`
-38. **DOC to PDF Converter** — `/doc-to-pdf-converter`
-39. **Video to Audio Converter** — `/video-to-audio-converter`
-40. **Image to PDF Converter** — `/image-to-pdf-converter`
-41. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
-42. **Document Data Extractor** — `/document-data-extractor`
-43. **Water Intake Calculator** — `/water-intake-calculator`
-44. **SIP Calculator** — `/sip-calculator`
-45. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
-46. **Percentage Calculator** — `/percentage-calculator`
-47. **Typing Speed Tester** — `/typing-speed-tester`
-48. **Calorie Calculator** — `/calorie-calculator`
-49. **Hook Generator** — `/hook-generator`
-50. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
-51. **Color Palette Generator** — `/color-palette-generator`
-52. **Invoice Generator** — `/invoice-generator`
-53. **EMI Calculator** — `/emi-calculator`
-54. **Should I Reply?** — `/should-i-reply`
-55. **Resignation Letter Generator** — `/resignation-letter-generator`
-56. **Subscription Tracker** — `/subscription-tracker`
-57. **Personal Admin Dashboard** — `/personal-admin-dashboard`
-58. **Email Decoder** — `/email-decoder`
-59. **Link Intelligence** — `/link-intelligence`
-60. **Learning OS** — `/learning-os`
-61. **Purchase Intelligence** — `/purchase-intelligence`
-62. **Leverage Finder** — `/leverage-finder`
-63. **Clipboard History Manager** — `/clipboard-history-manager`
-64. **Digital Declutter Assistant** — `/digital-declutter-assistant`
-65. **News Accuracy Checker** — `/news-accuracy-checker`
-66. **Time Cost Calculator** — `/time-cost-calculator`
-67. **Second Mind** — `/second-mind`
-68. **Discount Calculator** — `/discount-calculator`
-69. **Fear Decomposer** — `/fear-decomposer`
-70. **Perspective Switcher** — `/perspective-switcher`
-71. **History Repeats** — `/history-repeats`
-72. **Empire Simulator** — `/empire-simulator`
-73. **Before & After** — `/before-after`
-74. **If This Never Happened** — `/if-this-never-happened`
-75. **Timeline Comparison** — `/timeline-comparison`
-76. **Historical Perspective** — `/historical-perspective`
-77. **Cosmic Calendar** — `/cosmic-calendar`
+6. **Can I Trust This Website?** — `/can-i-trust-this-website`
+7. **News Accuracy Checker** — `/news-accuracy-checker`
+8. **Link Intelligence** — `/link-intelligence`
+9. **Age Calculator** — `/age-calculator`
+10. **BMI Calculator** — `/bmi-calculator`
+11. **Water Intake Calculator** — `/water-intake-calculator`
+12. **Birthday Countdown** — `/birthday-countdown`
+13. **Age Difference Calculator** — `/age-difference-calculator`
+14. **Discount Calculator** — `/discount-calculator`
+15. **Purchase Intelligence** — `/purchase-intelligence`
+16. **Time Cost Calculator** — `/time-cost-calculator`
+17. **SIP Calculator** — `/sip-calculator`
+18. **EMI Calculator** — `/emi-calculator`
+19. **QR Generator** — `/qr-generator`
+20. **Unit Converter** — `/unit-converter`
+21. **File Name Sanitizer** — `/file-name-sanitizer`
+22. **Image Compressor / Resizer** — `/image-compressor`
+23. **Image to PDF Converter** — `/image-to-pdf-converter`
+24. **DOC to PDF Converter** — `/doc-to-pdf-converter`
+25. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
+26. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
+27. **Document Data Extractor** — `/document-data-extractor`
+28. **Resume Bullet Rewriter** — `/resume-bullet-rewriter`
+29. **Resignation Letter Generator** — `/resignation-letter-generator`
+30. **Time Zone Converter** — `/time-zone-converter`
+31. **Days Between Dates** — `/days-between-dates`
+32. **To-Do List** — `/to-do-list`
+33. **GST Calculator** — `/gst-calculator`
+34. **Truth or Dare Play** — `/truth-or-dare-play`
+35. **Pomodoro Timer** — `/pomodoro-timer`
+36. **Roast My To-Do List** — `/roast-my-todo-list`
+37. **Markdown Previewer** — `/markdown-previewer`
+38. **Video Transcriber** — `/video-transcriber`
+39. **YouTube Title Generator** — `/youtube-title-generator`
+40. **LinkedIn Post Formatter** — `/linkedin-post-formatter`
+41. **What Happened Today In History** — `/what-happened-today`
+42. **Math Formula Calculator** — `/math-formula-calculator`
+43. **Science Formulas Calculator** — `/science-formulas-calculator`
+44. **QuickLearn** — `/concept-explorer`
+45. **Base Converter** — `/base-converter`
+46. **Aspect Ratio Calculator** — `/aspect-ratio-calculator`
+47. **Distance Between Cities** — `/distance-between-cities`
+48. **Currency Converter** — `/currency-converter`
+49. **Percentage Calculator** — `/percentage-calculator`
+50. **Social Account Analyzer** — `/social-account-analyzer`
+51. **Attendance Calculator** — `/attendance-calculator`
+52. **CGPA Target Planner** — `/cgpa-target-planner`
+53. **YouTube Downloader** — `/youtube-downloader`
+54. **Video to Audio Converter** — `/video-to-audio-converter`
+55. **Typing Speed Tester** — `/typing-speed-tester`
+56. **Calorie Calculator** — `/calorie-calculator`
+57. **Hook Generator** — `/hook-generator`
+58. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
+59. **Color Palette Generator** — `/color-palette-generator`
+60. **Invoice Generator** — `/invoice-generator`
+61. **Should I Reply?** — `/should-i-reply`
+62. **Subscription Tracker** — `/subscription-tracker`
+63. **Personal Admin Dashboard** — `/personal-admin-dashboard`
+64. **Email Decoder** — `/email-decoder`
+65. **Learning OS** — `/learning-os`
+66. **Leverage Finder** — `/leverage-finder`
+67. **Clipboard History Manager** — `/clipboard-history-manager`
+68. **Digital Declutter Assistant** — `/digital-declutter-assistant`
+69. **Second Mind** — `/second-mind`
+70. **Fear Decomposer** — `/fear-decomposer`
+71. **Perspective Switcher** — `/perspective-switcher`
+72. **History Repeats** — `/history-repeats`
+73. **Historical Perspective** — `/historical-perspective`
+74. **Before & After** — `/before-after`
+75. **Empire Simulator** — `/empire-simulator`
+76. **Timeline Comparison** — `/timeline-comparison`
+77. **If This Never Happened** — `/if-this-never-happened`
 78. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
-79. **Time on Other Planets** — `/time-on-other-planets`
-80. **CGPA Target Planner** — `/cgpa-target-planner`
-81. **Cosmic Address** — `/cosmic-address`
-82. **SUIII Counter** — `/suiii-counter`
-83. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
+79. **Cosmic Calendar** — `/cosmic-calendar`
+80. **Cosmic Address** — `/cosmic-address`
+81. **Time on Other Planets** — `/time-on-other-planets`
+82. **Placement Readiness Score** — `/placement-readiness-score`
+83. **Study Material Finder** — `/study-material-finder`
+84. **SUIII Counter** — `/suiii-counter`
+85. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
+86. **Fake Data Generator** — `/fake-data-generator`
 
 ---
 

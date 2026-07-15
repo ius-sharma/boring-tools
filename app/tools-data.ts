@@ -95,13 +95,15 @@ export const tools: Tool[] = [
   { id: "study-material-finder", name: "Study Material Finder", href: "/study-material-finder", category: "Education", description: "Enter any topic and instantly get the best GitHub repos, YouTube playlists, documentation, and practice resources — all in one place.", status: "Live", isNew: true, isFeatured: true },
   { id: "suiii-counter", name: "SUIII Counter", href: "/suiii-counter", category: "Fun", description: "Celebrate every SUIII with sound effects, achievements, combos, statistics, and challenge modes.", status: "Live", isNew: true, isFeatured: true },
   { id: "cinematic-ai-prompt-architect", name: "Cinematic AI Prompt Architect", href: "/cinematic-ai-prompt-architect", category: "Creator Tools", description: "Create production-quality cinematic AI prompts for image and video generation.", status: "Live", isNew: true, isFeatured: true },
-  { id: "fake-data-generator", name: "Fake Data Generator", href: "/fake-data-generator", category: "Developer", description: "Generate realistic fake names, emails, phone numbers, addresses, companies, products and SQL datasets instantly for testing and development. Runs completely in your browser.", status: "Live", isNew: true, isFeatured: true }
+  { id: "fake-data-generator", name: "Fake Data Generator", href: "/fake-data-generator", category: "Developer", description: "Generate realistic fake names, emails, phone numbers, addresses, companies, products and SQL datasets instantly for testing and development. Runs completely in your browser.", status: "Live", isNew: true, isFeatured: true },
+  { id: "movie-series-recommendation", name: "Movie & Series Recommendation", href: "/movie-series-recommendation", category: "Entertainment", description: "Find the perfect movie or TV series based on mood, genre, available time and preferences. Save favorites and build your personal watchlist. Runs completely in your browser.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["attendance-calculator", "perspective-switcher", "placement-readiness-score"];
+export const featuredToolIds = ["movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect", "placement-readiness-score"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
+
