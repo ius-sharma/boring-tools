@@ -97,7 +97,8 @@ export const tools: Tool[] = [
   { id: "cinematic-ai-prompt-architect", name: "Cinematic AI Prompt Architect", href: "/cinematic-ai-prompt-architect", category: "Creator Tools", description: "Create production-quality cinematic AI prompts for image and video generation.", status: "Live", isNew: true, isFeatured: true },
   { id: "fake-data-generator", name: "Fake Data Generator", href: "/fake-data-generator", category: "Developer", description: "Generate realistic fake names, emails, phone numbers, addresses, companies, products and SQL datasets instantly for testing and development. Runs completely in your browser.", status: "Live", isNew: true, isFeatured: true },
   { id: "movie-series-recommendation", name: "Movie & Series Recommendation", href: "/movie-series-recommendation", category: "Entertainment", description: "Find the perfect movie or TV series based on mood, genre, available time and preferences. Save favorites and build your personal watchlist. Runs completely in your browser.", status: "Live", isNew: true, isFeatured: true },
-  { id: "cash-runway-calculator", name: "Cash Runway Calculator", href: "/cash-runway-calculator", category: "Finance", description: "Calculate startup runway, burn rate and survival time using revenue and expenses.", status: "Live", isNew: true, isFeatured: true }
+  { id: "cash-runway-calculator", name: "Cash Runway Calculator", href: "/cash-runway-calculator", category: "Finance", description: "Calculate startup runway, burn rate and survival time using revenue and expenses.", status: "Live", isNew: true, isFeatured: true },
+  { id: "ai-agent-visualizer", name: "AI Agent Visualizer", href: "/ai-agent-visualizer", category: "Learning", description: "Understand how modern AI agents think, plan, use tools, remember information, and work in multi-agent networks.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
