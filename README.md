@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `86` (accessible online or via local setup)
-* **Upcoming Tools**: `0` (currently in development)
+* **Live Tools**: `93` (accessible online or via local setup)
+* **Upcoming Tools**: `7` (currently in development to reach 100)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -27,288 +27,77 @@ Access all live tools instantly:
  
 ---
  
-## ⭐ Featured Tools
-Try some of the most popular utilities and newest additions:
-* **Cosmic Calendar** (`/cosmic-calendar`) — Understand the scale of time by compressing the history of the universe into a calendar year and comparing it to your life.
-* **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps, physical comparisons, and astronomical facts.
+## ⭐ Featured & Newly Added Tools
+Try some of our newest and most popular utilities:
+* **Reaction Time & Mouse Accuracy Tester** (`/reaction-time-tester`) — Benchmark your reaction speed (ms), mouse target accuracy (%), click speed (CPS), and precision in real-time across 5 game modes with instant rank assignments, daily challenges, local storage tracking, and PNG card export.
+* **Movie & Series Recommendation** (`/movie-series-recommendation`) — Find the perfect movie or TV series based on mood, genre, available time and preferences. Save favorites and build your personal watchlist.
+* **Fake Data Generator** (`/fake-data-generator`) — Generate realistic fake names, emails, phone numbers, addresses, companies, products, and SQL datasets instantly for testing and development.
+* **Startup Name Analyzer** (`/startup-name-analyzer`) — Evaluate startup names for memorability, branding potential, domain readiness, global appeal, and emotional resonance.
+* **Logo Meaning Explorer** (`/logo-meaning-explorer`) — Upload any logo to discover the psychology, symbolism, color harmony, typography, and emotional impact behind its design.
+* **AI Agent Visualizer** (`/ai-agent-visualizer`) — Understand how modern AI agents think, plan, use tools, remember information, and collaborate in multi-agent networks through interactive diagrams.
+* **Cash Runway Calculator** (`/cash-runway-calculator`) — Compute startup runway duration, net burn rate, zero cash date, and runway extension scenarios.
+* **Cinematic AI Prompt Architect** (`/cinematic-ai-prompt-architect`) — Build production-quality cinematic AI prompts for Midjourney, Stable Diffusion, Flux, Kling, Runway, and more. Features Groq LLM enhancement, quality scoring, and negative prompts.
+* **Placement Readiness Score** (`/placement-readiness-score`) — Evaluate placement preparation with client-side AI resume scanning, DSA, project portfolio, aptitude, and communication skill scoring.
+* **Study Material Finder** (`/study-material-finder`) — Enter any topic and instantly discover top GitHub repositories, YouTube playlists, documentation, and practice resources.
+* **Cosmic Calendar** (`/cosmic-calendar`) — Compress the 13.8 billion year history of the universe into a single calendar year and compare it to human civilization and your life.
+* **Time on Other Planets** (`/time-on-other-planets`) — Compare planetary years, days, birthdays, and age across the Solar System with interactive speed-scaled orbit maps.
 * **Cosmic Address** (`/cosmic-address`) — Trace your exact coordinate in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
-* **CGPA Target Planner** (`/cgpa-target-planner`) — Calculate the required SGPA in remaining semesters to reach your target CGPA. Features a what-if simulator, custom semester targets, local storage support, and print-optimized PDF export.
-* **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event, invention, discovery, or breakthrough had never happened.
-* **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines, statistics, and impact breakdowns.
-* **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines, proportional statistics, and detailed breakdowns.
-* **History Repeats** (`/history-repeats`) — Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
-* **Historical Perspective** (`/historical-perspective`) — Understand modern situations through the lens of history, comparing patterns, outcomes, timelines, and adaptation lessons 100% locally.
+* **CGPA Target Planner** (`/cgpa-target-planner`) — Calculate the required SGPA in remaining semesters to reach your target CGPA with custom scenario modeling and PDF report exports.
+* **If This Never Happened** (`/if-this-never-happened`) — Explore alternate history by simulating how the world would look today if a major historical event or invention never occurred.
+* **Before & After** (`/before-after`) — Compare life before and after major inventions, scientific discoveries, and historical breakthroughs with interactive timelines and impact breakdowns.
+* **Timeline Comparison** (`/timeline-comparison`) — Visually compare two historical civilizations, technologies, or events side-by-side with interactive timelines and statistics.
+* **History Repeats** (`/history-repeats`) — Compare modern situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
 * **Your Weight on Other Planets** (`/your-weight-on-other-planets`) — Calculate your weight, jump height, and lifting capacity across different planets and moons in our Solar System.
-* **Perspective Switcher** (`/perspective-switcher`) — Evaluate complex decisions and personal dilemmas by reframing them through five distinct personal and objective lenses.
-* **Fear Decomposer** (`/fear-decomposer`) — Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
 * **Hook Generator** (`/hook-generator`) — Generate punchy, attention-grabbing opening lines for social media and short-form content.
 * **Sleep Cycle Calculator** (`/sleep-cycle-calculator`) — Time your sleep with natural 90-minute cycles to wake up feeling refreshed.
 * **Calorie Calculator** (`/calorie-calculator`) — Estimate daily calorie needs, BMR, TDEE, and macro targets based on your profile.
-* **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed and accuracy in real time.
-* **Video to Audio Converter** (`/video-to-audio-converter`) — Extract audio from uploaded videos in common formats.
-* **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images.
+* **Typing Speed Tester** (`/typing-speed-tester`) — Measure typing speed and accuracy in real time with interactive WPM charts.
+* **Video to Audio Converter** (`/video-to-audio-converter`) — Extract high-quality audio from uploaded videos in MP3, M4A, WAV, or FLAC formats.
+* **Document Data Extractor** (`/document-data-extractor`) — Pull contacts, dates, financial data, links, and raw text from documents and images 100% locally.
 * **Personal Admin Dashboard** (`/personal-admin-dashboard`) — Manage passports, licenses, insurances, documents, and reminders in one offline dashboard.
 * **Learning OS** (`/learning-os`) — Organize learning goals, track breakdown topics, and generate daily/weekly study targets completely offline.
-* **Placement Readiness Score** (`/placement-readiness-score`) — Evaluate your placement readiness based on DSA, projects, resume quality, communication, and aptitude skills. Features client-side AI resume scanning and GitHub portfolio evaluation.
-* **Cinematic AI Prompt Architect** (`/cinematic-ai-prompt-architect`) — Build production-quality cinematic AI prompts for image and video generation models like Midjourney, Stable Diffusion, Flux, Kling, Runway, and more. Features server-side Groq LLM enhancement, conflict detection, quality scoring, and one-click export.
-* **Study Material Finder** (`/study-material-finder`) — Enter any topic and instantly get the best GitHub repos, YouTube playlists, documentation, and practice resources — all in one place.
-* **Fake Data Generator** (`/fake-data-generator`) — Generate realistic fake names, emails, phone numbers, addresses, companies, products and SQL datasets instantly for testing and development. Runs completely client-side in your browser.
- 
----
- 
-## 🛠️ Upcoming Tools (Roadmap)
-More boring tools are on the way!
- 
+
 ---
 
 ## 📖 Selected Feature Spotlights
 
-### 1. SIP Calculator (Live)
+### 1. Reaction Time & Mouse Accuracy Tester (Live)
+Test your reflexes and aim precision in real-time with 5 gaming benchmark modes.
+* **5 Game Modes**: Reaction Time, Mouse Accuracy, Click Speed (30s CPS), Precision Bullseye, and Target Tracking.
+* **Anti-Cheat & Analytics**: Early-click protection with detailed fastest, slowest, average, median, and consistency metrics.
+* **Live HUD & Rank System**: Real-time score HUD and automatic rank assignment from Beginner to Lightning.
+* **Shareable PNG Export**: Render and download a customized PNG performance benchmark card.
+* **Synthesized Audio & Local Storage**: Native Web Audio API sound cues and offline personal best tracking.
+
+### 2. SIP Calculator (Live)
 Estimate your systematic investment plan returns with precise calculations and visual growth tracking.
 * **Monthly Compounding**: Accurate SIP future value calculations using compound interest formulas.
 * **Investment Breakdown**: Clear cards showing total investment, wealth gained, and estimated maturity value.
 * **Growth Visualization**: SVG line chart displaying projected portfolio growth over your investment period.
 * **Export & Download**: Copy results to clipboard or download detailed reports as text files.
-* **Real-time Calculations**: All computations run in your browser with instant updates as you adjust inputs.
 
-### 2. Typing Speed Tester (Live)
+### 3. Typing Speed Tester (Live)
 Measure your typing skills with real-time feedback and detailed performance analytics.
 * **Adjustable Durations**: 15s, 30s, 60s, and 120s test runs.
-* **Tactile Audio Feedback**: Audio synthesis playing keyboard clicks on correct characters and buzzes on mistakes (toggleable).
+* **Tactile Audio Feedback**: Audio synthesis playing keyboard clicks on correct characters and buzzes on mistakes.
 * **SVG Line Charts**: Second-by-second analytics graphing WPM, Raw WPM, and Accuracy.
 * **Personal Best & History**: Local storage logs to save high scores and track recent attempts.
 
-### 3. Water Intake Calculator (Live)
-Generate personalized daily hydration targets using climate and active profile adjustments.
-* **Profile Variables**: Inputs for weight, age, gender, activity levels, and environment climate.
-* **Hydration Guidance**: Hourly targets showing glasses of water to consume to space hydration evenly.
-* **Visual Progress Bottle**: A custom bottle gauge showing recommended daily targets relative to a standard 5 L capacity.
-
-### 4. Terms & Conditions Simplifier (Live)
-Scan through legalese instantly without reading pages of terms.
-* **Summarization**: Extracts core summaries and permissions.
-* **Risk Identifiers**: Spots potential privacy concerns, user obligations, and binding terms.
-* **Export Options**: Quickly copy simplified results or download text reports.
-
-### 5. Calorie Calculator (Live)
-Estimate daily calorie needs using science-backed formulas.
-* **Mifflin-St Jeor Equation**: Accurate BMR estimation based on age, gender, height, and weight.
-* **TDEE Targets**: Maintenance, weight loss, extreme loss, lean bulk, and aggressive gain calorie targets.
-* **Macro Breakdown**: Visual protein, carbs, and fat split for your maintenance calories.
-* **Dual Unit System**: Switch between Metric (kg/cm) and Imperial (lbs/ft-in) seamlessly.
-
-### 6. Text to Morse Code (Live)
-An instant converter between plain text and Morse code.
-* **Dual Conversion Mode**: Convert Text to Morse and decode Morse back into standard text.
-* **Synthesized Audio Playback**: Plays standard Morse sounds inside your browser.
-* **Quick Tools**: Copy results, download TXT files, and view statistics.
-
-### 7. Color Palette Generator (Live)
+### 4. Color Palette Generator (Live)
 Generate and customize beautiful color harmonies instantly and export them.
 * **Color Harmony Algorithms**: Generate analogous, monochromatic, complementary, triadic, split-complementary, and tetradic palettes client-side.
-* **Dynamic Controls**: Customize palette size (3, 5, or 7 colors) and enforce style presets (Pastel, Neon, Vintage, Dark, Warm, Cool).
-* **Interactive Details**: Edit colors directly with a native visual color picker, lock individual colors, and explore 10 similar shades/tints.
 * **Multiple Formats & Export**: Copy HEX/RGB color codes instantly, download full palettes as structured JSON, or export them as a clean PNG image.
 * **Keyboard Shortcuts**: Quickly generate new palettes by tapping the spacebar.
 
-### 8. Invoice Generator (Live)
+### 5. Invoice Generator (Live)
 Generate professional invoices instantly, all within your browser.
 * **100% Client-Side**: No signup, no login, and no server-side storage. Your business and client details remain completely private.
-* **Interactive Line Items**: Add, update, or remove invoice items dynamically with quantities, unit prices, and custom tax rates.
 * **Automatic Calculations**: Automatically computes subtotal, itemized tax rates, and grand total in real-time.
-* **Actions**: Instantly download professional PDF invoices, print them with specialized layouts, or copy the formatted text summary to your clipboard.
+* **Export Utilities**: Instantly download professional PDF invoices or print them with clean styling.
 
-### 9. EMI Calculator (Live)
-Calculate loan Equated Monthly Installments (EMI) instantly with repayment share breakdown and trend visualization.
-* **Instant Computations**: Accurate monthly amortized loan calculations based on principal, rate, and tenure.
-* **Interactive Charts**: Responsive custom SVGs including a principal vs interest donut chart and a repayment trend line chart.
-* **Flexible Tenure**: Toggle between years and months for loan repayment periods.
-* **Amortization Breakdown**: View a yearly repayment schedule table showing principal, interest, and remaining balance.
-* **Export Utilities**: Copy detailed text summary reports to the clipboard or download month-by-month amortization schedule documents.
+---
 
-### 10. Should I Reply? (Live)
-Evaluate if, when, and how you should reply to a message based on relationship, tone, and context.
-* **Context-Aware Heuristics**: Analyze the message text and optional context using dropdown parameters (sender relationship, vibe, urgency, and current mood).
-* **Actionable Recommendations**: Categorizes outcomes into Reply Now, Reply Later, Ignore, or Needs Clarification.
-* **Copyable Templates**: Generates tailored canned response templates (Polite/Professional, Casual, or Boundary) copyable in one click.
-* **100% Client-Side**: No backend, no login, and no user data storage. Your messages stay entirely private.
-
-### 11. Resignation Letter Generator (Live)
-Generate professional resignation letters client-side instantly.
-* **Tailored Styles**: Choose between Formal, Professional, Short, and Friendly styles.
-* **Fully Editable Preview**: Edit the generated letter directly in the browser to add personalized notes.
-* **100% Client-Side Exports**: Instantly download professional PDF resignation letters, copy to clipboard, or print with custom print-ready styling.
-* **Zero Storage**: All processing happens entirely within your browser for absolute privacy.
-
-### 12. Subscription Tracker (Live)
-Track and analyze all your recurring subscriptions and payments client-side.
-* **Cost Breakdown**: View total monthly and yearly costs dynamically calculated (monthly prices, or yearly prices divided by 12).
-* **Interactive Dashboard**: Modern statistics cards indicating total spend, subscription count, and most expensive item.
-* **Schedule Timeline**: Chronological lists of upcoming renewals with automatic days-remaining counters.
-* **Data Backup (Export/Import)**: Securely download your list as a JSON file, or restore/upload data in one click.
-* **Local Storage Storage**: Zero servers or database tracking. All subscription logs and currency settings are stored entirely on your device.
-
-### 13. Personal Admin Dashboard (Live)
-Manage passport, license, insurance, documents, and reminders in one browser-only hub.
-* **Important Dates Tracker**: Monitor expiration dates for passports, driver's licenses, memberships, and exam dates with dynamic urgency indicators.
-* **Important Documents Drawer**: Save document metadata and attach small documents (under 1.2MB) stored locally as Base64 strings.
-* **Quick Reminders Checklist**: Write down administrative tasks with priority rankings and custom due dates.
-* **Integrated Timeline & Stats**: Review unified timeline of expiries and deadlines, plus a localStorage storage capacity indicator.
-* **Import/Export Backups**: Securely download all stored administrative data as a JSON file or restore it with merge/replace capabilities.
-
-### 14. Email Decoder (Live)
-Decode subtext, detect tone, extract action items, and get response advice for any email.
-* **Tone Classifier**: Evaluates email vocabulary to determine the primary emotional tone (Professional, Friendly, Neutral, Urgent, Rejection, or Opportunity).
-* **Key Points Extraction**: Automatically extracts explicit requests, deadlines, and recommended action commands from sentences.
-* **Subtext Analysis**: Breaks down the hidden meanings and motivations behind specific email tones.
-* **Canned Templates**: Generates ready-to-use email templates corresponding to the recommended strategy, copyable in one click.
-* **100% Client-Side**: Safe and secure processing completely inside your web browser.
-
-### 15. Learning OS (Live)
-Organize learning goals, track breakdown topics, and generate daily/weekly study targets.
-* **100% Client-Side**: No backend, no login, and no user data tracking. Your study logs and notes remain private on your device.
-* **Preset Templates**: Access curated roadmaps for React Developer, Python & Data Science, UI/UX Design, or SQL & Databases, or build a custom curriculum.
-* **Dynamic Planner**: Computes recommended daily study time and schedules remaining topics into weekly targets based on your time availability.
-* **Topic-Specific Notes**: Write down code snippets, flashcards, or key concepts in an integrated offline editor.
-* **Data Backup (Export/Import)**: Securely download your workspaces as a JSON file or restore them on another device.
-
-### 16. Purchase Intelligence (Live)
-Evaluate purchases objectively to avoid buyer's remorse and make smarter spending decisions.
-* **Dual Scores**: Computes a Purchase Score (utility, necessity, alternatives) and a Usage Reality Score (planning fallacy, category risk adjustments) out of 100.
-* **Cost Per Use Estimate**: Calculates total expected lifetime uses and computes amortized cost per individual use.
-* **Spending Impact Breakdown**: View monthly and yearly amortized cost projections, along with a Labor Hour Equivalent (work hours required based on your hourly wage).
-* **Cooling Off Recommendation**: Suggests whether to Buy, Wait (cooling off period), or Reconsider based on scoring matrices.
-* **100% Client-Side**: All calculations occur in-browser. Your financial data stays private on your device.
-
-### 17. Leverage Finder (Live)
-Identify high-leverage actions and avoid low-value distractions to achieve your goals efficiently.
-* **100% Client-Side**: Run and evaluate action plans entirely locally in your browser with zero external server calls.
-* **Goal Category Heuristics**: Automatically classifies goal input into Career, Business, Study, Health, Creative, or Finance and applies specialized metrics.
-* **High-Leverage Top Actions**: Generates concrete next-step task breakdowns with estimated difficulty indicators.
-* **Distraction Avoidance Checklist**: Highlights common traps, low-value chores, and psychological pitfalls to ignore.
-* **Timeline Roadmap & Priorities**: Structure tasks into Today, This Week, and This Month milestones.
-
-### 18. Clipboard History Manager (Live)
-Store, manage, and organize multiple copied texts offline in one private dashboard.
-* **100% Client-Side**: No backend, no login, and no server-side storage. Your clipboard history stays entirely on your device.
-* **Smart Detection**: Automatically identifies content types (URLs, Emails, Code snippets) and attaches quick actions.
-* **Quick Access & Search**: Features a dedicated "Recent Snippets" bar and instantaneous text filtering.
-* **Pin & Favorite**: Pin critical text snippets to the top of your list or star them for quick retrieval.
-* **Backup Utilities**: Export history as a TXT compilation or JSON backup, and easily restore/merge backup files.
-
-### 19. Digital Declutter Assistant (Live)
-Analyze local directories and files recursively to identify digital clutter indicators 100% locally.
-* **100% Client-Side Traversal**: Uses HTML5 File System API to traverse folders recursively entirely in your browser with zero network requests.
-* **Redundancy Audits**: Identifies exact duplicate filenames and flags matching byte-size redundant copies.
-* **Similarity Heuristics**: Detects near-matching names, revision tags (e.g. `(1)`, ` - Copy`), or shared basenames.
-* **Custom Threshold Scanners**: Filters files exceeding size limits (e.g., >20MB) or age thresholds (e.g., >12 months) in real-time.
-* **Unorganized Content Flagging**: Flags placeholder names (e.g. `untitled`, `temp`), deep directory nesting, or missing/double extensions.
-* **Breakdown Visualizers**: Features horizontal stacked categorization bars and detailed markdown/text diagnostics exports.
-
-### 20. Time Cost Calculator (Live)
-Evaluate the true cost of purchases by converting price tags into the required work hours, career days, and saving months.
-* **100% Client-Side**: No backend or server processing. All income and savings statistics remain private on your device.
-* **Dual Time Metrics**: Calculates the exact number of active work hours and career working days required to afford an item.
-* **Savings Projections**: Computes the duration of dedicated savings needed to buy the product cash without affecting other funds.
-* **Compound Growth & Trade-offs**: Shows the opportunity cost of investing the funds (8% p.a. growth over 5 & 10 years) alongside localized consumer alternatives (coffee cups, streaming months).
-* **Export Utilities**: Instantly copy raw plain-text reports to clipboard or download formatted `.txt` reports.
-
-### 21. Empire Simulator (Live)
-Build and manage a fictional empire to simulate growth, random historical crises, and collapse trajectories.
-* **10-Index Configurator**: Sliders to customize indices like economy, corruption, happiness, military strength, external threats, and resources.
-* **Timeline Simulation Engine**: Run simulations for 10, 25, 50, or 100 years. Computes year-by-year natural drifts, feedback loops, and potential dynastic collapse.
-* **Random Event System**: Triggers random occurrences (war, famine, plague, rebellion, tech breakthrough, trade boom) that dynamically alter state statistics.
-* **Historical Similarity Metrics**: Dynamically computes Manhattan-distance similarity matching your empire to Pax Romana, late Rome, Victorian Britain, zenith/decline Ottomans, and the Mongol Horde.
-* **Trajectory Charting**: Generates multi-line SVG line charts mapping stability, military strength, and economy alongside scrollable event consoles.
-* **Local Privacy**: Runs 100% client-side in the browser. No data leaves your machine.
-
-### 22. Second Mind (Live)
-Reframe dilemmas, decisions, and personal situations by viewing them through four distinct psychological and cognitive perspectives.
-* **100% Client-Side Fallback**: If the API key is not configured, all cognitive processing and formatting occurs entirely inside your browser. If configured, it connects to the Groq LLM API.
-* **Four Cognitive Perspectives**: Generates specialized insights for the Logical Mind, Future Self (10 years out), Risk Perspective (defensive Plan B), and Opportunity Perspective (asymmetric payoffs).
-* **Auto-Category Classification**: An offline keyword classification engine identifies whether a situation is related to Career, Finance, Relationships, Time/Productivity, or Health, tailoring the outputs dynamically.
-* **Clean Reading Experience**: View results in a highly readable card layout with simple expand/collapse toggle transitions.
-* **Text & Markdown Exports**: Export your complete structured report via clipboard copy or structured plain-text file download.
-
-### 23. Discount Calculator (Live)
-Calculate discounts, savings, taxes, and final payable amounts instantly with stacked discount tiers.
-* **Dual Discount Tiers**: Support for compounding a primary discount with an additional percentage off.
-* **Tax Calculations**: Computes final amounts with customizable tax rates (inclusive or exclusive).
-* **Detailed Breakdown**: Displays total original price, percentage saved, total discount cash value, tax amount, and the final payable total.
-* **100% Client-Side**: Safe, instant browser calculations that keep your spending data private.
-
-### 24. Fear Decomposer (Live)
-Deconstruct fears and obstacles into real vs. imagined risks, controllable/uncontrollable factors, worst case scenario, and a first step.
-* **Risk Audit**: Systematically analyze real vs. imagined threat levels for any source of anxiety.
-* **Controllability Mapping**: Separate details you can influence from external factors you must accept, helping target effort effectively.
-* **Actionable Next Steps**: Formulate immediate, low-stakes micro-tasks to break psychological paralysis and build momentum.
-* **Local and Secure**: Runs completely client-side in the browser, protecting personal reflections.
-
-### 25. Perspective Switcher (Live)
-Reframing dilemmas and viewing problems from five distinct personal and objective viewpoints.
-* **Five Viewpoints**: Analyze dilemmas from the perspectives of the Rationalist, Optimist, Cynic, Future Self, and a Trusted Advisor.
-* **Pros and Cons Breakdown**: Structure decisions with detailed comparative assessments and key questions for each lens.
-* **Exports & Sharing**: Copy the full perspective analysis report to the clipboard or download it as a plain-text file.
-* **100% Client-Side**: Ensure complete confidentiality for personal reframing exercises.
-
-### 26. History Repeats (Live)
-Compare modern topics or situations to historical events, revealing structural similarities, differences, timeline parallels, and actionable lessons.
-* **Groq LLM API Integration**: Connect to Groq API for custom, hyper-tailored historical analogies.
-* **Local Database Fallback**: Automatically falls back to a rich offline database covering major analogies (AI, Economic Crisis, Remote Work, Social Media, Crypto, Green Transition) if API is unavailable.
-* **Milestone Timelines**: Displays a parallel chronological timeline comparing past stages against modern counterpart steps.
-* **Report Exports**: Copy structured analysis markdown to the clipboard or download as a text report.
-
-### 27. Before & After (Live)
-Explore how major inventions, historical events, scientific discoveries, or technological breakthroughs changed the world by comparing life before and after.
-* **7 Comparison Categories**: Compares Daily Life, Communication, Education, Business & Economy, Transportation, Technology & Tools, and Society side-by-side.
-* **Quantitative Transitions**: 3 statistics cards showing how key metrics shifted.
-* **Timeline Flow**: Downward chronological timeline mapping Before, Major Event, Immediate Impact, and Long-Term Impact.
-* **Hybrid Database/AI**: Runs offline using local datasets, and queries a secure proxied API for custom topics.
-
-### 28. If This Never Happened (Live)
-Explore alternate history by simulating how the world would look today if a major event or invention never occurred.
-* **Groq LLM API Integration**: Connects to the Groq API for custom, hyper-tailored counterfactual simulations. Automatically falls back to a rich offline database of 20 predefined topics or a smart client-side procedural generator if the API key is not configured.
-* **Interactive Timeline Slider**: Walk through chronological changes at key eras (10 Years Later, 50 Years Later, 100 Years Later, and Present Day).
-* **Multi-Domain Impact Assessment**: Analyzes visual segments for Technology, Society, Economy, Science, Politics, and Culture.
-* **Advanced Visualizations**: Features custom Cause & Effect flows, Ripple Effect chains, and side-by-side Before vs. Alternate comparisons.
-* **Local and Private**: Runs 100% in-browser with no servers or tracking. Includes options to copy markdown or download text reports.
-
-### 29. Timeline Comparison (Live)
-Visually compare two historical civilizations, empires, inventions, technologies, or events side-by-side.
-* **12 Comparison Categories**: Compares started/peak/decline/end timelines, total/peak durations, geographical regions/areas, estimated populations, economies, military capabilities, societal aspects, greatest achievements, declines, legacies, and fun facts.
-* **Proportional Scaling**: Features relative progress bars comparing duration length, maximum coverage area, and peak population.
-* **Visual Timeline Flow**: Displays chronological steps from started ➔ peak ➔ decline ➔ end side-by-side.
-* **100% Client-Side**: Structured local database of 22 detailed items runs completely offline without any network or API dependencies.
-
-### 30. Cosmic Calendar (Live)
-Understand the scale of time by compressing the universe's 13.8 billion year history into a calendar year and comparing it to your life.
-* **Programmatic Calendar Map**: Compresses cosmic epochs dynamically so you can inspect where major events occur.
-* **December 31 Deep-Dive**: Zoom in on humanity's birth, the agricultural revolution, written history, and your own lifespan in the final cosmic seconds.
-* **Comparative Metrics**: Compare your age side-by-side with Earth, civilization, the Internet, and modern computing.
-* **Privacy First**: 100% client-side execution with copy/download options for your personal reports.
-
-### 31. Cosmic Address (Live)
-Trace your exact location in the universe, zooming out from yourself to the edge of the observable universe with interactive visualizations.
-* **Interactive Zoom Experience**: Step through 9 cosmic layers (You ➔ Earth ➔ Solar System ➔ Orion Arm ➔ Milky Way Galaxy ➔ Local Group ➔ Virgo Cluster ➔ Laniakea Supercluster ➔ Observable Universe) with glowing nested SVG animations.
-* **Perspective Sizing Comparisons**: Compare Earth's size with the Sun, Solar System, Milky Way, and Observable Universe using intuitive scale analogies and graphics.
-* **Interactive Hierarchy Stepper**: Jump directly to any cosmic layer to inspect its estimated diameter, age, composition, distance, and interesting facts.
-* **Privacy Statement**: 100% client-side execution—your profile data is processed locally in your browser sandbox.
-
-### 32. Cinematic AI Prompt Architect (Live)
-Build production-quality cinematic AI prompts for image and video generation models without needing prompt engineering knowledge.
-* **11 Platform Targets**: Generates optimized prompts for Midjourney, ChatGPT Images, Flux, Stable Diffusion, Imagen, Kling, Runway, Pika, Veo, Hailuo, and a generic fallback.
-* **Structured Prompt Builder**: Guided multi-section input for Subject (character, appearance, clothing, pose), Scene (location, weather, season, architecture), Camera (type, lens, shot type, movement), Lighting, Style, Color Grading, Mood, and Visual Details.
-* **AI-Enhanced Generation**: Connects to a secure server-side Groq LLM API for professionally rewritten prompts. Falls back to a smart local rules-based compiler if the API is unavailable.
-* **Contradiction & Redundancy Auditor**: Detects lighting/time-of-day conflicts, indoor/outdoor mismatches, and repeated words across fields, with quality score penalties.
-* **Platform-Specific Ordering**: Reorders prompt elements based on each platform's token weighting strategy (e.g., subject-first for Midjourney, camera-movement-first for video models).
-* **Quality Scoring Engine**: Computes a 0–100% quality score across 6 axes (Completeness, Visual Detail, Camera, Lighting, Composition, Storytelling) with auditor penalty deductions.
-* **Quick-Apply Suggestions**: Smart recommendations with one-click auto-fill buttons for missing fields.
-* **SD CLIP Token Alert**: Warns when Stable Diffusion prompts exceed the ~75-token CLIP encoder limit.
-* **Director Presets**: One-click presets inspired by Christopher Nolan, Denis Villeneuve, Zack Snyder, Studio Ghibli, Cyberpunk, Blade Runner, and Dune aesthetics.
-* **Negative Prompts**: Toggle common negative keywords (Low Quality, Blur, Bad Anatomy, Watermark, etc.) for platforms that support them.
-* **Favorites & Export**: Save unlimited prompt configurations to localStorage, copy to clipboard, or download as TXT/Markdown reports.
-
-## 🗂️ Live Tools Directory (86 Live)
+## 🗂️ Live Tools Directory (93 Live Tools)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -323,79 +112,86 @@ Build production-quality cinematic AI prompts for image and video generation mod
 11. **Water Intake Calculator** — `/water-intake-calculator`
 12. **Birthday Countdown** — `/birthday-countdown`
 13. **Age Difference Calculator** — `/age-difference-calculator`
-14. **Discount Calculator** — `/discount-calculator`
-15. **Purchase Intelligence** — `/purchase-intelligence`
-16. **Time Cost Calculator** — `/time-cost-calculator`
-17. **SIP Calculator** — `/sip-calculator`
-18. **EMI Calculator** — `/emi-calculator`
-19. **QR Generator** — `/qr-generator`
-20. **Unit Converter** — `/unit-converter`
-21. **File Name Sanitizer** — `/file-name-sanitizer`
-22. **Image Compressor / Resizer** — `/image-compressor`
-23. **Image to PDF Converter** — `/image-to-pdf-converter`
-24. **DOC to PDF Converter** — `/doc-to-pdf-converter`
-25. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
-26. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
-27. **Document Data Extractor** — `/document-data-extractor`
-28. **Resume Bullet Rewriter** — `/resume-bullet-rewriter`
-29. **Resignation Letter Generator** — `/resignation-letter-generator`
-30. **Time Zone Converter** — `/time-zone-converter`
-31. **Days Between Dates** — `/days-between-dates`
-32. **To-Do List** — `/to-do-list`
-33. **GST Calculator** — `/gst-calculator`
-34. **Truth or Dare Play** — `/truth-or-dare-play`
-35. **Pomodoro Timer** — `/pomodoro-timer`
-36. **Roast My To-Do List** — `/roast-my-todo-list`
-37. **Markdown Previewer** — `/markdown-previewer`
-38. **Video Transcriber** — `/video-transcriber`
-39. **YouTube Title Generator** — `/youtube-title-generator`
-40. **LinkedIn Post Formatter** — `/linkedin-post-formatter`
-41. **What Happened Today In History** — `/what-happened-today`
-42. **Math Formula Calculator** — `/math-formula-calculator`
-43. **Science Formulas Calculator** — `/science-formulas-calculator`
-44. **QuickLearn** — `/concept-explorer`
-45. **Base Converter** — `/base-converter`
-46. **Aspect Ratio Calculator** — `/aspect-ratio-calculator`
-47. **Distance Between Cities** — `/distance-between-cities`
-48. **Currency Converter** — `/currency-converter`
-49. **Percentage Calculator** — `/percentage-calculator`
-50. **Social Account Analyzer** — `/social-account-analyzer`
-51. **Attendance Calculator** — `/attendance-calculator`
-52. **CGPA Target Planner** — `/cgpa-target-planner`
-53. **YouTube Downloader** — `/youtube-downloader`
-54. **Video to Audio Converter** — `/video-to-audio-converter`
-55. **Typing Speed Tester** — `/typing-speed-tester`
-56. **Calorie Calculator** — `/calorie-calculator`
-57. **Hook Generator** — `/hook-generator`
-58. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
-59. **Color Palette Generator** — `/color-palette-generator`
-60. **Invoice Generator** — `/invoice-generator`
-61. **Should I Reply?** — `/should-i-reply`
-62. **Subscription Tracker** — `/subscription-tracker`
-63. **Personal Admin Dashboard** — `/personal-admin-dashboard`
-64. **Email Decoder** — `/email-decoder`
-65. **Learning OS** — `/learning-os`
-66. **Leverage Finder** — `/leverage-finder`
-67. **Clipboard History Manager** — `/clipboard-history-manager`
-68. **Digital Declutter Assistant** — `/digital-declutter-assistant`
-69. **Second Mind** — `/second-mind`
-70. **Fear Decomposer** — `/fear-decomposer`
-71. **Perspective Switcher** — `/perspective-switcher`
-72. **History Repeats** — `/history-repeats`
-73. **Historical Perspective** — `/historical-perspective`
-74. **Before & After** — `/before-after`
-75. **Empire Simulator** — `/empire-simulator`
-76. **Timeline Comparison** — `/timeline-comparison`
-77. **If This Never Happened** — `/if-this-never-happened`
-78. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
-79. **Cosmic Calendar** — `/cosmic-calendar`
-80. **Cosmic Address** — `/cosmic-address`
-81. **Time on Other Planets** — `/time-on-other-planets`
-82. **Placement Readiness Score** — `/placement-readiness-score`
-83. **Study Material Finder** — `/study-material-finder`
-84. **SUIII Counter** — `/suiii-counter`
-85. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
-86. **Fake Data Generator** — `/fake-data-generator`
+14. **Freelancer Pricing Calculator** — `/freelancer-pricing-calculator`
+15. **Discount Calculator** — `/discount-calculator`
+16. **Purchase Intelligence** — `/purchase-intelligence`
+17. **Time Cost Calculator** — `/time-cost-calculator`
+18. **SIP Calculator** — `/sip-calculator`
+19. **EMI Calculator** — `/emi-calculator`
+20. **QR Generator** — `/qr-generator`
+21. **Unit Converter** — `/unit-converter`
+22. **File Name Sanitizer** — `/file-name-sanitizer`
+23. **Image Compressor / Resizer** — `/image-compressor`
+24. **Image to PDF Converter** — `/image-to-pdf-converter`
+25. **DOC to PDF Converter** — `/doc-to-pdf-converter`
+26. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
+27. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
+28. **Document Data Extractor** — `/document-data-extractor`
+29. **Resume Bullet Rewriter** — `/resume-bullet-rewriter`
+30. **Resignation Letter Generator** — `/resignation-letter-generator`
+31. **Time Zone Converter** — `/time-zone-converter`
+32. **Days Between Dates** — `/days-between-dates`
+33. **To-Do List** — `/to-do-list`
+34. **GST Calculator** — `/gst-calculator`
+35. **Truth or Dare Play** — `/truth-or-dare-play`
+36. **Pomodoro Timer** — `/pomodoro-timer`
+37. **Roast My To-Do List** — `/roast-my-todo-list`
+38. **Markdown Previewer** — `/markdown-previewer`
+39. **Video Transcriber** — `/video-transcriber`
+40. **YouTube Title Generator** — `/youtube-title-generator`
+41. **LinkedIn Post Formatter** — `/linkedin-post-formatter`
+42. **What Happened Today In History** — `/what-happened-today`
+43. **Math Formula Calculator** — `/math-formula-calculator`
+44. **Science Formulas Calculator** — `/science-formulas-calculator`
+45. **QuickLearn** — `/concept-explorer`
+46. **Base Converter** — `/base-converter`
+47. **Aspect Ratio Calculator** — `/aspect-ratio-calculator`
+48. **Distance Between Cities** — `/distance-between-cities`
+49. **Currency Converter** — `/currency-converter`
+50. **Percentage Calculator** — `/percentage-calculator`
+51. **Social Account Analyzer** — `/social-account-analyzer`
+52. **Attendance Calculator** — `/attendance-calculator`
+53. **CGPA Target Planner** — `/cgpa-target-planner`
+54. **YouTube Downloader** — `/youtube-downloader`
+55. **Video to Audio Converter** — `/video-to-audio-converter`
+56. **Typing Speed Tester** — `/typing-speed-tester`
+57. **Calorie Calculator** — `/calorie-calculator`
+58. **Hook Generator** — `/hook-generator`
+59. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
+60. **Color Palette Generator** — `/color-palette-generator`
+61. **Invoice Generator** — `/invoice-generator`
+62. **Should I Reply?** — `/should-i-reply`
+63. **Subscription Tracker** — `/subscription-tracker`
+64. **Personal Admin Dashboard** — `/personal-admin-dashboard`
+65. **Email Decoder** — `/email-decoder`
+66. **Learning OS** — `/learning-os`
+67. **Leverage Finder** — `/leverage-finder`
+68. **Clipboard History Manager** — `/clipboard-history-manager`
+69. **Digital Declutter Assistant** — `/digital-declutter-assistant`
+70. **Second Mind** — `/second-mind`
+71. **Fear Decomposer** — `/fear-decomposer`
+72. **Perspective Switcher** — `/perspective-switcher`
+73. **History Repeats** — `/history-repeats`
+74. **Historical Perspective** — `/historical-perspective`
+75. **Before & After** — `/before-after`
+76. **Empire Simulator** — `/empire-simulator`
+77. **Timeline Comparison** — `/timeline-comparison`
+78. **If This Never Happened** — `/if-this-never-happened`
+79. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
+80. **Cosmic Calendar** — `/cosmic-calendar`
+81. **Cosmic Address** — `/cosmic-address`
+82. **Time on Other Planets** — `/time-on-other-planets`
+83. **Placement Readiness Score** — `/placement-readiness-score`
+84. **Study Material Finder** — `/study-material-finder`
+85. **SUIII Counter** — `/suiii-counter`
+86. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
+87. **Fake Data Generator** — `/fake-data-generator`
+88. **Movie & Series Recommendation** — `/movie-series-recommendation`
+89. **Cash Runway Calculator** — `/cash-runway-calculator`
+90. **AI Agent Visualizer** — `/ai-agent-visualizer`
+91. **Logo Meaning Explorer** — `/logo-meaning-explorer`
+92. **Startup Name Analyzer** — `/startup-name-analyzer`
+93. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
 
 ---
 
@@ -415,19 +211,6 @@ Run the entire ecosystem locally on your computer in under a minute:
 
 3. **Open the app**:
    Navigate to `http://localhost:3000` to start exploring the tools.
-
-### 🌐 Local vs Online Functionality
-* **YouTube Downloader**: Requires running the app locally to prevent server IP rate limits and allow unrestricted downloads.
-* **Video to Audio Converter**: The hosted version limits uploads to 4 MB. Run locally to process large files.
-* **Google Directions Integration**: For full distance tracking inside the *Distance Between Cities* tool, add your key to `.env.local` inside the root folder:
-  ```env
-  GOOGLE_DIRECTIONS_KEY=your_key_here
-  ```
-* **Cinematic AI Prompt Architect (AI Enhancement)**: For server-side Groq LLM prompt enhancement, add your Groq API key to `.env.local`:
-  ```env
-  GROQ_API_KEY=your_groq_api_key_here
-  ```
-  The tool works fully without this key using a local rules-based compiler.
 
 ---
 
