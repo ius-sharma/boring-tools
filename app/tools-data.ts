@@ -101,14 +101,16 @@ export const tools: Tool[] = [
   { id: "cash-runway-calculator", name: "Cash Runway Calculator", href: "/cash-runway-calculator", category: "Finance", description: "Calculate startup runway, burn rate and survival time using revenue and expenses.", status: "Live", isNew: true, isFeatured: true },
   { id: "ai-agent-visualizer", name: "AI Agent Visualizer", href: "/ai-agent-visualizer", category: "Learning", description: "Understand how modern AI agents think, plan, use tools, remember information, and work in multi-agent networks.", status: "Live", isNew: true, isFeatured: true },
   { id: "logo-meaning-explorer", name: "Logo Meaning Explorer", href: "/logo-meaning-explorer", category: "Creator Tools", description: "Upload any logo and discover the psychology, symbolism, branding decisions, colors, typography, shapes, and emotional impact behind its design.", status: "Live", isNew: true, isFeatured: true },
-  { id: "startup-name-analyzer", name: "Startup Name Analyzer", href: "/startup-name-analyzer", category: "Creator Tools", description: "Analyze your startup name for memorability, branding, pronunciation, global appeal, emotional impact, and market readiness.", status: "Live", isNew: true, isFeatured: true }
+  { id: "startup-name-analyzer", name: "Startup Name Analyzer", href: "/startup-name-analyzer", category: "Creator Tools", description: "Analyze your startup name for memorability, branding, pronunciation, global appeal, emotional impact, and market readiness.", status: "Live", isNew: true, isFeatured: true },
+  { id: "reaction-time-tester", name: "Reaction Time & Mouse Accuracy Tester", href: "/reaction-time-tester", category: "Productivity", description: "Test your reaction speed, mouse precision, click accuracy, and tracking reflexes in real-time with 5 game modes, ranking dashboard, and stats.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect", "placement-readiness-score"];
+export const featuredToolIds = ["reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect", "placement-readiness-score"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
+
 
