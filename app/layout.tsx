@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import HomeButton from "./components/HomeButton";
 import NavBar from "./components/NavBar";
+import ToolContentFooter from "./components/ToolContentFooter";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         </div>
         <Analytics />
         {children}
+        <ToolContentFooter />
       </body>
     </html>
   );

@@ -9,9 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@matbee/libreoffice-converter": "^2.6.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
+    "@imgly/background-removal": "^1.7.0",
+    "@matbee/libreoffice-converter": "^2.6.0",
     "@vercel/analytics": "^2.0.1",
     "instagram-url-direct": "^2.0.7",
     "mammoth": "^1.12.0",
