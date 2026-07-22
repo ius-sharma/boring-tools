@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `93` (accessible online or via local setup)
-* **Upcoming Tools**: `7` (currently in development to reach 100)
+* **Live Tools**: `94` (accessible online or via local setup)
+* **Upcoming Tools**: `6` (currently in development to reach 100)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Browser-Based Background Remover** (`/background-remover`) — Remove image backgrounds instantly and 100% privately using local client-side AI (WebAssembly and ONNX Runtime). Custom solid/gradient backdrops, blurry overlays, edge smoothing, drop shadows, and scale exports are supported.
 * **Reaction Time & Mouse Accuracy Tester** (`/reaction-time-tester`) — Benchmark your reaction speed (ms), mouse target accuracy (%), click speed (CPS), and precision in real-time across 5 game modes with instant rank assignments, daily challenges, local storage tracking, and PNG card export.
 * **Movie & Series Recommendation** (`/movie-series-recommendation`) — Find the perfect movie or TV series based on mood, genre, available time and preferences. Save favorites and build your personal watchlist.
 * **Fake Data Generator** (`/fake-data-generator`) — Generate realistic fake names, emails, phone numbers, addresses, companies, products, and SQL datasets instantly for testing and development.
@@ -192,6 +193,7 @@ Generate professional invoices instantly, all within your browser.
 91. **Logo Meaning Explorer** — `/logo-meaning-explorer`
 92. **Startup Name Analyzer** — `/startup-name-analyzer`
 93. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
+94. **Browser-Based Background Remover** — `/background-remover`
 
 ---
 

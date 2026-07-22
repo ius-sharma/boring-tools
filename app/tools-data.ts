@@ -110,7 +110,7 @@ export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect", "placement-readiness-score"];
+export const featuredToolIds = ["background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 
