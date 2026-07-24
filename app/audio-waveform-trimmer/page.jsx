@@ -1179,7 +1179,7 @@ export default function AudioWaveformTrimmer() {
   }, [audioBuffer, channels, sampleRate, silences, duration, selectedFile]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/70 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-indigo-50/25 px-4 py-6 sm:px-6 lg:px-8">
       {/* Title SEO structured */}
       <head>
         <title>Audio Waveform Trimmer & Converter – Trim & Convert Audio Online</title>
@@ -1192,7 +1192,7 @@ export default function AudioWaveformTrimmer() {
             
             {/* Header Hero */}
             <div className="text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-700">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-700">
                 Privacy First • Local Browser Engine
               </span>
               <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
@@ -1222,17 +1222,17 @@ export default function AudioWaveformTrimmer() {
                   onDragLeave={() => setDragActive(false)}
                   onDrop={(e) => { e.preventDefault(); setDragActive(false); handleFile(e.dataTransfer.files?.[0]); }}
                   className={`relative min-w-0 rounded-3xl border-2 border-dashed p-6 transition sm:p-10 ${
-                    dragActive ? "border-orange-400 bg-orange-50/80" : "border-slate-200 bg-slate-50/40 hover:bg-slate-50"
+                    dragActive ? "border-indigo-400 bg-indigo-50/30" : "border-slate-200 bg-slate-50/40 hover:bg-slate-50"
                   }`}
                 >
                   <div className="flex flex-col items-center gap-5 text-center">
                     <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-md ring-1 ring-slate-100 relative group transition-transform duration-300">
-                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-orange-500/10 to-amber-500/5 opacity-40 blur-md" />
+                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-indigo-500/10 to-cyan-500/5 opacity-40 blur-md" />
                       <svg className="h-14 w-14 relative z-10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <defs>
                           <linearGradient id="user-soundwave-gradient" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stopColor="#ea580c" />
-                            <stop offset="100%" stopColor="#f59e0b" />
+                            <stop offset="0%" stopColor="#6366f1" />
+                            <stop offset="100%" stopColor="#06b6d4" />
                           </linearGradient>
                         </defs>
                         <rect x="3.4" y="10.25" width="1.2" height="3.5" rx="0.6" fill="url(#user-soundwave-gradient)" />
@@ -1292,7 +1292,7 @@ export default function AudioWaveformTrimmer() {
                 {/* Processing Overlay loading states */}
                 {loadingStep && (
                   <div className="flex flex-col items-center justify-center gap-4 py-8 text-center bg-slate-50 rounded-2xl">
-                    <div className="relative flex h-10 w-10 animate-spin items-center justify-center rounded-full border-4 border-slate-200 border-t-orange-500" />
+                    <div className="relative flex h-10 w-10 animate-spin items-center justify-center rounded-full border-4 border-slate-200 border-t-indigo-600" />
                     <div>
                       <p className="font-bold text-slate-900">
                         {loadingStep === "reading" && "Reading Audio File..."}
@@ -1317,7 +1317,7 @@ export default function AudioWaveformTrimmer() {
                       {recentFiles.map((file, idx) => (
                         <div key={idx} className="flex items-center justify-between py-3 text-xs sm:text-sm first:pt-0 last:pb-0">
                           <div className="flex items-center gap-3 min-w-0 pr-4">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-50 text-orange-500 shrink-0">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shrink-0">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
                               </svg>
