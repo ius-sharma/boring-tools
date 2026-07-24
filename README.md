@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `94` (accessible online or via local setup)
-* **Upcoming Tools**: `6` (currently in development to reach 100)
+* **Live Tools**: `95` (accessible online or via local setup)
+* **Upcoming Tools**: `5` (currently in development to reach 100)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Image to ASCII / Terminal Art Generator** (`/image-to-ascii`) — Convert uploaded images (PNG, JPG, WEBP) into high-quality ASCII and terminal text art instantly inside the browser. Features pixel shaders (brightness, contrast, gamma, sharpness, invert, edge detection), custom column sizes, color themes (neon green, amber, cyan monitors), text search and highlight, and multi-format exports (.txt, .html, .svg, and .png).
 * **Browser-Based Background Remover** (`/background-remover`) — Remove image backgrounds instantly and 100% privately using local client-side AI (WebAssembly and ONNX Runtime). Custom solid/gradient backdrops, blurry overlays, edge smoothing, drop shadows, and scale exports are supported.
 * **Reaction Time & Mouse Accuracy Tester** (`/reaction-time-tester`) — Benchmark your reaction speed (ms), mouse target accuracy (%), click speed (CPS), and precision in real-time across 5 game modes with instant rank assignments, daily challenges, local storage tracking, and PNG card export.
 * **Movie & Series Recommendation** (`/movie-series-recommendation`) — Find the perfect movie or TV series based on mood, genre, available time and preferences. Save favorites and build your personal watchlist.
@@ -95,10 +96,17 @@ Generate professional invoices instantly, all within your browser.
 * **100% Client-Side**: No signup, no login, and no server-side storage. Your business and client details remain completely private.
 * **Automatic Calculations**: Automatically computes subtotal, itemized tax rates, and grand total in real-time.
 * **Export Utilities**: Instantly download professional PDF invoices or print them with clean styling.
-
+ 
+### 6. Image to ASCII / Terminal Art Generator (Live)
+Convert any image into terminal text art instantly with pixel shaders and custom color themes.
+* **Pixel Adjustments**: Shaders for brightness, contrast, gamma, sharpness, invert, high-contrast, edge detection, sketch, and solid pixel blocks.
+* **Color Themes**: Presets for Amber, Neon Green, Cyan, Black & White, Original Image Colors, and custom CSS color codes.
+* **Interactive Features**: Character searching with text highlights, real-time WPM-style loader checklists, and character font scaling (4px to 16px).
+* **Multi-Format Export**: Instantly export to plain text (.txt), HTML span blocks, vector SVG group elements, and raster canvas images (.png).
+ 
 ---
-
-## 🗂️ Live Tools Directory (93 Live Tools)
+ 
+## 🗂️ Live Tools Directory (95 Live Tools)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -192,9 +200,10 @@ Generate professional invoices instantly, all within your browser.
 90. **AI Agent Visualizer** — `/ai-agent-visualizer`
 91. **Logo Meaning Explorer** — `/logo-meaning-explorer`
 92. **Startup Name Analyzer** — `/startup-name-analyzer`
-93. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
-94. **Browser-Based Background Remover** — `/background-remover`
-
+93. Reaction Time & Mouse Accuracy Tester — `/reaction-time-tester`
+94. Browser-Based Background Remover — `/background-remover`
+95. Image to ASCII / Terminal Art Generator — `/image-to-ascii`
+ 
 ---
 
 ## 💻 Local Setup & Development
