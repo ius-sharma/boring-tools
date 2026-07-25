@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `95` (accessible online or via local setup)
-* **Upcoming Tools**: `5` (currently in development to reach 100)
+* **Live Tools**: `97` (accessible online or via local setup)
+* **Upcoming Tools**: `3` (currently in development to reach 100)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Text to Handwriting Image Converter** (`/text-to-handwriting`) — Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors, and customizable slant/realism properties. Exports high-res PNG, JPG, or PDF files completely in the browser.
 * **Image to ASCII / Terminal Art Generator** (`/image-to-ascii`) — Convert uploaded images (PNG, JPG, WEBP) into high-quality ASCII and terminal text art instantly inside the browser. Features pixel shaders (brightness, contrast, gamma, sharpness, invert, edge detection), custom column sizes, color themes (neon green, amber, cyan monitors), text search and highlight, and multi-format exports (.txt, .html, .svg, and .png).
 * **Browser-Based Background Remover** (`/background-remover`) — Remove image backgrounds instantly and 100% privately using local client-side AI (WebAssembly and ONNX Runtime). Custom solid/gradient backdrops, blurry overlays, edge smoothing, drop shadows, and scale exports are supported.
 * **Reaction Time & Mouse Accuracy Tester** (`/reaction-time-tester`) — Benchmark your reaction speed (ms), mouse target accuracy (%), click speed (CPS), and precision in real-time across 5 game modes with instant rank assignments, daily challenges, local storage tracking, and PNG card export.
@@ -106,7 +107,7 @@ Convert any image into terminal text art instantly with pixel shaders and custom
  
 ---
  
-## 🗂️ Live Tools Directory (95 Live Tools)
+## 🗂️ Live Tools Directory (97 Live Tools)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -200,9 +201,11 @@ Convert any image into terminal text art instantly with pixel shaders and custom
 90. **AI Agent Visualizer** — `/ai-agent-visualizer`
 91. **Logo Meaning Explorer** — `/logo-meaning-explorer`
 92. **Startup Name Analyzer** — `/startup-name-analyzer`
-93. Reaction Time & Mouse Accuracy Tester — `/reaction-time-tester`
-94. Browser-Based Background Remover — `/background-remover`
-95. Image to ASCII / Terminal Art Generator — `/image-to-ascii`
+93. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
+94. **Browser-Based Background Remover** — `/background-remover`
+95. **Audio Waveform Trimmer & Converter** — `/audio-waveform-trimmer`
+96. **Image to ASCII / Terminal Art Generator** — `/image-to-ascii`
+97. **Text to Handwriting Image Converter** — `/text-to-handwriting`
  
 ---
 
