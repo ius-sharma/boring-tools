@@ -105,7 +105,8 @@ export const tools: Tool[] = [
   { id: "reaction-time-tester", name: "Reaction Time & Mouse Accuracy Tester", href: "/reaction-time-tester", category: "Productivity", description: "Test your reaction speed, mouse precision, click accuracy, and tracking reflexes in real-time with 5 game modes, ranking dashboard, and stats.", status: "Live", isNew: true, isFeatured: true },
   { id: "background-remover", name: "Browser-Based Background Remover", href: "/background-remover", category: "Media", description: "Remove image backgrounds instantly in your browser. No uploads, no signup, 100% private, fast and free.", status: "Live", isNew: true, isFeatured: true },
   { id: "audio-waveform-trimmer", name: "Audio Waveform Trimmer & Converter", href: "/audio-waveform-trimmer", category: "Media", description: "Trim, preview, convert and export audio directly in your browser. Fast, private and free.", status: "Live", isNew: true, isFeatured: true },
-  { id: "image-to-ascii", name: "Image to ASCII / Terminal Art Generator", href: "/image-to-ascii", category: "Media", description: "Convert images into beautiful ASCII and terminal art instantly. Export as TXT, HTML, SVG or PNG.", status: "Live", isNew: true, isFeatured: true }
+  { id: "image-to-ascii", name: "Image to ASCII / Terminal Art Generator", href: "/image-to-ascii", category: "Media", description: "Convert images into beautiful ASCII and terminal art instantly. Export as TXT, HTML, SVG or PNG.", status: "Live", isNew: true, isFeatured: true },
+  { id: "text-to-handwriting", name: "Text to Handwriting Image Converter", href: "/text-to-handwriting", category: "Documents", description: "Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors and export as PNG, PDF or JPG directly from your browser.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(

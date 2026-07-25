@@ -17,6 +17,8 @@
   --accent-strong: #d97706;
   --accent-soft: #fef3c7;
   --gold: #fbbf24;
+  --font-geist-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 @theme inline {
