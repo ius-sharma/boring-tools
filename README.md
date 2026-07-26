@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **GIF Maker from Images** (`/gif-maker`) — Create animated GIFs from multiple images using drag-and-drop editing, custom timeline ordering, text overlays, stickers, filters, transition animations (fade, slide, zoom, spin), and browser-based LZW encoding. Runs 100% locally and privately in the browser with local storage settings and size estimation.
 * **Text to Handwriting Image Converter** (`/text-to-handwriting`) — Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors, and customizable slant/realism properties. Exports high-res PNG, JPG, or PDF files completely in the browser.
 * **Image to ASCII / Terminal Art Generator** (`/image-to-ascii`) — Convert uploaded images (PNG, JPG, WEBP) into high-quality ASCII and terminal text art instantly inside the browser. Features pixel shaders (brightness, contrast, gamma, sharpness, invert, edge detection), custom column sizes, color themes (neon green, amber, cyan monitors), text search and highlight, and multi-format exports (.txt, .html, .svg, and .png).
 * **Browser-Based Background Remover** (`/background-remover`) — Remove image backgrounds instantly and 100% privately using local client-side AI (WebAssembly and ONNX Runtime). Custom solid/gradient backdrops, blurry overlays, edge smoothing, drop shadows, and scale exports are supported.
