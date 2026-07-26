@@ -33,6 +33,7 @@ export const tools: Tool[] = [
   { id: "unit-converter", name: "Unit Converter", href: "/unit-converter", category: "Utility", description: "Convert length, weight, temperature.", status: "Live" },
   { id: "file-name-sanitizer", name: "File Name Sanitizer", href: "/file-name-sanitizer", category: "Utility", description: "Clean unsafe or messy filenames.", status: "Live" },
   { id: "image-compressor", name: "Image Compressor / Resizer", href: "/image-compressor", category: "Media", description: "Compress and resize images quickly.", status: "Live", isNew: true, isFeatured: true },
+  { id: "gif-maker", name: "GIF Maker from Images", href: "/gif-maker", category: "Media", description: "Create animated GIFs from multiple images with custom transitions, delays, text overlays, and filters 100% locally.", status: "Live", isNew: true, isFeatured: true },
   { id: "image-to-pdf-converter", name: "Image to PDF Converter", href: "/image-to-pdf-converter", category: "Media", description: "Upload one or more images and convert them into a downloadable PDF.", status: "Live", isNew: true },
   { id: "doc-to-pdf-converter", name: "DOC to PDF Converter", href: "/doc-to-pdf-converter", category: "Documents", description: "Upload DOC or DOCX files and convert them into a downloadable PDF.", status: "Live", isNew: true },
   { id: "pdf-intelligence-tool", name: "PDF Intelligence Tool", href: "/pdf-intelligence-tool", category: "Documents", description: "Upload PDFs and extract summaries, key points, contacts, links, and document stats.", status: "Live", isNew: true },
