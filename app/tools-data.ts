@@ -10,6 +10,7 @@ export interface Tool {
 }
 
 export const tools: Tool[] = [
+  { id: "geography-quiz", name: "Geography Quiz & Map Explorer", href: "/geography-quiz", category: "Education", description: "Explore countries, capitals, flags and world maps through interactive quizzes and challenges.", status: "Live", isNew: true, isFeatured: true },
   { id: "text-formatter", name: "Text Formatter", href: "/text-formatter", category: "Text", description: "Clean and transform text instantly.", status: "Live" },
   { id: "text-to-morse-code", name: "Text to Morse Code", href: "/text-to-morse-code", category: "Text", description: "Convert text to Morse Code and Morse back to text instantly.", status: "Live", isNew: true, isFeatured: true },
   { id: "json-formatter", name: "JSON Formatter", href: "/json-formatter", category: "Developer", description: "Format and validate JSON in one click.", status: "Live" },
@@ -114,7 +115,7 @@ export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["gif-maker", "image-to-ascii", "background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect"];
+export const featuredToolIds = ["geography-quiz", "gif-maker", "image-to-ascii", "background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 
