@@ -6,13 +6,13 @@ import { useRouter, usePathname } from "next/navigation";
 
 export default function NavBar({ searchRef = null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const navRef = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (navRef.current && !navRef.current.contains(event.target)) {
         setMobileMenuOpen(false);
       }
     };
@@ -22,7 +22,7 @@ export default function NavBar({ searchRef = null }) {
   }, []);
 
   return (
-    <nav className="bg-white/70 backdrop-blur border-b border-white/20 sticky top-0 z-40 shadow-sm">
+    <nav ref={navRef} className="bg-white/70 backdrop-blur border-b border-white/20 sticky top-0 z-40 shadow-sm">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -102,7 +102,7 @@ export default function NavBar({ searchRef = null }) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div ref={menuRef} className="md:hidden border-t border-slate-200 py-4 space-y-3">
+          <div className="md:hidden border-t border-slate-200 py-4 space-y-3">
             <Link
               href="/"
               className="block px-4 py-2 text-slate-700 hover:bg-orange-50 rounded-lg transition"

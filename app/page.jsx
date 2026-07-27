@@ -603,7 +603,7 @@ export default function Home() {
                <div key={faq.id} className="border border-slate-200 rounded-lg overflow-hidden">
                  <div
                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition"
-                   onClick={() => setActiveFaq(index)}
+                   onClick={() => setActiveFaq(activeFaq === index ? null : index)}
                  >
                    <h3 className="text-lg font-medium text-slate-900">{faq.question}</h3>
                    <svg 
