@@ -169,7 +169,7 @@ export default function AboutClient() {
             </a>
 
             <a
-              href="https://instagram.com/ius.sharma"
+              href="https://instagram.com/ocn.ayush07"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
