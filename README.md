@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `97` (accessible online or via local setup)
-* **Upcoming Tools**: `3` (currently in development to reach 100)
+* **Live Tools**: `99` (accessible online or via local setup)
+* **Upcoming Tools**: `1` (currently in development to reach 100)
 * **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
  
 ---
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Geography Quiz & Map Explorer** (`/geography-quiz`) — Explore interactive world maps and test your geography knowledge with countries, capitals, flags and map challenges. Features client-side zoom & pan controls, 8 game modes + physical map hotspots, difficulty levels, achievements system, and HTML5 canvas scorecard PNG exports.
 * **GIF Maker from Images** (`/gif-maker`) — Create animated GIFs from multiple images using drag-and-drop editing, custom timeline ordering, text overlays, stickers, filters, transition animations (fade, slide, zoom, spin), and browser-based LZW encoding. Runs 100% locally and privately in the browser with local storage settings and size estimation.
 * **Text to Handwriting Image Converter** (`/text-to-handwriting`) — Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors, and customizable slant/realism properties. Exports high-res PNG, JPG, or PDF files completely in the browser.
 * **Image to ASCII / Terminal Art Generator** (`/image-to-ascii`) — Convert uploaded images (PNG, JPG, WEBP) into high-quality ASCII and terminal text art instantly inside the browser. Features pixel shaders (brightness, contrast, gamma, sharpness, invert, edge detection), custom column sizes, color themes (neon green, amber, cyan monitors), text search and highlight, and multi-format exports (.txt, .html, .svg, and .png).
@@ -108,7 +109,7 @@ Convert any image into terminal text art instantly with pixel shaders and custom
  
 ---
  
-## 🗂️ Live Tools Directory (97 Live Tools)
+## 🗂️ Live Tools Directory (99 Live Tools)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -207,7 +208,9 @@ Convert any image into terminal text art instantly with pixel shaders and custom
 95. **Audio Waveform Trimmer & Converter** — `/audio-waveform-trimmer`
 96. **Image to ASCII / Terminal Art Generator** — `/image-to-ascii`
 97. **Text to Handwriting Image Converter** — `/text-to-handwriting`
- 
+98. **GIF Maker from Images** — `/gif-maker`
+99. **Geography Quiz & Map Explorer** — `/geography-quiz`
+
 ---
 
 ## 💻 Local Setup & Development
