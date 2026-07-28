@@ -403,6 +403,12 @@ export default function DigitalTimeCapsule() {
   const [emailAddress, setEmailAddress] = useState("");
   const [reminderOffset, setReminderOffset] = useState("0");
 
+  // Bulk Delete and Edit Email States
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedCapsules, setSelectedCapsules] = useState(new Set());
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newReminderEmail, setNewReminderEmail] = useState("");
+
   // Audio Recording States
   const [recordingState, setRecordingState] = useState("idle"); // idle, recording, paused
   const [recordingDuration, setRecordingDuration] = useState(0);
@@ -799,6 +805,8 @@ export default function DigitalTimeCapsule() {
     setDecryptionPassword("");
     setDecryptionError("");
     setDecryptedPayload(null);
+    setIsEditingEmail(false);
+    setNewReminderEmail(capsule.emailAddress || "");
     
     // Check if auto-decryption key is locally stored
     const now = new Date();
@@ -865,9 +873,102 @@ export default function DigitalTimeCapsule() {
     if (confirm("Are you sure you want to delete this capsule forever? This action is irreversible.")) {
       await deleteCapsuleFromDB(id);
       localStorage.removeItem(`${KEY_PREFIX}${id}`);
+      
+      // Try to delete from sheet
+      try {
+        await fetch("/api/digital-time-capsule/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "delete", capsuleId: id }),
+        });
+      } catch (err) {
+        console.error("Failed to delete from sheet:", err);
+      }
+
       showToast("Time Capsule deleted.", "info");
       setView("home");
       refreshCapsules();
+    }
+  };
+
+  const toggleSelectCapsule = (id) => {
+    setSelectedCapsules((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCapsules.size === 0) return;
+
+    if (confirm(`Are you sure you want to delete the ${selectedCapsules.size} selected capsule(s) forever?`)) {
+      showToast("Deleting selected capsules...", "info");
+      const ids = Array.from(selectedCapsules);
+      let deleted = 0;
+      for (const id of ids) {
+        await deleteCapsuleFromDB(id);
+        localStorage.removeItem(`${KEY_PREFIX}${id}`);
+        
+        // Try to delete from sheet
+        try {
+          await fetch("/api/digital-time-capsule/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "delete", capsuleId: id }),
+          });
+        } catch (err) {
+          console.error("Failed to delete from sheet:", err);
+        }
+        deleted++;
+      }
+      showToast(`${deleted} capsule(s) deleted.`, "success");
+      setSelectedCapsules(new Set());
+      setIsSelectMode(false);
+      refreshCapsules();
+    }
+  };
+
+  const updateReminderEmail = async () => {
+    if (!newReminderEmail.trim()) {
+      showToast("Email address cannot be empty.", "error");
+      return;
+    }
+    
+    showToast("Updating email address...", "info");
+    try {
+      // 1. Update Sheet
+      const res = await fetch("/api/digital-time-capsule/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "updateEmail",
+          capsuleId: selectedCapsule.id,
+          email: newReminderEmail.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to update email in sheet");
+      }
+
+      // 2. Update local DB
+      const updatedCapsule = { ...selectedCapsule, emailAddress: newReminderEmail.trim() };
+      await saveCapsuleToDB(updatedCapsule);
+      
+      // Update UI state
+      setSelectedCapsule(updatedCapsule);
+      setIsEditingEmail(false);
+      showToast("Reminder email updated successfully!", "success");
+      refreshCapsules();
+    } catch (err) {
+      console.error(err);
+      showToast("Error updating reminder email: " + err.message, "error");
     }
   };
 
@@ -1155,6 +1256,23 @@ Generated via BoringTools Digital Time Capsule.`;
                       ariaLabel="Sort capsules"
                     />
                   </div>
+
+                  {/* Select Multiple Toggle */}
+                  {filteredCapsules.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setIsSelectMode(!isSelectMode);
+                        setSelectedCapsules(new Set());
+                      }}
+                      className={`px-4 py-4 h-[54px] border rounded-xl text-sm font-bold transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                        isSelectMode 
+                          ? "bg-amber-500 border-amber-500 text-white shadow-sm hover:bg-amber-600" 
+                          : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      {isSelectMode ? "Cancel" : "Select Multiple"}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1193,14 +1311,34 @@ Generated via BoringTools Digital Time Capsule.`;
                     return (
                       <div
                         key={capsule.id}
-                        onClick={() => handleSelectCapsule(capsule)}
-                        className="group border border-slate-200 rounded-2xl bg-white p-6 shadow-sm hover:shadow-md hover:border-slate-300 transition cursor-pointer flex flex-col justify-between space-y-6"
+                        onClick={() => {
+                          if (isSelectMode) {
+                            toggleSelectCapsule(capsule.id);
+                          } else {
+                            handleSelectCapsule(capsule);
+                          }
+                        }}
+                        className={`group border rounded-2xl p-6 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between space-y-6 relative overflow-hidden ${
+                          isSelectMode && selectedCapsules.has(capsule.id)
+                            ? "border-amber-400 bg-amber-50/20 ring-1 ring-amber-400/30"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
                       >
                         <div className="space-y-4">
                           <div className="flex items-start justify-between gap-3">
                             <h3 className="font-bold text-slate-900 text-lg group-hover:text-amber-500 transition line-clamp-2">
                               {capsule.title}
                             </h3>
+                            {isSelectMode && (
+                              <div className="shrink-0 pt-0.5" onClick={(e) => e.stopPropagation()}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedCapsules.has(capsule.id)}
+                                    onChange={() => toggleSelectCapsule(capsule.id)}
+                                    className="w-5 h-5 text-amber-500 border-slate-300 rounded focus:ring-amber-500 cursor-pointer"
+                                />
+                              </div>
+                            )}
                             <span className={`px-2.5 py-1 text-xs font-semibold rounded-full shrink-0 ${
                               isLocked 
                                 ? "bg-amber-50 text-amber-700 border border-amber-100" 
@@ -1283,6 +1421,28 @@ Generated via BoringTools Digital Time Capsule.`;
                       </div>
                     );
                   })}
+                </div>
+              )}
+              
+              {isSelectMode && selectedCapsules.size > 0 && (
+                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-xl flex items-center gap-6 z-50 border border-slate-800 transition-all duration-300">
+                  <span className="text-sm font-semibold font-mono">
+                    {selectedCapsules.size} capsule(s) selected
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setSelectedCapsules(new Set())}
+                      className="px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                    <button
+                      onClick={handleBulkDelete}
+                      className="px-4 py-2 text-xs font-bold bg-red-500 hover:bg-red-600 text-white rounded-lg transition cursor-pointer"
+                    >
+                      Delete Selected
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1806,6 +1966,18 @@ Generated via BoringTools Digital Time Capsule.`;
         {/* VAULT EXPERIENCE / READ CAPSULE */}
         {view === "vault" && selectedCapsule && (
           <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl shadow-xl p-6 sm:p-8 space-y-8 relative overflow-hidden">
+            {/* Delete button (Left) */}
+            <button
+              onClick={() => deleteCapsule(selectedCapsule.id)}
+              className="absolute top-5 left-5 z-25 p-2 text-slate-400 hover:text-red-600 rounded-lg hover:bg-red-50/50 transition cursor-pointer"
+              aria-label="Delete capsule"
+              title="Delete Time Capsule Forever"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+
             {/* Close */}
             <button
               onClick={() => {
@@ -1815,7 +1987,7 @@ Generated via BoringTools Digital Time Capsule.`;
                 setDecryptionPassword("");
                 setDecryptionError("");
               }}
-              className="absolute top-5 right-5 z-25 p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition"
+              className="absolute top-5 right-5 z-25 p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition cursor-pointer"
               aria-label="Back to dashboard"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1935,6 +2107,59 @@ Generated via BoringTools Digital Time Capsule.`;
                         {new Date(selectedCapsule.unlockDate).toLocaleString()}
                       </span>
                     </p>
+
+                    {/* Reminder Email Editor */}
+                    {selectedCapsule.emailReminder && (
+                      <div className="mt-6 pt-5 border-t border-slate-100 text-left max-w-xs mx-auto space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Reminder</span>
+                          {!isEditingEmail && (
+                            <button
+                              onClick={() => {
+                                setIsEditingEmail(true);
+                                setNewReminderEmail(selectedCapsule.emailAddress || "");
+                              }}
+                              className="text-xs font-bold text-amber-600 hover:underline cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </div>
+                        
+                        {isEditingEmail ? (
+                          <div className="space-y-2">
+                            <input
+                              type="email"
+                              value={newReminderEmail}
+                              onChange={(e) => setNewReminderEmail(e.target.value)}
+                              placeholder="New reminder email..."
+                              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                            />
+                            <div className="flex gap-2 justify-end">
+                              <button
+                                onClick={() => setIsEditingEmail(false)}
+                                className="px-2.5 py-1 text-xs font-semibold text-slate-500 hover:text-slate-700 cursor-pointer"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={updateReminderEmail}
+                                className="px-3 py-1 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white rounded-lg cursor-pointer"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-xs font-medium text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span className="truncate">{selectedCapsule.emailAddress}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4 max-w-sm mx-auto">
@@ -1986,17 +2211,6 @@ Generated via BoringTools Digital Time Capsule.`;
                       Locked {new Date(selectedCapsule.createdDate).toLocaleDateString()} • Unlocked {new Date(selectedCapsule.unlockDate).toLocaleDateString()}
                     </p>
                   </div>
-                  
-                  {/* Delete Option */}
-                  <button
-                    onClick={() => deleteCapsule(selectedCapsule.id)}
-                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                    title="Delete Time Capsule Forever"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
                 </div>
 
                 {/* Letter Body */}

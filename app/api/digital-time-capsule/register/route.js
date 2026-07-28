@@ -169,6 +169,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
+    const action = normalize(body?.action, "register");
     const capsuleId = normalize(body?.capsuleId);
     const title = normalize(body?.title);
     const email = normalize(body?.email).toLowerCase();
@@ -176,21 +177,34 @@ export async function POST(request) {
     const unlockDate = normalize(body?.unlockDate);
     const reminderOffset = parseInt(body?.reminderOffset ?? "0", 10);
 
-    if (!capsuleId || !title || !email || !createdDate || !unlockDate) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 });
+    if (action === "register") {
+      if (!capsuleId || !title || !email || !createdDate || !unlockDate) {
+        return Response.json({ error: "Missing required fields" }, { status: 400 });
+      }
+    } else if (action === "updateEmail") {
+      if (!capsuleId || !email) {
+        return Response.json({ error: "Missing required fields for updateEmail" }, { status: 400 });
+      }
+    } else if (action === "delete") {
+      if (!capsuleId) {
+        return Response.json({ error: "Missing required fields for delete" }, { status: 400 });
+      }
+    } else {
+      return Response.json({ error: "Invalid action" }, { status: 400 });
     }
 
     // Check if Google Apps Script Web App Webhook URL is configured
     const webAppUrl = process.env.GOOGLE_SCRIPT_WEB_APP_URL;
 
     if (webAppUrl && webAppUrl.trim() !== "") {
-      // POST to Apps Script Web App for instant execution & email dispatch
+      // POST to Apps Script Web App for instant execution
       const response = await fetch(webAppUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          action,
           capsuleId,
           title,
           email,
@@ -211,12 +225,16 @@ export async function POST(request) {
 
       return Response.json({
         ok: true,
-        message: "Successfully registered cloud reminder instantly via Web App",
+        message: `Successfully processed action "${action}" instantly via Web App`,
         capsuleId,
       });
     }
 
-    // FALLBACK: Directly append using Service Account credentials (emails processed on next cron/hourly run)
+    // FALLBACK: Directly append using Service Account credentials (only supports register)
+    if (action !== "register") {
+      return Response.json({ error: "Fallback sheet writer only supports 'register' action. Please configure GOOGLE_SCRIPT_WEB_APP_URL for update/delete." }, { status: 400 });
+    }
+
     const config = readServiceAccountConfig();
     if (!config.enabled) {
       return Response.json({ error: config.issue }, { status: 500 });
