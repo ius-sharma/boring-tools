@@ -119,6 +119,37 @@ export default function ToolContentFooter() {
           a: "Yes! You can choose a transparent background, solid colors, gradients, blur the original background, or select a magic studio, office, or abstract backdrop. You can also add shadows and modify size/rotation."
         }
       ]
+    },
+    "digital-time-capsule": {
+      title: "Digital Time Capsule – Privacy-First Browser Encryption Guide",
+      overview: "A digital time capsule is a secure space to write letters, record voice messages, and attach files for your future self. This premium offline tool uses military-grade, client-side encryption to ensure that your memories remain locked, confidential, and 100% private until the day you choose to open them.",
+      importance: "Traditional online time capsule services require you to upload personal memories, photos, and voice notes to their servers. This introduces data privacy risks and the chance that the company goes out of business before your capsule unlocks. By utilizing local IndexedDB storage and the Web Crypto API, this tool ensures your data never leaves your device, keeping your future messages completely under your control.",
+      howToUse: [
+        "Select 'Create Capsule' from the main dashboard to open the multi-step editor.",
+        "Enter a title and write your message using the premium rich-text editor (track word and character limits live).",
+        "Add attachments: upload images, record your voice directly using the microphone, upload audio files, or attach custom files (e.g. PDFs or document scans).",
+        "Set your unlock date using the quick presets (1 month to 10 years) or a precise custom calendar date and time.",
+        "Toggle encryption settings: choose to add an optional password (PBKDF2 key derivation) for extra local safety. If a password is set, the capsule cannot be decrypted without it.",
+        "Click 'Lock Capsule' to encrypt the payload via AES-GCM and store it inside your browser's IndexedDB. Download a calendar reminder (.ics file) to notify you on the unlock day."
+      ],
+      faqs: [
+        {
+          q: "How is my data secured inside the browser?",
+          a: "All capsule details (text, images, voice recordings, and attachments) are encrypted using AES-GCM (Advanced Encryption Standard with Galois/Counter Mode) via the browser's built-in Web Crypto API. The plaintext payload is never stored on disk. Data is saved in IndexedDB, which is sandboxed and accessible only to this application on your local machine."
+        },
+        {
+          q: "What happens if I forget my password?",
+          a: "Since this tool is designed with a strict zero-knowledge, privacy-first architecture, your password is never uploaded to any server. If you set a password for a capsule and forget it, it is cryptographically impossible to decrypt and recover the contents. Please choose a password you will remember or store it in a password manager."
+        },
+        {
+          q: "Can I access my capsules from a different device?",
+          a: "No, because all data is stored 100% locally in your current browser's IndexedDB database. To move capsules to another device, you can use the 'Export Encrypted Backup' feature to download your encrypted capsule data and import it on your other device's BoringTools workspace."
+        },
+        {
+          q: "How do email or calendar reminders work?",
+          a: "Because this app respects your privacy and runs entirely local, we do not require your email. Instead, you can download a standard iCalendar (.ics) file when locking a capsule. Importing this file adds a reminder to your native calendar (Google Calendar, Apple Calendar, Outlook, etc.), which will notify you exactly when the capsule is ready to be opened. If you explicitly opt-in to email reminders, we will prompt you for your address and register it offline."
+        }
+      ]
     }
   };
 

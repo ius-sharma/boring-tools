@@ -108,14 +108,15 @@ export const tools: Tool[] = [
   { id: "background-remover", name: "Browser-Based Background Remover", href: "/background-remover", category: "Media", description: "Remove image backgrounds instantly in your browser. No uploads, no signup, 100% private, fast and free.", status: "Live", isNew: true, isFeatured: true },
   { id: "audio-waveform-trimmer", name: "Audio Waveform Trimmer & Converter", href: "/audio-waveform-trimmer", category: "Media", description: "Trim, preview, convert and export audio directly in your browser. Fast, private and free.", status: "Live", isNew: true, isFeatured: true },
   { id: "image-to-ascii", name: "Image to ASCII / Terminal Art Generator", href: "/image-to-ascii", category: "Media", description: "Convert images into beautiful ASCII and terminal art instantly. Export as TXT, HTML, SVG or PNG.", status: "Live", isNew: true, isFeatured: true },
-  { id: "text-to-handwriting", name: "Text to Handwriting Image Converter", href: "/text-to-handwriting", category: "Documents", description: "Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors and export as PNG, PDF or JPG directly from your browser.", status: "Live", isNew: true, isFeatured: true }
+  { id: "text-to-handwriting", name: "Text to Handwriting Image Converter", href: "/text-to-handwriting", category: "Documents", description: "Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors and export as PNG, PDF or JPG directly from your browser.", status: "Live", isNew: true, isFeatured: true },
+  { id: "digital-time-capsule", name: "Digital Time Capsule – Future Self Message", href: "/digital-time-capsule", category: "Time & Date", description: "Create encrypted digital time capsules with text, images and voice recordings. Unlock them months or years later directly in your browser.", status: "Live", isNew: true, isFeatured: true }
 ];
 
 export const liveToolIds = new Set(
   tools.filter(t => t.status === "Live").map(t => t.id)
 );
 
-export const featuredToolIds = ["geography-quiz", "gif-maker", "image-to-ascii", "background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect"];
+export const featuredToolIds = ["geography-quiz", "gif-maker", "image-to-ascii", "background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect", "digital-time-capsule"];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
 
