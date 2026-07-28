@@ -81,7 +81,7 @@ export default function AboutClient() {
               That led me to start the <strong>100 Days, 100 Tools</strong> challenge as a solo developer. The goal was simple: build 100 lightweight, privacy-focused utilities where processing happens entirely in your browser.
             </p>
             <p className="border-l-2 border-slate-900 pl-4 py-1 text-slate-900 font-medium bg-slate-50/80 rounded-r-lg">
-              Today, that milestone is fully accomplished! 100 days of consistency has turned this experiment into a comprehensive, browser-first ecosystem of daily micro-utilities.
+              Today, <strong>28/07/2026</strong> (exactly 100 days since starting on <strong>20/04/2026</strong>), that milestone is fully accomplished! 100 days of consistency has turned this experiment into a comprehensive, browser-first ecosystem of daily micro-utilities.
             </p>
           </div>
         </section>
