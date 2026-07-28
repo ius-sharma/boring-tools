@@ -43,7 +43,7 @@ export default function AboutClient() {
           {/* Minimal Metrics Grid */}
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-200 pt-8">
             <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">99</p>
+              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">100</p>
               <p className="text-xs text-slate-500 font-medium mt-0.5">Live Utilities</p>
             </div>
             <div>
@@ -78,7 +78,10 @@ export default function AboutClient() {
               Having to jump across multiple paywalled websites for simple micro-tasks was inefficient and frustrating. I wanted a clean, single destination for fast, essential tools.
             </p>
             <p>
-              That led me to start the <strong>100 Days, 100 Tools</strong> challenge as a solo developer. The goal is simple: build 100 lightweight, privacy-focused utilities where processing happens entirely in your browser.
+              That led me to start the <strong>100 Days, 100 Tools</strong> challenge as a solo developer. The goal was simple: build 100 lightweight, privacy-focused utilities where processing happens entirely in your browser.
+            </p>
+            <p className="border-l-2 border-slate-900 pl-4 py-1 text-slate-900 font-medium bg-slate-50/80 rounded-r-lg">
+              Today, that milestone is fully accomplished! 100 days of consistency has turned this experiment into a comprehensive, browser-first ecosystem of daily micro-utilities.
             </p>
           </div>
         </section>
