@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "./components/ThemedDropdown";
+import ConfettiCelebration from "./components/ConfettiCelebration";
 
 import { tools, liveToolIds, featuredToolIds, availableTools } from "./tools-data";
 
@@ -30,6 +31,19 @@ export default function Home() {
   // FAQ state
   const [faqSearch, setFaqSearch] = useState("");
   const [activeFaq, setActiveFaq] = useState(null);
+  
+  // Celebration Confetti state
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const celebrated = sessionStorage.getItem("boringtools_100_celebrated");
+      if (!celebrated) {
+        setShowConfetti(true);
+        sessionStorage.setItem("boringtools_100_celebrated", "true");
+      }
+    }
+  }, []);
   
   
 
@@ -267,6 +281,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
+      {showConfetti && <ConfettiCelebration />}
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20">
         <div className="absolute inset-0 pointer-events-none">
@@ -333,20 +348,44 @@ export default function Home() {
             <p className="text-slate-600">Try these popular and newly added utilities</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredTools.map((tool) => (
-              <a
-                key={tool.id}
-                href={tool.href}
-                className="block p-6 rounded-xl border border-slate-200 bg-white hover:border-orange-400 hover:shadow-lg transition"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-xs font-semibold text-orange-600 uppercase">{tool.category}</span>
-                  {tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>}
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">{tool.name}</h3>
-                <p className="text-sm text-slate-600">{tool.description}</p>
-              </a>
-            ))}
+            {featuredTools.map((tool) => {
+              const isTimeCapsule = tool.id === "digital-time-capsule";
+              return (
+                <a
+                  key={tool.id}
+                  href={tool.href}
+                  className={`block p-6 rounded-xl border transition ${
+                    isTimeCapsule 
+                      ? "border border-amber-400 bg-gradient-to-br from-amber-50/20 via-white to-white shadow-[0_0_20px_rgba(245,158,11,0.08)] ring-1 ring-amber-300/30 hover:border-amber-500 hover:shadow-[0_0_25px_rgba(245,158,11,0.18)] relative overflow-hidden" 
+                      : "border-slate-200 bg-white hover:border-orange-400 hover:shadow-lg"
+                  }`}
+                >
+                  {isTimeCapsule && (
+                    <>
+                      <div className="h-1 bg-gradient-to-r from-amber-500 to-yellow-400 absolute top-0 left-0 right-0 z-20" />
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-200/20 to-transparent pointer-events-none rounded-bl-full" />
+                    </>
+                  )}
+                  <div className="flex items-start justify-between mb-3 relative z-10">
+                    <span className="text-xs font-semibold text-orange-600 uppercase">{tool.category}</span>
+                    {isTimeCapsule ? (
+                      <span className="text-[10px] font-bold tracking-wider bg-gradient-to-r from-amber-600 to-amber-500 text-white px-2.5 py-1 rounded-full uppercase shadow-xs flex items-center gap-1.5 animate-pulse">
+                        <svg className="w-3 h-3 text-amber-200" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Milestone #100
+                      </span>
+                    ) : (
+                      tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 relative z-10 flex items-center gap-1.5">
+                    {tool.name}
+                  </h3>
+                  <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -456,20 +495,44 @@ export default function Home() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredTools.slice(0, toolsToShow).map((tool) => (
-                  <a
-                    key={tool.id}
-                    href={tool.href}
-                    className="p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-400 hover:shadow-md transition"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <span className="text-xs font-semibold text-orange-600 uppercase">{tool.category}</span>
-                      {tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>}
-                    </div>
-                    <h3 className="font-bold text-slate-900 mb-1">{tool.name}</h3>
-                    <p className="text-sm text-slate-600">{tool.description}</p>
-                  </a>
-                ))}
+                {filteredTools.slice(0, toolsToShow).map((tool) => {
+                  const isTimeCapsule = tool.id === "digital-time-capsule";
+                  return (
+                    <a
+                      key={tool.id}
+                      href={tool.href}
+                      className={`p-4 rounded-lg border transition ${
+                        isTimeCapsule
+                          ? "border border-amber-400 bg-gradient-to-br from-amber-50/15 via-white to-white shadow-[0_0_15px_rgba(245,158,11,0.06)] ring-1 ring-amber-300/20 hover:border-amber-500 hover:shadow-md hover:shadow-amber-100/30 relative overflow-hidden"
+                          : "border-slate-200 bg-white hover:border-orange-400 hover:shadow-md"
+                      }`}
+                    >
+                      {isTimeCapsule && (
+                        <>
+                          <div className="h-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 absolute top-0 left-0 right-0 z-20" />
+                          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-200/20 to-transparent pointer-events-none rounded-bl-full" />
+                        </>
+                      )}
+                      <div className="flex items-start justify-between mb-2 relative z-10">
+                        <span className="text-xs font-semibold text-orange-600 uppercase">{tool.category}</span>
+                        {isTimeCapsule ? (
+                          <span className="text-[9px] font-bold tracking-wider bg-gradient-to-r from-amber-600 to-amber-500 text-white px-2 py-0.5 rounded-full uppercase shadow-xs flex items-center gap-1 animate-pulse">
+                            <svg className="w-2.5 h-2.5 text-amber-200" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+                            </svg>
+                            #100
+                          </span>
+                        ) : (
+                          tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
+                        )}
+                      </div>
+                      <h3 className="font-bold text-slate-900 mb-1 relative z-10 flex items-center gap-1.5">
+                        {tool.name}
+                      </h3>
+                      <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
+                    </a>
+                  );
+                })}
               </div>
 
               {toolsToShow < filteredTools.length && (
