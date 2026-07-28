@@ -1,8 +1,8 @@
 # BoringTools 🚀
 
-> **100 Days. 100 Boring Tools.**
-
-BoringTools is a curated collection of simple, fast, and practical micro-utilities built daily to solve everyday problems. Every tool runs 100% in your browser—no signup, no tracking, and no clutter.
+> 🎉 **MISSION ACCOMPLISHED: 100 DAYS. 100 TOOLS.** 🎉
+> 
+> BoringTools is a curated collection of simple, fast, and practical micro-utilities built daily to solve everyday problems. Every tool runs 100% in your browser—no signup, no tracking, and no clutter. Thank you to everyone who joined us in reaching this incredible milestone of **100 live, browser-first tools!**
 
 ---
 
@@ -14,9 +14,9 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `99` (accessible online or via local setup)
-* **Upcoming Tools**: `1` (currently in development to reach 100)
-* **Final Goal**: Build 100 tools in 100 days to form a comprehensive browser-first utility ecosystem.
+* **Live Tools**: `100` (accessible online or via local setup)
+* **Mission Status**: **Completed!** 100 tools built in 100 days.
+* **Final Goal**: Created a comprehensive browser-first utility ecosystem.
  
 ---
  
@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Digital Time Capsule** (`/digital-time-capsule`) — Create encrypted digital time capsules for your future self. Securely store text, images, and voice recordings in IndexedDB with client-side Web Crypto AES-GCM encryption, offline calendar alerts, and private email reminder notifications synced to Google Sheets.
 * **Geography Quiz & Map Explorer** (`/geography-quiz`) — Explore interactive world maps and test your geography knowledge with countries, capitals, flags and map challenges. Features client-side zoom & pan controls, 8 game modes + physical map hotspots, difficulty levels, achievements system, and HTML5 canvas scorecard PNG exports.
 * **GIF Maker from Images** (`/gif-maker`) — Create animated GIFs from multiple images using drag-and-drop editing, custom timeline ordering, text overlays, stickers, filters, transition animations (fade, slide, zoom, spin), and browser-based LZW encoding. Runs 100% locally and privately in the browser with local storage settings and size estimation.
 * **Text to Handwriting Image Converter** (`/text-to-handwriting`) — Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors, and customizable slant/realism properties. Exports high-res PNG, JPG, or PDF files completely in the browser.
@@ -210,6 +211,7 @@ Convert any image into terminal text art instantly with pixel shaders and custom
 97. **Text to Handwriting Image Converter** — `/text-to-handwriting`
 98. **GIF Maker from Images** — `/gif-maker`
 99. **Geography Quiz & Map Explorer** — `/geography-quiz`
+100. **Digital Time Capsule** — `/digital-time-capsule`
 
 ---
 
