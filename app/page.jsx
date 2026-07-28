@@ -34,6 +34,8 @@ export default function Home() {
   
   // Celebration Confetti state
   const [showConfetti, setShowConfetti] = useState(false);
+  // Animated tools count state
+  const [animatedToolCount, setAnimatedToolCount] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,6 +46,25 @@ export default function Home() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    let start = 0;
+    const end = liveToolCount;
+    if (start === end) return;
+
+    const totalDuration = 2500; // 2.5 seconds
+    const incrementTime = Math.max(Math.floor(totalDuration / end), 15); // 25ms per step
+
+    const timer = setInterval(() => {
+      start += 1;
+      setAnimatedToolCount(start);
+      if (start >= end) {
+        clearInterval(timer);
+      }
+    }, incrementTime);
+
+    return () => clearInterval(timer);
+  }, [liveToolCount]);
   
   
 
@@ -298,7 +319,7 @@ export default function Home() {
             </p>
             <div className="mb-8 flex justify-center gap-6 text-sm sm:text-base">
               <span className="text-slate-700 font-semibold">
-                <span className="text-orange-600 font-bold">{liveToolCount}</span> Tools Live
+                <span className="text-orange-600 font-bold">{animatedToolCount}</span> Tools Live
               </span>
               <span className="text-slate-400">•</span>
               <span className="text-slate-700 font-semibold">
