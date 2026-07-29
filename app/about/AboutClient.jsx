@@ -209,6 +209,39 @@ export default function AboutClient() {
           </div>
         </section>
 
+        {/* Other Projects / Smriti Tribute Section */}
+        <section className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-xs relative overflow-hidden group hover:border-amber-500 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,#fffbeb_0%,transparent_70%)] pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity"></div>
+          
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-mono font-medium text-amber-800 border border-amber-250/60 mb-4">
+              SIDE PROJECT
+            </div>
+            
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Smriti <span className="text-sm font-normal text-slate-500">— A Digital Tribute Wall to My Teachers</span>
+            </h2>
+            
+            <p className="mt-4 text-slate-600 leading-relaxed text-base">
+              Besides building daily micro-utilities, I also created <strong>Smriti</strong>—a heartfelt digital sanctuary dedicated to honoring, remembering, and expressing gratitude to the teachers who shaped my journey. It acts as a digital time-capsule where students can leave messages of appreciation for their mentors.
+            </p>
+            
+            <div className="mt-6">
+              <a
+                href="https://smritiius.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
+              >
+                <span>Visit Smriti Tribute Wall</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* Suggestion Form & GitHub Repository Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Form */}

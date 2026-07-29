@@ -258,6 +258,13 @@ export default function ToolContentFooter() {
             <div>
               <h3 className="font-bold text-white mb-3 text-lg">BoringTools</h3>
               <p className="text-sm text-slate-400">100 practical browser-first tools built in 100 days. No signup. No tracking.</p>
+              <div className="mt-4 pt-4 border-t border-slate-900">
+                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Other Projects</p>
+                <a href="https://smritiius.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-1 text-sm text-slate-300 hover:text-amber-300 transition group font-medium">
+                  <span>Smriti (Tribute Wall)</span>
+                  <span className="text-xs text-slate-500 group-hover:text-amber-300">→</span>
+                </a>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-3">Links</h4>
