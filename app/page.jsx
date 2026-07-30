@@ -789,6 +789,7 @@ export default function Home() {
           </div>
           <div className="border-t border-slate-700 pt-8 text-center text-sm">
             <p>© 2026 BoringTools. All rights reserved.</p>
+            <p className="text-xs text-slate-500 mt-2">Developed by <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition text-slate-400 font-medium">Ayush Sharma</a></p>
           </div>
         </div>
       </footer>

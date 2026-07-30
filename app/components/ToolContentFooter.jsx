@@ -182,7 +182,7 @@ export default function ToolContentFooter() {
         },
         {
           q: `Do I need to create an account to use the ${name}?`,
-          a: `No, BoringTools operates on a strict no-signup philosophy. You can use the ${name} and all other 90+ utilities immediately without providing your email address, setting passwords, or dealing with captcha verification.`
+          a: `No, BoringTools operates on a strict no-signup philosophy. You can use the ${name} and all other 100 utilities immediately without providing your email address, setting passwords, or dealing with captcha verification.`
         },
         {
           q: `Can I use the ${name} offline?`,
@@ -319,6 +319,7 @@ export default function ToolContentFooter() {
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
             <p>© 2026 BoringTools. All rights reserved.</p>
+            <p className="text-xs text-slate-600 mt-2">Developed by <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition text-slate-400 font-medium">Ayush Sharma</a></p>
           </div>
         </div>
       </footer>
