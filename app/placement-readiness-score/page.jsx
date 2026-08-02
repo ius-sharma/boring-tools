@@ -998,12 +998,6 @@ export default function PlacementReadinessScorePage() {
 
         {/* Hero Section */}
         <div className="flex flex-col gap-2 items-center text-center mb-1 print:mb-4">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200/60 text-[10px] font-bold uppercase tracking-wider text-orange-700">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4.67 9.88l-3.32-3.32M12 21v-6m-4 6h8" />
-            </svg>
-            <span>Career Readiness Assessment</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 mt-1">
             Placement Readiness Score
           </h1>
@@ -1027,12 +1021,9 @@ export default function PlacementReadinessScorePage() {
             {hasBackup && (
               <button
                 onClick={handleRestoreSession}
-                className="px-3.5 py-2 text-xs font-bold rounded-xl text-orange-700 bg-orange-50 hover:bg-orange-100/75 border border-orange-200/60 transition active:scale-95 cursor-pointer flex items-center gap-1.5 group"
+                className="px-3.5 py-2 text-xs font-bold rounded-xl text-orange-700 bg-orange-50 hover:bg-orange-100/75 border border-orange-200/60 transition active:scale-95 cursor-pointer"
               >
-                <svg className="w-3.5 h-3.5 text-orange-600 group-hover:rotate-[-180deg] transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89H18.75" />
-                </svg>
-                <span>Undo Reset</span>
+                Undo Reset
               </button>
             )}
           </div>
