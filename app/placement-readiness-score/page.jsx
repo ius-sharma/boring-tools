@@ -30,83 +30,83 @@ const radarSkills = [
 ];
 
 const labelWidths = {
-  dsa: 76,
-  dev: 80,
-  projects: 56,
-  resume: 56,
-  comm: 88,
-  apt: 62,
-  core: 54
+  dsa: 80,
+  dev: 84,
+  projects: 60,
+  resume: 60,
+  comm: 92,
+  apt: 66,
+  core: 58
 };
 
 const roadmapIcons = {
   "Solve DSA Challenges": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
     </svg>
   ),
   "Develop Practical Projects": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
     </svg>
   ),
   "Upgrade Project Details": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
     </svg>
   ),
   "Improve Resume Bullets": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
     </svg>
   ),
   "Practice Mock Interviews": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
     </svg>
   ),
   "Solve Aptitude Quizzes": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
     </svg>
   ),
   "Revise CS Core Subjects": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.168.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
     </svg>
   ),
   "Gain Work Experience": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4.67 9.88l-3.32-3.32M12 21v-6m-4 6h8" />
     </svg>
   ),
   "Optimize LinkedIn Page": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 10.742l4.636-2.318M8.684 13.258l4.636 2.318M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
   "Enhance GitHub Presence": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
     </svg>
   ),
   "Solve LeetCode Mediums": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
     </svg>
   ),
   "Mock Interview Marathons": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
   ),
   "System Design Basics": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
     </svg>
   ),
   "Targeted Networking": (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
     </svg>
   )
@@ -137,7 +137,16 @@ export default function PlacementReadinessScorePage() {
   const [hasBackup, setHasBackup] = useState(false);
   const toastTimeoutRef = useRef(null);
 
-  // Tab Manager for AI Profiler
+  // Assessment Wizard state
+  const [activeInputTab, setActiveInputTab] = useState("profile"); // 'profile', 'tech', 'soft'
+
+  // Results Dashboard state
+  const [activeResultsTab, setActiveResultsTab] = useState("insights"); // 'insights', 'mapping', 'roadmap'
+
+  // Interactive Checklist roadmap step progress
+  const [completedRoadmapSteps, setCompletedRoadmapSteps] = useState({});
+
+  // AI Profiler nested state (within wizard Tab 1)
   const [activeProfilerTab, setActiveProfilerTab] = useState("resume"); // 'resume' or 'github'
 
   // AI Resume Scanner State
@@ -163,6 +172,7 @@ export default function PlacementReadinessScorePage() {
     const savedAi = localStorage.getItem("placement_readiness_ai_results");
     const savedGithub = localStorage.getItem("placement_readiness_github_results");
     const savedUsername = localStorage.getItem("placement_readiness_github_username");
+    const savedRoadmapCompletion = localStorage.getItem("placement_readiness_roadmap_completion");
     
     if (saved) {
       try {
@@ -191,6 +201,13 @@ export default function PlacementReadinessScorePage() {
     if (savedUsername) {
       setGithubUsername(savedUsername);
     }
+    if (savedRoadmapCompletion) {
+      try {
+        setCompletedRoadmapSteps(JSON.parse(savedRoadmapCompletion));
+      } catch (e) {
+        console.error("Failed to load completed roadmap steps", e);
+      }
+    }
 
     // Set page title and meta description
     const prevTitle = document.title;
@@ -199,11 +216,11 @@ export default function PlacementReadinessScorePage() {
     let metaDesc = document.querySelector('meta[name="description"]');
     let prevDesc = metaDesc ? metaDesc.getAttribute("content") : "";
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.");
+      metaDesc.setAttribute("content", "Evaluate your placement preparation with a smart placement readiness assessment including resume scanner, GitHub analyzer, CS core, and communication scoring.");
     } else {
       metaDesc = document.createElement("meta");
       metaDesc.name = "description";
-      metaDesc.content = "Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.";
+      metaDesc.content = "Evaluate your placement preparation with a smart placement readiness assessment including resume scanner, GitHub analyzer, CS core, and communication scoring.";
       document.head.appendChild(metaDesc);
     }
     
@@ -326,7 +343,7 @@ export default function PlacementReadinessScorePage() {
 
       // Sync rating slider
       handleInputChange("resume", Number(parsedResults.rating));
-      showToast("success", `AI Scan complete! Score: ${parsedResults.rating}/10`);
+      showToast("success", `AI Scan complete! Resume Score: ${parsedResults.rating}/10`);
 
     } catch (e) {
       console.error(e);
@@ -440,7 +457,7 @@ export default function PlacementReadinessScorePage() {
         localStorage.setItem("placement_readiness_github_results", JSON.stringify(parsedResults));
       }
 
-      // Sync ratings (GitHub Portfolio + Projects Quality + DSA + Dev) safely without stale state overwriting
+      // Sync ratings (GitHub Portfolio + Projects Quality + DSA + Dev) safely
       const cleanGitRating = String(parsedResults.githubRating || "average").toLowerCase();
       handleInputChanges({
         github: cleanGitRating,
@@ -475,11 +492,13 @@ export default function PlacementReadinessScorePage() {
     setAiResults(null);
     setGithubResults(null);
     setGithubUsername("");
+    setCompletedRoadmapSteps({});
     if (typeof window !== "undefined") {
       localStorage.setItem("placement_readiness_inputs", JSON.stringify(defaultInputs));
       localStorage.removeItem("placement_readiness_ai_results");
       localStorage.removeItem("placement_readiness_github_results");
       localStorage.removeItem("placement_readiness_github_username");
+      localStorage.removeItem("placement_readiness_roadmap_completion");
     }
     showToast("success", "Values reset to defaults. You can undo this.");
   };
@@ -571,9 +590,9 @@ export default function PlacementReadinessScorePage() {
     if (score < 40) {
       return {
         label: "Beginner",
-        colorClass: "bg-red-50 text-red-700 border-red-200",
-        ringClass: "stroke-red-500 text-red-500",
-        accentColor: "#ef4444",
+        colorClass: "bg-rose-50 text-rose-700 border-rose-200",
+        ringClass: "stroke-rose-500 text-rose-500",
+        accentColor: "#f43f5e",
         desc: "You are in the early stages of placement preparation. Focus on laying solid foundations in DSA, writing your first resume, and building core projects."
       };
     } else if (score < 70) {
@@ -581,7 +600,7 @@ export default function PlacementReadinessScorePage() {
         label: "Intermediate",
         colorClass: "bg-amber-50 text-amber-700 border-amber-200",
         ringClass: "stroke-amber-500 text-amber-500",
-        accentColor: "#f59e0b",
+        accentColor: "#d97706",
         desc: "You have built some core skills but require deeper practice. Optimize your resume, practice mock interviews, and work on higher-quality development projects."
       };
     } else if (score < 85) {
@@ -590,7 +609,7 @@ export default function PlacementReadinessScorePage() {
         colorClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
         ringClass: "stroke-emerald-500 text-emerald-500",
         accentColor: "#10b981",
-        desc: "Great job! You satisfy the requirements for most company drives. Start reviewing core CS subjects, polishing your profile, and practice timing for coding assessments."
+        desc: "Great job! You satisfy the requirements for most company drives. Start reviewing core CS subjects, polishing your profile, and practicing timing for coding assessments."
       };
     } else {
       return {
@@ -810,6 +829,25 @@ export default function PlacementReadinessScorePage() {
     }));
   }, [inputs, aiResults, githubResults]);
 
+  // Handle roadmap checkbox state updates
+  const handleToggleRoadmapCheckbox = (weekTitle) => {
+    const updated = {
+      ...completedRoadmapSteps,
+      [weekTitle]: !completedRoadmapSteps[weekTitle]
+    };
+    setCompletedRoadmapSteps(updated);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("placement_readiness_roadmap_completion", JSON.stringify(updated));
+    }
+  };
+
+  // Calculate Roadmap Completion rate
+  const roadmapCompletionPercent = useMemo(() => {
+    if (!roadmap.length) return 0;
+    const completedCount = roadmap.filter(item => completedRoadmapSteps[item.week]).length;
+    return Math.round((completedCount / roadmap.length) * 100);
+  }, [roadmap, completedRoadmapSteps]);
+
   // Coordinate math for radar chart
   const getRadarCoords = (index, value) => {
     const maxVal = 10;
@@ -921,9 +959,9 @@ export default function PlacementReadinessScorePage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="text-center p-6 bg-white rounded-2xl border border-slate-200 shadow-sm max-w-sm w-full animate-pulse">
-          <div className="h-6 w-32 bg-slate-200 rounded mx-auto mb-3" />
-          <div className="h-4 w-48 bg-slate-100 rounded mx-auto" />
+        <div className="text-center p-8 bg-white rounded-3xl border border-slate-200 shadow-xl max-w-sm w-full animate-pulse">
+          <div className="h-6 w-36 bg-slate-200 rounded mx-auto mb-3" />
+          <div className="h-4 w-52 bg-slate-100 rounded mx-auto" />
         </div>
       </div>
     );
@@ -935,22 +973,23 @@ export default function PlacementReadinessScorePage() {
   const strokeOffset = strokeCircumference - (score / 100) * strokeCircumference;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8 font-sans">
+    <div className="min-h-screen bg-slate-50/50 p-4 sm:p-6 lg:p-8 font-sans pb-16">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
         
         {/* Toast Notification */}
         {toast.show && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-xl transition-all duration-300 transform translate-y-0 ${
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-xl transition-all duration-300 transform translate-y-0 ${
               toast.type === "success"
                 ? "bg-emerald-50 border-emerald-200 text-emerald-800"
                 : "bg-red-50 border-red-200 text-red-800"
             }`}
           >
-            <span className="text-sm font-semibold">{toast.message}</span>
+            <div className={`w-2 h-2 rounded-full ${toast.type === "success" ? "bg-emerald-500 animate-ping" : "bg-red-500"}`} />
+            <span className="text-xs font-semibold">{toast.message}</span>
             <button
               onClick={() => setToast({ show: false, type: "", message: "" })}
-              className="text-xs font-bold hover:underline cursor-pointer"
+              className="text-xs font-bold hover:text-slate-900 cursor-pointer ml-1"
             >
               ✕
             </button>
@@ -958,36 +997,48 @@ export default function PlacementReadinessScorePage() {
         )}
 
         {/* Hero Section */}
-        <div className="flex flex-col gap-2 items-center text-center mb-2 print:mb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-orange-600">Career tool</p>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
+        <div className="flex flex-col gap-2 items-center text-center mb-1 print:mb-4">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200/60 text-[10px] font-bold uppercase tracking-wider text-orange-700">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4.67 9.88l-3.32-3.32M12 21v-6m-4 6h8" />
+            </svg>
+            <span>Career Readiness Assessment</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-950 mt-1">
             Placement Readiness Score
           </h1>
-          <p className="text-slate-500 text-base max-w-2xl">
-            Evaluate your placement preparation with an offline placement readiness assessment including resume, DSA, projects, aptitude and communication skills.
+          <p className="text-slate-500 text-sm max-w-2xl mt-1 leading-relaxed">
+            Evaluate your preparedness through AI resume scanning, automated GitHub profile analysis, core subject diagnostic scoring, and communication maps.
           </p>
         </div>
 
         {/* Action Controls for session */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm print:hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white border border-slate-200/80 rounded-2xl shadow-sm print:hidden">
           <div className="flex items-center gap-2">
             <button
               onClick={handleReset}
-              className="px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 shadow-sm transition hover:-translate-y-px cursor-pointer"
+              className="px-3.5 py-2 text-xs font-bold rounded-xl text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition active:scale-95 cursor-pointer flex items-center gap-1.5"
             >
-              Reset Session
+              <svg className="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <span>Reset Assessment</span>
             </button>
             {hasBackup && (
               <button
                 onClick={handleRestoreSession}
-                className="px-3.5 py-2 text-xs font-semibold rounded-xl text-orange-700 bg-orange-50 hover:bg-orange-100 border border-orange-200 shadow-sm transition hover:-translate-y-px cursor-pointer"
+                className="px-3.5 py-2 text-xs font-bold rounded-xl text-orange-700 bg-orange-50 hover:bg-orange-100/75 border border-orange-200/60 transition active:scale-95 cursor-pointer flex items-center gap-1.5 group"
               >
-                Restore Previous Session
+                <svg className="w-3.5 h-3.5 text-orange-600 group-hover:rotate-[-180deg] transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89H18.75" />
+                </svg>
+                <span>Undo Reset</span>
               </button>
             )}
           </div>
-          <div className="text-xs text-slate-400 font-medium italic">
-            Saved automatically in local browser storage
+          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>Saved automatically client-side</span>
           </div>
         </div>
 
@@ -997,1055 +1048,869 @@ export default function PlacementReadinessScorePage() {
           {/* LEFT: INPUTS (lg:col-span-5) */}
           <div className="lg:col-span-5 flex flex-col gap-6 print:hidden">
             
-            {/* Unified AI Profile Analyzer Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
+            {/* Unified Input Card */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
               <div className="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-orange-600">AI Profile Analyzer</span>
-                  <h2 className="text-base font-bold text-slate-950 mt-0.5">Resume & Portfolio Scan</h2>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-orange-600">Assessment Wizard</span>
+                  <h2 className="text-base font-black text-slate-950 mt-0.5">Input Parameters</h2>
                 </div>
-                <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-black uppercase rounded-full">Groq AI</span>
-              </div>
-
-              {/* Tab Selector: Resume vs GitHub */}
-              <div className="flex bg-slate-50 p-1.5 rounded-xl text-xs font-bold text-slate-500 mb-4 border border-slate-200/60">
-                <button
-                  type="button"
-                  onClick={() => setActiveProfilerTab("resume")}
-                  className={`flex-1 py-1.5 rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeProfilerTab === "resume" ? "bg-white text-slate-950 shadow-sm" : "hover:text-slate-800"
-                  }`}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span>Resume Scanner</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveProfilerTab("github")}
-                  className={`flex-1 py-1.5 rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeProfilerTab === "github" ? "bg-white text-slate-950 shadow-sm" : "hover:text-slate-800"
-                  }`}
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                  <span>GitHub Analyzer</span>
-                </button>
-              </div>
-
-              {/* Resume Scanner Content */}
-              {activeProfilerTab === "resume" && (
-                <div className="flex flex-col gap-3">
-                  <div className="flex border-b border-slate-200 text-xs font-semibold text-slate-500 mb-2">
+                <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 p-1 rounded-xl">
+                  {["profile", "tech", "soft"].map((t) => (
                     <button
-                      onClick={() => setScanMode("pdf")}
-                      className={`flex-1 pb-2 border-b-2 transition ${
-                        scanMode === "pdf" ? "border-orange-500 text-orange-600" : "border-transparent hover:text-slate-800"
+                      key={t}
+                      type="button"
+                      onClick={() => setActiveInputTab(t)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase transition-all duration-150 cursor-pointer ${
+                        activeInputTab === t ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-950"
                       }`}
                     >
-                      PDF Upload
+                      {t === "profile" ? "Scan" : t === "tech" ? "Tech" : "Soft"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tab 1: AI Scanner & Profile Scanner */}
+              {activeInputTab === "profile" && (
+                <div className="flex flex-col gap-4">
+                  <div className="p-3 bg-orange-50/40 rounded-2xl border border-orange-100/60 mb-1">
+                    <p className="text-[11px] text-orange-800 leading-normal">
+                      🚀 <strong>Smart Auto-Fill:</strong> Upload your resume PDF or write a GitHub username to automatically analyze and evaluate your scores.
+                    </p>
+                  </div>
+
+                  {/* Profiler tab toggle: Resume vs GitHub */}
+                  <div className="flex bg-slate-50 border border-slate-200/60 p-1 rounded-xl text-xs font-bold text-slate-500">
+                    <button
+                      type="button"
+                      onClick={() => setActiveProfilerTab("resume")}
+                      className={`flex-1 py-1.5 rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
+                        activeProfilerTab === "resume" ? "bg-white text-slate-950 shadow-sm border border-slate-200/40 font-black" : "hover:text-slate-800"
+                      }`}
+                    >
+                      <svg className="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <span>Resume Scanner</span>
                     </button>
                     <button
-                      onClick={() => setScanMode("text")}
-                      className={`flex-1 pb-2 border-b-2 transition ${
-                        scanMode === "text" ? "border-orange-500 text-orange-600" : "border-transparent hover:text-slate-800"
+                      type="button"
+                      onClick={() => setActiveProfilerTab("github")}
+                      className={`flex-1 py-1.5 rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
+                        activeProfilerTab === "github" ? "bg-white text-slate-950 shadow-sm border border-slate-200/40 font-black" : "hover:text-slate-800"
                       }`}
                     >
-                      Paste Text
+                      <svg className="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                      <span>GitHub Portfolio</span>
                     </button>
                   </div>
 
-                  {scanMode === "pdf" ? (
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center cursor-pointer hover:bg-slate-50 transition-all duration-150 flex flex-col items-center justify-center min-h-[100px] select-none"
-                    >
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept=".pdf"
-                        onChange={(e) => setUploadedFile(e.target.files?.[0] || null)}
-                        className="hidden"
-                      />
-                      <svg className="w-8 h-8 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      {uploadedFile ? (
-                        <p className="text-xs font-bold text-slate-800 truncate max-w-xs">{uploadedFile.name}</p>
+                  {/* Resume scanner options */}
+                  {activeProfilerTab === "resume" && (
+                    <div className="flex flex-col gap-3">
+                      <div className="flex border-b border-slate-100 text-xs font-semibold text-slate-400">
+                        <button
+                          type="button"
+                          onClick={() => setScanMode("pdf")}
+                          className={`flex-1 pb-2 border-b-2 transition ${
+                            scanMode === "pdf" ? "border-orange-500 text-orange-600 font-extrabold" : "border-transparent hover:text-slate-600"
+                          }`}
+                        >
+                          Upload PDF
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setScanMode("text")}
+                          className={`flex-1 pb-2 border-b-2 transition ${
+                            scanMode === "text" ? "border-orange-500 text-orange-600 font-extrabold" : "border-transparent hover:text-slate-600"
+                          }`}
+                        >
+                          Paste Resume Text
+                        </button>
+                      </div>
+
+                      {scanMode === "pdf" ? (
+                        <div
+                          onClick={() => fileInputRef.current?.click()}
+                          className="border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center cursor-pointer hover:bg-slate-50/50 hover:border-slate-300 transition-all duration-150 flex flex-col items-center justify-center min-h-[110px] select-none group"
+                        >
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept=".pdf"
+                            onChange={(e) => setUploadedFile(e.target.files?.[0] || null)}
+                            className="hidden"
+                          />
+                          <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center group-hover:scale-110 transition duration-150 mb-2">
+                            <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                          </div>
+                          {uploadedFile ? (
+                            <p className="text-xs font-bold text-slate-800 truncate max-w-[240px] bg-slate-100 px-3 py-1 rounded-lg">
+                              📄 {uploadedFile.name}
+                            </p>
+                          ) : (
+                            <p className="text-xs text-slate-500">Drag & drop or click to upload PDF resume</p>
+                          )}
+                        </div>
                       ) : (
-                        <p className="text-xs text-slate-500">Drag & drop or click to upload your PDF resume</p>
+                        <textarea
+                          placeholder="Paste work experience, skills, projects, education details..."
+                          value={manualText}
+                          onChange={(e) => setManualText(e.target.value)}
+                          className="w-full min-h-[110px] p-3 border border-slate-200 rounded-2xl bg-slate-50/20 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:bg-white placeholder:text-slate-400"
+                        />
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={handleScanResume}
+                        disabled={isScanning}
+                        className="w-full py-2.5 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow disabled:bg-slate-400 cursor-pointer"
+                      >
+                        {isScanning ? (
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                            <span>{scanStatus}</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4 text-slate-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                            <span>Analyze Resume with Groq AI</span>
+                          </>
+                        )}
+                      </button>
+
+                      {aiResults && (
+                        <div className="mt-1 p-3 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-xs shrink-0 select-none">
+                            {aiResults.rating}
+                          </div>
+                          <div className="flex-1 flex flex-col gap-0.5">
+                            <span className="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider">AI Resume Synchronized</span>
+                            <p className="text-[11px] text-emerald-900 leading-tight">
+                              Resume evaluated at <strong>{aiResults.rating}/10</strong>. Strengths and action points loaded.
+                            </p>
+                          </div>
+                        </div>
                       )}
                     </div>
-                  ) : (
-                    <textarea
-                      placeholder="Paste your resume content (work history, skills, projects) here..."
-                      value={manualText}
-                      onChange={(e) => setManualText(e.target.value)}
-                      className="w-full min-h-[100px] p-3 border border-slate-300 rounded-xl bg-white text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 placeholder:text-slate-400"
-                    />
                   )}
 
-                  <button
-                    onClick={handleScanResume}
-                    disabled={isScanning}
-                    className="w-full py-2.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow disabled:bg-slate-400 cursor-pointer"
-                  >
-                    {isScanning ? (
-                      <>
-                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-                        <span>{scanStatus}</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4 text-slate-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                        </svg>
-                        <span>Analyze Resume with Groq AI</span>
-                      </>
-                    )}
-                  </button>
+                  {/* GitHub scanner options */}
+                  {activeProfilerTab === "github" && (
+                    <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="git-user" className="text-xs font-bold text-slate-700">GitHub Username</label>
+                        <input
+                          id="git-user"
+                          type="text"
+                          placeholder="e.g. torvalds"
+                          value={githubUsername}
+                          onChange={(e) => setGithubUsername(e.target.value)}
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50/20 px-3.5 py-2.5 text-xs text-slate-950 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white placeholder:text-slate-400 font-semibold"
+                        />
+                      </div>
 
-                  {aiResults && (
-                    <div className="mt-2 p-3 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center font-black text-xs shrink-0 select-none">
-                        {aiResults.rating}
-                      </div>
-                      <div className="flex-1 flex flex-col gap-0.5">
-                        <span className="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider">AI Evaluation Sync</span>
-                        <p className="text-[11px] text-emerald-900 leading-tight">
-                          Resume rated <strong>{aiResults.rating}/10</strong>. Insights mapped into report.
-                        </p>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={handleScanGithub}
+                        disabled={isScanningGithub}
+                        className="w-full py-2.5 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow disabled:bg-slate-400 cursor-pointer"
+                      >
+                        {isScanningGithub ? (
+                          <>
+                            <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
+                            <span>{scanGithubStatus}</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4 text-slate-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                            <span>Analyze GitHub Portfolio</span>
+                          </>
+                        )}
+                      </button>
+
+                      {githubResults && (
+                        <div className="mt-1 p-3 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-black text-xs shrink-0 select-none uppercase">
+                            {githubResults.githubRating.slice(0, 3)}
+                          </div>
+                          <div className="flex-1 flex flex-col gap-0.5">
+                            <span className="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider">AI Portfolio Synchronized</span>
+                            <p className="text-[11px] text-emerald-900 leading-tight">
+                              Projects score: <strong>{githubResults.projectRating}/10</strong> | DSA: <strong>{githubResults.dsaRating}/10</strong>.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               )}
 
-              {/* GitHub Analyzer Content */}
-              {activeProfilerTab === "github" && (
-                <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="git-user" className="text-xs font-semibold text-slate-700">GitHub Profile Username</label>
-                    <input
-                      id="git-user"
-                      type="text"
-                      placeholder="e.g. torvalds"
-                      value={githubUsername}
-                      onChange={(e) => setGithubUsername(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleScanGithub}
-                    disabled={isScanningGithub}
-                    className="w-full py-2.5 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow disabled:bg-slate-400 cursor-pointer"
-                  >
-                    {isScanningGithub ? (
-                      <>
-                        <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
-                        <span>{scanGithubStatus}</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4 text-slate-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                        <span>Analyze GitHub Portfolio</span>
-                      </>
-                    )}
-                  </button>
-
-                  {githubResults && (
-                    <div className="mt-2 p-3 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center font-black text-xs shrink-0 select-none uppercase">
-                        {githubResults.githubRating.slice(0, 3)}
+              {/* Tab 2: Technical Competencies */}
+              {activeInputTab === "tech" && (
+                <div className="flex flex-col gap-4">
+                  {[
+                    { key: "dsa", label: "DSA Skill Level", desc: "LeetCode solves, graph & tree structures, complexity analysis" },
+                    { key: "dev", label: "Development Skill", desc: "APIs, database engines, deployment tools, full-stack frameworks" },
+                    { key: "projects", label: "Projects Complexity", desc: "Operational hosted URLs, real-world utility, user bases" },
+                    { key: "core", label: "Core CS Knowledge", desc: "OS fundamentals, networking packets, DBMS structures, queries" }
+                  ].map((skill) => (
+                    <div key={skill.key} className="flex flex-col gap-1">
+                      <div className="flex justify-between items-center text-slate-800">
+                        <label htmlFor={skill.key} className="text-xs font-bold">{skill.label}</label>
+                        <span className="text-[10px] font-black bg-orange-100/80 text-orange-700 px-2 py-0.5 rounded-full select-none">
+                          {inputs[skill.key]}/10
+                        </span>
                       </div>
-                      <div className="flex-1 flex flex-col gap-0.5">
-                        <span className="text-[10px] font-extrabold uppercase text-emerald-700 tracking-wider">AI Portfolio Sync</span>
-                        <p className="text-[11px] text-emerald-900 leading-tight">
-                          Portfolio: <strong className="capitalize">{githubResults.githubRating}</strong> | Projects: <strong>{githubResults.projectRating}/10</strong>
-                        </p>
-                        <p className="text-[10px] text-emerald-800 leading-normal mt-0.5">
-                          Synced: DSA: <strong>{githubResults.dsaRating || inputs.dsa}/10</strong> | Dev: <strong>{githubResults.devRating || inputs.dev}/10</strong>
-                        </p>
+                      <input
+                        id={skill.key}
+                        type="range"
+                        min="0"
+                        max="10"
+                        step="1"
+                        value={inputs[skill.key]}
+                        onChange={(e) => handleInputChange(skill.key, parseInt(e.target.value))}
+                        className="premium-slider w-full cursor-pointer py-1"
+                      />
+                      <span className="text-[9.5px] text-slate-400 font-medium leading-none mt-0.5">{skill.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 3: Soft Skills & Experience */}
+              {activeInputTab === "soft" && (
+                <div className="flex flex-col gap-4">
+                  {[
+                    { key: "resume", label: "Resume Design", desc: "ATS standard layouts, result verbs, quantitative metrics" },
+                    { key: "comm", label: "Communication Skill", desc: "STAR framework responses, structural mock pacing, clarity" },
+                    { key: "apt", label: "Aptitude & Speed", desc: "Math sets, quantitative logic tests, timed checks" }
+                  ].map((skill) => (
+                    <div key={skill.key} className="flex flex-col gap-1">
+                      <div className="flex justify-between items-center text-slate-800">
+                        <label htmlFor={skill.key} className="text-xs font-bold">{skill.label}</label>
+                        <span className="text-[10px] font-black bg-orange-100/80 text-orange-700 px-2.5 py-0.5 rounded-full select-none">
+                          {inputs[skill.key]}/10
+                        </span>
+                      </div>
+                      <input
+                        id={skill.key}
+                        type="range"
+                        min="0"
+                        max="10"
+                        step="1"
+                        value={inputs[skill.key]}
+                        onChange={(e) => handleInputChange(skill.key, parseInt(e.target.value))}
+                        className="premium-slider w-full cursor-pointer py-1"
+                      />
+                      <span className="text-[9.5px] text-slate-400 font-medium leading-none mt-0.5">{skill.desc}</span>
+                    </div>
+                  ))}
+
+                  <div className="border-t border-slate-100 my-1 pt-3 flex flex-col gap-3">
+                    {/* Internship Selector */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-bold text-slate-700">Internship Experience</span>
+                      <div className="grid grid-cols-3 gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200/50">
+                        {["none", "small", "good"].map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => handleInputChange("internship", opt)}
+                            className={`py-1.5 rounded-lg text-[10px] font-black uppercase transition-all duration-150 cursor-pointer text-center ${
+                              inputs.internship === opt
+                                ? "bg-orange-600 text-white shadow-sm font-bold"
+                                : "text-slate-500 hover:text-slate-900"
+                            }`}
+                          >
+                            {opt === "none" ? "None" : opt === "small" ? "1-3 Months" : "3+ Months"}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                  )}
+
+                    {/* LinkedIn Selector */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-bold text-slate-700">LinkedIn Status</span>
+                      <div className="grid grid-cols-3 gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200/50">
+                        {["not_created", "basic", "optimized"].map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => handleInputChange("linkedin", opt)}
+                            className={`py-1.5 rounded-lg text-[10px] font-black uppercase transition-all duration-150 cursor-pointer text-center ${
+                              inputs.linkedin === opt
+                                ? "bg-orange-600 text-white shadow-sm font-bold"
+                                : "text-slate-500 hover:text-slate-900"
+                            }`}
+                          >
+                            {opt === "not_created" ? "None" : opt === "basic" ? "Basic" : "Optimized"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* GitHub Selector */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-xs font-bold text-slate-700">GitHub Presence</span>
+                      <div className="grid grid-cols-3 gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200/50">
+                        {["empty", "average", "strong"].map((opt) => (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => handleInputChange("github", opt)}
+                            className={`py-1.5 rounded-lg text-[10px] font-black uppercase transition-all duration-150 cursor-pointer text-center ${
+                              inputs.github === opt
+                                ? "bg-orange-600 text-white shadow-sm font-bold"
+                                : "text-slate-500 hover:text-slate-900"
+                            }`}
+                          >
+                            {opt === "empty" ? "Empty" : opt === "average" ? "Average" : "Strong"}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Core Tech Skills Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="border-b border-slate-100 pb-3 mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-orange-600">01 / Technical Foundations</span>
-                <h2 className="text-lg font-bold text-slate-950 mt-0.5">Core Technical Skills</h2>
-              </div>
-              
-              <div className="flex flex-col gap-5">
-                {/* DSA Skill */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="dsa" className="text-sm font-semibold text-slate-800">DSA Skill</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.dsa}/10</span>
-                  </div>
-                  <input
-                    id="dsa"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.dsa}
-                    onChange={(e) => handleInputChange("dsa", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">LeetCode problems solved, patterns, graphs, trees</span>
-                </div>
-
-                {/* Dev Skill */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="dev" className="text-sm font-semibold text-slate-800">Development Skill</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.dev}/10</span>
-                  </div>
-                  <input
-                    id="dev"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.dev}
-                    onChange={(e) => handleInputChange("dev", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">Frontend, Backend, APIs, databases, hosting, git</span>
-                </div>
-
-                {/* Projects Quality */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="projects" className="text-sm font-semibold text-slate-800">Projects Quality</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.projects}/10</span>
-                  </div>
-                  <input
-                    id="projects"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.projects}
-                    onChange={(e) => handleInputChange("projects", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">Complexity, live links, README docs, real users</span>
-                </div>
-
-                {/* Core CS Subjects */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="core" className="text-sm font-semibold text-slate-800">Core CS Knowledge</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.core}/10</span>
-                  </div>
-                  <input
-                    id="core"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.core}
-                    onChange={(e) => handleInputChange("core", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">Operating Systems, DBMS, SQL, Computer Networks</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Professional & Soft Skills Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="border-b border-slate-100 pb-3 mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-orange-600">02 / Profile & Soft Skills</span>
-                <h2 className="text-lg font-bold text-slate-950 mt-0.5">Professional & Communication</h2>
-              </div>
-              
-              <div className="flex flex-col gap-5">
-                {/* Resume Quality */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="resume" className="text-sm font-semibold text-slate-800">Resume Quality</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.resume}/10</span>
-                  </div>
-                  <input
-                    id="resume"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.resume}
-                    onChange={(e) => handleInputChange("resume", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">
-                    Structure, metric-driven bullet points, ATS formatting
-                  </span>
-                </div>
-
-                {/* Communication Skill */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="comm" className="text-sm font-semibold text-slate-800">Communication Skill</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.comm}/10</span>
-                  </div>
-                  <input
-                    id="comm"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.comm}
-                    onChange={(e) => handleInputChange("comm", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">Clarity, structuring (STAR), behavioral checks</span>
-                </div>
-
-                {/* Aptitude Prep */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between items-center">
-                    <label htmlFor="apt" className="text-sm font-semibold text-slate-800">Aptitude Preparation</label>
-                    <span className="text-xs font-black bg-orange-100 text-orange-700 px-2.5 py-0.5 rounded-full">{inputs.apt}/10</span>
-                  </div>
-                  <input
-                    id="apt"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    value={inputs.apt}
-                    onChange={(e) => handleInputChange("apt", parseInt(e.target.value))}
-                    className="premium-slider w-full"
-                  />
-                  <span className="text-[10.5px] text-slate-400 font-medium">Quantitative logic, math, reasoning speed</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Experience & Presence Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="border-b border-slate-100 pb-3 mb-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-orange-600">03 / Experience & Presence</span>
-                <h2 className="text-lg font-bold text-slate-950 mt-0.5">Online Profile & Internships</h2>
-              </div>
-              
-              <div className="flex flex-col gap-4">
-                {/* Internship Experience */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-800">Internship Experience</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {["none", "small", "good"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => handleInputChange("internship", opt)}
-                        className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all duration-150 cursor-pointer ${
-                          inputs.internship === opt
-                            ? "bg-orange-600 border-orange-600 text-white shadow-sm shadow-orange-200"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-orange-50 hover:border-orange-200"
-                        }`}
-                      >
-                        {opt === "none" ? "None" : opt === "small" ? "Small (1-3m)" : "Good (3m+)"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* LinkedIn Profile */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-800">LinkedIn Profile</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {["not_created", "basic", "optimized"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => handleInputChange("linkedin", opt)}
-                        className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all duration-150 cursor-pointer ${
-                          inputs.linkedin === opt
-                            ? "bg-orange-600 border-orange-600 text-white shadow-sm shadow-orange-200"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-orange-50 hover:border-orange-200"
-                        }`}
-                      >
-                        {opt === "not_created" ? "Not Created" : opt === "basic" ? "Basic" : "Optimized"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* GitHub Portfolio */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm font-semibold text-slate-800">GitHub Portfolio</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {["empty", "average", "strong"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => handleInputChange("github", opt)}
-                        className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all duration-150 cursor-pointer ${
-                          inputs.github === opt
-                            ? "bg-orange-600 border-orange-600 text-white shadow-sm shadow-orange-200"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-orange-50 hover:border-orange-200"
-                        }`}
-                      >
-                        {opt === "empty" ? "Empty" : opt === "average" ? "Average" : "Strong"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
 
           {/* RIGHT: RESULTS DASHBOARD (lg:col-span-7) */}
           <div className="lg:col-span-7 flex flex-col gap-6 results-panel">
             
-            {/* Main Score Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center">
-              
-              {/* Header inside printing mode */}
-              <div className="hidden print:block mb-4 text-center">
-                <h1 className="text-2xl font-bold text-slate-900">Placement Readiness Report</h1>
-                <p className="text-xs text-slate-500">Generated on {new Date().toLocaleDateString()} via BoringTools</p>
+            {/* Unified Results Card */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+              <div className="border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-orange-600">Evaluation Dashboard</span>
+                  <h2 className="text-base font-black text-slate-950 mt-0.5">Diagnostic Report</h2>
+                </div>
+                <div className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 p-1 rounded-xl print:hidden">
+                  {[
+                    { key: "insights", label: "Score" },
+                    { key: "mapping", label: "Skills Map" },
+                    { key: "roadmap", label: "Action Plan" }
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => setActiveResultsTab(tab.key)}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase transition-all duration-150 cursor-pointer ${
+                        activeResultsTab === tab.key ? "bg-slate-950 text-white shadow-sm" : "text-slate-500 hover:text-slate-950"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-6 justify-center w-full">
-                
-                {/* Circular indicator */}
-                <div className="relative flex items-center justify-center">
-                  <svg className="w-40 h-40 transform -rotate-90">
-                    {/* Background track circle */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r={strokeRadius}
-                      className="stroke-slate-100"
-                      strokeWidth="12"
-                      fill="transparent"
-                    />
-                    {/* Colored overlay circle */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r={strokeRadius}
-                      className={`transition-all duration-500 ease-out ${tierDetails.ringClass}`}
-                      strokeWidth="12"
-                      fill="transparent"
-                      strokeDasharray={strokeCircumference}
-                      strokeDashoffset={strokeOffset}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="absolute flex flex-col items-center justify-center">
-                    <span className="text-3xl font-extrabold text-slate-900 tracking-tighter tabular-nums">
-                      {score}%
-                    </span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mt-0.5">
-                      Ready
-                    </span>
-                  </div>
-                </div>
+              {/* Tab 1: Score & Insights */}
+              {(activeResultsTab === "insights" || typeof window === "undefined") && (
+                <div className="flex flex-col gap-5">
+                  <div className="flex flex-col md:flex-row items-center gap-6 justify-center w-full bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
+                    {/* circular indicator */}
+                    <div className="relative flex items-center justify-center shrink-0">
+                      <svg className="w-36 h-36 transform -rotate-90">
+                        <circle
+                          cx="72"
+                          cy="72"
+                          r="58"
+                          className="stroke-slate-100"
+                          strokeWidth="10"
+                          fill="transparent"
+                        />
+                        <circle
+                          cx="72"
+                          cy="72"
+                          r="58"
+                          className={`transition-all duration-500 ease-out ${tierDetails.ringClass}`}
+                          strokeWidth="10"
+                          fill="transparent"
+                          strokeDasharray={2 * Math.PI * 58}
+                          strokeDashoffset={2 * Math.PI * 58 - (score / 100) * 2 * Math.PI * 58}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute flex flex-col items-center justify-center">
+                        <span className="text-2xl font-black text-slate-950 tracking-tighter tabular-nums leading-none">
+                          {score}%
+                        </span>
+                        <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400 mt-1">
+                          Ready
+                        </span>
+                      </div>
+                    </div>
 
-                {/* Score Status info */}
-                <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-2.5">
-                  <div>
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest block">Readiness Tier</span>
-                    <div className="flex items-center gap-2 mt-1 justify-center md:justify-start">
-                      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${tierDetails.colorClass}`}>
-                        {tierDetails.label}
-                      </span>
+                    {/* score info text */}
+                    <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block leading-none">Preparation Tier</span>
+                        <div className="flex items-center gap-2 mt-1.5 justify-center md:justify-start">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border select-none ${tierDetails.colorClass}`}>
+                            {tierDetails.label}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-slate-500 text-xs leading-relaxed max-w-sm mt-1">
+                        {tierDetails.desc}
+                      </p>
                     </div>
                   </div>
-                  <p className="text-slate-600 text-sm leading-relaxed max-w-sm">
-                    {tierDetails.desc}
-                  </p>
+
+                  {/* Highlights section */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Strengths */}
+                    <div className="p-4 bg-emerald-50/20 border border-emerald-100/60 rounded-2xl flex flex-col">
+                      <h3 className="text-xs font-black text-emerald-800 flex items-center gap-1.5 mb-2.5">
+                        <span className="w-5 h-5 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">✓</span>
+                        Core Strengths
+                      </h3>
+                      {analysis.strengths.length > 0 ? (
+                        <div className="flex flex-col gap-2.5">
+                          {analysis.strengths.slice(0, 3).map((item, idx) => (
+                            <div key={idx} className="flex gap-2">
+                              <span className="text-[10px] text-emerald-500 font-bold shrink-0 mt-0.5">•</span>
+                              <div className="flex flex-col">
+                                <span className="text-[11px] font-bold text-slate-800">{item.label}</span>
+                                <span className="text-[10px] text-slate-500 leading-normal">{item.desc}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[10.5px] text-slate-400 italic">Modify your inputs to display identified strengths.</p>
+                      )}
+                    </div>
+
+                    {/* Weaknesses */}
+                    <div className="p-4 bg-rose-50/20 border border-rose-100/60 rounded-2xl flex flex-col">
+                      <h3 className="text-xs font-black text-rose-800 flex items-center gap-1.5 mb-2.5">
+                        <span className="w-5 h-5 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-[10px] font-bold">!</span>
+                        Focus Areas
+                      </h3>
+                      {analysis.weaknesses.length > 0 ? (
+                        <div className="flex flex-col gap-2.5">
+                          {analysis.weaknesses.slice(0, 3).map((item, idx) => (
+                            <div key={idx} className="flex gap-2">
+                              <span className="text-[10px] text-rose-500 font-bold shrink-0 mt-0.5">•</span>
+                              <div className="flex flex-col">
+                                <span className="text-[11px] font-bold text-slate-800">{item.label}</span>
+                                <span className="text-[10px] text-slate-500 leading-normal">{item.desc}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[10.5px] text-slate-400 italic">Great job! No major weak preparation areas found.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Highlights key value tags */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+                    <div>
+                      <span className="text-[9px] font-extrabold uppercase text-slate-400 block mb-1">Highest Scores</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {sortedSkillList.highest.map((item, idx) => (
+                          <div key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white border border-slate-200/60 font-semibold text-[10px] text-slate-700">
+                            <span>{item.name}</span>
+                            <span className="font-black text-emerald-600">{item.display}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[9px] font-extrabold uppercase text-slate-400 block mb-1">Room to Improve</span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {sortedSkillList.lowest.map((item, idx) => (
+                          <div key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white border border-slate-200/60 font-semibold text-[10px] text-slate-700">
+                            <span>{item.name}</span>
+                            <span className="font-black text-amber-600">{item.display}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
 
-            {/* Visuals: Radar Chart + Readiness Gauge Meter */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Skill Map (Radar Chart) */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
-                <div className="border-b border-slate-100 pb-2.5 mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-800">Skill Map (Radar Chart)</h3>
-                  <span className="text-[10.5px] font-bold text-slate-400">Scale: 0 - 10</span>
-                </div>
-                
-                <div className="flex-1 flex justify-center items-center py-2 bg-slate-50 rounded-xl border border-slate-100 overflow-hidden min-h-[300px]">
-                  <svg viewBox="0 0 400 400" className="w-full max-w-[280px] h-auto select-none">
-                    <defs>
-                      <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor={tierDetails.accentColor} stopOpacity="0.25" />
-                        <stop offset="100%" stopColor={tierDetails.accentColor} stopOpacity="0" />
-                      </radialGradient>
-                    </defs>
+              {/* Tab 2: Skill Mapping (Radar Chart + Progress bars) */}
+              {activeResultsTab === "mapping" && (
+                <div className="flex flex-col gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    {/* SVG Radar Chart (col-span-5) */}
+                    <div className="md:col-span-5 flex justify-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                      <svg viewBox="0 0 400 400" className="w-full max-w-[210px] h-auto select-none">
+                        <defs>
+                          <radialGradient id="radar-glow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor={tierDetails.accentColor} stopOpacity="0.25" />
+                            <stop offset="100%" stopColor={tierDetails.accentColor} stopOpacity="0" />
+                          </radialGradient>
+                        </defs>
 
-                    {/* Circular radial glow background */}
-                    <circle cx="200" cy="200" r="135" fill="url(#radar-glow)" />
+                        {/* Circular radial background */}
+                        <circle cx="200" cy="200" r="135" fill="url(#radar-glow)" />
 
-                    {/* Concentric grid lines (Polygons) */}
-                    {[2, 4, 6, 8, 10].map((level) => {
-                      const points = Array.from({ length: 7 }, (_, idx) => {
-                        const coord = getRadarCoords(idx, level);
-                        return `${coord.x},${coord.y}`;
-                      }).join(" ");
-                      return (
-                        <g key={level}>
-                          <polygon
-                            points={points}
-                            className="stroke-slate-200/90 fill-none"
-                            strokeWidth={level === 10 ? "1.5" : "1"}
-                            strokeDasharray={level === 10 ? "none" : "3,3"}
-                          />
-                          {/* Scale numbers along the vertical axis */}
-                          <text
-                            x="200"
-                            y={200 - (level / 10) * 135 - 3}
-                            textAnchor="middle"
-                            className="text-[9px] font-bold fill-slate-400/90"
-                          >
-                            {level}
-                          </text>
-                        </g>
-                      );
-                    })}
+                        {/* concentric grids */}
+                        {[2, 4, 6, 8, 10].map((level) => {
+                          const points = Array.from({ length: 7 }, (_, idx) => {
+                            const coord = getRadarCoords(idx, level);
+                            return `${coord.x},${coord.y}`;
+                          }).join(" ");
+                          return (
+                            <g key={level}>
+                              <polygon
+                                points={points}
+                                className="stroke-slate-200/70 fill-none"
+                                strokeWidth={level === 10 ? "1.5" : "1"}
+                                strokeDasharray={level === 10 ? "none" : "2,2"}
+                              />
+                            </g>
+                          );
+                        })}
 
-                    {/* Radial axis lines */}
-                    {Array.from({ length: 7 }).map((_, idx) => {
-                      const outer = getRadarCoords(idx, 10);
-                      return (
-                        <line
-                          key={idx}
-                          x1="200"
-                          y1="200"
-                          x2={outer.x}
-                          y2={outer.y}
-                          className="stroke-slate-200"
-                          strokeWidth="1"
-                        />
-                      );
-                    })}
+                        {/* radial axes */}
+                        {Array.from({ length: 7 }).map((_, idx) => {
+                          const outer = getRadarCoords(idx, 10);
+                          return (
+                            <line
+                              key={idx}
+                              x1="200"
+                              y1="200"
+                              x2={outer.x}
+                              y2={outer.y}
+                              className="stroke-slate-200"
+                              strokeWidth="1"
+                            />
+                          );
+                        })}
 
-                    {/* Polygon mapping user's actual scores */}
-                    {(() => {
-                      const points = radarSkills.map((s, idx) => {
-                        const val = inputs[s.key];
-                        const coord = getRadarCoords(idx, val);
-                        return `${coord.x},${coord.y}`;
-                      }).join(" ");
-                      return (
-                        <g>
-                          {/* Main area fill */}
-                          <polygon
-                            points={points}
-                            fill={`${tierDetails.accentColor}28`}
-                            stroke={tierDetails.accentColor}
-                            strokeWidth="3.5"
-                            strokeLinejoin="round"
-                          />
-                          {/* Outer glowing vertices */}
-                          {radarSkills.map((s, idx) => {
+                        {/* score polygon */}
+                        {(() => {
+                          const points = radarSkills.map((s, idx) => {
                             const val = inputs[s.key];
                             const coord = getRadarCoords(idx, val);
-                            return (
-                              <g key={s.key}>
-                                <circle
-                                  cx={coord.x}
-                                  cy={coord.y}
-                                  r="5"
-                                  fill={tierDetails.accentColor}
-                                />
-                                <circle
-                                  cx={coord.x}
-                                  cy={coord.y}
-                                  r="2"
-                                  fill="#ffffff"
-                                />
-                              </g>
-                            );
-                          })}
-                        </g>
-                      );
-                    })()}
+                            return `${coord.x},${coord.y}`;
+                          }).join(" ");
+                          return (
+                            <g>
+                              <polygon
+                                points={points}
+                                fill={`${tierDetails.accentColor}24`}
+                                stroke={tierDetails.accentColor}
+                                strokeWidth="3"
+                                strokeLinejoin="round"
+                              />
+                              {radarSkills.map((s, idx) => {
+                                const val = inputs[s.key];
+                                const coord = getRadarCoords(idx, val);
+                                return (
+                                  <circle
+                                    key={s.key}
+                                    cx={coord.x}
+                                    cy={coord.y}
+                                    r="4.5"
+                                    fill={tierDetails.accentColor}
+                                    stroke="#ffffff"
+                                    strokeWidth="1.5"
+                                  />
+                                );
+                              })}
+                            </g>
+                          );
+                        })()}
 
-                    {/* Premium Label Badges */}
-                    {radarSkills.map((skill, idx) => {
-                      const angle = (idx * 2 * Math.PI) / 7 - Math.PI / 2;
-                      const cos = Math.cos(angle);
-                      const sin = Math.sin(angle);
-                      
-                      const labelRadius = 135 + 24;
-                      const lx = 200 + labelRadius * cos;
-                      const ly = 200 + labelRadius * sin;
-                      
-                      const w = labelWidths[skill.key] || 60;
-                      const h = 20;
-                      const rx = lx - w / 2;
-                      const ry = ly - h / 2;
+                        {/* axis label badges */}
+                        {radarSkills.map((skill, idx) => {
+                          const angle = (idx * 2 * Math.PI) / 7 - Math.PI / 2;
+                          const cos = Math.cos(angle);
+                          const sin = Math.sin(angle);
+                          
+                          const labelRadius = 135 + 24;
+                          const lx = 200 + labelRadius * cos;
+                          const ly = 200 + labelRadius * sin;
+                          
+                          const w = labelWidths[skill.key] || 60;
+                          const h = 18;
+                          const rx = lx - w / 2;
+                          const ry = ly - h / 2;
+                          
+                          return (
+                            <g key={skill.key}>
+                              <rect
+                                x={rx}
+                                y={ry}
+                                width={w}
+                                height={h}
+                                rx="5"
+                                fill="#ffffff"
+                                stroke="#e2e8f0"
+                                strokeWidth="1"
+                                className="shadow-sm"
+                              />
+                              <text
+                                x={lx}
+                                y={ly}
+                                textAnchor="middle"
+                                dy="3px"
+                                className="text-[8.5px] font-extrabold fill-slate-500 select-none"
+                              >
+                                {skill.label}
+                              </text>
+                            </g>
+                          );
+                        })}
+                      </svg>
+                    </div>
+
+                    {/* Progress score lines (col-span-7) */}
+                    <div className="md:col-span-7 flex flex-col gap-3">
+                      {[
+                        { name: "DSA Solving", val: inputs.dsa, max: 10 },
+                        { name: "Development", val: inputs.dev, max: 10 },
+                        { name: "Projects Quality", val: inputs.projects, max: 10 },
+                        { name: "Core CS Subjects", val: inputs.core, max: 10 },
+                        { name: "Resume Score", val: inputs.resume, max: 10 },
+                        { name: "Communication", val: inputs.comm, max: 10 },
+                        { name: "Aptitude Prep", val: inputs.apt, max: 10 }
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex flex-col gap-1 text-[11px]">
+                          <div className="flex justify-between font-bold text-slate-700 leading-none">
+                            <span>{item.name}</span>
+                            <span className="font-extrabold text-slate-900">{item.val}/10</span>
+                          </div>
+                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-300"
+                              style={{
+                                width: `${(item.val / item.max) * 100}%`,
+                                backgroundColor: tierDetails.accentColor
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Roadmap Timeline Checklist */}
+              {activeResultsTab === "roadmap" && (
+                <div className="flex flex-col gap-4">
+                  {/* Roadmap Progress bar */}
+                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold text-slate-700">Roadmap Progress</span>
+                      <span className="font-black text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-100 select-none">
+                        {roadmapCompletionPercent}% Complete
+                      </span>
+                    </div>
+                    <div className="w-full h-2.5 bg-slate-200/70 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-orange-600 rounded-full transition-all duration-300"
+                        style={{ width: `${roadmapCompletionPercent}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Weeks list */}
+                  <div className="flex flex-col gap-3">
+                    {roadmap.map((step, idx) => {
+                      const isCompleted = !!completedRoadmapSteps[step.week];
+                      const icon = roadmapIcons[step.title] || (
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                      );
                       
                       return (
-                        <g key={skill.key} className="transition-all duration-300">
-                          {/* Connecting dashed anchor line */}
-                          <line
-                            x1={200 + 135 * cos}
-                            y1={200 + 135 * sin}
-                            x2={lx}
-                            y2={ly}
-                            stroke="#cbd5e1"
-                            strokeWidth="1"
-                            strokeDasharray="2,2"
-                          />
-                          {/* Badge container rect */}
-                          <rect
-                            x={rx}
-                            y={ry}
-                            width={w}
-                            height={h}
-                            rx="6"
-                            fill="#ffffff"
-                            stroke="#e2e8f0"
-                            strokeWidth="1.5"
-                            className="shadow-sm filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-                          />
-                          {/* Text label */}
-                          <text
-                            x={lx}
-                            y={ly}
-                            textAnchor="middle"
-                            dy="3.5px"
-                            className="text-[9.2px] font-extrabold fill-slate-600 select-none"
+                        <div
+                          key={idx}
+                          onClick={() => handleToggleRoadmapCheckbox(step.week)}
+                          className={`p-4 rounded-2xl border transition-all duration-200 flex gap-3.5 items-start cursor-pointer select-none relative group hover:shadow-sm ${
+                            isCompleted
+                              ? "bg-slate-50/50 border-slate-200 opacity-70"
+                              : "bg-white border-slate-200 hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-center justify-center shrink-0 mt-0.5">
+                            <input
+                              type="checkbox"
+                              checked={isCompleted}
+                              onChange={() => {}} // handled by parent onClick
+                              className="w-4 h-4 rounded text-orange-600 border-slate-300 focus:ring-orange-500 cursor-pointer"
+                            />
+                          </div>
+
+                          <div
+                            className={`flex items-center justify-center w-9 h-9 rounded-xl border shrink-0 transition ${
+                              isCompleted 
+                                ? "bg-slate-200/50 text-slate-500 border-slate-200" 
+                                : "bg-orange-50 text-orange-600 border-orange-100 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900"
+                            }`}
                           >
-                            {skill.label}
-                          </text>
-                        </g>
+                            {icon}
+                          </div>
+
+                          <div className="flex-1 flex flex-col">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-black uppercase tracking-wider text-orange-600">{step.week} Target</span>
+                              {isCompleted && (
+                                <span className="text-[8px] font-black text-emerald-700 bg-emerald-50 border border-emerald-100 px-1.5 py-0.2 rounded uppercase">Completed</span>
+                              )}
+                            </div>
+                            <h4 className={`text-xs font-black mt-0.5 ${isCompleted ? "text-slate-400 line-through" : "text-slate-800"}`}>
+                              {step.title}
+                            </h4>
+                            <p className={`text-[10.5px] leading-relaxed mt-1 ${isCompleted ? "text-slate-400" : "text-slate-500"}`}>
+                              {step.desc}
+                            </p>
+                          </div>
+                        </div>
                       );
                     })}
-                  </svg>
-                </div>
-              </div>
-
-              {/* Readiness Gauge Meter */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-                <div className="border-b border-slate-100 pb-2.5 mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-slate-800">Readiness Meter</h3>
-                  <span className="text-[10.5px] font-bold text-slate-400">Total Gauge</span>
-                </div>
-
-                <div className="flex-1 flex flex-col items-center justify-center py-2 bg-slate-50 rounded-xl border border-slate-100 min-h-[300px]">
-                  <svg viewBox="0 0 300 160" className="w-full max-w-[240px] h-auto select-none">
-                    <defs>
-                      <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#ef4444" />
-                        <stop offset="40%" stopColor="#f59e0b" />
-                        <stop offset="75%" stopColor="#10b981" />
-                        <stop offset="100%" stopColor="#4f46e5" />
-                      </linearGradient>
-                    </defs>
-                    
-                    {/* Inactive background track */}
-                    <path
-                      d="M 40 130 A 110 110 0 0 1 260 130"
-                      fill="none"
-                      stroke="#e2e8f0"
-                      strokeWidth="16"
-                      strokeLinecap="round"
-                    />
-                    
-                    {/* Zone indicators color stroke */}
-                    <path
-                      d="M 40 130 A 110 110 0 0 1 260 130"
-                      fill="none"
-                      stroke="url(#gauge-gradient)"
-                      strokeWidth="16"
-                      strokeLinecap="round"
-                      strokeDasharray="345.57"
-                    />
-
-                    {/* Scale marker annotations */}
-                    <text x="35" y="152" className="text-[9px] font-extrabold fill-slate-400" textAnchor="middle">0</text>
-                    <text x="110" y="44" className="text-[9px] font-extrabold fill-slate-400" textAnchor="middle">40</text>
-                    <text x="190" y="44" className="text-[9px] font-extrabold fill-slate-400" textAnchor="middle">70</text>
-                    <text x="265" y="152" className="text-[9px] font-extrabold fill-slate-400" textAnchor="middle">100</text>
-
-                    {/* Elegant tapered speedometer needle pointer */}
-                    <polygon
-                      points={gaugeNeedlePoints.points}
-                      fill="#1e293b"
-                      stroke="#1e293b"
-                      strokeWidth="1"
-                      strokeLinejoin="round"
-                    />
-                    {/* Glowing needle pointer tip */}
-                    <circle cx={gaugeNeedlePoints.tipX} cy={gaugeNeedlePoints.tipY} r="4" fill={tierDetails.accentColor} stroke="#ffffff" strokeWidth="1.5" />
-
-                    {/* Large stylish glassmorphic center hub */}
-                    <circle cx="150" cy="130" r="14" fill="#ffffff" stroke="#1e293b" strokeWidth="3.2" />
-                    <circle cx="150" cy="130" r="6" fill="#1e293b" />
-                  </svg>
-                  
-                  {/* Interactive Reactive Tier Badges */}
-                  <div className="flex justify-between w-full px-4 text-[9px] font-black -mt-1.5 transition-all duration-300">
-                    <span className={`uppercase transition-all duration-300 ${score < 40 ? "text-red-600 scale-105 font-black filter drop-shadow-[0_1px_3px_rgba(239,68,68,0.15)]" : "text-slate-400"}`}>
-                      Beginner
-                    </span>
-                    <span className={`uppercase transition-all duration-300 ${score >= 40 && score < 70 ? "text-amber-600 scale-105 font-black filter drop-shadow-[0_1px_3px_rgba(245,158,11,0.15)]" : "text-slate-400"}`}>
-                      Intermediate
-                    </span>
-                    <span className={`uppercase transition-all duration-300 ${score >= 70 && score < 85 ? "text-emerald-600 scale-105 font-black filter drop-shadow-[0_1px_3px_rgba(16,185,129,0.15)]" : "text-slate-400"}`}>
-                      Ready
-                    </span>
-                    <span className={`uppercase transition-all duration-300 ${score >= 85 ? "text-indigo-600 scale-105 font-black filter drop-shadow-[0_1px_3px_rgba(79,70,229,0.15)]" : "text-slate-400"}`}>
-                      Excellent
-                    </span>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Visuals: Skills Detail Progress Bars */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-              <h3 className="text-sm font-extrabold text-slate-800 border-b border-slate-100 pb-2 mb-3">
-                Skill Score Breakdown
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { name: "DSA Solving", value: inputs.dsa, max: 10, display: `${inputs.dsa}/10` },
-                  { name: "Development", value: inputs.dev, max: 10, display: `${inputs.dev}/10` },
-                  { name: "Projects Quality", value: inputs.projects, max: 10, display: `${inputs.projects}/10` },
-                  { name: "Core CS Knowledge", value: inputs.core, max: 10, display: `${inputs.core}/10` },
-                  { name: "Resume Quality", value: inputs.resume, max: 10, display: `${inputs.resume}/10` },
-                  { name: "Communication", value: inputs.comm, max: 10, display: `${inputs.comm}/10` },
-                  { name: "Aptitude Prep", value: inputs.apt, max: 10, display: `${inputs.apt}/10` }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 text-xs">
-                    <div className="flex justify-between font-semibold text-slate-700">
-                      <span>{item.name}</span>
-                      <span className="tabular-nums">{item.display}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-300"
-                        style={{
-                          width: `${(item.value / item.max) * 100}%`,
-                          backgroundColor: tierDetails.accentColor
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-                {[
-                  { 
-                    name: "Internship", 
-                    value: inputs.internship === "good" ? 10 : (inputs.internship === "small" ? 5 : 0), 
-                    display: inputs.internship === "good" ? "Good" : (inputs.internship === "small" ? "Small" : "None")
-                  },
-                  { 
-                    name: "LinkedIn Profile", 
-                    value: inputs.linkedin === "optimized" ? 10 : (inputs.linkedin === "basic" ? 5 : 0), 
-                    display: inputs.linkedin === "optimized" ? "Optimized" : (inputs.linkedin === "basic" ? "Basic" : "Not Created")
-                  },
-                  { 
-                    name: "GitHub Portfolio", 
-                    value: inputs.github === "strong" ? 10 : (inputs.github === "average" ? 5 : 0), 
-                    display: inputs.github === "strong" ? "Strong" : (inputs.github === "average" ? "Average" : "Empty")
-                  }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex flex-col gap-1 text-xs">
-                    <div className="flex justify-between font-semibold text-slate-700">
-                      <span>{item.name}</span>
-                      <span>{item.display}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-300"
-                        style={{
-                          width: `${(item.value / 10) * 100}%`,
-                          backgroundColor: tierDetails.accentColor
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Analysis Section: Strengths and Weak Areas */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* Strengths Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-                <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                  <span className="flex items-center justify-center w-5.5 h-5.5 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">✓</span>
-                  Strengths
-                </h3>
-                {analysis.strengths.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    {analysis.strengths.map((str, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start justify-between gap-3 p-3 bg-emerald-50/20 border border-emerald-100/50 rounded-xl hover:bg-emerald-50/50 transition duration-150 group"
-                      >
-                        <div className="flex gap-2.5 items-start">
-                          <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 shrink-0 mt-0.5 group-hover:bg-emerald-500 group-hover:text-white transition duration-200">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </span>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-slate-800">{str.label}</span>
-                            <span className="text-[10.5px] text-slate-500 leading-tight mt-0.5">{str.desc}</span>
-                          </div>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100/70 text-emerald-800 text-[10px] font-black tracking-wider uppercase shrink-0">
-                          {str.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-slate-400 italic">No skills scored at 7+ yet. Adjust inputs to identify strengths.</p>
-                )}
-              </div>
-
-              {/* Weak Areas Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-                <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                  <span className="flex items-center justify-center w-5.5 h-5.5 rounded-lg bg-rose-100 text-rose-700 text-xs font-bold">!</span>
-                  Weak Areas
-                </h3>
-                {analysis.weaknesses.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    {analysis.weaknesses.map((weak, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start justify-between gap-3 p-3 bg-rose-50/20 border border-rose-100/50 rounded-xl hover:bg-rose-50/50 transition duration-150 group"
-                      >
-                        <div className="flex gap-2.5 items-start">
-                          <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-rose-100 text-rose-600 shrink-0 mt-0.5 group-hover:bg-rose-500 group-hover:text-white transition duration-200">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                          </span>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-slate-800">{weak.label}</span>
-                            <span className="text-[10.5px] text-slate-500 leading-tight mt-0.5">{weak.desc}</span>
-                          </div>
-                        </div>
-                        <span className="px-2 py-0.5 rounded-full bg-rose-100/70 text-rose-800 text-[10px] font-black tracking-wider uppercase shrink-0">
-                          {weak.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-emerald-600 font-semibold italic">No weak areas! Excellent job keeping your skills balanced.</p>
-                )}
-              </div>
-            </div>
-
-            {/* Highest/Lowest Scoring Skills Overview */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 block mb-2">Highest Scoring Areas</span>
-                <div className="flex flex-wrap gap-2">
-                  {sortedSkillList.highest.map((item, idx) => (
-                    <div key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-100 text-xs font-semibold">
-                      <span>{item.name}</span>
-                      <span className="px-1.5 py-0.2 bg-emerald-100 rounded-full text-[10px] font-black">{item.display}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 block mb-2">Lowest Scoring Areas</span>
-                <div className="flex flex-wrap gap-2">
-                  {sortedSkillList.lowest.map((item, idx) => (
-                    <div key={idx} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 text-amber-800 border border-amber-100 text-xs font-semibold">
-                      <span>{item.name}</span>
-                      <span className="px-1.5 py-0.2 bg-amber-100 rounded-full text-[10px] font-black">{item.display}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Improvement Plan (Roadmap) */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-              <div className="border-b border-slate-100 pb-2.5 mb-4 flex items-center justify-between">
-                <h3 className="text-base font-bold text-slate-900">4-Week Improvement Plan</h3>
-                <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">Personalized Roadmap</span>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {roadmap.map((step, idx) => {
-                  const icon = roadmapIcons[step.title] || (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  );
-                  return (
-                    <div
-                      key={idx}
-                      className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex gap-3.5 hover:border-slate-300 transition-all duration-200 group hover:shadow-sm"
-                      style={{
-                        hoverBorderColor: tierDetails.accentColor
-                      }}
-                    >
-                      <div
-                        className="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-250 shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 border"
-                        style={{
-                          color: tierDetails.accentColor,
-                          backgroundColor: `${tierDetails.accentColor}12`,
-                          borderColor: `${tierDetails.accentColor}25`
-                        }}
-                      >
-                        {icon}
-                      </div>
-                      <div className="flex-1 flex flex-col">
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-xs font-bold uppercase tracking-widest" style={{ color: tierDetails.accentColor }}>{step.week}</h4>
-                          <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full uppercase tracking-wider">Target</span>
-                        </div>
-                        <h5 className="text-sm font-extrabold text-slate-800 mt-1">{step.title}</h5>
-                        <p className="text-[11px] text-slate-500 leading-relaxed mt-1">{step.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Action Buttons: Export Report */}
-            <div className="grid grid-cols-3 gap-3 action-buttons print:hidden mt-2">
+            {/* Print & Export buttons */}
+            <div className="grid grid-cols-3 gap-3 action-buttons print:hidden">
               <button
                 type="button"
                 onClick={handleCopyReport}
-                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-xs font-bold text-slate-800 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-all duration-200 hover:-translate-y-px cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl text-xs font-bold text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 active:scale-98 transition shadow-sm cursor-pointer"
               >
-                <svg className="w-4 h-4 text-slate-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                 </svg>
-                Copy Report
+                <span>Copy Markdown</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleDownloadTxt}
-                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-xs font-bold text-slate-800 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-all duration-200 hover:-translate-y-px cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl text-xs font-bold text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 active:scale-98 transition shadow-sm cursor-pointer"
               >
-                <svg className="w-4 h-4 text-slate-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                Download TXT
+                <span>Download TXT</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl text-xs font-bold text-white bg-slate-900 shadow-md hover:bg-slate-800 transition-all duration-200 hover:-translate-y-px cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-3 px-2 rounded-2xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 active:scale-98 transition shadow-md cursor-pointer"
               >
                 <svg className="w-4 h-4 text-slate-100 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
-                Print Friendly
+                <span>Print Report</span>
               </button>
             </div>
-
           </div>
-
         </div>
-
       </div>
 
-      {/* Styled JSX for the beautiful slider and print modifications */}
+      {/* Styled JSX for range sliders and custom components */}
       <style jsx>{`
         .premium-slider {
-          width: 100%;
-          height: 8px;
-          border-radius: 8px;
-          background: linear-gradient(90deg, #ea580c 0%, #fb923c 50%, #fed7aa 100%);
-          outline: none;
           -webkit-appearance: none;
           appearance: none;
-          cursor: pointer;
-          position: relative;
+          background: transparent;
         }
 
+        .premium-slider:focus {
+          outline: none;
+        }
+
+        /* Webkit sliders track & thumb */
         .premium-slider::-webkit-slider-runnable-track {
           width: 100%;
-          height: 8px;
+          height: 6px;
           border-radius: 8px;
-          background: linear-gradient(90deg, #ea580c 0%, #fb923c 50%, #fed7aa 100%);
-          box-shadow: 0 0 10px rgba(234, 88, 12, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
         }
 
         .premium-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
           appearance: none;
-          width: 22px;
-          height: 22px;
+          width: 18px;
+          height: 18px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
           cursor: pointer;
-          box-shadow: 
-            0 0 0 3px rgba(234, 88, 12, 0.1),
-            0 4px 8px rgba(234, 88, 12, 0.25),
-            inset -1px -1px 2px rgba(0, 0, 0, 0.1),
-            inset 1px 1px 2px rgba(255, 255, 255, 0.2);
-          border: 1.5px solid white;
-          transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-          position: relative;
-          z-index: 5;
-          margin-top: -7px;
+          border: 2px solid #ffffff;
+          box-shadow: 0 2px 4px rgba(234, 88, 12, 0.3);
+          margin-top: -6px;
+          transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .premium-slider::-webkit-slider-thumb:hover {
-          transform: scale(1.1);
-          box-shadow: 
-            0 0 0 5px rgba(234, 88, 12, 0.15),
-            0 6px 12px rgba(234, 88, 12, 0.35),
-            inset -1px -1px 2px rgba(0, 0, 0, 0.1),
-            inset 1px 1px 2px rgba(255, 255, 255, 0.25);
+          transform: scale(1.15);
+          box-shadow: 0 3px 6px rgba(234, 88, 12, 0.45);
         }
 
         .premium-slider::-webkit-slider-thumb:active {
           transform: scale(0.95);
         }
 
+        /* Firefox sliders track & thumb */
         .premium-slider::-moz-range-track {
           width: 100%;
-          height: 8px;
+          height: 6px;
           border-radius: 8px;
-          background: #fed7aa;
+          background: #f1f5f9;
+          border: 1px solid #e2e8f0;
         }
 
         .premium-slider::-moz-range-thumb {
-          width: 22px;
-          height: 22px;
+          width: 18px;
+          height: 18px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
+          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
           cursor: pointer;
-          box-shadow: 0 4px 8px rgba(234, 88, 12, 0.25);
-          border: 1.5px solid white;
-          transition: all 0.2s ease;
+          border: 2px solid #ffffff;
+          box-shadow: 0 2px 4px rgba(234, 88, 12, 0.3);
+          transition: transform 0.15s ease;
+        }
+
+        .premium-slider::-moz-range-thumb:hover {
+          transform: scale(1.15);
         }
 
         .premium-slider::-moz-range-progress {
-          height: 8px;
+          height: 6px;
           border-radius: 8px;
-          background: linear-gradient(90deg, #ea580c 0%, #fb923c 100%);
+          background: linear-gradient(90deg, #ea580c 0%, #f97316 100%);
+        }
+
+        @keyframes spin-reverse {
+          from {
+            transform: rotate(360deg);
+          }
+          to {
+            transform: rotate(0deg);
+          }
+        }
+        .animate-spin-reverse {
+          animation: spin-reverse 1s linear infinite;
         }
 
         @media print {
@@ -2054,7 +1919,7 @@ export default function PlacementReadinessScorePage() {
             padding: 0 !important;
             margin: 0 !important;
           }
-          nav, .tool-float-button, .print-hidden, .action-buttons, button {
+          nav, .tool-float-button, .print-hidden, .action-buttons, button, input[type="checkbox"] {
             display: none !important;
           }
           .results-panel {
