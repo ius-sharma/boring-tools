@@ -1,5 +1,5 @@
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
 function normalize(text) {
   return String(text ?? "").trim();
