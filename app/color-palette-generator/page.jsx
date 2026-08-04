@@ -136,6 +136,20 @@ export default function ColorPaletteGeneratorPage() {
   const [activeShadeIndex, setActiveShadeIndex] = useState(null); // which color card is viewing shades
   const toastTimerRef = useRef(null);
 
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [paletteTitle, setPaletteTitle] = useState("");
+  const [paletteDescription, setPaletteDescription] = useState("");
+
+  const SUGGESTIONS = [
+    "Cyberpunk Neon",
+    "Cozy Coffee Shop",
+    "Vintage Polaroid",
+    "Nordic Minimalist",
+    "Sunset Beach Vibe",
+    "Sweet Cotton Candy"
+  ];
+
   // Initialize first palette on mount
   useEffect(() => {
     // Start with a default set of 5 colors
@@ -158,6 +172,51 @@ export default function ColorPaletteGeneratorPage() {
     toastTimerRef.current = window.setTimeout(() => {
       setToast({ type: "", message: "" });
     }, 1800);
+  };
+
+  // AI Generator fetch
+  const handleAiGenerate = async (e) => {
+    if (e) e.preventDefault();
+    if (!aiPrompt.trim()) return;
+
+    setIsGenerating(true);
+    const lockedColors = colors.map(c => c.locked ? c.hex : null);
+
+    try {
+      const res = await fetch("/api/color-palette-generator", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: aiPrompt,
+          count: colorCount,
+          lockedColors
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to generate palette");
+      const data = await res.json();
+
+      if (data && Array.isArray(data.colors)) {
+        const newColors = data.colors.map((color, idx) => ({
+          hex: color.hex,
+          locked: colors[idx] ? colors[idx].locked : false,
+          name: color.name,
+          role: color.role
+        }));
+
+        setColors(newColors);
+        setPaletteTitle(data.title);
+        setPaletteDescription(data.description);
+        showToast("success", `Generated: ${data.title}`);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("error", "AI Generation failed. Using local fallback.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Keyboard shortcut listener: Spacebar to generate
@@ -208,6 +267,8 @@ export default function ColorPaletteGeneratorPage() {
 
   // Main generator function
   const generatePalette = (forcedCount = null) => {
+    setPaletteTitle("");
+    setPaletteDescription("");
     const targetCount = forcedCount || colorCount;
     const newColors = Array(targetCount).fill(null);
 
@@ -308,7 +369,7 @@ export default function ColorPaletteGeneratorPage() {
   // Manually update a specific color card
   const handleColorChange = (index, newHex) => {
     if (/^#[0-9A-F]{6}$/i.test(newHex)) {
-      setColors(prev => prev.map((color, i) => i === index ? { ...color, hex: newHex } : color));
+      setColors(prev => prev.map((color, i) => i === index ? { ...color, hex: newHex, name: "Custom Tone", role: "Manual Tweak" } : color));
     }
   };
 
@@ -439,7 +500,7 @@ export default function ColorPaletteGeneratorPage() {
   // Replace active shade with selected one
   const handleShadeSelect = (shadeHex) => {
     if (activeShadeIndex !== null) {
-      setColors(prev => prev.map((color, i) => i === activeShadeIndex ? { ...color, hex: shadeHex } : color));
+      setColors(prev => prev.map((color, i) => i === activeShadeIndex ? { ...color, hex: shadeHex, name: "Selected Shade", role: "Manual Adjustment" } : color));
       showToast("success", `Updated color to ${shadeHex}`);
     }
   };
@@ -455,6 +516,74 @@ export default function ColorPaletteGeneratorPage() {
           <p className="text-slate-500 text-base max-w-2xl">
             Generate and customize stunning color palettes in one click. Lock colors you love, modify details, explore shade variations, and export immediately.
           </p>
+        </div>
+
+        {/* AI Prompt Generator Card */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-rose-500/10 rounded-2xl border border-orange-200/40 p-5 sm:p-6 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-orange-400/20 rounded-full blur-2xl pointer-events-none -mr-8 -mt-8" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-rose-400/10 rounded-full blur-3xl pointer-events-none -ml-12 -mb-12" />
+
+          <div className="relative flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-md">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                  <circle cx="12" cy="12" r="4" fill="currentColor" />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-1.5">
+                  Generate with Gemini AI
+                </h2>
+                <p className="text-xs text-slate-500">Specify your vibe, brand name, aesthetic, or design needs to generate a custom palette.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleAiGenerate} className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="e.g., Retro coffee shop, sunset over sand dunes, cyberpunk arcade neon..."
+                disabled={isGenerating}
+                className="flex-1 px-4 py-3.5 rounded-xl border border-orange-200 bg-white/80 backdrop-blur-sm text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/80 shadow-sm placeholder-slate-400"
+              />
+              <button
+                type="submit"
+                disabled={isGenerating || !aiPrompt.trim()}
+                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold text-sm shadow-sm hover:shadow transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap min-w-[140px]"
+              >
+                {isGenerating ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+                    <span>Magic Generate</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="flex flex-wrap gap-1.5 items-center">
+              <span className="text-xs font-semibold text-orange-850 mr-1">Vibe Ideas:</span>
+              {SUGGESTIONS.map((s, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setAiPrompt(s)}
+                  className="text-xs bg-white/75 hover:bg-orange-100/50 hover:text-orange-950 border border-orange-200/50 text-orange-900 px-3 py-1.5 rounded-xl shadow-xs transition duration-200 cursor-pointer"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Dashboard Settings Controls */}
@@ -503,6 +632,17 @@ export default function ColorPaletteGeneratorPage() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><rect x="3" y="14" width="18" height="4" rx="1" /><path d="M5 14V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7" /></svg>
           <span>Press <span className="font-semibold px-1.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-500">Space</span> to generate a new palette</span>
         </p>
+
+        {/* AI Generated Vibe Context Banner */}
+        {paletteTitle && (
+          <div className="bg-gradient-to-r from-orange-50/30 to-amber-50/20 border border-orange-200/40 rounded-2xl p-4 sm:p-5 flex flex-col gap-1 shadow-xs animate-slide-down">
+            <h3 className="text-sm sm:text-base font-extrabold text-slate-800 flex items-center gap-2">
+              <span className="text-lg">✨</span>
+              <span>Palette Vibe: {paletteTitle}</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-650 leading-relaxed font-normal">{paletteDescription}</p>
+          </div>
+        )}
 
         {/* MAIN PALETTE CONTAINER (Desktop row, Mobile column) */}
         <div className="flex flex-col md:flex-row gap-3 min-h-[420px] md:h-[480px]">
@@ -561,7 +701,7 @@ export default function ColorPaletteGeneratorPage() {
                 </div>
 
                 {/* Color Codes Display (Middle on desktop) */}
-                <div className="flex-1 md:flex-none flex flex-col gap-2 items-start md:items-center justify-center w-full order-1 md:order-2">
+                <div className="flex-1 md:flex-none flex flex-col gap-2 items-start md:items-center justify-center w-full order-1 md:order-2 text-center">
                   {/* Hex display */}
                   <button
                     type="button"
@@ -574,12 +714,30 @@ export default function ColorPaletteGeneratorPage() {
                     {color.hex}
                   </button>
 
+                  {/* Optional AI Name & Role */}
+                  {color.name && (
+                    <div className="flex flex-col items-start md:items-center gap-0.5 max-w-[140px] md:max-w-full">
+                      <span className={`text-xs font-bold truncate max-w-full ${
+                        light ? "text-slate-800" : "text-slate-150"
+                      }`}>
+                        {color.name}
+                      </span>
+                      {color.role && (
+                        <span className={`text-[10px] uppercase font-bold tracking-wider opacity-70 truncate max-w-full ${
+                          light ? "text-slate-600" : "text-slate-350"
+                        }`}>
+                          {color.role}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   {/* RGB display */}
                   <button
                     type="button"
                     onClick={() => copyColor(rgbString, "RGB")}
                     title="Click to copy RGB values"
-                    className={`text-xs opacity-75 hover:opacity-100 transition font-mono ${
+                    className={`text-[10px] opacity-60 hover:opacity-100 transition font-mono ${
                       light ? "hover:text-slate-600" : "hover:text-slate-200"
                     }`}
                   >
