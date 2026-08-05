@@ -639,6 +639,10 @@ export default function FakeDataGenerator() {
   const [favoritePresets, setFavoritePresets] = useState([]);
   const [recentExports, setRecentExports] = useState([]);
 
+  // AI states
+  const [useAI, setUseAI] = useState(false);
+  const [generating, setGenerating] = useState(false);
+
   // Setup options definitions
   const RECORD_COUNT_OPTIONS = [
     { value: 10, label: "10 Records" },
@@ -649,6 +653,13 @@ export default function FakeDataGenerator() {
     { value: 500, label: "500 Records" },
     { value: 1000, label: "1000 Records" }
   ];
+
+  const activeRecordCountOptions = useMemo(() => {
+    if (useAI) {
+      return RECORD_COUNT_OPTIONS.filter(opt => opt.value <= 50);
+    }
+    return RECORD_COUNT_OPTIONS;
+  }, [useAI]);
 
   const COUNTRY_OPTIONS = [
     { value: "India", label: "India" },
@@ -684,7 +695,7 @@ export default function FakeDataGenerator() {
   ];
 
   // Save config to localStorage helper
-  const saveStateToLocalStorage = (fields, custom, cnt, ctry, sd, cons, uniq, nl, dp, shf, tbl, dia) => {
+  const saveStateToLocalStorage = (fields, custom, cnt, ctry, sd, cons, uniq, nl, dp, shf, tbl, dia, ai) => {
     const config = {
       selectedFields: fields,
       customColumns: custom,
@@ -697,7 +708,8 @@ export default function FakeDataGenerator() {
       dupPct: dp,
       shuffleData: shf,
       sqlTableName: tbl,
-      sqlDialect: dia
+      sqlDialect: dia,
+      useAI: ai
     };
     localStorage.setItem("boring_fake_data_config", JSON.stringify(config));
   };
@@ -710,8 +722,111 @@ export default function FakeDataGenerator() {
   };
 
   // Generate Data logic
-  const generateData = () => {
+  const generateData = async () => {
     const startTime = performance.now();
+
+    if (useAI) {
+      setGenerating(true);
+      try {
+        const colsForAi = activeAllColumns.map(col => {
+          const customDef = customColumns.find(c => c.id === col.id);
+          if (customDef) {
+            return {
+              id: customDef.id,
+              name: customDef.name,
+              type: customDef.type,
+              options: customDef.options || undefined
+            };
+          }
+          return {
+            id: col.id,
+            name: col.label,
+            type: "Text"
+          };
+        });
+
+        const response = await fetch("/api/fake-data-generator", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            columns: colsForAi,
+            count: count,
+            country: country
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || "Failed to generate AI data");
+        }
+
+        const resData = await response.json();
+        let finalRows = resData.data || [];
+
+        const activeSeed = consistentGen ? seed : Math.floor(Math.random() * 999999);
+        const rng = createRng(activeSeed);
+
+        // Apply local null percentage / duplicate percentage / shuffle post-processing
+        if (nullPct > 0) {
+          finalRows = finalRows.map(row => {
+            const newRow = { ...row };
+            activeAllColumns.forEach(col => {
+              if (rng() < (nullPct / 100)) {
+                newRow[col.id] = null;
+              }
+            });
+            return newRow;
+          });
+        }
+
+        if (dupPct > 0) {
+          const rowsWithDups = [];
+          for (let r = 0; r < finalRows.length; r++) {
+            if (r > 0 && rng() < (dupPct / 100)) {
+              const prevRowIndex = Math.floor(rng() * r);
+              rowsWithDups.push({ ...rowsWithDups[prevRowIndex], _id: r + 1 });
+            } else {
+              rowsWithDups.push({ ...finalRows[r], _id: r + 1 });
+            }
+          }
+          finalRows = rowsWithDups;
+        }
+
+        if (shuffleData) {
+          finalRows = seededShuffle(finalRows, rng);
+        }
+
+        setGeneratedData(finalRows);
+        setGenerationTime(Math.round(performance.now() - startTime));
+        setCurrentPage(1);
+        showToast("AI Dataset generated successfully!");
+      } catch (err) {
+        showToast(err instanceof Error ? err.message : "Error generating AI data", "error");
+      } finally {
+        setGenerating(false);
+      }
+
+      // Persist configurations
+      saveStateToLocalStorage(
+        selectedFields,
+        customColumns,
+        count,
+        country,
+        seed,
+        consistentGen,
+        uniqueValues,
+        nullPct,
+        dupPct,
+        shuffleData,
+        sqlTableName,
+        sqlDialect,
+        true
+      );
+      return;
+    }
+
     const activeSeed = consistentGen ? seed : Math.floor(Math.random() * 999999);
     const rng = createRng(activeSeed);
 
@@ -824,7 +939,8 @@ export default function FakeDataGenerator() {
       dupPct,
       shuffleData,
       sqlTableName,
-      sqlDialect
+      sqlDialect,
+      false
     );
   };
 
@@ -843,6 +959,7 @@ export default function FakeDataGenerator() {
     let loadedShuffle = false;
     let loadedSqlTable = "fake_users";
     let loadedSqlDialect = "mysql";
+    let loadedUseAI = false;
 
     if (saved) {
       try {
@@ -859,6 +976,7 @@ export default function FakeDataGenerator() {
         if (parsed.shuffleData !== undefined) loadedShuffle = parsed.shuffleData;
         if (parsed.sqlTableName) loadedSqlTable = parsed.sqlTableName;
         if (parsed.sqlDialect) loadedSqlDialect = parsed.sqlDialect;
+        if (parsed.useAI !== undefined) loadedUseAI = parsed.useAI;
 
         setSelectedFields(loadedFields);
         setCustomColumns(loadedCustom);
@@ -872,6 +990,7 @@ export default function FakeDataGenerator() {
         setShuffleData(loadedShuffle);
         setSqlTableName(loadedSqlTable);
         setSqlDialect(loadedSqlDialect);
+        setUseAI(loadedUseAI);
       } catch (e) {}
     }
 
@@ -979,7 +1098,8 @@ export default function FakeDataGenerator() {
       dupPct,
       shuffleData,
       sqlTableName,
-      sqlDialect
+      sqlDialect,
+      useAI
     );
   };
 
@@ -1001,7 +1121,8 @@ export default function FakeDataGenerator() {
       dupPct,
       shuffleData,
       sqlTableName,
-      sqlDialect
+      sqlDialect,
+      useAI
     );
   };
 
@@ -1474,7 +1595,7 @@ export default function FakeDataGenerator() {
                   <ThemedDropdown
                     ariaLabel="Number of records"
                     value={count}
-                    options={RECORD_COUNT_OPTIONS}
+                    options={activeRecordCountOptions}
                     onChange={(val) => setCount(Number(val))}
                   />
                 </div>
@@ -1487,6 +1608,35 @@ export default function FakeDataGenerator() {
                     onChange={setCountry}
                   />
                 </div>
+              </div>
+
+              {/* AI toggle */}
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-slate-700 uppercase flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    AI-Enhanced (Groq)
+                  </span>
+                  <span className="text-[10px] text-slate-400">Generate highly realistic, context-aware fake data</span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={useAI}
+                    onChange={(e) => {
+                      const val = e.target.checked;
+                      setUseAI(val);
+                      if (val && count > 50) {
+                        setCount(50);
+                        showToast("AI generation limited to 50 records.", "info");
+                      }
+                    }}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-orange-500"></div>
+                </label>
               </div>
 
               {/* Advanced Collapsible options */}
@@ -1596,7 +1746,8 @@ export default function FakeDataGenerator() {
               {/* Generate master button */}
               <button
                 onClick={generateData}
-                className="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition shadow-sm hover:shadow flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                disabled={generating}
+                className={`w-full mt-2 text-white py-3 rounded-xl font-bold transition shadow-sm hover:shadow flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-500 ${generating ? "bg-orange-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-600"}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -1604,11 +1755,11 @@ export default function FakeDataGenerator() {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5 animate-spin-hover"
+                  className={`w-5 h-5 ${generating ? "animate-spin" : "animate-spin-hover"}`}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                 </svg>
-                <span>Generate Dataset</span>
+                <span>{generating ? "Generating AI Dataset..." : "Generate Dataset"}</span>
               </button>
             </div>
 
@@ -1921,7 +2072,13 @@ export default function FakeDataGenerator() {
             </div>
 
             {/* Live Data Preview Section */}
-            <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col gap-4 overflow-hidden">
+            <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col gap-4 overflow-hidden relative">
+              {generating && (
+                <div className="absolute inset-0 bg-white/75 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center gap-3 animate-fade-in">
+                  <div className="w-9 h-9 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
+                  <span className="text-sm font-semibold text-slate-700">Groq AI is generating realistic records...</span>
+                </div>
+              )}
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
                 <h3 className="text-base font-bold text-slate-900">Dataset Preview</h3>
