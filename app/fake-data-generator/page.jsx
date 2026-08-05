@@ -1462,7 +1462,7 @@ export default function FakeDataGenerator() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6 items-stretch">
           
           {/* Left Column: Settings */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 min-w-0">
             
             {/* General Configurations */}
             <div className="border border-slate-200 rounded-xl p-5 bg-white flex flex-col gap-4 shadow-sm">
@@ -1798,7 +1798,7 @@ export default function FakeDataGenerator() {
           </div>
 
           {/* Right Column: Preview & Exports */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 min-w-0">
             
             {/* Export and Stats Card */}
             <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col gap-4">
