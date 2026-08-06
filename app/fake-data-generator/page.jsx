@@ -643,6 +643,18 @@ export default function FakeDataGenerator() {
   const [useAI, setUseAI] = useState(false);
   const [generating, setGenerating] = useState(false);
 
+  // Tab and Custom Dataset states
+  const [activeTab, setActiveTab] = useState("generate"); // "generate" or "modify"
+  const [uploadedData, setUploadedData] = useState([]);
+  const [uploadedColumns, setUploadedColumns] = useState([]);
+  const [uploadError, setUploadError] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [dragActive, setDragActive] = useState(false);
+
+  // Tab Glare states
+  const [glarePos, setGlarePos] = useState({ x: 0, y: 0 });
+  const [glareOpacity, setGlareOpacity] = useState(0);
+
   // Setup options definitions
   const RECORD_COUNT_OPTIONS = [
     { value: 10, label: "10 Records" },
@@ -724,6 +736,62 @@ export default function FakeDataGenerator() {
   // Generate Data logic
   const generateData = async () => {
     const startTime = performance.now();
+
+    if (activeTab === "modify") {
+      if (!uploadedData || uploadedData.length === 0) {
+        showToast("Please upload a dataset first.", "error");
+        return;
+      }
+      setGenerating(true);
+      try {
+        const activeSeed = consistentGen ? seed : Math.floor(Math.random() * 999999);
+        const rng = createRng(activeSeed);
+
+        // Apply Null Percentage
+        let modified = uploadedData.map((row) => {
+          const newRow = { ...row };
+          if (nullPct > 0) {
+            uploadedColumns.forEach(col => {
+              if (rng() < (nullPct / 100)) {
+                newRow[col.id] = null;
+              }
+            });
+          }
+          return newRow;
+        });
+
+        // Apply Duplicate Rows
+        if (dupPct > 0) {
+          const rowsWithDups = [];
+          for (let r = 0; r < modified.length; r++) {
+            if (r > 0 && rng() < (dupPct / 100)) {
+              const prevRowIndex = Math.floor(rng() * r);
+              rowsWithDups.push({ ...rowsWithDups[prevRowIndex], _id: r + 1 });
+            } else {
+              rowsWithDups.push({ ...modified[r], _id: r + 1 });
+            }
+          }
+          modified = rowsWithDups;
+        } else {
+          modified = modified.map((row, idx) => ({ ...row, _id: idx + 1 }));
+        }
+
+        // Apply Shuffle
+        if (shuffleData) {
+          modified = seededShuffle(modified, rng);
+        }
+
+        setGeneratedData(modified);
+        setGenerationTime(Math.round(performance.now() - startTime));
+        setCurrentPage(1);
+        showToast("Dataset modifications applied!");
+      } catch (err) {
+        showToast("Error applying modifications.", "error");
+      } finally {
+        setGenerating(false);
+      }
+      return;
+    }
 
     if (useAI) {
       setGenerating(true);
@@ -1030,12 +1098,170 @@ export default function FakeDataGenerator() {
     setGeneratedData(rows);
   }, []);
 
+  // CSV Parser
+  const parseCSV = (text) => {
+    const lines = [];
+    let row = [""];
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const next = text[i + 1];
+
+      if (c === '"') {
+        if (inQuotes && next === '"') {
+          row[row.length - 1] += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === ',' && !inQuotes) {
+        row.push('');
+      } else if ((c === '\r' || c === '\n') && !inQuotes) {
+        if (c === '\r' && next === '\n') {
+          i++;
+        }
+        lines.push(row);
+        row = [''];
+      } else {
+        row[row.length - 1] += c;
+      }
+    }
+    if (row.length > 1 || row[0] !== '') {
+      lines.push(row);
+    }
+
+    if (lines.length < 2) {
+      throw new Error("CSV must contain at least a header row and one data row.");
+    }
+
+    const headers = lines[0].map(h => h.trim());
+    const data = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i];
+      if (values.length === 1 && values[0] === '') continue;
+
+      const obj = {};
+      headers.forEach((header, index) => {
+        let val = values[index];
+        if (val !== undefined) {
+          val = val.trim();
+          if (val !== "" && !isNaN(val)) {
+            obj[header] = Number(val);
+          } else if (val.toLowerCase() === "true") {
+            obj[header] = true;
+          } else if (val.toLowerCase() === "false") {
+            obj[header] = false;
+          } else if (val.toLowerCase() === "null") {
+            obj[header] = null;
+          } else {
+            obj[header] = val;
+          }
+        } else {
+          obj[header] = "";
+        }
+      });
+      data.push(obj);
+    }
+
+    return { headers, data };
+  };
+
+  const handleFileUpload = (file) => {
+    if (!file) return;
+
+    setUploadError("");
+    setFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      try {
+        let parsedData = [];
+        let cols = [];
+
+        if (file.name.endsWith(".json")) {
+          const rawParsed = JSON.parse(content);
+          if (Array.isArray(rawParsed)) {
+            parsedData = rawParsed;
+          } else if (rawParsed && typeof rawParsed === "object" && Array.isArray(rawParsed.data)) {
+            parsedData = rawParsed.data;
+          } else {
+            throw new Error("JSON must be an array of objects or contain a 'data' array.");
+          }
+
+          const keysSet = new Set();
+          parsedData.forEach(obj => {
+            if (obj && typeof obj === "object") {
+              Object.keys(obj).forEach(k => {
+                if (k !== "_id") keysSet.add(k);
+              });
+            }
+          });
+          cols = Array.from(keysSet).map(k => ({ id: k, label: k }));
+        } else if (file.name.endsWith(".csv")) {
+          const parsedCsv = parseCSV(content);
+          parsedData = parsedCsv.data;
+          cols = parsedCsv.headers.map(h => ({ id: h, label: h }));
+        } else {
+          throw new Error("Unsupported file type. Please upload .csv or .json files.");
+        }
+
+        if (parsedData.length === 0) {
+          throw new Error("Dataset is empty.");
+        }
+
+        const indexedData = parsedData.map((row, idx) => ({
+          ...row,
+          _id: idx + 1
+        }));
+
+        setUploadedData(indexedData);
+        setUploadedColumns(cols);
+        setGeneratedData(indexedData);
+        showToast(`Loaded ${indexedData.length} records successfully!`);
+      } catch (err) {
+        setUploadError(err instanceof Error ? err.message : "Error parsing file.");
+        showToast("Failed to parse file.", "error");
+      }
+    };
+
+    reader.onerror = () => {
+      setUploadError("Error reading file.");
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
+
   // Update visible columns if fields structure changes
   const activeAllColumns = useMemo(() => {
+    if (activeTab === "modify" && uploadedColumns.length > 0) {
+      return uploadedColumns;
+    }
     const defaultCols = DEFAULT_FIELDS.filter(f => selectedFields.includes(f.id)).map(f => ({ id: f.id, label: f.label }));
     const customCols = customColumns.map(c => ({ id: c.id, label: c.name }));
     return [...defaultCols, ...customCols];
-  }, [selectedFields, customColumns]);
+  }, [activeTab, uploadedColumns, selectedFields, customColumns]);
 
   // Keep visible columns synchronized
   useEffect(() => {
@@ -1540,7 +1766,93 @@ export default function FakeDataGenerator() {
           </p>
         </div>
 
+        {/* Tab Navigation (Inspired by Apple Liquid Glass Nav) */}
+        <div 
+          className="relative flex items-center p-1.5 bg-slate-100/60 backdrop-blur-2xl rounded-2xl shadow-inner max-w-lg mx-auto w-full border border-slate-200/80 overflow-hidden select-none transition-all duration-300"
+          style={{
+            boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.05), inset 0 2px 3px -1px rgba(255, 255, 255, 0.8), inset 0 -2px 4px -1px rgba(0, 0, 0, 0.02), inset 0 0 0 1px rgba(0, 0, 0, 0.02)",
+          }}
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            setGlarePos({
+              x: e.clientX - rect.left,
+              y: e.clientY - rect.top
+            });
+          }}
+          onMouseEnter={() => setGlareOpacity(1)}
+          onMouseLeave={() => setGlareOpacity(0)}
+        >
+          {/* Liquid Glare Mouse Spotlight */}
+          <div 
+            className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-300 mix-blend-overlay z-0"
+            style={{
+              opacity: glareOpacity,
+              background: `radial-gradient(circle 85px at ${glarePos.x}px ${glarePos.y}px, rgba(255, 255, 255, 0.6) 0%, transparent 100%)`
+            }}
+          />
+
+          {/* Wet Gloss Reflection Overlay */}
+          <div 
+            className="absolute top-[0.5px] left-[0.5px] right-[0.5px] h-[44%] pointer-events-none z-10"
+            style={{
+              background: "linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)",
+              borderRadius: "14px 14px 4px 4px / 14px 14px 2px 2px"
+            }}
+          />
+
+          {/* Liquid Sliding Pill */}
+          <div 
+            className="absolute top-1.5 bottom-1.5 bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04),_inset_0_1px_1px_rgba(255,255,255,0.9)] border border-slate-100/50 transition-all duration-500 z-0"
+            style={{
+              left: activeTab === "generate" ? "6px" : "calc(50% + 3px)",
+              width: "calc(50% - 9px)",
+              transitionTimingFunction: "cubic-bezier(0.34, 1.2, 0.64, 1)"
+            }}
+          />
+
+          <button
+            onClick={() => {
+              setActiveTab("generate");
+              setCount(generatedData.length);
+            }}
+            className={`flex-1 py-2.5 text-center font-bold text-xs sm:text-sm flex items-center justify-center gap-2 select-none relative z-20 transition-colors duration-300 ${
+              activeTab === "generate"
+                ? "text-orange-600 font-extrabold"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={activeTab === "generate" ? 2.5 : 2} stroke="currentColor" className="w-4 h-4 transition-transform duration-300">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <span>Generate New Dataset</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab("modify");
+              if (uploadedData.length > 0) {
+                setGeneratedData(uploadedData);
+                setCount(uploadedData.length);
+              } else {
+                setGeneratedData([]);
+                setCount(0);
+              }
+            }}
+            className={`flex-1 py-2.5 text-center font-bold text-xs sm:text-sm flex items-center justify-center gap-2 select-none relative z-20 transition-colors duration-300 ${
+              activeTab === "modify"
+                ? "text-orange-600 font-extrabold"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={activeTab === "modify" ? 2.5 : 2} stroke="currentColor" className="w-4 h-4 transition-transform duration-300">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span>Modify Dataset</span>
+          </button>
+        </div>
+
         {/* Quick Presets Section */}
+        {activeTab === "generate" && (
         <div className="border border-slate-200 rounded-xl p-4 sm:p-5 bg-slate-50/50 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold tracking-wide uppercase text-slate-500">Quick Presets</h2>
@@ -1578,6 +1890,7 @@ export default function FakeDataGenerator() {
             })}
           </div>
         </div>
+        )}
 
         {/* Master Content Split Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-6 items-stretch">
@@ -1585,7 +1898,9 @@ export default function FakeDataGenerator() {
           {/* Left Column: Settings */}
           <div className="flex flex-col gap-5 min-w-0">
             
-            {/* General Configurations */}
+            {activeTab === "generate" ? (
+              <>
+                {/* General Configurations */}
             <div className="border border-slate-200 rounded-xl p-5 bg-white flex flex-col gap-4 shadow-sm">
               <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Dataset Settings</h3>
               
@@ -1945,7 +2260,157 @@ export default function FakeDataGenerator() {
                 })}
               </div>
             </div>
+              </>
+            ) : (
+              <>
+                {/* File Uploader Card */}
+                <div 
+                  className={`border-2 border-dashed rounded-2xl p-6 bg-white shadow-sm flex flex-col items-center justify-center gap-4 text-center transition-all ${
+                    dragActive ? "border-orange-500 bg-orange-50/20" : "border-slate-200 hover:border-slate-300"
+                  }`}
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                >
+                  <div className="p-3 bg-orange-100 rounded-full text-orange-600">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-bold text-slate-800">
+                      {fileName ? `Selected: ${fileName}` : "Drag & Drop dataset here"}
+                    </span>
+                    <span className="text-xs text-slate-400">Supports CSV and JSON files (max 10MB)</span>
+                  </div>
+                  <label className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg cursor-pointer transition select-none">
+                    Browse Files
+                    <input 
+                      type="file" 
+                      accept=".csv,.json" 
+                      onChange={(e) => handleFileUpload(e.target.files?.[0])} 
+                      className="hidden" 
+                    />
+                  </label>
+                  {uploadError && (
+                    <span className="text-xs text-red-500 mt-1 font-medium">{uploadError}</span>
+                  )}
+                </div>
 
+                {/* Dataset Metadata Details */}
+                {uploadedData.length > 0 && (
+                  <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col gap-4">
+                    <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">Uploaded Dataset Details</h3>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5">
+                        <span className="text-slate-400 block font-medium">Filename</span>
+                        <span className="font-bold text-slate-800 truncate block mt-0.5" title={fileName}>{fileName}</span>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5">
+                        <span className="text-slate-400 block font-medium">Record Count</span>
+                        <span className="font-bold text-slate-800 block mt-0.5">{uploadedData.length} records</span>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5 col-span-2">
+                        <span className="text-slate-400 block font-medium">Detected Fields ({uploadedColumns.length})</span>
+                        <span className="font-semibold text-slate-700 block mt-1 leading-relaxed">
+                          {uploadedColumns.map(c => c.label).join(", ")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Modification settings */}
+                <div className="border border-slate-200 rounded-xl p-5 bg-white shadow-sm flex flex-col gap-4">
+                  <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">Modification Options</h3>
+                  
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-500 uppercase">Introduce Null Values</span>
+                      <span className="font-bold text-slate-900">{nullPct}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="90"
+                      step="5"
+                      value={nullPct}
+                      onChange={(e) => setNullPct(Number(e.target.value))}
+                      className="w-full accent-slate-900"
+                    />
+
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-500 uppercase">Introduce Duplicate Rows</span>
+                      <span className="font-bold text-slate-900">{dupPct}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={dupPct}
+                      onChange={(e) => setDupPct(Number(e.target.value))}
+                      className="w-full accent-slate-900"
+                    />
+
+                    <div className="flex flex-col gap-2.5 pt-2 border-t border-slate-100">
+                      <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={shuffleData}
+                          onChange={(e) => setShuffleData(e.target.checked)}
+                          className="accent-slate-900 rounded"
+                        />
+                        <span>Shuffle Final Rows</span>
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={consistentGen}
+                          onChange={(e) => setConsistentGen(e.target.checked)}
+                          className="accent-slate-900 rounded"
+                        />
+                        <span>Consistent Seed for modifications</span>
+                      </label>
+                      {consistentGen && (
+                        <div className="flex items-center gap-2 pl-6">
+                          <span className="text-xs text-slate-400">Seed:</span>
+                          <input
+                            type="number"
+                            value={seed}
+                            onChange={(e) => setSeed(Number(e.target.value))}
+                            className="w-20 rounded-lg border border-slate-300 px-2 py-0.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 text-center"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={generateData}
+                    disabled={generating || uploadedData.length === 0}
+                    className={`w-full mt-2 text-white py-3 rounded-xl font-bold transition shadow-sm hover:shadow flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                      generating || uploadedData.length === 0 
+                        ? "bg-slate-300 text-slate-450 cursor-not-allowed" 
+                        : "bg-orange-500 hover:bg-orange-600 text-white"
+                    }`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className={`w-5 h-5 ${generating ? "animate-spin" : "animate-spin-hover"}`}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    <span>{generating ? "Applying modifications..." : "Apply Modifications"}</span>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Right Column: Preview & Exports */}
