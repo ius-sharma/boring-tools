@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# DOC to PDF converter: WASM engine (~250 MB) copied by scripts/setup-wasm.mjs (postinstall)
+/public/wasm
+
 # generated local data
 /data/
 

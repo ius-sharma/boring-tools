@@ -43,6 +43,7 @@ function getPdfName(fileName) {
 export default function DocToPdfConverter() {
   const fileInputRef = useRef(null);
   const downloadUrlRef = useRef("");
+  const converterRef = useRef(null);
   const fileRef = useRef(null);
 
   const [file, setFile] = useState(null);
@@ -54,6 +55,7 @@ export default function DocToPdfConverter() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [downloadName, setDownloadName] = useState("");
   const [outputSize, setOutputSize] = useState(0);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   useEffect(() => {
     fileRef.current = file;
@@ -68,6 +70,10 @@ export default function DocToPdfConverter() {
       if (downloadUrlRef.current) {
         URL.revokeObjectURL(downloadUrlRef.current);
       }
+      if (converterRef.current) {
+        converterRef.current.destroy();
+        converterRef.current = null;
+      }
     };
   }, []);
 
@@ -80,6 +86,7 @@ export default function DocToPdfConverter() {
     setStatus("Ready to upload a document");
     setDownloadName("");
     setOutputSize(0);
+    setLoadProgress(0);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -139,6 +146,31 @@ export default function DocToPdfConverter() {
     downloadPdf(downloadUrl, downloadName);
   };
 
+  async function getConverter() {
+    if (converterRef.current?.isReady()) return converterRef.current;
+
+    const { WorkerBrowserConverter, createWasmPaths } = await import("@matbee/libreoffice-converter/browser");
+
+    if (converterRef.current) {
+      try {
+        converterRef.current.destroy();
+      } catch {}
+      converterRef.current = null;
+    }
+
+    const converter = new WorkerBrowserConverter({
+      ...createWasmPaths("/wasm/"),
+      browserWorkerJs: "/wasm/browser.worker.global.js",
+      onProgress: (info) => {
+        if (info?.percent !== undefined) setLoadProgress(Math.round(info.percent));
+      },
+    });
+
+    await converter.initialize();
+    converterRef.current = converter;
+    return converter;
+  }
+
   const convertDocument = async () => {
     if (!file) {
       setError("Please upload a DOC or DOCX file first.");
@@ -147,31 +179,26 @@ export default function DocToPdfConverter() {
 
     setIsProcessing(true);
     setError("");
-    setStatus("Converting document to PDF...");
+    setLoadProgress(0);
+    setStatus("Preparing the document engine...");
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("paperSize", paperSize);
+      const converter = await getConverter();
 
-      const response = await fetch("/api/doc-to-pdf-converter", {
-        method: "POST",
-        body: formData,
+      setStatus("Converting document to PDF...");
+
+      const result = await converter.convertFile(file, {
+        outputFormat: "pdf",
+        pdf: {
+          // A4 is LibreOffice's default page size; Letter is enforced via filter options
+          ...(paperSize === "Letter" ? { quality: 90 } : {}),
+        },
+        ...(paperSize === "Letter" ? { filterOptions: 'PaperName="Letter"' } : {}),
       });
 
-      if (!response.ok) {
-        let message = "Could not convert the document.";
-        try {
-          const data = await response.json();
-          if (data?.error) {
-            message = data.error;
-          }
-        } catch {}
-
-        throw new Error(message);
-      }
-
-      const blob = await response.blob();
+      const pdfBuffer = result.data;
+      const pdfBytes = pdfBuffer instanceof Uint8Array ? pdfBuffer : new Uint8Array(pdfBuffer);
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
       const nextUrl = URL.createObjectURL(blob);
       const nextName = getPdfName(file.name);
 
@@ -187,7 +214,15 @@ export default function DocToPdfConverter() {
 
       downloadPdf(nextUrl, nextName);
     } catch (conversionError) {
-      setError(conversionError instanceof Error ? conversionError.message : "Could not convert the document.");
+      // Rebuild the engine on the next attempt if it broke
+      if (converterRef.current) {
+        try {
+          converterRef.current.destroy();
+        } catch {}
+        converterRef.current = null;
+      }
+      const message = conversionError instanceof Error ? conversionError.message : "Could not convert the document.";
+      setError(message);
       setStatus("Ready to try again");
     } finally {
       setIsProcessing(false);
@@ -281,7 +316,7 @@ export default function DocToPdfConverter() {
                     <div className="min-w-0">
                       <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">PDF settings</p>
                       <p className="mt-1 break-words text-sm leading-relaxed text-slate-600">
-                        Conversion is handled by a native document engine for high-fidelity output, so original pagination and styling are retained.
+                        Conversion happens entirely in your browser using the same native document engine, so original pagination and styling are retained. Your file never leaves your device.
                       </p>
                     </div>
                     <div className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-2 text-xs font-bold text-white">
@@ -308,6 +343,22 @@ export default function DocToPdfConverter() {
                       );
                     })}
                   </div>
+
+                  {isProcessing && loadProgress > 0 && loadProgress < 100 && (
+                    <div className="mt-5">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
+                        <span>Loading document engine</span>
+                        <span>{loadProgress}%</span>
+                      </div>
+                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-orange-500 to-amber-500 transition-[width] duration-300"
+                          style={{ width: `${loadProgress}%` }}
+                        />
+                      </div>
+                      <p className="mt-2 text-xs text-slate-500">First conversion downloads the conversion engine once; later conversions are almost instant.</p>
+                    </div>
+                  )}
                 </div>
 
                 {error && (
@@ -350,7 +401,7 @@ export default function DocToPdfConverter() {
                   <button
                     type="button"
                     onClick={downloadLatestPdf}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-900 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-100"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.25" d="M4 16.5V19a2 2 0 002 2h12a2 2 0 002-2v-2.5M12 3v12m0 0l4-4m-4 4l-4-4" />

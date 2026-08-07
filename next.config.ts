@@ -5,8 +5,27 @@ const nextConfig: NextConfig = {
   experimental: {
     proxyClientMaxBodySize: "4mb",
   },
-  outputFileTracingIncludes: {
-    "/api/doc-to-pdf-converter": ["./node_modules/zod/**/*"],
+  async headers() {
+    return [
+      {
+        // SharedArrayBuffer is required by the browser-side LibreOffice WASM engine
+        // (DOC to PDF Converter). Scoped to this page only so other tools'
+        // third-party assets (flags, TMDB images, AdSense) are not affected by COEP.
+        // Both the converter page and the WASM engine files need cross-origin
+        // isolation; keeping this scoped so other tools' third-party assets are untouched.
+        source: "/(doc-to-pdf-converter|wasm)/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "require-corp",
+          },
+        ],
+      },
+    ];
   },
 };
 
