@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -29,6 +30,17 @@ function getWasmPath() {
   // are not packaged into serverless functions (prevents Vercel size limits).
   // You can set `LIBREOFFICE_WASM_PATH` to a custom URL or filesystem path.
   if (process.env.LIBREOFFICE_WASM_PATH) return process.env.LIBREOFFICE_WASM_PATH;
+
+  // First check if the WASM files are available locally in node_modules.
+  // This avoids downloading ~250MB from a CDN at runtime, which is fast and offline-friendly.
+  try {
+    const localPath = path.join(process.cwd(), "node_modules", "@matbee", "libreoffice-converter", "wasm");
+    if (fs.existsSync(path.join(localPath, "soffice.wasm"))) {
+      return localPath;
+    }
+  } catch (e) {
+    // Ignore error
+  }
 
   // Default to jsDelivr for the known package version. Update the version
   // string here if you bump the converter dependency.
