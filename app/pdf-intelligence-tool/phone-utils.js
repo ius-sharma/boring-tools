@@ -44,7 +44,7 @@ function phoneDigits(value) {
   return normalizeWhitespace(value).replace(/\D/g, "");
 }
 
-function normalizePhoneDisplay(value) {
+export function normalizePhoneDisplay(value) {
   const clean = normalizeWhitespace(value).replace(/[),.;:!?]+$/g, "");
   if (!clean) return null;
 

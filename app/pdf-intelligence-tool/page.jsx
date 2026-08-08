@@ -195,6 +195,10 @@ function toWords(value) {
     .match(/[a-z0-9']+/g) || [];
 }
 
+function isPurelyNumeric(value) {
+  return /^\d+$/.test(value);
+}
+
 function splitSentences(text) {
   const matches = normalizeWhitespace(text).match(/[^.!?]+[.!?]+|[^.!?]+$/g);
   return (matches || []).map((sentence) => sentence.trim()).filter(Boolean);
@@ -279,7 +283,7 @@ function extractDates(text) {
 function extractKeywords(text) {
   const counts = new Map();
   for (const word of toWords(text)) {
-    if (word.length < 4 || STOP_WORDS.has(word)) continue;
+    if (word.length < 4 || STOP_WORDS.has(word) || isPurelyNumeric(word)) continue;
     counts.set(word, (counts.get(word) || 0) + 1);
   }
 
