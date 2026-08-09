@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { recognize } from "tesseract.js";
-import { buildJsonExport, buildPlainTextExport, buildReportText, extractDocumentData } from "./extractor-utils";
+import { buildJsonExport, buildPlainTextExport, buildReportText, enrichAnalysisWithAiData, extractDocumentData } from "./extractor-utils";
 
 const SUPPORTED_EXTENSIONS = ["pdf", "jpg", "jpeg", "png", "txt"];
 const TAB_ITEMS = [
@@ -459,8 +459,29 @@ export default function DocumentDataExtractor() {
       }
 
       const combinedText = normalizeWhitespace(extractedTexts.join("\n\n"));
-      const nextAnalysis = extractDocumentData({ fileSummaries, combinedText });
-      setAnalysis(nextAnalysis);
+      let finalAnalysis = extractDocumentData({ fileSummaries, combinedText });
+
+      if (combinedText && combinedText.length >= 10) {
+        setProgress({ percent: 90, message: "Enriching extracted data with AI..." });
+        try {
+          const aiRes = await fetch("/api/document-data-extractor", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ combinedText }),
+          });
+
+          if (aiRes.ok) {
+            const aiJson = await aiRes.json();
+            if (aiJson.success && aiJson.data) {
+              finalAnalysis = enrichAnalysisWithAiData(finalAnalysis, aiJson.data);
+            }
+          }
+        } catch {
+          // Fall back gracefully to local analysis
+        }
+      }
+
+      setAnalysis(finalAnalysis);
       setActiveTab("personal");
       setProgress({ percent: 100, message: "Extraction complete" });
       showNotice("success", "Document data extracted successfully.");

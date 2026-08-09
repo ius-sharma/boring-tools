@@ -130,11 +130,12 @@ const STOP_WORDS = new Set([
 const PERSON_LABELS = /(?:^|\n)\s*(?:name|full name|customer|client|recipient|patient|issued to|bill to|ship to|sold to|contact person|prepared by|author|owner|account holder|attn|attention)\s*[:\-]\s*([^\n\r]+)/gim;
 const ADDRESS_LABELS = /(?:^|\n)\s*(?:address|mailing address|billing address|shipping address|residential address|location|office address)\s*[:\-]\s*([^\n\r]+)/gim;
 const ID_LABELS = /(?:invoice\s*(?:number|no\.?|#)?|order\s*(?:number|no\.?|#)?|reference\s*(?:number|no\.?|#)?|ref\s*(?:number|no\.?|#)?|id\s*(?:number|no\.?|#)?|document\s*(?:id|number|no\.?|#)?)\s*[:#\-\s]*([A-Z0-9][A-Z0-9/._-]{2,})/gim;
-const MONEY_PATTERN = /(?:[$€£¥]|USD|EUR|GBP|INR|AUD|CAD|NZD|JPY|CHF|CNY|SGD|AED|SAR)\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?|\d{1,3}(?:,\d{3})+(?:\.\d{2})?\s?(?:[$€£¥]|USD|EUR|GBP|INR|AUD|CAD|NZD|JPY|CHF|CNY|SGD|AED|SAR)/gi;
+const MONEY_PATTERN = /(?:[$€£¥₹]|USD|EUR|GBP|INR|RS\.?|AUD|CAD|NZD|JPY|CHF|CNY|SGD|AED|SAR)\s?\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2})?|\d{1,3}(?:[,\s]\d{3})+(?:\.\d{2})?\s?(?:[$€£¥₹]|USD|EUR|GBP|INR|RS\.?|AUD|CAD|NZD|JPY|CHF|CNY|SGD|AED|SAR)/gi;
 const DATE_PATTERNS = [
   /\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/g,
   /\b\d{4}[/-]\d{1,2}[/-]\d{1,2}\b/g,
-  /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|May|June|July|August|September|October|November|December)\.?\s+\d{1,2}(?:,\s+\d{4})?\b/gi,
+  /\b\d{1,2}(?:st|nd|rd|th)?\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|May|June|July|August|September|October|November|December)\.?\s+(?:\d{2,4})\b/gi,
+  /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|May|June|July|August|September|October|November|December)\.?\s+\d{1,2}(?:st|nd|rd|th)?(?:,\s+\d{4})?\b/gi,
   /\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec|January|February|March|April|May|June|July|August|September|October|November|December)\.?\s+\d{4}\b/gi,
 ];
 const NAME_BLOCK_BLACKLIST = /(?:invoice|receipt|statement|order|reference|total|amount|date|phone|email|address|website|www\.|http|tax|balance|payment|company|limited|ltd|llc|inc|corp|co\.|pvt|gmbh|sarl|bank|department)/i;
@@ -470,6 +471,92 @@ export function extractDocumentData({ fileSummaries = [], combinedText = "" }) {
       invoiceNumbers: identifiers.invoiceNumbers,
       orderNumbers: identifiers.orderNumbers,
       referenceNumbers: identifiers.referenceNumbers,
+      importantBlocks,
+    },
+    financialData,
+    links,
+    keywords,
+    importantBlocks,
+    statistics,
+  };
+}
+
+export function enrichAnalysisWithAiData(localAnalysis, aiData) {
+  if (!localAnalysis || !aiData) return localAnalysis;
+
+  const mergeLists = (local = [], ai = []) => {
+    const set = new Set();
+    const result = [];
+
+    for (const item of [...(local || []), ...(ai || [])]) {
+      const cleaned = String(item || "").trim();
+      if (!cleaned) continue;
+      const lower = cleaned.toLowerCase();
+      if (!set.has(lower)) {
+        set.add(lower);
+        result.push(cleaned);
+      }
+    }
+
+    return result;
+  };
+
+  const names = mergeLists(localAnalysis.personalInfo?.names, aiData.personalInfo?.names);
+  const phones = mergeLists(localAnalysis.personalInfo?.phones, aiData.personalInfo?.phones);
+  const emails = mergeLists(localAnalysis.personalInfo?.emails, aiData.personalInfo?.emails);
+  const addresses = mergeLists(localAnalysis.personalInfo?.addresses, aiData.personalInfo?.addresses);
+
+  const dates = mergeLists(localAnalysis.documentInfo?.dates, aiData.documentInfo?.dates);
+  const ids = mergeLists(localAnalysis.documentInfo?.ids, aiData.documentInfo?.ids);
+  const invoiceNumbers = mergeLists(localAnalysis.documentInfo?.invoiceNumbers, aiData.documentInfo?.invoiceNumbers);
+  const orderNumbers = mergeLists(localAnalysis.documentInfo?.orderNumbers, aiData.documentInfo?.orderNumbers);
+  const referenceNumbers = mergeLists(localAnalysis.documentInfo?.referenceNumbers, aiData.documentInfo?.referenceNumbers);
+  const importantBlocks = mergeLists(localAnalysis.documentInfo?.importantBlocks, aiData.documentInfo?.importantBlocks || aiData.importantBlocks);
+
+  const amounts = mergeLists(localAnalysis.financialData?.amounts, aiData.financialData?.amounts);
+  const currencyValues = mergeLists(localAnalysis.financialData?.currencyValues, aiData.financialData?.currencyValues);
+  const totals = mergeLists(localAnalysis.financialData?.totals, aiData.financialData?.totals);
+  const taxValues = mergeLists(localAnalysis.financialData?.taxValues, aiData.financialData?.taxValues);
+
+  const links = mergeLists(localAnalysis.links, aiData.links);
+  const keywords = mergeLists(localAnalysis.keywords, aiData.keywords);
+
+  const financialData = {
+    amounts,
+    currencyValues,
+    totals,
+    taxValues,
+  };
+
+  const statistics = buildStatistics({
+    names,
+    emails,
+    phones,
+    addresses,
+    dates,
+    links,
+    identifiers: { ids, invoiceNumbers, orderNumbers, referenceNumbers },
+    financialData,
+    keywords,
+    importantBlocks,
+    fullText: localAnalysis.fullText || "",
+  });
+
+  return {
+    fileSummaries: localAnalysis.fileSummaries || [],
+    fullText: localAnalysis.fullText || "",
+    personalInfo: {
+      names,
+      phones,
+      emails,
+      addresses,
+    },
+    documentInfo: {
+      dates,
+      ids,
+      invoiceNumbers,
+      orderNumbers,
+      referenceNumbers,
       importantBlocks,
     },
     financialData,
