@@ -29,6 +29,7 @@ Access all live tools instantly:
  
 ## ⭐ Featured & Newly Added Tools
 Try some of our newest and most popular utilities:
+* **Playlist IQ** (`/youtube-playlist-analyzer`) — Calculate total watch time in hours across playback speeds (1.0x, 1.25x, 1.5x, 1.75x, 2.0x), extract core concepts, module roadmaps & learning outcomes with AI intelligence, set daily pacing goals with calendar finish target estimates, and search video breakdown lists.
 * **Digital Time Capsule** (`/digital-time-capsule`) — Create encrypted digital time capsules for your future self. Securely store text, images, and voice recordings in IndexedDB with client-side Web Crypto AES-GCM encryption, offline calendar alerts, and private email reminder notifications synced to Google Sheets.
 * **Geography Quiz & Map Explorer** (`/geography-quiz`) — Explore interactive world maps and test your geography knowledge with countries, capitals, flags and map challenges. Features client-side zoom & pan controls, 8 game modes + physical map hotspots, difficulty levels, achievements system, and HTML5 canvas scorecard PNG exports.
 * **GIF Maker from Images** (`/gif-maker`) — Create animated GIFs from multiple images using drag-and-drop editing, custom timeline ordering, text overlays, stickers, filters, transition animations (fade, slide, zoom, spin), and browser-based LZW encoding. Runs 100% locally and privately in the browser with local storage settings and size estimation.
@@ -67,7 +68,15 @@ Try some of our newest and most popular utilities:
 
 ## 📖 Selected Feature Spotlights
 
-### 1. Reaction Time & Mouse Accuracy Tester (Live)
+### 1. Playlist IQ (Live)
+Analyze any YouTube playlist to calculate total watch duration across playback speeds, extract AI concept roadmaps, and plan daily study schedules.
+* **Duration & Speed Matrix**: Calculate total hours/minutes across 1.0x, 1.25x, 1.5x, 1.75x, 2.0x playback speeds and Deep Study Mode (+50% note-taking buffer).
+* **Daily Pacing Planner**: Interactive slider to set daily watch goals (15m to 4h/day) and calculate exact completion date target.
+* **AI Concept Intelligence**: Automatic domain detection, skill level tag, summary overview, extracted core concepts tag cloud, module roadmap, learning outcomes, and study tips.
+* **Searchable Video Breakdown**: Filterable and sortable video list (original index, longest first, shortest first) with direct YouTube watch links.
+* **1-Click Markdown Export**: Copy full formatted study roadmap directly to Notion, Obsidian, or local notes.
+
+### 2. Reaction Time & Mouse Accuracy Tester (Live)
 Test your reflexes and aim precision in real-time with 5 gaming benchmark modes.
 * **5 Game Modes**: Reaction Time, Mouse Accuracy, Click Speed (30s CPS), Precision Bullseye, and Target Tracking.
 * **Anti-Cheat & Analytics**: Early-click protection with detailed fastest, slowest, average, median, and consistency metrics.

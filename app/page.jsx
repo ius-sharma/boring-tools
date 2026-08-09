@@ -371,6 +371,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredTools.map((tool) => {
               const isTimeCapsule = tool.id === "digital-time-capsule";
+              const isPlaylistIQ = tool.id === "youtube-playlist-analyzer";
               return (
                 <a
                   key={tool.id}
@@ -378,6 +379,8 @@ export default function Home() {
                   className={`block p-6 rounded-xl border transition ${
                     isTimeCapsule 
                       ? "border border-amber-400 bg-gradient-to-br from-amber-50/20 via-white to-white shadow-[0_0_20px_rgba(245,158,11,0.08)] ring-1 ring-amber-300/30 hover:border-amber-500 hover:shadow-[0_0_25px_rgba(245,158,11,0.18)] relative overflow-hidden" 
+                      : isPlaylistIQ
+                      ? "border border-sky-400 bg-gradient-to-br from-sky-50/25 via-white to-white shadow-[0_0_20px_rgba(14,165,233,0.08)] ring-1 ring-sky-300/30 hover:border-sky-500 hover:shadow-[0_0_25px_rgba(14,165,233,0.18)] relative overflow-hidden"
                       : "border-slate-200 bg-white hover:border-orange-400 hover:shadow-lg"
                   }`}
                 >
@@ -385,6 +388,12 @@ export default function Home() {
                     <>
                       <div className="h-1 bg-gradient-to-r from-amber-500 to-yellow-400 absolute top-0 left-0 right-0 z-20" />
                       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-amber-200/20 to-transparent pointer-events-none rounded-bl-full" />
+                    </>
+                  )}
+                  {isPlaylistIQ && (
+                    <>
+                      <div className="h-1 bg-gradient-to-r from-sky-500 to-indigo-500 absolute top-0 left-0 right-0 z-20" />
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-sky-200/20 to-transparent pointer-events-none rounded-bl-full" />
                     </>
                   )}
                   <div className="flex items-start justify-between mb-3 relative z-10">
@@ -395,6 +404,10 @@ export default function Home() {
                           <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                         </svg>
                         Milestone #100
+                      </span>
+                    ) : isPlaylistIQ ? (
+                      <span className="text-[10px] font-bold tracking-wider bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-2.5 py-1 rounded-full uppercase shadow-xs flex items-center gap-1.5 animate-pulse">
+                        ⚡ Featured AI
                       </span>
                     ) : (
                       tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
@@ -518,6 +531,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTools.slice(0, toolsToShow).map((tool) => {
                   const isTimeCapsule = tool.id === "digital-time-capsule";
+                  const isPlaylistIQ = tool.id === "youtube-playlist-analyzer";
                   return (
                     <a
                       key={tool.id}
@@ -525,6 +539,8 @@ export default function Home() {
                       className={`p-4 rounded-lg border transition ${
                         isTimeCapsule
                           ? "border border-amber-400 bg-gradient-to-br from-amber-50/15 via-white to-white shadow-[0_0_15px_rgba(245,158,11,0.06)] ring-1 ring-amber-300/20 hover:border-amber-500 hover:shadow-md hover:shadow-amber-100/30 relative overflow-hidden"
+                          : isPlaylistIQ
+                          ? "border border-sky-400 bg-gradient-to-br from-sky-50/20 via-white to-white shadow-[0_0_15px_rgba(14,165,233,0.06)] ring-1 ring-sky-300/20 hover:border-sky-500 hover:shadow-md hover:shadow-sky-100/30 relative overflow-hidden"
                           : "border-slate-200 bg-white hover:border-orange-400 hover:shadow-md"
                       }`}
                     >
@@ -532,6 +548,12 @@ export default function Home() {
                         <>
                           <div className="h-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 absolute top-0 left-0 right-0 z-20" />
                           <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-200/20 to-transparent pointer-events-none rounded-bl-full" />
+                        </>
+                      )}
+                      {isPlaylistIQ && (
+                        <>
+                          <div className="h-0.5 bg-gradient-to-r from-sky-500 to-indigo-500 absolute top-0 left-0 right-0 z-20" />
+                          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-sky-200/20 to-transparent pointer-events-none rounded-bl-full" />
                         </>
                       )}
                       <div className="flex items-start justify-between mb-2 relative z-10">
@@ -542,6 +564,10 @@ export default function Home() {
                               <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                             </svg>
                             #100
+                          </span>
+                        ) : isPlaylistIQ ? (
+                          <span className="text-[9px] font-bold tracking-wider bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-2 py-0.5 rounded-full uppercase shadow-xs flex items-center gap-1 animate-pulse">
+                            ⚡ AI
                           </span>
                         ) : (
                           tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
