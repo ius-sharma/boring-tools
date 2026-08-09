@@ -38,6 +38,16 @@ const LEGAL_PHRASE_REPLACEMENTS = [
   [/\bapproximately\b/gi, "about"],
   [/\bbest efforts\b/gi, "best efforts"],
   [/\breasonable efforts\b/gi, "reasonable efforts"],
+  [/\bindemnify\b/gi, "protect from liability"],
+  [/\bhold harmless\b/gi, "protect from legal responsibility"],
+  [/\bbinding arbitration\b/gi, "out-of-court arbitration"],
+  [/\bclass action waiver\b/gi, "giving up right to sue as a group"],
+  [/\blimitation of liability\b/gi, "capped company liability"],
+  [/\bforce majeure\b/gi, "unforeseen emergencies"],
+  [/\bpursuant to\b/gi, "under"],
+  [/\bin perpetuity\b/gi, "permanently"],
+  [/\birrevocable\b/gi, "permanent and unchangeable"],
+  [/\bnon-refundable\b/gi, "non-refundable"],
 ];
 
 const STOP_WORDS = new Set([
@@ -658,7 +668,7 @@ export default function TermsConditionsSimplifierPage() {
     setStatus("");
   };
 
-  const handleSimplify = () => {
+  const handleSimplify = async () => {
     const cleaned = normalizeText(inputText);
 
     if (!cleaned) {
@@ -675,22 +685,65 @@ export default function TermsConditionsSimplifierPage() {
     setError("");
     clearCopyStatus();
 
-    processTimerRef.current = window.setTimeout(() => {
-      try {
-        const nextAnalysis = analyzeLegalText(cleaned);
-        setAnalysis({
-          ...nextAnalysis,
-          reportText: buildReportText(nextAnalysis),
-        });
-        setStatus("Your legal text has been simplified into plain English.");
-      } catch {
-        setError("Could not simplify this text. Try pasting a cleaner copy of the document.");
-        setAnalysis(null);
-      } finally {
-        setIsLoading(false);
-        processTimerRef.current = null;
+    try {
+      const res = await fetch("/api/terms-conditions-simplifier", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: cleaned }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          const aiData = json.data;
+          const words = toWords(cleaned);
+          const sentences = splitSentences(cleaned);
+          const sectionsFilled = [
+            aiData.summary,
+            aiData.importantPoints,
+            aiData.obligations,
+            aiData.permissions,
+            aiData.risks,
+          ].filter((section) => (typeof section === "string" ? Boolean(section.trim()) : section.length > 0)).length;
+
+          const nextAnalysis = {
+            wordCount: words.length,
+            sentenceCount: sentences.length,
+            readingTime: formatReadingTime(words.length),
+            summary: aiData.summary,
+            importantPoints: aiData.importantPoints,
+            obligations: aiData.obligations,
+            permissions: aiData.permissions,
+            risks: aiData.risks,
+            sectionsFilled,
+          };
+
+          setAnalysis({
+            ...nextAnalysis,
+            reportText: buildReportText(nextAnalysis),
+          });
+          setStatus("Your legal text has been simplified into plain English using AI.");
+          setIsLoading(false);
+          return;
+        }
       }
-    }, 180);
+    } catch {
+      // Fallback gracefully to local parser
+    }
+
+    try {
+      const nextAnalysis = analyzeLegalText(cleaned);
+      setAnalysis({
+        ...nextAnalysis,
+        reportText: buildReportText(nextAnalysis),
+      });
+      setStatus("Your legal text has been simplified into plain English.");
+    } catch {
+      setError("Could not simplify this text. Try pasting a cleaner copy of the document.");
+      setAnalysis(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleClearInput = () => {
