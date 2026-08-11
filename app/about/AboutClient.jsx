@@ -43,7 +43,7 @@ export default function AboutClient() {
           {/* Minimal Metrics Grid */}
           <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-200 pt-8">
             <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">100</p>
+              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">101</p>
               <p className="text-xs text-slate-500 font-medium mt-0.5">Live Utilities</p>
             </div>
             <div>

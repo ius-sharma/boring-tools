@@ -1,8 +1,8 @@
 # BoringTools 🚀
 
-> 🎉 **MISSION ACCOMPLISHED: 100 DAYS. 100 TOOLS.** 🎉
+> 🎉 **MISSION ACCOMPLISHED: 100 DAYS. 101 TOOLS.** 🎉
 > 
-> BoringTools is a curated collection of simple, fast, and practical micro-utilities built daily to solve everyday problems. Every tool runs 100% in your browser—no signup, no tracking, and no clutter. Thank you to everyone who joined us in reaching this incredible milestone of **100 live, browser-first tools!**
+> BoringTools is a curated collection of simple, fast, and practical micro-utilities built daily to solve everyday problems. Every tool runs 100% in your browser—no signup, no tracking, and no clutter. Thank you to everyone who joined us in reaching this incredible milestone of **101 live, browser-first tools!**
 
 ---
 
@@ -14,8 +14,8 @@ Access all live tools instantly:
 
 ## 📊 Project Status & Roadmap
  
-* **Live Tools**: `100` (accessible online or via local setup)
-* **Mission Status**: **Completed!** 100 tools built in 100 days.
+* **Live Tools**: `101` (accessible online or via local setup)
+* **Mission Status**: **Completed!** 101 tools built.
 * **Final Goal**: Created a comprehensive browser-first utility ecosystem.
  
 ---
@@ -119,7 +119,7 @@ Convert any image into terminal text art instantly with pixel shaders and custom
  
 ---
  
-## 🗂️ Live Tools Directory (99 Live Tools)
+## 🗂️ Live Tools Directory (101 Live Tools)
 
 1. **Text Formatter** — `/text-formatter`
 2. **Text to Morse Code** — `/text-to-morse-code`
@@ -175,52 +175,53 @@ Convert any image into terminal text art instantly with pixel shaders and custom
 52. **Attendance Calculator** — `/attendance-calculator`
 53. **CGPA Target Planner** — `/cgpa-target-planner`
 54. **YouTube Downloader** — `/youtube-downloader`
-55. **Video to Audio Converter** — `/video-to-audio-converter`
-56. **Typing Speed Tester** — `/typing-speed-tester`
-57. **Calorie Calculator** — `/calorie-calculator`
-58. **Hook Generator** — `/hook-generator`
-59. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
-60. **Color Palette Generator** — `/color-palette-generator`
-61. **Invoice Generator** — `/invoice-generator`
-62. **Should I Reply?** — `/should-i-reply`
-63. **Subscription Tracker** — `/subscription-tracker`
-64. **Personal Admin Dashboard** — `/personal-admin-dashboard`
-65. **Email Decoder** — `/email-decoder`
-66. **Learning OS** — `/learning-os`
-67. **Leverage Finder** — `/leverage-finder`
-68. **Clipboard History Manager** — `/clipboard-history-manager`
-69. **Digital Declutter Assistant** — `/digital-declutter-assistant`
-70. **Second Mind** — `/second-mind`
-71. **Fear Decomposer** — `/fear-decomposer`
-72. **Perspective Switcher** — `/perspective-switcher`
-73. **History Repeats** — `/history-repeats`
-74. **Historical Perspective** — `/historical-perspective`
-75. **Before & After** — `/before-after`
-76. **Empire Simulator** — `/empire-simulator`
-77. **Timeline Comparison** — `/timeline-comparison`
-78. **If This Never Happened** — `/if-this-never-happened`
-79. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
-80. **Cosmic Calendar** — `/cosmic-calendar`
-81. **Cosmic Address** — `/cosmic-address`
-82. **Time on Other Planets** — `/time-on-other-planets`
-83. **Placement Readiness Score** — `/placement-readiness-score`
-84. **Study Material Finder** — `/study-material-finder`
-85. **SUIII Counter** — `/suiii-counter`
-86. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
-87. **Fake Data Generator** — `/fake-data-generator`
-88. **Movie & Series Recommendation** — `/movie-series-recommendation`
-89. **Cash Runway Calculator** — `/cash-runway-calculator`
-90. **AI Agent Visualizer** — `/ai-agent-visualizer`
-91. **Logo Meaning Explorer** — `/logo-meaning-explorer`
-92. **Startup Name Analyzer** — `/startup-name-analyzer`
-93. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
-94. **Browser-Based Background Remover** — `/background-remover`
-95. **Audio Waveform Trimmer & Converter** — `/audio-waveform-trimmer`
-96. **Image to ASCII / Terminal Art Generator** — `/image-to-ascii`
-97. **Text to Handwriting Image Converter** — `/text-to-handwriting`
-98. **GIF Maker from Images** — `/gif-maker`
-99. **Geography Quiz & Map Explorer** — `/geography-quiz`
-100. **Digital Time Capsule** — `/digital-time-capsule`
+55. **Playlist IQ** — `/youtube-playlist-analyzer`
+56. **Video to Audio Converter** — `/video-to-audio-converter`
+57. **Typing Speed Tester** — `/typing-speed-tester`
+58. **Calorie Calculator** — `/calorie-calculator`
+59. **Hook Generator** — `/hook-generator`
+60. **Sleep Cycle Calculator** — `/sleep-cycle-calculator`
+61. **Color Palette Generator** — `/color-palette-generator`
+62. **Invoice Generator** — `/invoice-generator`
+63. **Should I Reply?** — `/should-i-reply`
+64. **Subscription Tracker** — `/subscription-tracker`
+65. **Personal Admin Dashboard** — `/personal-admin-dashboard`
+66. **Email Decoder** — `/email-decoder`
+67. **Learning OS** — `/learning-os`
+68. **Leverage Finder** — `/leverage-finder`
+69. **Clipboard History Manager** — `/clipboard-history-manager`
+70. **Digital Declutter Assistant** — `/digital-declutter-assistant`
+71. **Second Mind** — `/second-mind`
+72. **Fear Decomposer** — `/fear-decomposer`
+73. **Perspective Switcher** — `/perspective-switcher`
+74. **History Repeats** — `/history-repeats`
+75. **Historical Perspective** — `/historical-perspective`
+76. **Before & After** — `/before-after`
+77. **Empire Simulator** — `/empire-simulator`
+78. **Timeline Comparison** — `/timeline-comparison`
+79. **If This Never Happened** — `/if-this-never-happened`
+80. **Your Weight on Other Planets** — `/your-weight-on-other-planets`
+81. **Cosmic Calendar** — `/cosmic-calendar`
+82. **Cosmic Address** — `/cosmic-address`
+83. **Time on Other Planets** — `/time-on-other-planets`
+84. **Placement Readiness Score** — `/placement-readiness-score`
+85. **Study Material Finder** — `/study-material-finder`
+86. **SUIII Counter** — `/suiii-counter`
+87. **Cinematic AI Prompt Architect** — `/cinematic-ai-prompt-architect`
+88. **Fake Data Generator** — `/fake-data-generator`
+89. **Movie & Series Recommendation** — `/movie-series-recommendation`
+90. **Cash Runway Calculator** — `/cash-runway-calculator`
+91. **AI Agent Visualizer** — `/ai-agent-visualizer`
+92. **Logo Meaning Explorer** — `/logo-meaning-explorer`
+93. **Startup Name Analyzer** — `/startup-name-analyzer`
+94. **Reaction Time & Mouse Accuracy Tester** — `/reaction-time-tester`
+95. **Browser-Based Background Remover** — `/background-remover`
+96. **Audio Waveform Trimmer & Converter** — `/audio-waveform-trimmer`
+97. **Image to ASCII / Terminal Art Generator** — `/image-to-ascii`
+98. **Text to Handwriting Image Converter** — `/text-to-handwriting`
+99. **GIF Maker from Images** — `/gif-maker`
+100. **Geography Quiz & Map Explorer** — `/geography-quiz`
+101. **Digital Time Capsule** — `/digital-time-capsule`
 
 ---
 
