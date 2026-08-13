@@ -1,69 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function PomodoroTimer() {
   const WORK_TIME = 25 * 60;
-  const BREAK_TIME = 5 * 60;
-  const LONG_BREAK_TIME = 15 * 60;
-
-  const [seconds, setSeconds] = useState(WORK_TIME);
-  const [running, setRunning] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  const [sessions, setSessions] = useState(0);
-  const [dailyStats, setDailyStats] = useState({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
-  const [streak, setStreak] = useState(0);
-  const [showSettings, setShowSettings] = useState(false);
-  
-  // Custom Timer Settings
-  const [customWorkTime, setCustomWorkTime] = useState(25);
-  const [customBreakTime, setCustomBreakTime] = useState(5);
-  const [customLongBreakTime, setCustomLongBreakTime] = useState(15);
-  const [autoStartBreaks, setAutoStartBreaks] = useState(true);
-  const [autoStartFocus, setAutoStartFocus] = useState(true);
-
-  // Sound Settings
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [soundTone, setSoundTone] = useState("chime"); // chime | bell | beep
-  const [soundVolume, setSoundVolume] = useState(0.5);
-
-  // Task Goal Tracking
-  const [currentTask, setCurrentTask] = useState("");
-
-  const notificationPermissionRequestedRef = useRef(false);
-  const audioContextRef = useRef(null);
-  const timerIntervalRef = useRef(null);
 
   // Storage Keys
   const TIMER_STORAGE_KEY = "pomodoroTimerState";
   const SETTINGS_STORAGE_KEY = "pomodoroSettingsState";
   const HISTORY_STORAGE_KEY = "pomodoroHistory";
-
-  // Helper: Save timer state to localStorage
-  const saveTimerState = (state) => {
-    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
-  };
-
-  // Helper: Load timer state from localStorage
-  const loadTimerState = () => {
-    try {
-      const saved = localStorage.getItem(TIMER_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  };
-
-  // Helper: Get remaining time based on wall clock
-  const getRemainingTime = (timerState) => {
-    if (!timerState.isRunning || !timerState.startTime || !timerState.duration) {
-      return timerState.secondsLeft || timerState.duration;
-    }
-
-    const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
-    const remaining = Math.max(0, timerState.duration - elapsed);
-    return remaining;
-  };
 
   // Helper: Calculate streak from history
   const calculateStreak = (history) => {
@@ -91,71 +36,340 @@ export default function PomodoroTimer() {
     return streakCount;
   };
 
-  // Load stats, settings, task and timer state on mount
-  useEffect(() => {
-    const today = new Date().toDateString();
-
-    // Load History & Daily Stats
-    let history = {};
-    try {
-      const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
-      if (savedHistory) history = JSON.parse(savedHistory);
-    } catch {}
-
-    const savedStats = localStorage.getItem("pomodoroStats");
-    if (savedStats) {
-      try {
-        const data = JSON.parse(savedStats);
-        if (data.date === today) {
-          setDailyStats(data.stats);
-        } else {
-          setDailyStats({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
-        }
-      } catch {}
+  // Helper: Get remaining time based on wall clock
+  const getRemainingTime = (timerState) => {
+    if (!timerState.isRunning || !timerState.startTime || !timerState.duration) {
+      return timerState.secondsLeft || timerState.duration;
     }
 
-    setStreak(calculateStreak(history));
+    const elapsed = Math.floor((Date.now() - timerState.startTime) / 1000);
+    const remaining = Math.max(0, timerState.duration - elapsed);
+    return remaining;
+  };
 
-    // Load Saved Settings
+  // Helper: Load saved timer state
+  const loadSavedTimerState = () => {
+    if (typeof window === "undefined") return null;
+    try {
+      const saved = localStorage.getItem(TIMER_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  // Helper: Load saved settings state
+  const loadSavedSettings = () => {
+    if (typeof window === "undefined") return {};
     try {
       const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
-      if (savedSettings) {
-        const parsed = JSON.parse(savedSettings);
-        if (parsed.customWorkTime) setCustomWorkTime(parsed.customWorkTime);
-        if (parsed.customBreakTime) setCustomBreakTime(parsed.customBreakTime);
-        if (parsed.customLongBreakTime) setCustomLongBreakTime(parsed.customLongBreakTime);
-        if (parsed.autoStartBreaks !== undefined) setAutoStartBreaks(parsed.autoStartBreaks);
-        if (parsed.autoStartFocus !== undefined) setAutoStartFocus(parsed.autoStartFocus);
-        if (parsed.soundEnabled !== undefined) setSoundEnabled(parsed.soundEnabled);
-        if (parsed.soundTone) setSoundTone(parsed.soundTone);
-        if (parsed.soundVolume !== undefined) setSoundVolume(parsed.soundVolume);
+      return savedSettings ? JSON.parse(savedSettings) : {};
+    } catch {
+      return {};
+    }
+  };
+
+  // Lazy Initializers for State to avoid setState in useEffect
+  const [customWorkTime, setCustomWorkTime] = useState(() => {
+    const s = loadSavedSettings();
+    const ts = loadSavedTimerState();
+    return ts?.customWorkTime || s.customWorkTime || 25;
+  });
+
+  const [customBreakTime, setCustomBreakTime] = useState(() => {
+    const s = loadSavedSettings();
+    const ts = loadSavedTimerState();
+    return ts?.customBreakTime || s.customBreakTime || 5;
+  });
+
+  const [customLongBreakTime, setCustomLongBreakTime] = useState(() => {
+    const s = loadSavedSettings();
+    const ts = loadSavedTimerState();
+    return ts?.customLongBreakTime || s.customLongBreakTime || 15;
+  });
+
+  const [autoStartBreaks, setAutoStartBreaks] = useState(() => {
+    const s = loadSavedSettings();
+    return s.autoStartBreaks !== undefined ? s.autoStartBreaks : true;
+  });
+
+  const [autoStartFocus, setAutoStartFocus] = useState(() => {
+    const s = loadSavedSettings();
+    return s.autoStartFocus !== undefined ? s.autoStartFocus : true;
+  });
+
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const s = loadSavedSettings();
+    return s.soundEnabled !== undefined ? s.soundEnabled : true;
+  });
+
+  const [soundTone, setSoundTone] = useState(() => {
+    const s = loadSavedSettings();
+    return s.soundTone || "chime";
+  });
+
+  const [soundVolume, setSoundVolume] = useState(() => {
+    const s = loadSavedSettings();
+    return s.soundVolume !== undefined ? s.soundVolume : 0.5;
+  });
+
+  const [currentTask, setCurrentTask] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("pomodoroCurrentTask") || "";
+  });
+
+  const [dailyStats, setDailyStats] = useState(() => {
+    if (typeof window === "undefined") return { focusSessions: 0, breakSessions: 0, focusMinutes: 0 };
+    const today = new Date().toDateString();
+    try {
+      const savedStats = localStorage.getItem("pomodoroStats");
+      if (savedStats) {
+        const data = JSON.parse(savedStats);
+        if (data.date === today) return data.stats;
       }
     } catch {}
+    return { focusSessions: 0, breakSessions: 0, focusMinutes: 0 };
+  });
 
-    // Load Task Goal
-    const savedTask = localStorage.getItem("pomodoroCurrentTask");
-    if (savedTask) setCurrentTask(savedTask);
+  const [streak, setStreak] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    try {
+      const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+      const historyObj = savedHistory ? JSON.parse(savedHistory) : {};
+      return calculateStreak(historyObj);
+    } catch {
+      return 0;
+    }
+  });
 
-    // Load timer state if exists
-    const timerState = loadTimerState();
+  const [seconds, setSeconds] = useState(() => {
+    const ts = loadSavedTimerState();
+    if (ts) return getRemainingTime(ts);
+    return WORK_TIME;
+  });
+
+  const [running, setRunning] = useState(() => {
+    const ts = loadSavedTimerState();
+    return ts ? ts.isRunning : false;
+  });
+
+  const [isBreak, setIsBreak] = useState(() => {
+    const ts = loadSavedTimerState();
+    return ts ? ts.isBreak : false;
+  });
+
+  const [sessions, setSessions] = useState(() => {
+    const ts = loadSavedTimerState();
+    return ts ? ts.sessions : 0;
+  });
+
+  const [showSettings, setShowSettings] = useState(false);
+
+  const notificationPermissionRequestedRef = useRef(false);
+  const audioContextRef = useRef(null);
+  const timerIntervalRef = useRef(null);
+
+  // Pure Helper: Format time
+  const formatTime = (secs) => {
+    const mins = Math.floor(secs / 60);
+    const sec = secs % 60;
+    return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
+
+  // Helper: Save timer state to localStorage
+  const saveTimerState = (state) => {
+    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
+  };
+
+  // Request notification permission
+  const requestNotificationPermission = async () => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+    if (Notification.permission === "default") {
+      try {
+        await Notification.requestPermission();
+      } catch {
+        // Ignore
+      }
+    }
+  };
+
+  // Synthesize Sound Tone using Web Audio API
+  const playSound = useCallback((tone = soundTone, vol = soundVolume) => {
+    if (!soundEnabled) return;
+    try {
+      const audioContext = audioContextRef.current || new (window.AudioContext || window.webkitAudioContext)();
+      audioContextRef.current = audioContext;
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      const now = audioContext.currentTime;
+
+      if (tone === "chime") {
+        [523.25, 659.25, 783.99].forEach((freq, idx) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+          gain.gain.setValueAtTime(vol * 0.25, now + idx * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.8);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.8);
+        });
+      } else if (tone === "bell") {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(587.33, now);
+        gain.gain.setValueAtTime(vol * 0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 1.1);
+      } else {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(800, now);
+        gain.gain.setValueAtTime(vol * 0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+    } catch {
+      console.log("Sound play failed");
+    }
+  }, [soundEnabled, soundTone, soundVolume]);
+
+  // Send notification & trigger audio tone
+  const sendNotification = useCallback((title, body) => {
+    playSound();
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+    if (Notification.permission === "granted") {
+      new Notification(title, { body });
+    }
+  }, [playSound]);
+
+  // Start timer
+  const handleStart = useCallback(async () => {
+    if (!notificationPermissionRequestedRef.current) {
+      notificationPermissionRequestedRef.current = true;
+      await requestNotificationPermission();
+    }
+
+    let duration;
+    if (isBreak) {
+      const isLongBreak = sessions > 0 && sessions % 4 === 0;
+      duration = isLongBreak ? customLongBreakTime * 60 : customBreakTime * 60;
+    } else {
+      duration = customWorkTime * 60;
+    }
+
+    const newTimerState = {
+      isRunning: true,
+      startTime: Date.now(),
+      duration,
+      secondsLeft: seconds,
+      isBreak,
+      sessions,
+      customWorkTime,
+      customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
+    };
+    saveTimerState(newTimerState);
+    setRunning(true);
+  }, [autoStartBreaks, autoStartFocus, customBreakTime, customLongBreakTime, customWorkTime, isBreak, seconds, sessions]);
+
+  // Pause timer
+  const handlePause = useCallback(() => {
+    const timerState = loadSavedTimerState();
     if (timerState) {
       const remaining = getRemainingTime(timerState);
-      setSeconds(remaining);
-      setRunning(timerState.isRunning);
-      setIsBreak(timerState.isBreak);
-      setSessions(timerState.sessions);
-      if (timerState.customWorkTime) setCustomWorkTime(timerState.customWorkTime);
-      if (timerState.customBreakTime) setCustomBreakTime(timerState.customBreakTime);
-      if (timerState.customLongBreakTime) setCustomLongBreakTime(timerState.customLongBreakTime);
+      timerState.isRunning = false;
+      timerState.secondsLeft = remaining;
+      timerState.startTime = null;
+      saveTimerState(timerState);
     }
+    setRunning(false);
   }, []);
+
+  // Reset timer
+  const resetTimer = useCallback(() => {
+    const duration = customWorkTime * 60;
+    const newTimerState = {
+      isRunning: false,
+      startTime: null,
+      duration,
+      secondsLeft: duration,
+      isBreak: false,
+      sessions: 0,
+      customWorkTime,
+      customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
+    };
+    saveTimerState(newTimerState);
+    setRunning(false);
+    setIsBreak(false);
+    setSeconds(duration);
+    setSessions(0);
+  }, [autoStartBreaks, autoStartFocus, customBreakTime, customLongBreakTime, customWorkTime]);
+
+  // Skip current phase
+  const handleSkip = useCallback(() => {
+    let nextIsBreak = !isBreak;
+    let nextDuration;
+
+    if (nextIsBreak) {
+      const nextSessions = sessions;
+      const isLong = (nextSessions + 1) % 4 === 0;
+      nextDuration = (isLong ? customLongBreakTime : customBreakTime) * 60;
+    } else {
+      nextDuration = customWorkTime * 60;
+    }
+
+    const shouldAutoStart = nextIsBreak ? autoStartBreaks : autoStartFocus;
+
+    const newTimerState = {
+      isRunning: shouldAutoStart,
+      startTime: shouldAutoStart ? Date.now() : null,
+      duration: nextDuration,
+      secondsLeft: nextDuration,
+      isBreak: nextIsBreak,
+      sessions,
+      customWorkTime,
+      customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
+    };
+
+    saveTimerState(newTimerState);
+    setIsBreak(nextIsBreak);
+    setSeconds(nextDuration);
+    setRunning(shouldAutoStart);
+  }, [autoStartBreaks, autoStartFocus, customBreakTime, customLongBreakTime, customWorkTime, isBreak, sessions]);
+
+  // Save current task to localStorage
+  const handleTaskChange = (val) => {
+    setCurrentTask(val);
+    localStorage.setItem("pomodoroCurrentTask", val);
+  };
 
   // Update document title for live browser tab countdown
   useEffect(() => {
     if (running) {
-      const icon = isBreak ? "☕" : "🍅";
       const phase = isBreak ? "Break" : "Focus";
-      document.title = `(${formatTime(seconds)}) ${icon} ${phase} | Pomodoro`;
+      document.title = `(${formatTime(seconds)}) ${phase} | Pomodoro`;
     } else {
       document.title = "Pomodoro Timer";
     }
@@ -164,16 +378,9 @@ export default function PomodoroTimer() {
     };
   }, [seconds, running, isBreak]);
 
-  // Save current task to localStorage
-  const handleTaskChange = (val) => {
-    setCurrentTask(val);
-    localStorage.setItem("pomodoroCurrentTask", val);
-  };
-
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Don't trigger shortcuts if user is typing in task input or numbers
       if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
 
       if (e.code === "Space") {
@@ -200,92 +407,14 @@ export default function PomodoroTimer() {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [running, isBreak, seconds, customWorkTime, customBreakTime, customLongBreakTime, autoStartBreaks, autoStartFocus]);
-
-  // Request notification permission
-  const requestNotificationPermission = async () => {
-    if (typeof window === "undefined" || typeof Notification === "undefined") return;
-    if (Notification.permission === "default") {
-      try {
-        await Notification.requestPermission();
-      } catch {
-        // Ignore
-      }
-    }
-  };
-
-  // Synthesize Sound Tone using Web Audio API
-  const playSound = (tone = soundTone, vol = soundVolume) => {
-    if (!soundEnabled) return;
-    try {
-      const audioContext = audioContextRef.current || new (window.AudioContext || window.webkitAudioContext)();
-      audioContextRef.current = audioContext;
-
-      if (audioContext.state === "suspended") {
-        audioContext.resume();
-      }
-
-      const now = audioContext.currentTime;
-
-      if (tone === "chime") {
-        // Harmonic triad chord (C5, E5, G5)
-        [523.25, 659.25, 783.99].forEach((freq, idx) => {
-          const osc = audioContext.createOscillator();
-          const gain = audioContext.createGain();
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
-          gain.gain.setValueAtTime(vol * 0.25, now + idx * 0.07);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.8);
-          osc.connect(gain);
-          gain.connect(audioContext.destination);
-          osc.start(now + idx * 0.07);
-          osc.stop(now + idx * 0.07 + 0.8);
-        });
-      } else if (tone === "bell") {
-        // Gentle bell tone
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(587.33, now); // D5
-        gain.gain.setValueAtTime(vol * 0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.start(now);
-        osc.stop(now + 1.1);
-      } else {
-        // Standard beep
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(800, now);
-        gain.gain.setValueAtTime(vol * 0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.start(now);
-        osc.stop(now + 0.4);
-      }
-    } catch {
-      console.log("Sound play failed");
-    }
-  };
-
-  // Send notification & trigger audio tone
-  const sendNotification = (title, body) => {
-    playSound();
-    if (typeof window === "undefined" || typeof Notification === "undefined") return;
-    if (Notification.permission === "granted") {
-      new Notification(title, { body });
-    }
-  };
+  }, [handlePause, handleSkip, handleStart, resetTimer, running]);
 
   // Main timer loop - uses wall clock for accuracy
   useEffect(() => {
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
     timerIntervalRef.current = setInterval(() => {
-      const timerState = loadTimerState();
+      const timerState = loadSavedTimerState();
       if (!timerState) return;
 
       const remaining = getRemainingTime(timerState);
@@ -386,14 +515,14 @@ export default function PomodoroTimer() {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [dailyStats, soundEnabled, soundTone, soundVolume, autoStartBreaks, autoStartFocus, customWorkTime, customBreakTime, customLongBreakTime]);
+  }, [autoStartBreaks, autoStartFocus, customBreakTime, customLongBreakTime, customWorkTime, dailyStats, sendNotification]);
 
   // Handle visibility change (tab switch resync)
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) return;
 
-      const timerState = loadTimerState();
+      const timerState = loadSavedTimerState();
       if (timerState) {
         const remaining = getRemainingTime(timerState);
         setSeconds(remaining);
@@ -407,107 +536,9 @@ export default function PomodoroTimer() {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  // Start timer
-  const handleStart = async () => {
-    if (!notificationPermissionRequestedRef.current) {
-      notificationPermissionRequestedRef.current = true;
-      await requestNotificationPermission();
-    }
-
-    let duration;
-    if (isBreak) {
-      const isLongBreak = sessions > 0 && sessions % 4 === 0;
-      duration = isLongBreak ? customLongBreakTime * 60 : customBreakTime * 60;
-    } else {
-      duration = customWorkTime * 60;
-    }
-
-    const newTimerState = {
-      isRunning: true,
-      startTime: Date.now(),
-      duration,
-      secondsLeft: seconds,
-      isBreak,
-      sessions,
-      customWorkTime,
-      customBreakTime,
-      customLongBreakTime,
-      autoStartBreaks,
-      autoStartFocus,
-    };
-    saveTimerState(newTimerState);
-    setRunning(true);
-  };
-
-  // Pause timer
-  const handlePause = () => {
-    const timerState = loadTimerState();
-    if (timerState) {
-      const remaining = getRemainingTime(timerState);
-      timerState.isRunning = false;
-      timerState.secondsLeft = remaining;
-      timerState.startTime = null;
-      saveTimerState(timerState);
-    }
-    setRunning(false);
-  };
-
-  // Reset timer
-  const resetTimer = () => {
-    const duration = customWorkTime * 60;
-    const newTimerState = {
-      isRunning: false,
-      startTime: null,
-      duration,
-      secondsLeft: duration,
-      isBreak: false,
-      sessions: 0,
-      customWorkTime,
-      customBreakTime,
-      customLongBreakTime,
-      autoStartBreaks,
-      autoStartFocus,
-    };
-    saveTimerState(newTimerState);
-    setRunning(false);
-    setIsBreak(false);
-    setSeconds(duration);
-    setSessions(0);
-  };
-
-  // Skip current phase
-  const handleSkip = () => {
-    let nextIsBreak = !isBreak;
-    let nextDuration;
-
-    if (nextIsBreak) {
-      const nextSessions = sessions;
-      const isLong = (nextSessions + 1) % 4 === 0;
-      nextDuration = (isLong ? customLongBreakTime : customBreakTime) * 60;
-    } else {
-      nextDuration = customWorkTime * 60;
-    }
-
-    const shouldAutoStart = nextIsBreak ? autoStartBreaks : autoStartFocus;
-
-    const newTimerState = {
-      isRunning: shouldAutoStart,
-      startTime: shouldAutoStart ? Date.now() : null,
-      duration: nextDuration,
-      secondsLeft: nextDuration,
-      isBreak: nextIsBreak,
-      sessions,
-      customWorkTime,
-      customBreakTime,
-      customLongBreakTime,
-      autoStartBreaks,
-      autoStartFocus,
-    };
-
-    saveTimerState(newTimerState);
-    setIsBreak(nextIsBreak);
-    setSeconds(nextDuration);
-    setRunning(shouldAutoStart);
+  // Save Settings Helper
+  const saveSettings = (newSettingsObj) => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettingsObj));
   };
 
   // Apply preset
@@ -537,11 +568,6 @@ export default function PomodoroTimer() {
     setTimeout(() => resetTimer(), 0);
   };
 
-  // Save Settings Helper
-  const saveSettings = (newSettingsObj) => {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettingsObj));
-  };
-
   // Apply custom settings
   const applyCustom = () => {
     saveSettings({
@@ -556,13 +582,6 @@ export default function PomodoroTimer() {
     });
     setShowSettings(false);
     setTimeout(() => resetTimer(), 0);
-  };
-
-  // Format time
-  const formatTime = (secs) => {
-    const mins = Math.floor(secs / 60);
-    const sec = secs % 60;
-    return `${String(mins).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
   };
 
   // Calculate progress
@@ -592,7 +611,7 @@ export default function PomodoroTimer() {
         <div className="w-full">
           <input
             type="text"
-            placeholder="🎯 What are you working on? (Optional)"
+            placeholder="What are you working on? (Optional)"
             value={currentTask}
             onChange={(e) => handleTaskChange(e.target.value)}
             className="w-full text-center text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition placeholder:text-slate-400 font-medium"
@@ -619,7 +638,7 @@ export default function PomodoroTimer() {
             </svg>
           </div>
           <p className="mb-2 text-base font-medium text-slate-700">
-            {isBreak ? (isLongBreakCurrent ? "☕ Long Break Time" : "☕ Break Time") : "🍅 Focus Time"}
+            {isBreak ? (isLongBreakCurrent ? "Long Break Time" : "Break Time") : "Focus Time"}
           </p>
           <div className={`text-5xl sm:text-6xl font-bold text-slate-900 tabular-nums ${isLastThreeSeconds ? "animate-pulse" : ""}`}>
             {formatTime(seconds)}
@@ -648,7 +667,7 @@ export default function PomodoroTimer() {
             className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
             title="Skip to next phase (S)"
           >
-            Skip ⏭️
+            Skip
           </button>
 
           <button
@@ -810,7 +829,7 @@ export default function PomodoroTimer() {
                       onClick={() => playSound(soundTone, soundVolume)}
                       className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded font-medium transition"
                     >
-                      🔊 Test Sound
+                      Test Sound
                     </button>
                   )}
                 </div>
