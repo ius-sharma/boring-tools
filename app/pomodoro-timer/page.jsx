@@ -12,17 +12,32 @@ export default function PomodoroTimer() {
   const [isBreak, setIsBreak] = useState(false);
   const [sessions, setSessions] = useState(0);
   const [dailyStats, setDailyStats] = useState({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
+  const [streak, setStreak] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
+  
+  // Custom Timer Settings
   const [customWorkTime, setCustomWorkTime] = useState(25);
   const [customBreakTime, setCustomBreakTime] = useState(5);
+  const [customLongBreakTime, setCustomLongBreakTime] = useState(15);
+  const [autoStartBreaks, setAutoStartBreaks] = useState(true);
+  const [autoStartFocus, setAutoStartFocus] = useState(true);
+
+  // Sound Settings
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundTone, setSoundTone] = useState("chime"); // chime | bell | beep
+  const [soundVolume, setSoundVolume] = useState(0.5);
+
+  // Task Goal Tracking
+  const [currentTask, setCurrentTask] = useState("");
 
   const notificationPermissionRequestedRef = useRef(false);
   const audioContextRef = useRef(null);
   const timerIntervalRef = useRef(null);
 
-  // Timer state stored in localStorage
+  // Storage Keys
   const TIMER_STORAGE_KEY = "pomodoroTimerState";
+  const SETTINGS_STORAGE_KEY = "pomodoroSettingsState";
+  const HISTORY_STORAGE_KEY = "pomodoroHistory";
 
   // Helper: Save timer state to localStorage
   const saveTimerState = (state) => {
@@ -50,18 +65,76 @@ export default function PomodoroTimer() {
     return remaining;
   };
 
-  // Load stats and timer state on mount
-  useEffect(() => {
-    const today = new Date().toDateString();
-    const saved = localStorage.getItem("pomodoroStats");
-    if (saved) {
-      const data = JSON.parse(saved);
-      if (data.date === today) {
-        setDailyStats(data.stats);
+  // Helper: Calculate streak from history
+  const calculateStreak = (history) => {
+    let streakCount = 0;
+    const today = new Date();
+    const todayStr = today.toDateString();
+
+    if (history[todayStr] && history[todayStr].focusSessions > 0) {
+      streakCount++;
+    }
+
+    let checkDate = new Date(today);
+    checkDate.setDate(checkDate.getDate() - 1);
+
+    while (true) {
+      const dateStr = checkDate.toDateString();
+      if (history[dateStr] && history[dateStr].focusSessions > 0) {
+        streakCount++;
+        checkDate.setDate(checkDate.getDate() - 1);
       } else {
-        localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: { focusSessions: 0, breakSessions: 0, focusMinutes: 0 } }));
+        break;
       }
     }
+
+    return streakCount;
+  };
+
+  // Load stats, settings, task and timer state on mount
+  useEffect(() => {
+    const today = new Date().toDateString();
+
+    // Load History & Daily Stats
+    let history = {};
+    try {
+      const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+      if (savedHistory) history = JSON.parse(savedHistory);
+    } catch {}
+
+    const savedStats = localStorage.getItem("pomodoroStats");
+    if (savedStats) {
+      try {
+        const data = JSON.parse(savedStats);
+        if (data.date === today) {
+          setDailyStats(data.stats);
+        } else {
+          setDailyStats({ focusSessions: 0, breakSessions: 0, focusMinutes: 0 });
+        }
+      } catch {}
+    }
+
+    setStreak(calculateStreak(history));
+
+    // Load Saved Settings
+    try {
+      const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        if (parsed.customWorkTime) setCustomWorkTime(parsed.customWorkTime);
+        if (parsed.customBreakTime) setCustomBreakTime(parsed.customBreakTime);
+        if (parsed.customLongBreakTime) setCustomLongBreakTime(parsed.customLongBreakTime);
+        if (parsed.autoStartBreaks !== undefined) setAutoStartBreaks(parsed.autoStartBreaks);
+        if (parsed.autoStartFocus !== undefined) setAutoStartFocus(parsed.autoStartFocus);
+        if (parsed.soundEnabled !== undefined) setSoundEnabled(parsed.soundEnabled);
+        if (parsed.soundTone) setSoundTone(parsed.soundTone);
+        if (parsed.soundVolume !== undefined) setSoundVolume(parsed.soundVolume);
+      }
+    } catch {}
+
+    // Load Task Goal
+    const savedTask = localStorage.getItem("pomodoroCurrentTask");
+    if (savedTask) setCurrentTask(savedTask);
 
     // Load timer state if exists
     const timerState = loadTimerState();
@@ -71,14 +144,38 @@ export default function PomodoroTimer() {
       setRunning(timerState.isRunning);
       setIsBreak(timerState.isBreak);
       setSessions(timerState.sessions);
-      setCustomWorkTime(timerState.customWorkTime || 25);
-      setCustomBreakTime(timerState.customBreakTime || 5);
+      if (timerState.customWorkTime) setCustomWorkTime(timerState.customWorkTime);
+      if (timerState.customBreakTime) setCustomBreakTime(timerState.customBreakTime);
+      if (timerState.customLongBreakTime) setCustomLongBreakTime(timerState.customLongBreakTime);
     }
   }, []);
+
+  // Update document title for live browser tab countdown
+  useEffect(() => {
+    if (running) {
+      const icon = isBreak ? "☕" : "🍅";
+      const phase = isBreak ? "Break" : "Focus";
+      document.title = `(${formatTime(seconds)}) ${icon} ${phase} | Pomodoro`;
+    } else {
+      document.title = "Pomodoro Timer";
+    }
+    return () => {
+      document.title = "Pomodoro Timer";
+    };
+  }, [seconds, running, isBreak]);
+
+  // Save current task to localStorage
+  const handleTaskChange = (val) => {
+    setCurrentTask(val);
+    localStorage.setItem("pomodoroCurrentTask", val);
+  };
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
+      // Don't trigger shortcuts if user is typing in task input or numbers
+      if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
+
       if (e.code === "Space") {
         e.preventDefault();
         if (running) handlePause();
@@ -88,6 +185,14 @@ export default function PomodoroTimer() {
         e.preventDefault();
         resetTimer();
       }
+      if (e.code === "KeyS") {
+        e.preventDefault();
+        handleSkip();
+      }
+      if (e.code === "KeyM") {
+        e.preventDefault();
+        setSoundEnabled((prev) => !prev);
+      }
       if (e.code === "Escape") {
         setShowSettings(false);
       }
@@ -95,7 +200,7 @@ export default function PomodoroTimer() {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [running]);
+  }, [running, isBreak, seconds, customWorkTime, customBreakTime, customLongBreakTime, autoStartBreaks, autoStartFocus]);
 
   // Request notification permission
   const requestNotificationPermission = async () => {
@@ -109,32 +214,68 @@ export default function PomodoroTimer() {
     }
   };
 
-  // Play beep sound
-  const playBeep = () => {
+  // Synthesize Sound Tone using Web Audio API
+  const playSound = (tone = soundTone, vol = soundVolume) => {
     if (!soundEnabled) return;
     try {
       const audioContext = audioContextRef.current || new (window.AudioContext || window.webkitAudioContext)();
       audioContextRef.current = audioContext;
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      oscillator.frequency.value = 800;
-      oscillator.type = "sine";
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (e) {
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      const now = audioContext.currentTime;
+
+      if (tone === "chime") {
+        // Harmonic triad chord (C5, E5, G5)
+        [523.25, 659.25, 783.99].forEach((freq, idx) => {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+          gain.gain.setValueAtTime(vol * 0.25, now + idx * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.8);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.8);
+        });
+      } else if (tone === "bell") {
+        // Gentle bell tone
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        gain.gain.setValueAtTime(vol * 0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 1.1);
+      } else {
+        // Standard beep
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(800, now);
+        gain.gain.setValueAtTime(vol * 0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+    } catch {
       console.log("Sound play failed");
     }
   };
 
-  // Send notification
+  // Send notification & trigger audio tone
   const sendNotification = (title, body) => {
+    playSound();
     if (typeof window === "undefined" || typeof Notification === "undefined") return;
     if (Notification.permission === "granted") {
-      playBeep();
       new Notification(title, { body });
     }
   };
@@ -147,10 +288,8 @@ export default function PomodoroTimer() {
       const timerState = loadTimerState();
       if (!timerState) return;
 
-      // Calculate remaining time based on wall clock
       const remaining = getRemainingTime(timerState);
 
-      // Update UI
       setSeconds(remaining);
       setRunning(timerState.isRunning);
       setIsBreak(timerState.isBreak);
@@ -160,70 +299,100 @@ export default function PomodoroTimer() {
       if (remaining === 0 && timerState.isRunning) {
         let newIsBreak, newDuration, newSeconds;
         let newSessions = timerState.sessions;
+        let shouldAutoStart = true;
 
         if (!timerState.isBreak) {
-          // Work session completed
+          // Focus session completed
           newSessions = timerState.sessions + 1;
           newIsBreak = true;
-          newDuration = timerState.customBreakTime * 60;
-          newSeconds = newDuration;
 
-          // Update daily stats
+          const isLongBreak = newSessions % 4 === 0;
+          const breakMins = isLongBreak
+            ? (timerState.customLongBreakTime || customLongBreakTime)
+            : (timerState.customBreakTime || customBreakTime);
+
+          newDuration = breakMins * 60;
+          newSeconds = newDuration;
+          shouldAutoStart = timerState.autoStartBreaks !== undefined ? timerState.autoStartBreaks : autoStartBreaks;
+
+          // Update daily stats & history
+          const today = new Date().toDateString();
+          const workMins = timerState.customWorkTime || customWorkTime;
           const newStats = {
             ...dailyStats,
             focusSessions: dailyStats.focusSessions + 1,
-            focusMinutes: dailyStats.focusMinutes + timerState.customWorkTime,
+            focusMinutes: dailyStats.focusMinutes + workMins,
           };
           setDailyStats(newStats);
-          const today = new Date().toDateString();
           localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
 
-          if (newSessions % 4 === 0) {
-            sendNotification("4 sessions completed!", `Time for a 15 min long break. Great work!`);
+          // Save to history object
+          try {
+            const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+            const historyObj = savedHistory ? JSON.parse(savedHistory) : {};
+            historyObj[today] = newStats;
+            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyObj));
+            setStreak(calculateStreak(historyObj));
+          } catch {}
+
+          if (isLongBreak) {
+            sendNotification("4 sessions completed!", `Time for a ${breakMins} min long break. Great work!`);
           } else {
-            sendNotification("Focus session complete", `Break time started. Take ${timerState.customBreakTime} minutes to reset.`);
+            sendNotification("Focus session complete", `Break time started. Take ${breakMins} minutes to reset.`);
           }
         } else {
           // Break session completed
           newIsBreak = false;
-          newDuration = timerState.customWorkTime * 60;
+          const workMins = timerState.customWorkTime || customWorkTime;
+          newDuration = workMins * 60;
           newSeconds = newDuration;
+          shouldAutoStart = timerState.autoStartFocus !== undefined ? timerState.autoStartFocus : autoStartFocus;
 
-          // Update daily stats
+          // Update daily stats & history
+          const today = new Date().toDateString();
           const newStats = { ...dailyStats, breakSessions: dailyStats.breakSessions + 1 };
           setDailyStats(newStats);
-          const today = new Date().toDateString();
           localStorage.setItem("pomodoroStats", JSON.stringify({ date: today, stats: newStats }));
+
+          try {
+            const savedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
+            const historyObj = savedHistory ? JSON.parse(savedHistory) : {};
+            historyObj[today] = newStats;
+            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(historyObj));
+          } catch {}
 
           sendNotification("Break finished", `Focus time started. Back to work.`);
         }
 
         // Save new state
         const newTimerState = {
-          isRunning: true,
-          startTime: Date.now(),
+          isRunning: shouldAutoStart,
+          startTime: shouldAutoStart ? Date.now() : null,
           duration: newDuration,
           secondsLeft: newSeconds,
           isBreak: newIsBreak,
           sessions: newSessions,
-          customWorkTime: timerState.customWorkTime,
-          customBreakTime: timerState.customBreakTime,
+          customWorkTime: timerState.customWorkTime || customWorkTime,
+          customBreakTime: timerState.customBreakTime || customBreakTime,
+          customLongBreakTime: timerState.customLongBreakTime || customLongBreakTime,
+          autoStartBreaks,
+          autoStartFocus,
         };
         saveTimerState(newTimerState);
+        setRunning(shouldAutoStart);
       }
-    }, 500); // Update every 500ms for smooth updates
+    }, 500);
 
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [dailyStats, soundEnabled]);
+  }, [dailyStats, soundEnabled, soundTone, soundVolume, autoStartBreaks, autoStartFocus, customWorkTime, customBreakTime, customLongBreakTime]);
 
-  // Handle visibility change (tab switch)
+  // Handle visibility change (tab switch resync)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden) return; // Tab is hidden, do nothing
+      if (document.hidden) return;
 
-      // Tab became visible - resync timer state
       const timerState = loadTimerState();
       if (timerState) {
         const remaining = getRemainingTime(timerState);
@@ -245,7 +414,14 @@ export default function PomodoroTimer() {
       await requestNotificationPermission();
     }
 
-    const duration = isBreak ? customBreakTime * 60 : customWorkTime * 60;
+    let duration;
+    if (isBreak) {
+      const isLongBreak = sessions > 0 && sessions % 4 === 0;
+      duration = isLongBreak ? customLongBreakTime * 60 : customBreakTime * 60;
+    } else {
+      duration = customWorkTime * 60;
+    }
+
     const newTimerState = {
       isRunning: true,
       startTime: Date.now(),
@@ -255,6 +431,9 @@ export default function PomodoroTimer() {
       sessions,
       customWorkTime,
       customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
     };
     saveTimerState(newTimerState);
     setRunning(true);
@@ -285,6 +464,9 @@ export default function PomodoroTimer() {
       sessions: 0,
       customWorkTime,
       customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
     };
     saveTimerState(newTimerState);
     setRunning(false);
@@ -293,24 +475,85 @@ export default function PomodoroTimer() {
     setSessions(0);
   };
 
+  // Skip current phase
+  const handleSkip = () => {
+    let nextIsBreak = !isBreak;
+    let nextDuration;
+
+    if (nextIsBreak) {
+      const nextSessions = sessions;
+      const isLong = (nextSessions + 1) % 4 === 0;
+      nextDuration = (isLong ? customLongBreakTime : customBreakTime) * 60;
+    } else {
+      nextDuration = customWorkTime * 60;
+    }
+
+    const shouldAutoStart = nextIsBreak ? autoStartBreaks : autoStartFocus;
+
+    const newTimerState = {
+      isRunning: shouldAutoStart,
+      startTime: shouldAutoStart ? Date.now() : null,
+      duration: nextDuration,
+      secondsLeft: nextDuration,
+      isBreak: nextIsBreak,
+      sessions,
+      customWorkTime,
+      customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
+    };
+
+    saveTimerState(newTimerState);
+    setIsBreak(nextIsBreak);
+    setSeconds(nextDuration);
+    setRunning(shouldAutoStart);
+  };
+
   // Apply preset
   const applyPreset = (preset) => {
-    if (preset === "standard") {
-      setCustomWorkTime(25);
-      setCustomBreakTime(5);
-    } else if (preset === "long") {
-      setCustomWorkTime(50);
-      setCustomBreakTime(10);
+    let w = 25, b = 5, lb = 15;
+    if (preset === "long") {
+      w = 50; b = 10; lb = 20;
     } else if (preset === "short") {
-      setCustomWorkTime(15);
-      setCustomBreakTime(3);
+      w = 15; b = 3; lb = 10;
     }
+    setCustomWorkTime(w);
+    setCustomBreakTime(b);
+    setCustomLongBreakTime(lb);
+
+    saveSettings({
+      customWorkTime: w,
+      customBreakTime: b,
+      customLongBreakTime: lb,
+      autoStartBreaks,
+      autoStartFocus,
+      soundEnabled,
+      soundTone,
+      soundVolume,
+    });
+
     setShowSettings(false);
     setTimeout(() => resetTimer(), 0);
   };
 
+  // Save Settings Helper
+  const saveSettings = (newSettingsObj) => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettingsObj));
+  };
+
   // Apply custom settings
   const applyCustom = () => {
+    saveSettings({
+      customWorkTime,
+      customBreakTime,
+      customLongBreakTime,
+      autoStartBreaks,
+      autoStartFocus,
+      soundEnabled,
+      soundTone,
+      soundVolume,
+    });
     setShowSettings(false);
     setTimeout(() => resetTimer(), 0);
   };
@@ -323,17 +566,37 @@ export default function PomodoroTimer() {
   };
 
   // Calculate progress
-  const maxTime = isBreak ? customBreakTime * 60 : customWorkTime * 60;
-  const progress = ((maxTime - seconds) / maxTime) * 100;
+  const isLongBreakCurrent = isBreak && sessions > 0 && sessions % 4 === 0;
+  const maxTime = isBreak
+    ? (isLongBreakCurrent ? customLongBreakTime : customBreakTime) * 60
+    : customWorkTime * 60;
+  const progress = Math.min(100, Math.max(0, ((maxTime - seconds) / maxTime) * 100));
   const isLastThreeSeconds = seconds <= 3 && seconds > 0 && running;
-  const nextPhaseText = isBreak ? `Next: ${customWorkTime} min focus` : `Next: ${customBreakTime} min break`;
+  const nextPhaseText = isBreak
+    ? `Next: ${customWorkTime} min focus`
+    : (sessions + 1) % 4 === 0
+    ? `Next: ${customLongBreakTime} min long break`
+    : `Next: ${customBreakTime} min break`;
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-2xl border border-slate-200 flex flex-col gap-6">
+        
+        {/* Header */}
         <div className="flex flex-col gap-1 items-center text-center">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">Pomodoro Timer</h1>
           <p className="text-slate-500 text-base">Stay focused with work and break cycles</p>
+        </div>
+
+        {/* Task Goal Input */}
+        <div className="w-full">
+          <input
+            type="text"
+            placeholder="🎯 What are you working on? (Optional)"
+            value={currentTask}
+            onChange={(e) => handleTaskChange(e.target.value)}
+            className="w-full text-center text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition placeholder:text-slate-400 font-medium"
+          />
         </div>
 
         {/* Timer Display with Progress Ring */}
@@ -355,7 +618,9 @@ export default function PomodoroTimer() {
               />
             </svg>
           </div>
-          <p className="mb-2 text-base font-medium text-slate-700">{isBreak ? "Break Time" : "Focus Time"}</p>
+          <p className="mb-2 text-base font-medium text-slate-700">
+            {isBreak ? (isLongBreakCurrent ? "☕ Long Break Time" : "☕ Break Time") : "🍅 Focus Time"}
+          </p>
           <div className={`text-5xl sm:text-6xl font-bold text-slate-900 tabular-nums ${isLastThreeSeconds ? "animate-pulse" : ""}`}>
             {formatTime(seconds)}
           </div>
@@ -363,7 +628,7 @@ export default function PomodoroTimer() {
         </div>
 
         {/* Controls */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           <button
             onClick={handleStart}
             className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
@@ -379,6 +644,14 @@ export default function PomodoroTimer() {
           </button>
 
           <button
+            onClick={handleSkip}
+            className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
+            title="Skip to next phase (S)"
+          >
+            Skip ⏭️
+          </button>
+
+          <button
             onClick={resetTimer}
             className="border border-slate-300 rounded-lg py-2 px-2 text-slate-700 hover:bg-slate-100 transition font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           >
@@ -388,11 +661,11 @@ export default function PomodoroTimer() {
 
         {/* Keyboard Shortcuts Info */}
         <p className="text-center text-xs text-slate-500">
-          <span className="font-medium">Shortcuts:</span> Space (Start/Pause) • R (Reset) • Esc (Close)
+          <span className="font-medium">Shortcuts:</span> Space (Start/Pause) • S (Skip) • R (Reset) • M (Mute/Unmute)
         </p>
 
-        {/* Daily Stats */}
-        <div className="grid grid-cols-3 gap-3">
+        {/* Daily Stats & Streak */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-3">
           <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
             <p className="text-xs text-slate-500">Focus Sessions</p>
             <p className="text-xl font-semibold text-slate-900">{dailyStats.focusSessions}</p>
@@ -404,6 +677,10 @@ export default function PomodoroTimer() {
           <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
             <p className="text-xs text-slate-500">Focus Minutes</p>
             <p className="text-xl font-semibold text-slate-900">{dailyStats.focusMinutes}</p>
+          </div>
+          <div className="p-3 border border-slate-200 rounded-lg bg-slate-50 text-center">
+            <p className="text-xs text-slate-500">Daily Streak</p>
+            <p className="text-xl font-semibold text-amber-600">{streak} 🔥</p>
           </div>
         </div>
 
@@ -424,87 +701,162 @@ export default function PomodoroTimer() {
         {/* Settings Modal */}
         {showSettings && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md border border-slate-200">
+            <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md border border-slate-200 max-h-[90vh] overflow-y-auto">
               <h2 className="text-2xl font-bold text-slate-900 mb-4">Settings</h2>
 
               {/* Presets */}
               <div className="mb-6">
-                <p className="font-medium text-slate-900 mb-3">Timer Presets</p>
+                <p className="font-medium text-slate-900 mb-3 text-sm">Timer Presets</p>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => applyPreset("standard")}
-                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-xs font-medium text-slate-700"
                   >
-                    Standard (25-5)
+                    Standard (25-5-15)
                   </button>
                   <button
                     onClick={() => applyPreset("long")}
-                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-xs font-medium text-slate-700"
                   >
-                    Long (50-10)
+                    Long (50-10-20)
                   </button>
                   <button
                     onClick={() => applyPreset("short")}
-                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-sm font-medium text-slate-700"
+                    className="p-2 border border-slate-300 rounded-lg hover:bg-slate-100 transition text-xs font-medium text-slate-700"
                   >
-                    Short (15-3)
+                    Short (15-3-10)
                   </button>
                 </div>
               </div>
 
-              {/* Custom Timer */}
+              {/* Custom Durations */}
               <div className="mb-6">
-                <p className="font-medium text-slate-900 mb-3">Custom Timer</p>
-                <div className="grid grid-cols-2 gap-4">
+                <p className="font-medium text-slate-900 mb-3 text-sm">Custom Durations (minutes)</p>
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm text-slate-700 mb-1">Work (minutes)</label>
+                    <label className="block text-xs text-slate-700 mb-1">Work</label>
                     <input
                       type="number"
                       min="1"
-                      max="60"
+                      max="120"
                       value={customWorkTime}
                       onChange={(e) => setCustomWorkTime(parseInt(e.target.value) || 1)}
-                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm text-slate-700 mb-1">Break (minutes)</label>
+                    <label className="block text-xs text-slate-700 mb-1">Short Break</label>
                     <input
                       type="number"
                       min="1"
                       max="60"
                       value={customBreakTime}
                       onChange={(e) => setCustomBreakTime(parseInt(e.target.value) || 1)}
-                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-700 mb-1">Long Break</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="60"
+                      value={customLongBreakTime}
+                      onChange={(e) => setCustomLongBreakTime(parseInt(e.target.value) || 1)}
+                      className="w-full border border-slate-300 rounded-lg p-2 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Sound Toggle */}
-              <div className="mb-6">
+              {/* Auto Start Options */}
+              <div className="mb-6 border-t border-slate-100 pt-4 flex flex-col gap-3">
+                <p className="font-medium text-slate-900 text-sm">Cycle Controls</p>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={soundEnabled}
-                    onChange={(e) => setSoundEnabled(e.target.checked)}
+                    checked={autoStartBreaks}
+                    onChange={(e) => setAutoStartBreaks(e.target.checked)}
                     className="w-4 h-4 border-slate-300 rounded focus:ring-2 focus:ring-slate-900"
                   />
-                  <span className="text-slate-900 font-medium">Enable Sound Notifications</span>
+                  <span className="text-slate-800 text-sm font-medium">Auto-start Breaks</span>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoStartFocus}
+                    onChange={(e) => setAutoStartFocus(e.target.checked)}
+                    className="w-4 h-4 border-slate-300 rounded focus:ring-2 focus:ring-slate-900"
+                  />
+                  <span className="text-slate-800 text-sm font-medium">Auto-start Focus Sessions</span>
                 </label>
               </div>
 
-              {/* Buttons */}
+              {/* Sound Options */}
+              <div className="mb-6 border-t border-slate-100 pt-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={soundEnabled}
+                      onChange={(e) => setSoundEnabled(e.target.checked)}
+                      className="w-4 h-4 border-slate-300 rounded focus:ring-2 focus:ring-slate-900"
+                    />
+                    <span className="text-slate-900 text-sm font-medium">Sound Notifications</span>
+                  </label>
+                  {soundEnabled && (
+                    <button
+                      onClick={() => playSound(soundTone, soundVolume)}
+                      className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded font-medium transition"
+                    >
+                      🔊 Test Sound
+                    </button>
+                  )}
+                </div>
+
+                {soundEnabled && (
+                  <div className="grid grid-cols-2 gap-3 mt-1">
+                    <div>
+                      <label className="block text-xs text-slate-600 mb-1">Tone</label>
+                      <select
+                        value={soundTone}
+                        onChange={(e) => setSoundTone(e.target.value)}
+                        className="w-full border border-slate-300 rounded-lg p-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      >
+                        <option value="chime">Gentle Chime</option>
+                        <option value="bell">Soft Bell</option>
+                        <option value="beep">Digital Beep</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-slate-600 mb-1">Volume ({Math.round(soundVolume * 100)}%)</label>
+                      <input
+                        type="range"
+                        min="0.1"
+                        max="1"
+                        step="0.05"
+                        value={soundVolume}
+                        onChange={(e) => setSoundVolume(parseFloat(e.target.value))}
+                        className="w-full mt-2 accent-slate-900"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
               <div className="flex gap-2">
                 <button
                   onClick={applyCustom}
-                  className="flex-1 bg-orange-500 text-white rounded-lg py-2 font-medium hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="flex-1 bg-slate-900 text-white rounded-lg py-2 text-sm font-medium hover:bg-slate-800 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
                 >
-                  Apply
+                  Apply & Save
                 </button>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="flex-1 border border-slate-300 rounded-lg py-2 text-slate-700 font-medium hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="flex-1 border border-slate-300 rounded-lg py-2 text-slate-700 text-sm font-medium hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-slate-900"
                 >
                   Close
                 </button>
@@ -535,5 +887,3 @@ export default function PomodoroTimer() {
     </div>
   );
 }
-
-
