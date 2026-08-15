@@ -108,6 +108,12 @@ export default function AttendanceCalculator() {
     Saturday: [],
   });
 
+  // State for Smart Auto-Estimation Wizard (Option 1)
+  const [estimateStartDate, setEstimateStartDate] = useState("2026-06-01");
+  const [estimateCalculationDate, setEstimateCalculationDate] = useState("2026-07-15");
+  const [estimateAttendancePct, setEstimateAttendancePct] = useState(75);
+  const [showAutoEstimateBar, setShowAutoEstimateBar] = useState(false);
+
   const fileInputRef = useRef(null);
 
   // Persistence: Load saved data from localStorage on client side
@@ -266,6 +272,63 @@ export default function AttendanceCalculator() {
       setUploadStatusType("success");
       setQuickBulkInputText("");
     }
+  };
+
+  // Auto-Estimate Classes from Semester Dates (Option 1)
+  const handleAutoEstimateClasses = () => {
+    const start = new Date(estimateStartDate);
+    const curr = new Date(estimateCalculationDate);
+    const diffTime = curr - start;
+
+    if (diffTime < 0) {
+      setUploadStatusMessage("Calculation date must be after Semester Start date");
+      setUploadStatusType("error");
+      return;
+    }
+
+    const elapsedDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+    const elapsedWeeks = Math.max(1, Math.round(elapsedDays / 7));
+
+    setSubjects((prev) =>
+      prev.map((sub) => {
+        const weekly = Math.max(1, sub.weeklyClasses || 3);
+        const total = Math.max(1, elapsedWeeks * weekly);
+        const attended = Math.max(
+          0,
+          Math.min(total, Math.round(total * (estimateAttendancePct / 100)))
+        );
+        return {
+          ...sub,
+          total,
+          attended,
+        };
+      })
+    );
+
+    setUploadStatusMessage(
+      `⚡ Auto-estimated classes across ${elapsedWeeks} elapsed weeks with ${estimateAttendancePct}% attendance!`
+    );
+    setUploadStatusType("success");
+  };
+
+  // Quick Preset percentage applied to a single subject
+  const handleQuickSetSubjectPct = (subjectId, percentage) => {
+    setSubjects((prev) =>
+      prev.map((sub) => {
+        if (sub.id === subjectId) {
+          const total = Math.max(1, sub.total || 20);
+          const attended = Math.max(
+            0,
+            Math.min(total, Math.round(total * (percentage / 100)))
+          );
+          return {
+            ...sub,
+            attended,
+          };
+        }
+        return sub;
+      })
+    );
   };
 
   // Load Preset Template
@@ -831,7 +894,13 @@ export default function AttendanceCalculator() {
                   <h2 className="text-xl font-bold text-slate-900">Subject-Wise & Timetable Intelligence</h2>
                   <p className="text-xs text-slate-500">Upload timetable documents (PDF, DOCX, CSV) or load pre-built branch schedules.</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => setShowAutoEstimateBar(!showAutoEstimateBar)}
+                    className="bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <span>⚡ Auto-Estimate from Dates</span>
+                  </button>
                   <button onClick={() => setShowTimetableUploadSection(!showTimetableUploadSection)} className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                     <span>Upload Timetable</span>
@@ -842,6 +911,83 @@ export default function AttendanceCalculator() {
                   </button>
                 </div>
               </div>
+
+              {/* Smart Date-Based Auto-Estimator Wizard Card (Option 1) */}
+              {showAutoEstimateBar && (
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-orange-200 rounded-2xl p-5 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">⚡</span>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm">Smart Class & Attendance Estimator</h3>
+                        <p className="text-[11px] text-slate-600">Don't know exact counts? Let the system calculate classes held since semester start.</p>
+                      </div>
+                    </div>
+                    <button onClick={() => setShowAutoEstimateBar(false)} className="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-[11px] font-semibold text-slate-700 block mb-1">Semester Start Date</label>
+                      <input
+                        type="date"
+                        value={estimateStartDate}
+                        onChange={(e) => setEstimateStartDate(e.target.value)}
+                        className="w-full border border-orange-300 rounded-lg p-2 bg-white text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-slate-700 block mb-1">Today / Calculation Date</label>
+                      <input
+                        type="date"
+                        value={estimateCalculationDate}
+                        onChange={(e) => setEstimateCalculationDate(e.target.value)}
+                        className="w-full border border-orange-300 rounded-lg p-2 bg-white text-slate-900 text-xs focus:ring-2 focus:ring-orange-500 font-medium"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-semibold text-slate-700">Estimated Attendance</label>
+                        <span className="text-xs font-bold text-orange-700">{estimateAttendancePct}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="40"
+                        max="98"
+                        value={estimateAttendancePct}
+                        onChange={(e) => setEstimateAttendancePct(parseInt(e.target.value))}
+                        className="premium-slider w-full"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-orange-200/60">
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                      <span>Quick Target:</span>
+                      {[85, 75, 65].map((pct) => (
+                        <button
+                          key={pct}
+                          onClick={() => setEstimateAttendancePct(pct)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            estimateAttendancePct === pct
+                              ? "bg-orange-600 text-white"
+                              : "bg-white text-slate-700 border border-orange-200"
+                          }`}
+                        >
+                          {pct}%
+                        </button>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={handleAutoEstimateClasses}
+                      className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5 transition"
+                    >
+                      <span>⚡ Auto-Fill All Subjects</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Preset Branch Timetables */}
               <div className="pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2">
@@ -1155,6 +1301,44 @@ export default function AttendanceCalculator() {
                       <div>
                         <span className="text-slate-500 block mb-1">OD/Medical</span>
                         <input type="number" min="0" value={sub.medical || 0} onChange={(e) => handleUpdateSubject(sub.id, "medical", Math.max(0, parseInt(e.target.value) || 0))} className="w-full border border-slate-300 rounded p-1 bg-white font-semibold" />
+                      </div>
+                    </div>
+
+                    {/* Quick Preset Chips for When Counts are Unknown */}
+                    <div className="flex flex-wrap items-center justify-between gap-1 mb-3 pt-1 border-t border-slate-100 text-[10px]">
+                      <span className="text-slate-600 font-medium">Quick Estimate:</span>
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          onClick={() => handleQuickSetSubjectPct(sub.id, 85)}
+                          className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-semibold border border-emerald-200 transition"
+                          title="Auto-set 85% attendance"
+                        >
+                          85%
+                        </button>
+                        <button
+                          onClick={() => handleQuickSetSubjectPct(sub.id, 75)}
+                          className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 hover:bg-amber-100 font-semibold border border-amber-200 transition"
+                          title="Auto-set 75% attendance"
+                        >
+                          75%
+                        </button>
+                        <button
+                          onClick={() => handleQuickSetSubjectPct(sub.id, 60)}
+                          className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-800 hover:bg-rose-100 font-semibold border border-rose-200 transition"
+                          title="Auto-set 60% attendance"
+                        >
+                          60%
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleUpdateSubject(sub.id, "attended", 0);
+                            handleUpdateSubject(sub.id, "total", 0);
+                          }}
+                          className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold border border-slate-200 transition"
+                          title="Fresh semester (0 classes held)"
+                        >
+                          0/0 (Fresh)
+                        </button>
                       </div>
                     </div>
 
