@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 
 export default function CgpaTargetPlanner() {
   const [scale, setScale] = useState(10); // 10 or 4
@@ -25,10 +25,24 @@ export default function CgpaTargetPlanner() {
   // What-If Simulator state
   const [simulatorSgpa, setSimulatorSgpa] = useState(8.5);
 
+  // Percentage Conversion Settings
+  const [percentageFormula, setPercentageFormula] = useState("aicte"); // aicte (9.5x), standard (10x), vtu ((cgpa-0.75)*10), custom
+  const [customPercentageMultiplier, setCustomPercentageMultiplier] = useState("9.5");
+  const [showPercentageModal, setShowPercentageModal] = useState(false);
+
+  // Detailed Past Semesters Accordion
+  const [showPastSemBreakdown, setShowPastSemBreakdown] = useState(false);
+
+  // Career Pillars Active Tab
+  const [activePillarTab, setActivePillarTab] = useState("projects");
+
   // Saved plans state
   const [savedPlans, setSavedPlans] = useState([]);
   const [newPlanName, setNewPlanName] = useState("");
   const [activePlanId, setActivePlanId] = useState(null);
+
+  // File import ref
+  const fileInputRef = useRef(null);
 
   // Toast notification
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
@@ -42,7 +56,15 @@ export default function CgpaTargetPlanner() {
     };
   }, []);
 
-  // Fetch saved plans on mount
+  // Show Toast Helper
+  const showToast = (message, type = "success") => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 3000);
+  };
+
+  // Fetch saved plans on mount & parse shared URL if present
   useEffect(() => {
     try {
       const stored = localStorage.getItem("boring_cgpa_plans");
@@ -52,15 +74,32 @@ export default function CgpaTargetPlanner() {
     } catch (e) {
       console.error("Failed to load saved plans", e);
     }
-  }, []);
 
-  // Show Toast Helper
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: "", type: "success" });
-    }, 3000);
-  };
+    // Check URL hash for shared state
+    try {
+      if (typeof window !== "undefined" && window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        if (hash.startsWith("plan=")) {
+          const rawData = decodeURIComponent(hash.replace("plan=", ""));
+          const parsed = JSON.parse(rawData);
+          if (parsed && parsed.scale && parsed.totalSems) {
+            setScale(parsed.scale);
+            setUseCredits(parsed.useCredits || false);
+            setCurrentCgpaInput(parsed.currentCgpa || "7.50");
+            setTargetCgpaInput(parsed.targetCgpa || "8.50");
+            setCompletedSems(parsed.completedSems || 0);
+            setTotalSems(parsed.totalSems || 8);
+            if (parsed.percentageFormula) setPercentageFormula(parsed.percentageFormula);
+            if (parsed.semesterSgpas) setSemesterSgpas(parsed.semesterSgpas);
+            if (parsed.semesterCredits) setSemesterCredits(parsed.semesterCredits);
+            showToast("Roadmap loaded from shared link!", "success");
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse shared plan from URL", e);
+    }
+  }, []);
 
   // Re-initialize planner SGPAs and Credits when basic configuration changes
   useEffect(() => {
@@ -98,8 +137,27 @@ export default function CgpaTargetPlanner() {
     setActivePlanId(null);
   }, [totalSems, completedSems, scale]);
 
-  // Handle Current CGPA and Target CGPA changes
-  // Setting the current CGPA sets the completed semesters' SGPAs to that CGPA.
+  // Percentage conversion helper
+  const calculatePercentage = (cgpaVal) => {
+    const val = parseFloat(cgpaVal) || 0;
+    if (val <= 0) return 0;
+    if (scale === 4) {
+      return Math.min(100, Math.max(0, (val / 4.0) * 100));
+    }
+    if (percentageFormula === "aicte") {
+      return Math.min(100, Math.max(0, val * 9.5));
+    } else if (percentageFormula === "standard") {
+      return Math.min(100, Math.max(0, val * 10.0));
+    } else if (percentageFormula === "vtu") {
+      return Math.min(100, Math.max(0, (val - 0.75) * 10.0));
+    } else if (percentageFormula === "custom") {
+      const mult = parseFloat(customPercentageMultiplier) || 9.5;
+      return Math.min(100, Math.max(0, val * mult));
+    }
+    return Math.min(100, Math.max(0, val * 9.5));
+  };
+
+  // Handle Current CGPA changes
   const handleCurrentCgpaChange = (valStr) => {
     setCurrentCgpaInput(valStr);
     const val = parseFloat(valStr) || 0;
@@ -132,7 +190,7 @@ export default function CgpaTargetPlanner() {
   const currentCgpa = parseFloat(currentCgpaInput) || 0;
   const targetCgpa = parseFloat(targetCgpaInput) || 0;
 
-  // Perform core calculations and auto-distribution
+  // Perform core calculations, auto-distribution, boundary predictions, and milestones
   const calculations = useMemo(() => {
     const completed = Math.min(completedSems, totalSems);
     const remainingSems = totalSems - completed;
@@ -170,6 +228,14 @@ export default function CgpaTargetPlanner() {
 
     // Required Average SGPA for all remaining semesters
     const requiredAverageSgpa = futureCreditsSum > 0 ? futurePointsNeeded / futureCreditsSum : 0;
+
+    // Boundary Calculations (Max & Min Possible CGPA)
+    const maxPossiblePoints = completedPointsSum + (futureCreditsSum * scale);
+    const maxPossibleCgpa = totalCreditsSum > 0 ? maxPossiblePoints / totalCreditsSum : actualCurrentCgpa;
+
+    const minPassingSgpa = scale === 10 ? 4.0 : 2.0;
+    const minPossiblePoints = completedPointsSum + (futureCreditsSum * minPassingSgpa);
+    const minPossibleCgpa = totalCreditsSum > 0 ? minPossiblePoints / totalCreditsSum : actualCurrentCgpa;
 
     // 5. Auto-distribute targets across unedited semesters
     let finalSgpas = [...semesterSgpas];
@@ -264,6 +330,78 @@ export default function CgpaTargetPlanner() {
       }
     }
 
+    // 7. Multi-Scenario Matrix Calculations (Optimistic, Planned, Conservative)
+    const optimisticSgpa = Math.min(scale, Math.max(0, requiredAverageSgpa + 0.5));
+    const optimisticPoints = completedPointsSum + (optimisticSgpa * futureCreditsSum);
+    const optimisticCgpa = totalCreditsSum > 0 ? optimisticPoints / totalCreditsSum : actualCurrentCgpa;
+
+    const conservativeSgpa = Math.max(0, requiredAverageSgpa - 0.5);
+    const conservativePoints = completedPointsSum + (conservativeSgpa * futureCreditsSum);
+    const conservativeCgpa = totalCreditsSum > 0 ? conservativePoints / totalCreditsSum : actualCurrentCgpa;
+
+    // 8. Academic Milestone Evaluation
+    const milestones = [
+      {
+        id: "distinction",
+        name: "First Class with Distinction",
+        threshold: scale === 10 ? 8.5 : 3.7,
+        achieved: plannedFinalCgpa >= (scale === 10 ? 8.5 : 3.7),
+        desc: scale === 10 ? "CGPA ≥ 8.50" : "GPA ≥ 3.70 (Honors)"
+      },
+      {
+        id: "first_class",
+        name: "First Class Degree",
+        threshold: scale === 10 ? 6.5 : 3.0,
+        achieved: plannedFinalCgpa >= (scale === 10 ? 6.5 : 3.0),
+        desc: scale === 10 ? "CGPA ≥ 6.50 (60%+)" : "GPA ≥ 3.00"
+      },
+      {
+        id: "tier1_placement",
+        name: "Top Tier Placement Eligibility",
+        threshold: scale === 10 ? 8.0 : 3.5,
+        achieved: plannedFinalCgpa >= (scale === 10 ? 8.0 : 3.5),
+        desc: scale === 10 ? "CGPA ≥ 8.00 (MAANG / Consulting)" : "GPA ≥ 3.50"
+      },
+      {
+        id: "study_abroad",
+        name: "Study Abroad / MS Tier-1 Cutoff",
+        threshold: scale === 10 ? 7.5 : 3.2,
+        achieved: plannedFinalCgpa >= (scale === 10 ? 7.5 : 3.2),
+        desc: scale === 10 ? "CGPA ≥ 7.50 (US/EU Grad Admissions)" : "GPA ≥ 3.20"
+      }
+    ];
+
+    // 9. Course Grade Combination Blueprint (for next upcoming semester)
+    let gradeBlueprint = null;
+    if (remainingSems > 0) {
+      const nextSemSgpa = finalSgpas[completed] || requiredAverageSgpa;
+      if (scale === 10) {
+        if (nextSemSgpa >= 9.5) {
+          gradeBlueprint = { mix: "5 × 'O' (10 Grade Points)", note: "All subjects need top grade" };
+        } else if (nextSemSgpa >= 8.8) {
+          gradeBlueprint = { mix: "3 × 'O' (10) + 2 × 'A+' (9)", note: "Aim for 3 Outstandings & 2 A+" };
+        } else if (nextSemSgpa >= 8.2) {
+          gradeBlueprint = { mix: "2 × 'O' (10) + 2 × 'A+' (9) + 1 × 'A' (8)", note: "Balanced high-performance spread" };
+        } else if (nextSemSgpa >= 7.5) {
+          gradeBlueprint = { mix: "3 × 'A+' (9) + 2 × 'A' (8)", note: "Solid consistent performance" };
+        } else if (nextSemSgpa >= 6.8) {
+          gradeBlueprint = { mix: "2 × 'A' (8) + 3 × 'B+' (7)", note: "Achievable with focused revision" };
+        } else {
+          gradeBlueprint = { mix: "All 'B+' (7) or 'B' (6)", note: "Standard passing grade combination" };
+        }
+      } else {
+        if (nextSemSgpa >= 3.8) {
+          gradeBlueprint = { mix: "4 × 'A' (4.0) + 1 × 'A-' (3.7)", note: "Top tier academic honors" };
+        } else if (nextSemSgpa >= 3.4) {
+          gradeBlueprint = { mix: "2 × 'A' (4.0) + 2 × 'A-' (3.7) + 1 × 'B+' (3.3)", note: "Strong graduate admissions track" };
+        } else if (nextSemSgpa >= 3.0) {
+          gradeBlueprint = { mix: "3 × 'B+' (3.3) + 2 × 'B' (3.0)", note: "Solid benchmark" };
+        } else {
+          gradeBlueprint = { mix: "Mix of 'B' (3.0) and 'C+' (2.3)", note: "Passing standards" };
+        }
+      }
+    }
+
     return {
       actualCurrentCgpa,
       requiredAverageSgpa,
@@ -271,16 +409,128 @@ export default function CgpaTargetPlanner() {
       remainingSems,
       totalCreditsSum,
       completedCreditsSum,
+      futureCreditsSum,
       plannedFinalCgpa,
+      maxPossibleCgpa,
+      minPossibleCgpa,
       gapRemaining,
       plannedGap,
       progressPercent,
       difficulty,
       difficultyColor,
       isImpossible,
-      finalSgpas
+      finalSgpas,
+      optimisticSgpa,
+      optimisticCgpa,
+      conservativeSgpa,
+      conservativeCgpa,
+      milestones,
+      gradeBlueprint
     };
   }, [completedSems, totalSems, semesterSgpas, semesterCredits, editedFutureSemesters, autoDistribute, currentCgpaInput, targetCgpaInput, scale, useCredits]);
+
+  // 10. Beyond CGPA - Career Success Pillars Data
+  const careerPillars = [
+    {
+      id: "projects",
+      icon: "🔨",
+      title: "Proof of Work & Real Projects",
+      tagline: "Live products beat 100 theoretical assignments",
+      description: "Recruiters and founders want to see that you can build and ship. 2-3 production-grade, deployed full-stack or domain projects hosted online with clean GitHub code matter 10x more than a 9.5 CGPA on paper.",
+      actionItems: [
+        "Build full-featured apps or solve a real personal problem with genuine users",
+        "Write clean READMEs with architecture diagrams and live demo links",
+        "Host on Vercel, Netlify, Render or AWS so anyone can test it with one click"
+      ],
+      leverage: "Highest Leverage (Bypasses traditional resume screening)"
+    },
+    {
+      id: "problem_solving",
+      icon: "🧠",
+      title: "Core Problem Solving & Tech Depth",
+      tagline: "Fundamentals that survive changing tech trends",
+      description: "College exams test rote memory; real technical rounds test how you break down unfamiliar engineering problems. Solid fundamentals in Data Structures, System Design, or Practical Frameworks are your core superpower.",
+      actionItems: [
+        "Solve 150-200 curated problem patterns (NeetCode/Striver) focused on concepts, not quantity",
+        "Understand how databases, APIs, state management, and caching work under the hood",
+        "Learn engineering tradeoffs: speed vs. memory vs. maintainability"
+      ],
+      leverage: "Essential for Technical Rounds & Product Companies"
+    },
+    {
+      id: "communication",
+      icon: "🗣️",
+      title: "Communication & Articulation",
+      tagline: "The #1 unfair advantage in tech and business",
+      description: "You could write the cleanest code in the room, but if you cannot explain your thought process clearly, summarize technical decisions, or write concise emails, your career will hit an early ceiling.",
+      actionItems: [
+        "Practice 'Thinking Out Loud' during coding problems and mock interviews",
+        "Write technical blogs or LinkedIn breakdown posts explaining complex concepts simply",
+        "Master the STAR framework (Situation, Task, Action, Result) for behavioral rounds"
+      ],
+      leverage: "Determines Offer Levels & Long-term Leadership Growth"
+    },
+    {
+      id: "networking",
+      icon: "🤝",
+      title: "Building in Public & Cold Outreach",
+      tagline: "Opportunity favors the visible",
+      description: "Over 70% of high-paying startup and tech roles are filled through referrals and proof of work. Sending a thoughtful DM with a Loom video showing a bug fix or feature proposal gets 10x more replies than 500 blind resume submissions.",
+      actionItems: [
+        "Contribute to active Open-Source repositories on GitHub",
+        "Participate in 24/48-hour hackathons to meet mentors and ambitious peers",
+        "Reach out directly to engineering leads & founders on LinkedIn / X showing genuine work"
+      ],
+      leverage: "Unlocks Direct Referrals & Off-Campus Hiring"
+    },
+    {
+      id: "learnability",
+      icon: "🚀",
+      title: "Fast Learnability & Adaptability",
+      tagline: "Learn any new framework in 48 hours",
+      description: "College syllabi are often 5-10 years outdated. In the modern era of AI and rapidly evolving tools, the ability to read official docs, prototype a solution in a weekend, and adapt quickly is what separates top engineers from textbook toppers.",
+      actionItems: [
+        "Learn to build by reading official docs instead of relying on 20-hour video tutorials",
+        "Experiment with modern tools, AI APIs, and automated developer workflows",
+        "Embrace debugging and reading open-source codebases with confidence"
+      ],
+      leverage: "Future-Proofs Your Entire Career Lifecycle"
+    }
+  ];
+
+  // Dynamic Career Reality Insight based on CGPA
+  const careerRealityInsight = useMemo(() => {
+    const val = calculations ? calculations.actualCurrentCgpa : (parseFloat(currentCgpaInput) || 0);
+    const isScale10 = scale === 10;
+    const lowThreshold = isScale10 ? 7.0 : 2.8;
+    const highThreshold = isScale10 ? 8.2 : 3.5;
+
+    if (val < lowThreshold) {
+      return {
+        status: "Comeback & Off-Campus Mode",
+        badgeColor: "bg-orange-500 text-white",
+        headline: "Do NOT Panic: Your Career Is NOT Decided by College Marks",
+        advice: "Keep a safe baseline (6.0 - 6.5) so you don't face academic hurdles, and dedicate 75% of your remaining energy to building real-world projects, GitHub proof-of-work, and off-campus networking. Top tech startups and modern companies do not care about college CGPA if your portfolio demonstrates genuine competence.",
+        actionFocus: "Focus: 2 Deep Projects + Active GitHub + Direct Cold Outreach"
+      };
+    } else if (val < highThreshold) {
+      return {
+        status: "The Sweet Spot (Safe Zone)",
+        badgeColor: "bg-emerald-600 text-white",
+        headline: "You're in the Ideal Sweet Spot — Focus on High-Leverage Skills",
+        advice: "You easily clear 90%+ of all campus placement and job eligibility cutoffs. Chasing an extra 0.5 CGPA has severe diminishing returns. Spend that time doing internships, open-source contributions, and mastering core technical depth instead.",
+        actionFocus: "Focus: Internships + DSA / System Design + Open Source"
+      };
+    } else {
+      return {
+        status: "High Academic Track",
+        badgeColor: "bg-indigo-600 text-white",
+        headline: "Great Academic Discipline — Avoid the 'Grades Only' Trap",
+        advice: "Your consistency and academic discipline are outstanding! Just ensure you don't become a pure 'Marksheet Collector'. Balance your high grades with hands-on architecture, real user projects, and communication skills to be an unstoppable candidate.",
+        actionFocus: "Focus: Production Projects + Interview Storytelling + Leadership"
+      };
+    }
+  }, [calculations, currentCgpaInput, scale]);
 
   // Update a single semester's SGPA
   const updateSemesterSgpa = (index, value) => {
@@ -364,6 +614,8 @@ export default function CgpaTargetPlanner() {
       targetCgpa: targetCgpaInput,
       completedSems,
       totalSems,
+      percentageFormula,
+      customPercentageMultiplier,
       semesterSgpas: calculations ? calculations.finalSgpas : semesterSgpas,
       semesterCredits,
       editedFutureSemesters,
@@ -394,6 +646,8 @@ export default function CgpaTargetPlanner() {
     setTargetCgpaInput(plan.targetCgpa);
     setCompletedSems(plan.completedSems);
     setTotalSems(plan.totalSems);
+    if (plan.percentageFormula) setPercentageFormula(plan.percentageFormula);
+    if (plan.customPercentageMultiplier) setCustomPercentageMultiplier(plan.customPercentageMultiplier);
     
     setTimeout(() => {
       setSemesterSgpas(plan.semesterSgpas);
@@ -427,8 +681,9 @@ export default function CgpaTargetPlanner() {
     text += `==========================\n`;
     text += `Scale: ${scale}.0 GPA Scale\n`;
     text += `Completed Semesters: ${completed} / ${totalSems}\n`;
-    text += `Current CGPA: ${calculations.actualCurrentCgpa.toFixed(2)}\n`;
-    text += `Target CGPA: ${targetCgpa.toFixed(2)}\n`;
+    text += `Current CGPA: ${calculations.actualCurrentCgpa.toFixed(2)} (${calculatePercentage(calculations.actualCurrentCgpa).toFixed(1)}%)\n`;
+    text += `Target CGPA: ${targetCgpa.toFixed(2)} (${calculatePercentage(targetCgpa).toFixed(1)}%)\n`;
+    text += `Maximum Possible CGPA: ${calculations.maxPossibleCgpa.toFixed(2)}\n`;
     text += `Required Average SGPA: ${calculations.requiredAverageSgpa.toFixed(2)} (${calculations.difficulty})\n`;
     if (calculations.remainingSems > 0) {
       text += `Remaining Semesters: ${calculations.remainingSems}\n`;
@@ -448,6 +703,26 @@ export default function CgpaTargetPlanner() {
     showToast("Results copied to clipboard!", "success");
   };
 
+  // Copy Shareable URL
+  const handleCopyShareLink = () => {
+    if (!calculations) return;
+    const planData = {
+      scale,
+      useCredits,
+      currentCgpa: currentCgpaInput,
+      targetCgpa: targetCgpaInput,
+      completedSems,
+      totalSems,
+      percentageFormula,
+      semesterSgpas: calculations.finalSgpas,
+      semesterCredits
+    };
+
+    const url = `${window.location.origin}${window.location.pathname}#plan=${encodeURIComponent(JSON.stringify(planData))}`;
+    navigator.clipboard.writeText(url);
+    showToast("Shareable link copied to clipboard!", "success");
+  };
+
   // Export JSON file
   const handleExportJson = () => {
     if (!calculations) return;
@@ -458,6 +733,8 @@ export default function CgpaTargetPlanner() {
       targetCgpa: targetCgpaInput,
       completedSems,
       totalSems,
+      percentageFormula,
+      customPercentageMultiplier,
       semesterSgpas: calculations.finalSgpas,
       semesterCredits,
       editedFutureSemesters,
@@ -472,7 +749,76 @@ export default function CgpaTargetPlanner() {
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
-    showToast("JSON file downloaded!", "success");
+    showToast("JSON plan downloaded!", "success");
+  };
+
+  // Export CSV file
+  const handleExportCsv = () => {
+    if (!calculations) return;
+    let csv = "Semester,Status,Credits,SGPA,Cumulative CGPA,Equivalent Percentage\n";
+
+    let runningPoints = 0;
+    let runningCredits = 0;
+    const completed = Math.min(completedSems, totalSems);
+
+    for (let i = 0; i < totalSems; i++) {
+      const cred = useCredits ? (semesterCredits[i] || 20) : 20;
+      const sgpa = calculations.finalSgpas[i] || 0;
+      runningCredits += cred;
+      runningPoints += sgpa * cred;
+      const cumCgpa = runningCredits > 0 ? (runningPoints / runningCredits).toFixed(2) : "0.00";
+      const pct = calculatePercentage(cumCgpa).toFixed(1);
+      const status = i < completed ? "Completed" : "Target";
+
+      csv += `Semester ${i + 1},${status},${cred},${sgpa.toFixed(2)},${cumCgpa},${pct}%\n`;
+    }
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `cgpa_roadmap_${totalSems}sems.csv`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showToast("CSV roadmap downloaded!", "success");
+  };
+
+  // Import JSON File
+  const handleImportJson = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result);
+        if (!parsed || !parsed.totalSems) {
+          throw new Error("Invalid plan file format");
+        }
+
+        setScale(parsed.scale || 10);
+        setUseCredits(parsed.useCredits || false);
+        setCurrentCgpaInput(parsed.currentCgpa || "7.50");
+        setTargetCgpaInput(parsed.targetCgpa || "8.50");
+        setCompletedSems(parsed.completedSems || 0);
+        setTotalSems(parsed.totalSems || 8);
+        if (parsed.percentageFormula) setPercentageFormula(parsed.percentageFormula);
+        if (parsed.customPercentageMultiplier) setCustomPercentageMultiplier(parsed.customPercentageMultiplier);
+        
+        setTimeout(() => {
+          if (parsed.semesterSgpas) setSemesterSgpas(parsed.semesterSgpas);
+          if (parsed.semesterCredits) setSemesterCredits(parsed.semesterCredits);
+          if (parsed.editedFutureSemesters) setEditedFutureSemesters(parsed.editedFutureSemesters);
+          setAutoDistribute(parsed.autoDistribute !== undefined ? parsed.autoDistribute : true);
+          showToast("Plan imported successfully!", "success");
+        }, 50);
+      } catch (err) {
+        showToast("Failed to parse JSON file. Please check format.", "error");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
   };
 
   // What-If Simulator results
@@ -540,7 +886,7 @@ export default function CgpaTargetPlanner() {
     if (reqSgpa > scale) {
       list.push({
         type: "error",
-        text: `Target is mathematically impossible. Even with a perfect ${scale}.00 in all remaining semesters, you will max out below your target.`
+        text: `Target is mathematically impossible. Even with a perfect ${scale}.00 in all remaining semesters, the highest possible CGPA is ${calculations.maxPossibleCgpa.toFixed(2)}.`
       });
     } else if (reqSgpa <= 0) {
       list.push({
@@ -667,6 +1013,8 @@ export default function CgpaTargetPlanner() {
     };
   }, [calculations, totalSems, completedSems, semesterCredits, targetCgpa, scale, useCredits]);
 
+  const currentSelectedPillar = careerPillars.find((p) => p.id === activePillarTab) || careerPillars[0];
+
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-8 font-sans print:bg-white print:p-0">
       
@@ -727,26 +1075,28 @@ export default function CgpaTargetPlanner() {
         <div className="hidden print:block max-w-4xl mx-auto p-8 text-slate-900 bg-white font-sans">
           <div className="text-center border-b pb-6 mb-8">
             <h1 className="text-3xl font-bold tracking-tight mb-2">CGPA Target Planner Report</h1>
-            <p className="text-sm text-slate-500">Degree Roadmap &amp; Required SGPA Analysis</p>
+            <p className="text-sm text-slate-500">Degree Roadmap, Feasibility Bounds &amp; Required SGPA Analysis</p>
           </div>
           
           <div className="grid grid-cols-2 gap-8 mb-8 border rounded-xl p-6 bg-slate-50/50">
             <div>
               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Academic Profile</h3>
-              <div className="space-y-1 text-sm font-medium">
+              <div className="space-y-1.5 text-sm font-medium">
                 <div>Scale: <span className="font-bold">{scale}.0 GPA Scale</span></div>
                 <div>Completed Semesters: <span className="font-bold">{completedSems} / {totalSems}</span></div>
-                <div>Current CGPA: <span className="font-bold">{calculations.actualCurrentCgpa.toFixed(2)}</span></div>
-                <div>Target CGPA: <span className="font-bold text-orange-600">{targetCgpa.toFixed(2)}</span></div>
+                <div>Current CGPA: <span className="font-bold">{calculations.actualCurrentCgpa.toFixed(2)} ({calculatePercentage(calculations.actualCurrentCgpa).toFixed(1)}%)</span></div>
+                <div>Target CGPA: <span className="font-bold text-orange-600">{targetCgpa.toFixed(2)} ({calculatePercentage(targetCgpa).toFixed(1)}%)</span></div>
+                <div>Conversion Formula: <span className="font-semibold text-slate-600">{percentageFormula.toUpperCase()}</span></div>
               </div>
             </div>
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Target Status</h3>
-              <div className="space-y-1 text-sm font-medium">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Target &amp; Boundaries</h3>
+              <div className="space-y-1.5 text-sm font-medium">
                 <div>Required Average SGPA: <span className="font-bold text-orange-600">{calculations.requiredAverageSgpa.toFixed(2)}</span></div>
                 <div>Target Difficulty: <span className="font-bold">{calculations.difficulty}</span></div>
+                <div>Max Attainable CGPA: <span className="font-bold text-emerald-600">{calculations.maxPossibleCgpa.toFixed(2)}</span></div>
+                <div>Min Passing CGPA: <span className="font-bold text-slate-600">{calculations.minPossibleCgpa.toFixed(2)}</span></div>
                 {useCredits && <div>Total Program Credits: <span className="font-bold">{calculations.totalCreditsSum}</span></div>}
-                <div>Remaining Gap: <span className="font-bold">{calculations.gapRemaining.toFixed(2)}</span></div>
               </div>
             </div>
           </div>
@@ -760,6 +1110,7 @@ export default function CgpaTargetPlanner() {
                 {useCredits && <th className="border p-3">Credits</th>}
                 <th className="border p-3">SGPA</th>
                 <th className="border p-3">Cumulative CGPA</th>
+                <th className="border p-3">Equiv %</th>
               </tr>
             </thead>
             <tbody>
@@ -780,6 +1131,7 @@ export default function CgpaTargetPlanner() {
                     {useCredits && <td className="border p-3">{semesterCredits[idx] || 20}</td>}
                     <td className="border p-3 font-bold">{sgpa.toFixed(2)}</td>
                     <td className="border p-3">{runningCumCgpa.toFixed(2)}</td>
+                    <td className="border p-3">{calculatePercentage(runningCumCgpa).toFixed(1)}%</td>
                   </tr>
                 );
               })}
@@ -795,13 +1147,22 @@ export default function CgpaTargetPlanner() {
       {/* SCREEN LAYOUT */}
       <div className="max-w-6xl mx-auto print:hidden">
         
+        {/* Hidden File Input for JSON Import */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleImportJson}
+          accept=".json"
+          className="hidden"
+        />
+
         {/* Header */}
         <div className="mb-6 flex flex-col items-center text-center">
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-2">
             CGPA Target Planner
           </h1>
           <p className="text-slate-600 max-w-2xl text-sm sm:text-base">
-            Help college students understand exactly what SGPA they need in future semesters to reach their target CGPA.
+            Calculate required future SGPAs, forecast multi-scenario outcomes, explore career success pillars beyond marks, and plan your degree roadmap.
           </p>
         </div>
 
@@ -824,7 +1185,7 @@ export default function CgpaTargetPlanner() {
               <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
                 <button
                   onClick={() => handleScaleChange(10)}
-                  className={`py-2 px-3 rounded-lg font-bold text-sm transition ${
+                  className={`py-2 px-3 rounded-lg font-bold text-sm transition cursor-pointer ${
                     scale === 10
                       ? "bg-white text-orange-600 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -834,7 +1195,7 @@ export default function CgpaTargetPlanner() {
                 </button>
                 <button
                   onClick={() => handleScaleChange(4)}
-                  className={`py-2 px-3 rounded-lg font-bold text-sm transition ${
+                  className={`py-2 px-3 rounded-lg font-bold text-sm transition cursor-pointer ${
                     scale === 4
                       ? "bg-white text-orange-600 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
@@ -847,12 +1208,88 @@ export default function CgpaTargetPlanner() {
 
             {/* Inputs Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-5">
-              <h2 className="text-base font-bold text-slate-900">Academic Profile</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-slate-900">Academic Profile</h2>
+                <button
+                  onClick={() => setShowPercentageModal(!showPercentageModal)}
+                  className="text-[11px] font-bold text-orange-600 hover:text-orange-700 bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-100 transition cursor-pointer"
+                >
+                  % Formula ⚙️
+                </button>
+              </div>
+
+              {/* Percentage Formula Options Drawer */}
+              {showPercentageModal && scale === 10 && (
+                <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                    Percentage Conversion Formula
+                  </span>
+                  <div className="space-y-1.5 text-xs font-semibold">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="formula"
+                        checked={percentageFormula === "aicte"}
+                        onChange={() => setPercentageFormula("aicte")}
+                        className="accent-orange-600"
+                      />
+                      <span>AICTE / CBSE / Standard (CGPA × 9.5)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="formula"
+                        checked={percentageFormula === "standard"}
+                        onChange={() => setPercentageFormula("standard")}
+                        className="accent-orange-600"
+                      />
+                      <span>Direct Multiplier (CGPA × 10.0)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="formula"
+                        checked={percentageFormula === "vtu"}
+                        onChange={() => setPercentageFormula("vtu")}
+                        className="accent-orange-600"
+                      />
+                      <span>VTU / SPPU / Mumbai ((CGPA - 0.75) × 10)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="formula"
+                        checked={percentageFormula === "custom"}
+                        onChange={() => setPercentageFormula("custom")}
+                        className="accent-orange-600"
+                      />
+                      <span>Custom Formula Multiplier</span>
+                    </label>
+                  </div>
+                  {percentageFormula === "custom" && (
+                    <div className="pt-2">
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={customPercentageMultiplier}
+                        onChange={(e) => setCustomPercentageMultiplier(e.target.value)}
+                        placeholder="e.g. 9.5"
+                        className="w-full border border-slate-200 rounded-lg p-2 text-xs bg-white text-slate-900"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                  Current CGPA
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Current CGPA
+                  </label>
+                  <span className="text-[11px] font-bold text-slate-500">
+                    ≈ {calculatePercentage(currentCgpaInput).toFixed(1)}%
+                  </span>
+                </div>
                 <input
                   type="number"
                   step="0.01"
@@ -893,10 +1330,63 @@ export default function CgpaTargetPlanner() {
                 </div>
               </div>
 
+              {/* Expandable Past Semesters Detail Input */}
+              {completedSems > 0 && (
+                <div className="pt-2 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setShowPastSemBreakdown(!showPastSemBreakdown)}
+                    className="w-full flex items-center justify-between text-xs font-bold text-slate-700 hover:text-orange-600 py-1 transition cursor-pointer"
+                  >
+                    <span>Past Semesters SGPA Breakdown</span>
+                    <span className="text-slate-400 text-sm">{showPastSemBreakdown ? "▲" : "▼"}</span>
+                  </button>
+
+                  {showPastSemBreakdown && (
+                    <div className="mt-3 space-y-2 max-h-48 overflow-y-auto roadmap-scroll pr-1">
+                      {Array.from({ length: completedSems }).map((_, idx) => (
+                        <div key={idx} className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200/70">
+                          <span className="text-[11px] font-bold text-slate-600 w-16">Sem {idx + 1}</span>
+                          <div className="flex-1">
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              max={scale}
+                              value={semesterSgpas[idx] !== undefined ? semesterSgpas[idx] : currentCgpa}
+                              onChange={(e) => updateSemesterSgpa(idx, e.target.value)}
+                              placeholder="SGPA"
+                              className="w-full border border-slate-200 rounded-md p-1 text-xs bg-white text-slate-900 font-bold focus:outline-none focus:ring-1 focus:ring-orange-500"
+                            />
+                          </div>
+                          {useCredits && (
+                            <div className="w-16">
+                              <input
+                                type="number"
+                                min="1"
+                                value={semesterCredits[idx] || 20}
+                                onChange={(e) => updateSemesterCredits(idx, e.target.value)}
+                                placeholder="Credits"
+                                className="w-full border border-slate-200 rounded-md p-1 text-xs bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                  Target CGPA
-                </label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Target CGPA
+                  </label>
+                  <span className="text-[11px] font-bold text-orange-600">
+                    ≈ {calculatePercentage(targetCgpaInput).toFixed(1)}%
+                  </span>
+                </div>
                 <input
                   type="number"
                   step="0.01"
@@ -918,7 +1408,7 @@ export default function CgpaTargetPlanner() {
                     <button
                       key={target}
                       onClick={() => setTargetCgpaInput(target)}
-                      className={`text-xs px-3 py-1.5 rounded-lg border font-bold transition ${
+                      className={`text-xs px-3 py-1.5 rounded-lg border font-bold transition cursor-pointer ${
                         targetCgpaInput === target
                           ? "bg-orange-500 border-orange-500 text-white shadow-xs"
                           : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -1001,7 +1491,7 @@ export default function CgpaTargetPlanner() {
                 />
                 <button
                   type="submit"
-                  className="w-full bg-slate-900 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs transition"
+                  className="w-full bg-slate-900 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs transition cursor-pointer"
                 >
                   {activePlanId ? "Update Plan" : "Save Current Setup"}
                 </button>
@@ -1027,7 +1517,7 @@ export default function CgpaTargetPlanner() {
                       </div>
                       <button
                         onClick={(e) => handleDeletePlan(plan.id, e)}
-                        className="text-slate-400 hover:text-red-500 p-1 transition"
+                        className="text-slate-400 hover:text-red-500 p-1 transition cursor-pointer"
                         title="Delete Plan"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1050,52 +1540,63 @@ export default function CgpaTargetPlanner() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>Privacy Statement</span>
+                <span>Privacy &amp; Local Storage</span>
               </h3>
               <p className="text-[11px] leading-relaxed text-slate-400">
-                Everything runs locally inside your browser. No information is uploaded. All calculations and plan storage reside 100% offline.
+                Everything runs locally inside your browser. No grades are sent to any server. Your degree calculations stay 100% private.
               </p>
             </div>
 
           </div>
 
-          {/* RIGHT PANELS - CALCULATIONS, CHARTS, AND PLANNER */}
+          {/* RIGHT PANELS - CALCULATIONS, CHARTS, SCENARIOS, CAREER PILLARS, AND PLANNER */}
           <div className="lg:col-span-2 space-y-6">
             
             {/* Visual Dashboard Cards */}
             {calculations && (
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
                 <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Current CGPA</span>
                   <span className="text-xl font-black text-slate-800">{calculations.actualCurrentCgpa.toFixed(2)}</span>
+                  <span className="text-[10px] text-slate-400 block font-semibold">≈ {calculatePercentage(calculations.actualCurrentCgpa).toFixed(1)}%</span>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Target CGPA</span>
                   <span className="text-xl font-black text-orange-600">{targetCgpa.toFixed(2)}</span>
+                  <span className="text-[10px] text-orange-400 block font-semibold">≈ {calculatePercentage(targetCgpa).toFixed(1)}%</span>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs col-span-2 sm:col-span-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Required SGPA</span>
                   <span className="text-xl font-black text-orange-600">
                     {calculations.remainingSems > 0 ? calculations.requiredAverageSgpa.toFixed(2) : "N/A"}
                   </span>
+                  <span className="text-[10px] text-slate-400 block font-semibold">per future sem</span>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Max Attainable</span>
+                  <span className="text-xl font-black text-emerald-600">{calculations.maxPossibleCgpa.toFixed(2)}</span>
+                  <span className="text-[10px] text-emerald-500 block font-semibold">at 100% SGPAs</span>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Sems Left</span>
                   <span className="text-xl font-black text-slate-800">{calculations.remainingSems}</span>
+                  <span className="text-[10px] text-slate-400 block font-semibold">of {totalSems} total</span>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Progress</span>
                   <span className="text-xl font-black text-slate-800">{calculations.progressPercent}%</span>
+                  <span className="text-[10px] text-slate-400 block font-semibold">{completedSems}/{totalSems} sems</span>
                 </div>
               </div>
             )}
 
-            {/* Live Progress Card */}
+            {/* Live Progress & Feasibility Range Card */}
             {calculations && (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
                   <span>Current: {calculations.actualCurrentCgpa.toFixed(2)}</span>
                   <span>Target: {targetCgpa.toFixed(2)}</span>
+                  <span>Max Limit: {calculations.maxPossibleCgpa.toFixed(2)}</span>
                 </div>
 
                 {/* Horizontal Progress bar */}
@@ -1111,23 +1612,94 @@ export default function CgpaTargetPlanner() {
                     }}
                     className="h-full bg-gradient-to-r from-orange-500 to-orange-400 absolute top-0 transition-all duration-500"
                   />
+                  {/* Target line */}
                   <div
                     style={{ left: `${Math.min(100, (targetCgpa / scale) * 100)}%` }}
-                    className="h-full w-0.5 bg-red-600 absolute top-0"
+                    className="h-full w-0.5 bg-red-600 absolute top-0 z-10"
+                    title={`Target: ${targetCgpa.toFixed(2)}`}
+                  />
+                  {/* Max Attainable indicator */}
+                  <div
+                    style={{ left: `${Math.min(100, (calculations.maxPossibleCgpa / scale) * 100)}%` }}
+                    className="h-full w-0.5 bg-emerald-600 absolute top-0 z-10"
+                    title={`Max Possible: ${calculations.maxPossibleCgpa.toFixed(2)}`}
                   />
                 </div>
 
                 <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
                   <div className="flex items-center gap-1.5 font-semibold text-slate-600">
                     <span className="w-2.5 h-2.5 bg-slate-300 rounded-full inline-block" />
-                    <span>Completed CGPA</span>
+                    <span>Completed ({calculations.actualCurrentCgpa.toFixed(2)})</span>
                   </div>
                   <div className="flex items-center gap-1.5 font-semibold text-slate-600">
                     <span className="w-2.5 h-2.5 bg-orange-500 rounded-full inline-block" />
                     <span>Gap: {Math.max(0, calculations.gapRemaining).toFixed(2)}</span>
                   </div>
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-600">
+                    <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block" />
+                    <span>Max Possible: {calculations.maxPossibleCgpa.toFixed(2)}</span>
+                  </div>
                   <div className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${calculations.difficultyColor}`}>
                     {calculations.difficulty}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 3-WAY MULTI-SCENARIO COMPARISON MATRIX */}
+            {calculations && calculations.remainingSems > 0 && (
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">3-Way Scenario Modeling</h3>
+                    <p className="text-[11px] text-slate-400 font-medium">Compare potential graduation CGPAs across performance variances.</p>
+                  </div>
+                  <span className="text-[10px] bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-bold">
+                    Forecast
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Optimistic */}
+                  <div className="p-4 rounded-xl border border-emerald-100 bg-emerald-50/40 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-emerald-800">🚀 Optimistic (+0.5)</span>
+                      <span className="text-[10px] font-bold bg-emerald-200/60 text-emerald-900 px-1.5 py-0.5 rounded">High Push</span>
+                    </div>
+                    <div className="text-xl font-black text-emerald-700">
+                      {calculations.optimisticCgpa.toFixed(2)} <span className="text-xs font-semibold text-emerald-600">CGPA</span>
+                    </div>
+                    <div className="text-[11px] font-medium text-emerald-900/80">
+                      Avg SGPA: <span className="font-bold">{calculations.optimisticSgpa.toFixed(2)}</span> • {calculatePercentage(calculations.optimisticCgpa).toFixed(1)}%
+                    </div>
+                  </div>
+
+                  {/* Planned Target */}
+                  <div className="p-4 rounded-xl border border-orange-200 bg-orange-50/40 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-orange-800">🎯 Planned Roadmap</span>
+                      <span className="text-[10px] font-bold bg-orange-200/60 text-orange-900 px-1.5 py-0.5 rounded">Target</span>
+                    </div>
+                    <div className="text-xl font-black text-orange-600">
+                      {calculations.plannedFinalCgpa.toFixed(2)} <span className="text-xs font-semibold text-orange-600">CGPA</span>
+                    </div>
+                    <div className="text-[11px] font-medium text-orange-900/80">
+                      Avg SGPA: <span className="font-bold">{calculations.requiredAverageSgpa.toFixed(2)}</span> • {calculatePercentage(calculations.plannedFinalCgpa).toFixed(1)}%
+                    </div>
+                  </div>
+
+                  {/* Conservative */}
+                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-700">🛡️ Conservative (-0.5)</span>
+                      <span className="text-[10px] font-bold bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">Buffer</span>
+                    </div>
+                    <div className="text-xl font-black text-slate-800">
+                      {calculations.conservativeCgpa.toFixed(2)} <span className="text-xs font-semibold text-slate-600">CGPA</span>
+                    </div>
+                    <div className="text-[11px] font-medium text-slate-600">
+                      Avg SGPA: <span className="font-bold">{calculations.conservativeSgpa.toFixed(2)}</span> • {calculatePercentage(calculations.conservativeCgpa).toFixed(1)}%
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1282,6 +1854,213 @@ export default function CgpaTargetPlanner() {
               </div>
             )}
 
+            {/* Academic Milestones & Eligibility Card */}
+            {calculations && (
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>🎓 Academic &amp; Placement Eligibility</span>
+                  </h3>
+                  <span className="text-[10px] text-slate-400 font-semibold">Based on Planned CGPA ({calculations.plannedFinalCgpa.toFixed(2)})</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {calculations.milestones.map((m) => (
+                    <div
+                      key={m.id}
+                      className={`p-3.5 rounded-xl border flex items-center justify-between ${
+                        m.achieved
+                          ? "bg-emerald-50/50 border-emerald-200"
+                          : "bg-slate-50 border-slate-200/80 opacity-75"
+                      }`}
+                    >
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                          {m.name}
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">{m.desc}</div>
+                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        m.achieved
+                          ? "bg-emerald-600 text-white"
+                          : "bg-slate-200 text-slate-600"
+                      }`}>
+                        {m.achieved ? "✓ Eligible" : "Off-Target"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Upcoming Semester Grade Combination Blueprint */}
+            {calculations && calculations.gradeBlueprint && (
+              <div className="bg-gradient-to-r from-orange-50/60 to-amber-50/60 border border-orange-200/80 rounded-2xl p-5 shadow-2xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-orange-950 flex items-center gap-1.5">
+                    <span>⚡ Semester {completedSems + 1} Target Grade Mix</span>
+                  </span>
+                  <span className="text-[10px] bg-orange-500 text-white px-2 py-0.5 rounded-full font-bold">
+                    Guidance
+                  </span>
+                </div>
+                <p className="text-xs font-semibold text-slate-700">
+                  Recommended Course Grades: <span className="font-extrabold text-orange-900">{calculations.gradeBlueprint.mix}</span>
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  {calculations.gradeBlueprint.note} for a standard 5-subject course load.
+                </p>
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* BEYOND CGPA: THE REAL CAREER SUCCESS MATRIX (MINDSET & ACTION PLAYBOOK) */}
+            {/* ========================================================================= */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
+              
+              {/* Header with Reality Check banner */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🌟</span>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-900">Beyond CGPA: The Real Career Success Matrix</h3>
+                      <p className="text-xs text-slate-500">Why your degree grades are only 10% of the game — and where real success is built.</p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-bold bg-orange-500/10 text-orange-700 border border-orange-200 px-2.5 py-1 rounded-full">
+                    Reality Check 💡
+                  </span>
+                </div>
+
+                {/* Empathetic Reality Check Callout */}
+                <div className="bg-slate-900 text-slate-200 p-4 rounded-xl border border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-orange-400 font-bold text-xs uppercase tracking-wider">
+                    <span>Reality Check: A Low SGPA Does Not Define Your Career</span>
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-300">
+                    CGPA is merely an initial screening filter (typically 6.5 – 7.5) for legacy campus placement drives. High-growth tech companies, top startups, and modern employers do not judge your trajectory by marks — they hire for <strong>Proof of Work</strong>, <strong>Real Problem Solving</strong>, and <strong>Execution Speed</strong>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Dynamic CGPA-Tailored Advice */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4.5 space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${careerRealityInsight.badgeColor}`}>
+                    {careerRealityInsight.status}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-500">Current CGPA: {calculations ? calculations.actualCurrentCgpa.toFixed(2) : currentCgpaInput}</span>
+                </div>
+                <h4 className="text-sm font-bold text-slate-900">{careerRealityInsight.headline}</h4>
+                <p className="text-xs leading-relaxed text-slate-600 font-medium">
+                  {careerRealityInsight.advice}
+                </p>
+                <div className="pt-2 border-t border-slate-200/60 text-xs font-bold text-orange-700">
+                  {careerRealityInsight.actionFocus}
+                </div>
+              </div>
+
+              {/* 5 Real-World Career Pillars Tabs */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    5 High-Leverage Career Pillars
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">Click to inspect action plan</span>
+                </div>
+
+                {/* Tabs Selector */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 bg-slate-100 p-1.5 rounded-xl">
+                  {careerPillars.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setActivePillarTab(p.id)}
+                      className={`py-2 px-2 rounded-lg text-xs font-bold transition flex flex-col items-center gap-1 cursor-pointer ${
+                        activePillarTab === p.id
+                          ? "bg-white text-orange-600 shadow-2xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <span className="text-sm">{p.icon}</span>
+                      <span className="truncate w-full text-center text-[10px]">{p.title.split(" ")[0]}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Pillar Detail Card */}
+                <div className="border border-slate-200 bg-white rounded-xl p-5 space-y-3.5 shadow-3xs">
+                  <div className="flex items-start justify-between flex-wrap gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{currentSelectedPillar.icon}</span>
+                        <h4 className="text-sm font-bold text-slate-900">{currentSelectedPillar.title}</h4>
+                      </div>
+                      <p className="text-xs font-semibold text-orange-600 mt-0.5">{currentSelectedPillar.tagline}</p>
+                    </div>
+                    <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-2 py-1 rounded-md border border-slate-200/80">
+                      {currentSelectedPillar.leverage}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    {currentSelectedPillar.description}
+                  </p>
+
+                  <div className="pt-2 border-t border-slate-100 space-y-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Concrete Action Steps:
+                    </span>
+                    <div className="space-y-1.5">
+                      {currentSelectedPillar.actionItems.map((action, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-xs font-medium text-slate-700">
+                          <span className="text-emerald-500 font-bold">✓</span>
+                          <span>{action}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4-Step Comeback Action Checklist */}
+              <div className="pt-2 border-t border-slate-100 space-y-3">
+                <span className="text-xs font-bold text-slate-900 block">
+                  🚀 4-Step Tension-Free Comeback Playbook
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center shrink-0">1</span>
+                    <div>
+                      <strong className="text-slate-800 block">Lock Baseline (~6.5+)</strong>
+                      <span className="text-slate-500 text-[11px]">Pass exams without stress; keep eligibility doors open.</span>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-orange-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0">2</span>
+                    <div>
+                      <strong className="text-slate-800 block">Ship 2-3 Real Projects</strong>
+                      <span className="text-slate-500 text-[11px]">Deploy live apps on Vercel/AWS with actual functional depth.</span>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-orange-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0">3</span>
+                    <div>
+                      <strong className="text-slate-800 block">Publish Proof of Work</strong>
+                      <span className="text-slate-500 text-[11px]">Clean GitHub repositories, active commits, and LinkedIn breakdowns.</span>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex gap-2.5">
+                    <span className="w-5 h-5 rounded-full bg-emerald-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0">4</span>
+                    <div>
+                      <strong className="text-slate-800 block">Direct Founder Outreach</strong>
+                      <span className="text-slate-500 text-[11px]">Bypass ATS resume filters with Loom demos and direct messages.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
             {/* Goal Insights and Summary Panel */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
@@ -1355,7 +2134,7 @@ export default function CgpaTargetPlanner() {
                         <button
                           key={preset}
                           onClick={() => setSimulatorSgpa(parseFloat(preset))}
-                          className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition border ${
+                          className={`text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition border cursor-pointer ${
                             simulatorSgpa === parseFloat(preset)
                               ? "bg-orange-500 border-orange-500 text-white shadow-xs"
                               : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700"
@@ -1411,7 +2190,7 @@ export default function CgpaTargetPlanner() {
                       {editedFutureSemesters.length > 0 && (
                         <button
                           onClick={resetFuturePlannerEdits}
-                          className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline px-1"
+                          className="text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline px-1 cursor-pointer"
                         >
                           Reset Manual Targets
                         </button>
@@ -1516,22 +2295,41 @@ export default function CgpaTargetPlanner() {
             {/* Export and Action Cards */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
               <div className="text-left w-full sm:w-auto">
-                <h3 className="text-sm font-bold text-slate-900">Save &amp; Export Roadmap</h3>
-                <p className="text-[11px] text-slate-500">Download reports, copy summaries, or export planners.</p>
+                <h3 className="text-sm font-bold text-slate-900">Save, Share &amp; Export Roadmap</h3>
+                <p className="text-[11px] text-slate-500">Download reports, copy shareable links, or import JSON files.</p>
               </div>
 
               <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                 <button
-                  onClick={handleCopyResults}
-                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                  onClick={handleCopyShareLink}
+                  className="flex-1 sm:flex-none text-xs font-bold bg-orange-50 hover:bg-orange-100 text-orange-700 px-3.5 py-2.5 rounded-xl border border-orange-200 transition-all cursor-pointer"
+                  title="Copy Shareable Link"
                 >
-                  Copy Results
+                  🔗 Share Link
+                </button>
+                <button
+                  onClick={handleCopyResults}
+                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                >
+                  Copy Summary
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
                 >
-                  Print / Save PDF
+                  Print PDF
+                </button>
+                <button
+                  onClick={handleExportCsv}
+                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                >
+                  Export CSV
+                </button>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 sm:flex-none text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer"
+                >
+                  Import JSON
                 </button>
                 <button
                   onClick={handleExportJson}
