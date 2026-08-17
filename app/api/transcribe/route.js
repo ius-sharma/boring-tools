@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Readable } from "stream";
 import { Innertube, Platform } from "youtubei.js";
 
 export const runtime = "nodejs";
@@ -12,137 +11,36 @@ Platform.shim.eval = async (data) => {
 };
 
 let innertube = null;
+
+function getCookieString() {
+  const cookieStr = process.env.YOUTUBE_COOKIES_STRING || process.env.YOUTUBE_COOKIE;
+  if (cookieStr && typeof cookieStr === "string") return cookieStr.trim();
+
+  const jsonRaw = process.env.YOUTUBE_COOKIES_JSON || process.env.YOUTUBE_COOKIES;
+  if (jsonRaw) {
+    try {
+      const parsed = JSON.parse(jsonRaw);
+      if (Array.isArray(parsed)) {
+        return parsed.map((c) => `${c.name}=${c.value}`).join("; ");
+      }
+    } catch {
+      // ignore json parse error
+    }
+  }
+  return "";
+}
+
 async function getInnertubeClient() {
   if (!innertube) {
+    const cookie = getCookieString();
     innertube = await Innertube.create({
       lang: "en",
       location: "US",
       retrieve_player: true,
+      ...(cookie ? { cookie } : {}),
     });
   }
   return innertube;
-}
-
-function parseYoutubeCookies() {
-  const jsonRaw = process.env.YOUTUBE_COOKIES_JSON || process.env.YOUTUBE_COOKIES;
-  const stringRaw = process.env.YOUTUBE_COOKIES_STRING;
-
-  if (jsonRaw) {
-    try {
-      const parsed = JSON.parse(jsonRaw);
-      if (Array.isArray(parsed)) return parsed;
-    } catch {
-      // ignore json parse error and try string format
-    }
-  }
-
-  if (stringRaw && typeof stringRaw === "string") {
-    return stringRaw
-      .split(";")
-      .map((item) => item.trim())
-      .filter(Boolean)
-      .map((item) => {
-        const eq = item.indexOf("=");
-        if (eq <= 0) return null;
-        const name = item.slice(0, eq).trim();
-        const value = item.slice(eq + 1).trim();
-        return {
-          name,
-          value,
-          domain: ".youtube.com",
-          path: "/",
-          secure: true,
-          httpOnly: false,
-          hostOnly: false,
-          sameSite: "lax",
-        };
-      })
-      .filter(Boolean);
-  }
-
-  return [];
-}
-
-function isYoutubeBotChallenge(error) {
-  const message = String(error?.message || error || "").toLowerCase();
-  return (
-    message.includes("sign in to confirm you're not a bot") ||
-    message.includes("confirm you\u2019re not a bot") ||
-    message.includes("status code: 403") ||
-    message.includes("could not extract functions")
-  );
-}
-
-async function getInvidiousAudioUrl(videoId) {
-  const instanceListUrl = "https://api.invidious.io/instances.json?sort_by=type,users";
-  const preferredHosts = ["inv.thepixora.com", "invidious.nerdvpn.de", "yewtu.be"];
-  let hosts = [];
-
-  try {
-    const listResponse = await fetch(instanceListUrl, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-    });
-    if (listResponse.ok) {
-      const instances = await listResponse.json();
-      hosts = instances
-        .filter((item) => item?.[1]?.api === true && item?.[1]?.type === "https")
-        .map((item) => item[0])
-        .slice(0, 120);
-    }
-  } catch {
-    // fall back to static hosts
-  }
-
-  const prioritizedHosts = [
-    ...preferredHosts,
-    ...hosts.filter((host) => !preferredHosts.includes(host)),
-  ];
-
-  for (const host of prioritizedHosts) {
-    const url = `https://${host}/api/v1/videos/${videoId}?local=true`;
-    try {
-      const response = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0" },
-        redirect: "follow",
-      });
-      if (!response.ok) continue;
-      const payload = await response.json();
-      const formats = (payload?.adaptiveFormats || [])
-        .filter(
-          (format) =>
-            String(format?.type || "").startsWith("audio") &&
-            Number.isFinite(Number(format?.itag))
-        )
-        .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
-
-      const fallbackItags = [251, 250, 249, 140];
-      const candidateItags = [
-        ...formats.map((format) => Number(format.itag)).filter(Boolean),
-        ...fallbackItags,
-      ];
-      const uniqueItags = [...new Set(candidateItags)].slice(0, 6);
-
-      for (const itag of uniqueItags) {
-        const candidateUrl = `https://${host}/latest_version?id=${videoId}&itag=${itag}&local=true`;
-        const probe = await fetch(candidateUrl, {
-          headers: {
-            "User-Agent": "Mozilla/5.0",
-            Referer: `https://${host}/`,
-            Range: "bytes=0-65535",
-          },
-        });
-        if (probe.ok) {
-          probe.body?.cancel();
-          return candidateUrl;
-        }
-        probe.body?.cancel();
-      }
-    } catch {
-      // try next instance
-    }
-  }
-
-  throw new Error("No working Invidious instance returned an audio stream");
 }
 
 // Helper: Extract YouTube video ID from URL (including Shorts)
@@ -150,19 +48,23 @@ function extractYouTubeId(url) {
   try {
     const urlObj = new URL(url);
     if (urlObj.hostname.includes("youtube.com")) {
-      // Check for YouTube Shorts: youtube.com/shorts/ID
       if (urlObj.pathname.includes("/shorts/")) {
-        return urlObj.pathname.split("/shorts/")[1];
+        return urlObj.pathname.split("/shorts/")[1].split(/[?#&]/)[0];
       }
-      // Regular YouTube: youtube.com/watch?v=ID
+      if (urlObj.pathname.includes("/embed/")) {
+        return urlObj.pathname.split("/embed/")[1].split(/[?#&]/)[0];
+      }
       return urlObj.searchParams.get("v");
     } else if (urlObj.hostname.includes("youtu.be")) {
-      // Short links: youtu.be/ID
-      return urlObj.pathname.slice(1);
+      return urlObj.pathname.slice(1).split(/[?#&]/)[0];
     }
   } catch {
-    return null;
+    const match = url.match(
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i
+    );
+    return match ? match[1] : null;
   }
+  return null;
 }
 
 // Helper: Extract Instagram media ID from URL
@@ -170,12 +72,11 @@ function extractInstagramMediaId(url) {
   try {
     const urlObj = new URL(url);
     if (urlObj.hostname.includes("instagram.com")) {
-      // Match patterns: /p/ID/, /reel/ID/, /tv/ID/
       const match = url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
       if (match) {
         return {
           id: match[2],
-          type: match[1], // 'p', 'reel', or 'tv'
+          type: match[1],
         };
       }
     }
@@ -185,7 +86,6 @@ function extractInstagramMediaId(url) {
   return null;
 }
 
-// Helper: Check if URL is Instagram
 function isInstagramUrl(url) {
   try {
     const urlObj = new URL(url);
@@ -195,21 +95,143 @@ function isInstagramUrl(url) {
   }
 }
 
-// Helper: Fetch YouTube transcript using youtube-transcript-api
-async function getYouTubeTranscript(videoId) {
+// Helper: Decode XML entities
+function decodeXmlEntities(text) {
+  if (!text) return "";
+  return text
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)));
+}
+
+// Layer 1: Strategy A - youtube-transcript npm package
+async function fetchViaYoutubeTranscript(videoId) {
   try {
     const { YoutubeTranscript } = await import("youtube-transcript");
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-    const text = transcript.map((item) => item.text).join(" ");
-    return text;
-  } catch (error) {
-    console.log("YouTube transcript not available, will use AI transcription");
-    return null;
+    if (transcript && transcript.length > 0) {
+      return transcript.map((item) => item.text).join(" ").trim();
+    }
+  } catch {
+    // Continue to next method
   }
+  return null;
+}
+
+// Layer 1: Strategy B - Innertube getTranscript
+async function fetchViaInnertubeTranscript(videoId) {
+  try {
+    const yt = await getInnertubeClient();
+    const info = await yt.getInfo(videoId);
+    const transcriptInfo = await info.getTranscript();
+    const segments =
+      transcriptInfo?.transcript?.content?.body?.initial_segments || [];
+    if (segments.length > 0) {
+      const texts = segments
+        .map((s) => s?.snippet?.text || s?.text || "")
+        .filter(Boolean);
+      if (texts.length > 0) {
+        return texts.join(" ").trim();
+      }
+    }
+  } catch {
+    // Continue to next method
+  }
+  return null;
+}
+
+// Layer 1: Strategy C - Direct YouTube timedtext caption extraction
+async function fetchViaDirectCaptions(videoId) {
+  try {
+    const response = await fetch(
+      `https://www.youtube.com/watch?v=${videoId}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+          "Accept-Language": "en-US,en;q=0.9",
+        },
+      }
+    );
+    if (!response.ok) return null;
+    const html = await response.text();
+
+    const playerMatch = html.match(
+      /var\s+ytInitialPlayerResponse\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s
+    );
+    if (!playerMatch) return null;
+
+    const playerData = JSON.parse(playerMatch[1]);
+    const captionTracks =
+      playerData?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+
+    if (!Array.isArray(captionTracks) || captionTracks.length === 0) {
+      return null;
+    }
+
+    const preferredTrack =
+      captionTracks.find((t) => t.languageCode === "en" || t.languageCode === "hi") ||
+      captionTracks[0];
+
+    if (!preferredTrack?.baseUrl) return null;
+
+    const captionRes = await fetch(preferredTrack.baseUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+    if (!captionRes.ok) return null;
+    const xml = await captionRes.text();
+
+    const textMatches = [...xml.matchAll(/<text[^>]*>([^<]*)<\/text>/g)];
+    if (textMatches.length > 0) {
+      return textMatches
+        .map((m) => decodeXmlEntities(m[1]))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+  } catch {
+    // Fallback
+  }
+  return null;
+}
+
+// Master Caption Fetcher
+async function getYouTubeTranscript(videoId) {
+  // Strategy 1: youtube-transcript
+  let text = await fetchViaYoutubeTranscript(videoId);
+  if (text) return text;
+
+  // Strategy 2: Innertube getTranscript
+  text = await fetchViaInnertubeTranscript(videoId);
+  if (text) return text;
+
+  // Strategy 3: Direct timedtext captions
+  text = await fetchViaDirectCaptions(videoId);
+  if (text) return text;
+
+  return null;
 }
 
 // Helper: Get video title from YouTube
 async function getYouTubeTitle(videoId) {
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+    const res = await fetch(oembedUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.title) return data.title;
+    }
+  } catch {
+    // try Innertube
+  }
+
   try {
     const yt = await getInnertubeClient();
     const info = await yt.getInfo(videoId);
@@ -219,16 +241,18 @@ async function getYouTubeTitle(videoId) {
   }
 }
 
-async function transcribeAudioBufferWithGroq(audioBuffer) {
+async function transcribeAudioBufferWithGroq(audioBuffer, filename = "audio.mp3", mimeType = "audio/mp3") {
   const groqApiKey = process.env.GROQ_API_KEY;
 
   if (!groqApiKey) {
-    throw new Error("Groq API key not configured. Please set GROQ_API_KEY in environment variables.");
+    throw new Error(
+      "Groq API key not configured. Please set GROQ_API_KEY in environment variables."
+    );
   }
 
-  const audioBlob = new Blob([audioBuffer], { type: "audio/mp3" });
+  const audioBlob = new Blob([audioBuffer], { type: mimeType || "audio/mp3" });
   const formData = new FormData();
-  formData.append("file", audioBlob, "audio.mp3");
+  formData.append("file", audioBlob, filename || "audio.mp3");
   formData.append("model", "whisper-large-v3-turbo");
 
   const groqResponse = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
@@ -240,100 +264,22 @@ async function transcribeAudioBufferWithGroq(audioBuffer) {
   });
 
   if (!groqResponse.ok) {
-    const error = await groqResponse.json();
-    throw new Error(error.error?.message || "Groq transcription failed");
+    const error = await groqResponse.json().catch(() => ({}));
+    throw new Error(error.error?.message || `Groq transcription failed (HTTP ${groqResponse.status})`);
   }
 
   const result = await groqResponse.json();
   return result.text;
 }
 
-async function streamToBuffer(stream) {
-  const chunks = [];
-  for await (const chunk of stream) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-  return Buffer.concat(chunks);
-}
-
-async function getYouTubeAudioBuffer(videoUrl) {
-  const videoId = extractYouTubeId(videoUrl);
-  if (!videoId) throw new Error("Invalid YouTube URL");
-
-  try {
-    const yt = await getInnertubeClient();
-    const info = await yt.getInfo(videoId);
-
-    const streamingData = info.streaming_data;
-    const allFormats = [
-      ...(streamingData?.formats || []),
-      ...(streamingData?.adaptive_formats || []),
-    ];
-
-    // Find best audio format
-    const audioFormats = allFormats
-      .filter((f) => f.has_audio)
-      .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
-
-    // Prefer audio-only, then muxed
-    const audioOnly = audioFormats.filter((f) => !f.has_video);
-    const selectedFormat = audioOnly[0] || audioFormats[0];
-
-    if (!selectedFormat) {
-      throw new Error("No audio format found");
-    }
-
-    // Try to decipher the URL
-    let downloadUrl = selectedFormat.url;
-    if (!downloadUrl && typeof selectedFormat.decipher === "function") {
-      downloadUrl = await selectedFormat.decipher(yt.session?.player);
-    }
-
-    if (!downloadUrl) {
-      throw new Error("Could not decipher audio URL");
-    }
-
-    const response = await fetch(downloadUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch audio (HTTP ${response.status})`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
-  } catch (error) {
-    innertube = null;
-    throw error;
-  }
-}
-
-async function getYouTubeAudioBufferViaInvidious(videoUrl) {
-  const videoId = extractYouTubeId(videoUrl);
-  if (!videoId) {
-    throw new Error("Unable to extract YouTube video ID for fallback");
-  }
-
-  const audioUrl = await getInvidiousAudioUrl(videoId);
-  const audioOrigin = new URL(audioUrl).origin;
-  return fetchBinaryFromUrl(
-    audioUrl,
-    {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Referer: `${audioOrigin}/`,
-      },
-    },
-    3
-  );
-}
-
-async function fetchBinaryFromUrl(url, options = {}, retries = 1) {
+async function fetchBinaryFromUrl(url, options = {}, retries = 2) {
   let lastError = null;
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
-        throw new Error(`Failed to fetch media (${response.status})`);
+        throw new Error(`Failed to fetch media (HTTP ${response.status})`);
       }
       const arrayBuffer = await response.arrayBuffer();
       return Buffer.from(arrayBuffer);
@@ -345,13 +291,227 @@ async function fetchBinaryFromUrl(url, options = {}, retries = 1) {
   throw lastError instanceof Error ? lastError : new Error("Failed to fetch media");
 }
 
-// Helper: Extract audio from Instagram/video URL using pure JS fetch/streams
+// Layer 2: Innertube audio buffer extraction
+async function getYouTubeAudioBufferViaInnertube(videoId) {
+  const yt = await getInnertubeClient();
+  const info = await yt.getInfo(videoId);
+
+  const streamingData = info.streaming_data;
+  const allFormats = [
+    ...(streamingData?.formats || []),
+    ...(streamingData?.adaptive_formats || []),
+  ];
+
+  const audioFormats = allFormats
+    .filter((f) => f.has_audio)
+    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+  const audioOnly = audioFormats.filter((f) => !f.has_video);
+  const selectedFormat = audioOnly[0] || audioFormats[0];
+
+  if (!selectedFormat) {
+    throw new Error("No audio format found in YouTube stream");
+  }
+
+  let downloadUrl = selectedFormat.url;
+  if (!downloadUrl && typeof selectedFormat.decipher === "function") {
+    downloadUrl = await selectedFormat.decipher(yt.session?.player);
+  }
+
+  if (!downloadUrl) {
+    throw new Error("Could not decipher audio URL");
+  }
+
+  return await fetchBinaryFromUrl(downloadUrl, {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    },
+  });
+}
+
+// Layer 3: Cobalt API Fallback
+async function getYouTubeAudioBufferViaCobalt(videoUrl) {
+  const cobaltInstances = [
+    "https://api.cobalt.tools",
+    "https://cobalt-api.kwiatekm.tokyo",
+    "https://cobalt.api.scip.io",
+  ];
+
+  for (const instance of cobaltInstances) {
+    try {
+      const response = await fetch(`${instance}/`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0",
+        },
+        body: JSON.stringify({
+          url: videoUrl,
+          downloadMode: "audio",
+          audioFormat: "mp3",
+        }),
+      });
+
+      if (!response.ok) continue;
+      const data = await response.json();
+      const streamUrl = data.url || data.audio;
+      if (streamUrl) {
+        return await fetchBinaryFromUrl(streamUrl, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+        });
+      }
+    } catch {
+      // try next cobalt instance
+    }
+  }
+
+  throw new Error("All Cobalt instances failed");
+}
+
+// Layer 3: Piped API Fallback
+async function getYouTubeAudioBufferViaPiped(videoId) {
+  const pipedInstances = [
+    "https://pipedapi.kavin.rocks",
+    "https://api.piped.privacydev.net",
+    "https://piped-api.lunar.icu",
+    "https://api.piped.projectsegfau.lt",
+  ];
+
+  for (const instance of pipedInstances) {
+    try {
+      const res = await fetch(`${instance}/streams/${videoId}`, {
+        headers: { "User-Agent": "Mozilla/5.0" },
+      });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const audioStreams = (data.audioStreams || []).sort(
+        (a, b) => (b.bitrate || 0) - (a.bitrate || 0)
+      );
+
+      if (audioStreams.length > 0 && audioStreams[0].url) {
+        return await fetchBinaryFromUrl(audioStreams[0].url, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+        });
+      }
+    } catch {
+      // try next instance
+    }
+  }
+
+  throw new Error("All Piped instances failed");
+}
+
+// Layer 3: Invidious Fallback
+async function getYouTubeAudioBufferViaInvidious(videoId) {
+  const invidiousHosts = [
+    "invidious.nerdvpn.de",
+    "inv.tux.pizza",
+    "invidious.drgns.space",
+    "yt.artemislena.eu",
+    "inv.thepixora.com",
+    "yewtu.be",
+  ];
+
+  for (const host of invidiousHosts) {
+    try {
+      const url = `https://${host}/api/v1/videos/${videoId}?local=true`;
+      const response = await fetch(url, {
+        headers: { "User-Agent": "Mozilla/5.0" },
+      });
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const formats = (payload?.adaptiveFormats || [])
+        .filter(
+          (format) =>
+            String(format?.type || "").startsWith("audio") &&
+            Number.isFinite(Number(format?.itag))
+        )
+        .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+
+      const candidateItags = [
+        ...formats.map((format) => Number(format.itag)).filter(Boolean),
+        251,
+        250,
+        140,
+      ];
+      const uniqueItags = [...new Set(candidateItags)].slice(0, 4);
+
+      for (const itag of uniqueItags) {
+        const candidateUrl = `https://${host}/latest_version?id=${videoId}&itag=${itag}&local=true`;
+        const buffer = await fetchBinaryFromUrl(
+          candidateUrl,
+          {
+            headers: {
+              "User-Agent": "Mozilla/5.0",
+              Referer: `https://${host}/`,
+            },
+          },
+          1
+        );
+        if (buffer && buffer.length > 1000) {
+          return buffer;
+        }
+      }
+    } catch {
+      // try next instance
+    }
+  }
+
+  throw new Error("All Invidious instances failed");
+}
+
+// Master Audio Transcriber with Resilient Multi-Layer Fallback
+async function getYouTubeAudioTranscript(videoUrl, videoId) {
+  let lastError = null;
+
+  // 1. Try Innertube direct
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaInnertube(videoId);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 2. Try Cobalt API
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaCobalt(videoUrl);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 3. Try Piped API
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaPiped(videoId);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 4. Try Invidious API
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaInvidious(videoId);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  throw new Error(
+    `Audio transcription failed: YouTube blocked direct audio extraction and fallback streamers were unreachable. (Detail: ${
+      lastError instanceof Error ? lastError.message : "Stream unreachable"
+    }). Tip: You can also upload the audio/video file directly!`
+  );
+}
+
+// Instagram Audio Extraction
 async function getInstagramTranscript(instagramUrl) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
   if (!groqApiKey) {
     throw new Error(
-      "Instagram transcription requires Groq API key. Please set GROQ_API_KEY in .env.local"
+      "Instagram transcription requires Groq API key. Please set GROQ_API_KEY in environment variables."
     );
   }
 
@@ -382,26 +542,8 @@ async function getInstagramTranscript(instagramUrl) {
   }
 }
 
-async function getYouTubeAudioTranscript(videoUrl) {
-  try {
-    const audioBuffer = await getYouTubeAudioBuffer(videoUrl);
-    return await transcribeAudioBufferWithGroq(audioBuffer);
-  } catch (error) {
-    try {
-      const audioBuffer = await getYouTubeAudioBufferViaInvidious(videoUrl);
-      return await transcribeAudioBufferWithGroq(audioBuffer);
-    } catch (fallbackError) {
-      throw new Error(
-        `YouTube audio transcription failed: ${error instanceof Error ? error.message : "Unknown error"}. Invidious fallback failed: ${fallbackError instanceof Error ? fallbackError.message : "Unknown error"}`
-      );
-    }
-  }
-}
-
-// Helper: Extract Instagram media title from URL or metadata
 async function getInstagramTitle(mediaId, mediaType) {
   try {
-    // Return a descriptive title based on media type
     const typeLabel = mediaType === "reel" ? "Reel" : "Video";
     return `Instagram ${typeLabel}-${mediaId.substring(0, 8)}`;
   } catch {
@@ -411,6 +553,44 @@ async function getInstagramTitle(mediaId, mediaType) {
 
 export async function POST(request) {
   try {
+    const contentType = request.headers.get("content-type") || "";
+
+    // Handle Direct File Upload (Multipart Form Data)
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      const file = formData.get("file");
+
+      if (!file || typeof file === "string") {
+        return NextResponse.json(
+          { error: "Audio or video file is required." },
+          { status: 400 }
+        );
+      }
+
+      // Check file size (Groq limit is 25MB)
+      if (file.size > 25 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: "File size exceeds 25MB limit. Please upload a smaller file or convert to compressed audio." },
+          { status: 400 }
+        );
+      }
+
+      const arrayBuffer = await file.arrayBuffer();
+      const audioBuffer = Buffer.from(arrayBuffer);
+      const transcript = await transcribeAudioBufferWithGroq(
+        audioBuffer,
+        file.name || "uploaded-audio.mp3",
+        file.type || "audio/mp3"
+      );
+
+      return NextResponse.json({
+        transcript,
+        title: file.name ? file.name.replace(/\.[^/.]+$/, "") : "Uploaded File",
+        source: "file-upload",
+      });
+    }
+
+    // Handle URL Transcription (JSON)
     const { url } = await request.json();
 
     if (!url) {
@@ -420,20 +600,20 @@ export async function POST(request) {
     // Check if YouTube URL (including Shorts)
     const youtubeId = extractYouTubeId(url);
     if (youtubeId) {
-      // Try to get YouTube transcript first
+      // 1. Try to get official / auto-generated captions first (Fastest, 0 bandwidth)
       const transcript = await getYouTubeTranscript(youtubeId);
       if (transcript) {
         const title = await getYouTubeTitle(youtubeId);
         return NextResponse.json({
           transcript,
           title,
-          source: "youtube",
+          source: "youtube-captions",
         });
       }
 
-      // If captions are unavailable, fall back to audio transcription.
+      // 2. If captions unavailable, fallback to audio stream transcription via Groq AI
       try {
-        const transcript = await getYouTubeAudioTranscript(url);
+        const transcript = await getYouTubeAudioTranscript(url, youtubeId);
         const title = await getYouTubeTitle(youtubeId);
         return NextResponse.json({
           transcript,
@@ -446,7 +626,7 @@ export async function POST(request) {
             error:
               error instanceof Error
                 ? error.message
-                : "This YouTube video doesn't have available captions and audio transcription failed.",
+                : "This YouTube video has no available captions and audio extraction failed. Try uploading the audio/video file directly.",
           },
           { status: 400 }
         );
@@ -494,7 +674,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         error:
-          "Unsupported URL. Please provide a YouTube (including Shorts) or Instagram video URL (posts, reels, or TV).",
+          "Unsupported URL. Please provide a YouTube (including Shorts) or Instagram video URL, or switch to the 'Upload File' tab.",
       },
       { status: 400 }
     );
