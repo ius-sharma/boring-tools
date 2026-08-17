@@ -10,7 +10,7 @@ Platform.shim.eval = async (data) => {
   return new Function(data.output)();
 };
 
-let innertube = null;
+const innertubeClients = new Map();
 
 function getCookieString() {
   const cookieStr = process.env.YOUTUBE_COOKIES_STRING || process.env.YOUTUBE_COOKIE;
@@ -30,17 +30,23 @@ function getCookieString() {
   return "";
 }
 
-async function getInnertubeClient() {
-  if (!innertube) {
+async function getInnertubeClient(client = "WEB") {
+  if (!innertubeClients.has(client)) {
     const cookie = getCookieString();
-    innertube = await Innertube.create({
+    const instance = await Innertube.create({
+      client,
       lang: "en",
       location: "US",
       retrieve_player: true,
       ...(cookie ? { cookie } : {}),
     });
+    innertubeClients.set(client, instance);
   }
-  return innertube;
+  return innertubeClients.get(client);
+}
+
+function resetInnertubeClients() {
+  innertubeClients.clear();
 }
 
 // Helper: Extract YouTube video ID from URL (including Shorts)
@@ -293,41 +299,65 @@ async function fetchBinaryFromUrl(url, options = {}, retries = 2) {
 
 // Layer 2: Innertube audio buffer extraction
 async function getYouTubeAudioBufferViaInnertube(videoId) {
-  const yt = await getInnertubeClient();
-  const info = await yt.getInfo(videoId);
+  let lastError = null;
+  const clients = ["WEB", "ANDROID", "IOS", "TV_EMBEDDED"];
 
-  const streamingData = info.streaming_data;
-  const allFormats = [
-    ...(streamingData?.formats || []),
-    ...(streamingData?.adaptive_formats || []),
-  ];
+  for (const client of clients) {
+    try {
+      const yt = await getInnertubeClient(client);
+      const info = await yt.getInfo(videoId, { client });
+      const streamingData = info.streaming_data;
+      const allFormats = [
+        ...(streamingData?.formats || []),
+        ...(streamingData?.adaptive_formats || []),
+      ];
 
-  const audioFormats = allFormats
-    .filter((f) => f.has_audio)
-    .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+      // Do not depend only on has_audio: YouTube responses from alternate
+      // clients may omit that flag while still exposing an audio MIME type.
+      const audioFormats = allFormats
+        .filter((format) => {
+          const mimeType = String(format?.mime_type || format?.type || "").toLowerCase();
+          return format?.has_audio === true || mimeType.startsWith("audio/") ||
+            (!format?.has_video && Boolean(format?.audio_quality));
+        })
+        .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
 
-  const audioOnly = audioFormats.filter((f) => !f.has_video);
-  const selectedFormat = audioOnly[0] || audioFormats[0];
+      const selectedFormats = [
+        ...audioFormats.filter((format) => format.has_video === false),
+        ...audioFormats.filter((format) => format.has_video !== false),
+      ];
 
-  if (!selectedFormat) {
-    throw new Error("No audio format found in YouTube stream");
+      if (selectedFormats.length === 0) {
+        throw new Error(`No audio format found for YouTube client ${client}`);
+      }
+
+      for (const format of selectedFormats) {
+        try {
+          const downloadUrl = typeof format.decipher === "function"
+            ? await format.decipher(yt.session?.player)
+            : format.url;
+          if (!downloadUrl) continue;
+
+          const audioBuffer = await fetchBinaryFromUrl(downloadUrl, {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+            },
+          });
+          if (audioBuffer.length > 1000) return audioBuffer;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  let downloadUrl = selectedFormat.url;
-  if (!downloadUrl && typeof selectedFormat.decipher === "function") {
-    downloadUrl = await selectedFormat.decipher(yt.session?.player);
-  }
-
-  if (!downloadUrl) {
-    throw new Error("Could not decipher audio URL");
-  }
-
-  return await fetchBinaryFromUrl(downloadUrl, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-    },
-  });
+  resetInnertubeClients();
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("No usable YouTube audio format found");
 }
 
 // Layer 3: Cobalt API Fallback
@@ -405,61 +435,96 @@ async function getYouTubeAudioBufferViaPiped(videoId) {
 
 // Layer 3: Invidious Fallback
 async function getYouTubeAudioBufferViaInvidious(videoId) {
-  const invidiousHosts = [
-    "invidious.nerdvpn.de",
+  const staticHosts = [
     "inv.tux.pizza",
+    "invidious.nerdvpn.de",
     "invidious.drgns.space",
     "yt.artemislena.eu",
-    "inv.thepixora.com",
     "yewtu.be",
   ];
+  let discoveredHosts = [];
 
-  for (const host of invidiousHosts) {
+  try {
+    const response = await fetch("https://api.invidious.io/instances.json?sort_by=type,users", {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (response.ok) {
+      const instances = await response.json();
+      discoveredHosts = instances
+        .filter((item) => item?.[1]?.api === true && item?.[1]?.type === "https")
+        .map((item) => item[0]);
+    }
+  } catch {
+    // Continue with the known static list.
+  }
+
+  const hosts = [...new Set([...staticHosts, ...discoveredHosts])].slice(0, 80);
+  let lastError = null;
+
+  for (const host of hosts) {
     try {
-      const url = `https://${host}/api/v1/videos/${videoId}?local=true`;
-      const response = await fetch(url, {
+      const response = await fetch(`https://${host}/api/v1/videos/${videoId}?local=true`, {
         headers: { "User-Agent": "Mozilla/5.0" },
+        signal: AbortSignal.timeout(10000),
       });
       if (!response.ok) continue;
+
       const payload = await response.json();
-      const formats = (payload?.adaptiveFormats || [])
-        .filter(
-          (format) =>
-            String(format?.type || "").startsWith("audio") &&
-            Number.isFinite(Number(format?.itag))
-        )
+      const formats = [
+        ...(payload?.adaptiveFormats || []),
+        ...(payload?.formatStreams || []),
+      ]
+        .filter((format) => {
+          const type = String(format?.type || format?.mimeType || "").toLowerCase();
+          return type.startsWith("audio/") && format?.url;
+        })
         .sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
 
-      const candidateItags = [
-        ...formats.map((format) => Number(format.itag)).filter(Boolean),
-        251,
-        250,
-        140,
-      ];
-      const uniqueItags = [...new Set(candidateItags)].slice(0, 4);
-
-      for (const itag of uniqueItags) {
-        const candidateUrl = `https://${host}/latest_version?id=${videoId}&itag=${itag}&local=true`;
-        const buffer = await fetchBinaryFromUrl(
-          candidateUrl,
-          {
+      for (const format of formats) {
+        try {
+          const buffer = await fetchBinaryFromUrl(format.url, {
             headers: {
               "User-Agent": "Mozilla/5.0",
               Referer: `https://${host}/`,
             },
-          },
-          1
-        );
-        if (buffer && buffer.length > 1000) {
-          return buffer;
+          }, 1);
+          if (buffer.length > 1000) return buffer;
+        } catch (error) {
+          lastError = error;
         }
       }
-    } catch {
-      // try next instance
+
+      // Some older instances expose audio only through latest_version.
+      const candidateItags = [
+        ...formats.map((format) => Number(format.itag)).filter(Boolean),
+        251, 250, 140,
+      ];
+      for (const itag of [...new Set(candidateItags)].slice(0, 6)) {
+        try {
+          const buffer = await fetchBinaryFromUrl(
+            `https://${host}/latest_version?id=${videoId}&itag=${itag}&local=true`,
+            {
+              headers: {
+                "User-Agent": "Mozilla/5.0",
+                Referer: `https://${host}/`,
+              },
+            },
+            1
+          );
+          if (buffer.length > 1000) return buffer;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+    } catch (error) {
+      lastError = error;
     }
   }
 
-  throw new Error("All Invidious instances failed");
+  throw lastError instanceof Error
+    ? new Error(`No working Invidious instance returned an audio stream: ${lastError.message}`)
+    : new Error("No working Invidious instance returned an audio stream");
 }
 
 // Master Audio Transcriber with Resilient Multi-Layer Fallback
