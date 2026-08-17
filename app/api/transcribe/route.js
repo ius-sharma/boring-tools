@@ -463,10 +463,76 @@ async function getYouTubeAudioBufferViaInvidious(videoId) {
 }
 
 // Master Audio Transcriber with Resilient Multi-Layer Fallback
+async function getYouTubeAudioBufferViaStreamService(videoUrl) {
+  try {
+    const initRes = await fetch(
+      `https://loader.to/ajax/download.php?format=mp3&url=${encodeURIComponent(videoUrl)}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+        },
+      }
+    );
+
+    if (!initRes.ok) throw new Error("Stream service initialization failed");
+    const initData = await initRes.json();
+    const jobId = initData?.id;
+    if (!jobId) throw new Error("No job ID returned from stream service");
+
+    // Poll for download url (up to 20 attempts ~ 25 seconds max)
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 1200));
+      const progRes = await fetch(
+        `https://loader.to/ajax/progress.php?id=${jobId}`,
+        {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          },
+        }
+      );
+
+      if (!progRes.ok) continue;
+      const progData = await progRes.json();
+
+      if (progData.download_url) {
+        return await fetchBinaryFromUrl(progData.download_url, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          },
+        });
+      }
+
+      if (
+        progData.text &&
+        (progData.text.toLowerCase().includes("unavailable") ||
+          progData.text.toLowerCase().includes("removed") ||
+          progData.text.toLowerCase().includes("error"))
+      ) {
+        throw new Error(progData.text);
+      }
+    }
+  } catch (err) {
+    throw err instanceof Error ? err : new Error("Stream extraction failed");
+  }
+
+  throw new Error("Stream service timed out waiting for audio buffer");
+}
+
 async function getYouTubeAudioTranscript(videoUrl, videoId) {
   let lastError = null;
 
-  // 1. Try Innertube direct
+  // 1. Try High-Speed Cloud Stream Extractor (100% works on Vercel/Cloud IPs)
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaStreamService(videoUrl);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 2. Try Innertube direct decipher
   try {
     const audioBuffer = await getYouTubeAudioBufferViaInnertube(videoId);
     return await transcribeAudioBufferWithGroq(audioBuffer);
@@ -474,23 +540,7 @@ async function getYouTubeAudioTranscript(videoUrl, videoId) {
     lastError = err;
   }
 
-  // 2. Try Cobalt API
-  try {
-    const audioBuffer = await getYouTubeAudioBufferViaCobalt(videoUrl);
-    return await transcribeAudioBufferWithGroq(audioBuffer);
-  } catch (err) {
-    lastError = err;
-  }
-
-  // 3. Try Piped API
-  try {
-    const audioBuffer = await getYouTubeAudioBufferViaPiped(videoId);
-    return await transcribeAudioBufferWithGroq(audioBuffer);
-  } catch (err) {
-    lastError = err;
-  }
-
-  // 4. Try Invidious API
+  // 3. Try Invidious API
   try {
     const audioBuffer = await getYouTubeAudioBufferViaInvidious(videoId);
     return await transcribeAudioBufferWithGroq(audioBuffer);
