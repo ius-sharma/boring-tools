@@ -537,6 +537,7 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
           "User-Agent":
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
         },
+        signal: AbortSignal.timeout(12000),
       }
     );
 
@@ -545,9 +546,10 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
     const jobId = initData?.id;
     if (!jobId) throw new Error("No job ID returned from stream service");
 
-    // Poll for download url (up to 20 attempts ~ 25 seconds max)
+    // Poll for a download URL for up to ~30 seconds, but never leave a
+    // serverless request hanging on a stalled third-party stream service.
     for (let i = 0; i < 20; i++) {
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, 900));
       const progRes = await fetch(
         `https://loader.to/ajax/progress.php?id=${jobId}`,
         {
@@ -555,6 +557,7 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
           },
+          signal: AbortSignal.timeout(8000),
         }
       );
 
@@ -562,12 +565,17 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
       const progData = await progRes.json();
 
       if (progData.download_url) {
-        return await fetchBinaryFromUrl(progData.download_url, {
-          headers: {
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        return await fetchBinaryFromUrl(
+          progData.download_url,
+          {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            },
           },
-        });
+          2,
+          60000
+        );
       }
 
       if (
@@ -630,17 +638,19 @@ function getInstagramCookieString() {
   return "";
 }
 
-async function getInstagramMediaUrlViaDirect(instagramUrl) {
+async function getInstagramMediaUrlsViaDirect(instagramUrl) {
   try {
     const { instagramGetUrl } = await INSTAGRAM_DIRECT_PROMISE;
-    const mediaData = await instagramGetUrl(instagramUrl);
-    const mediaUrl =
-      mediaData?.media_details?.find((item) => item?.type === "video")?.url ||
-      mediaData?.media_details?.[0]?.url ||
-      mediaData?.url_list?.find(Boolean);
-    return mediaUrl || null;
+    const mediaData = await instagramGetUrl(instagramUrl, { retries: 2, delay: 700 });
+    const urls = [
+      ...(mediaData?.media_details || [])
+        .filter((item) => item?.type === "video" && item?.url)
+        .map((item) => item.url),
+      ...(mediaData?.url_list || []).filter(Boolean),
+    ];
+    return [...new Set(urls)];
   } catch {
-    return null;
+    return [];
   }
 }
 
@@ -660,6 +670,7 @@ async function getInstagramMediaUrlViaGraphQL(shortcode) {
         variables: JSON.stringify({ shortcode }),
         doc_id: "9510064595728286",
       }),
+      signal: AbortSignal.timeout(12000),
     });
 
     if (!res.ok) return null;
@@ -696,25 +707,43 @@ async function getInstagramTranscript(instagramUrl) {
   // 2. Try direct media URL extractors (GraphQL with cookie support + instagram-url-direct)
   try {
     const mediaInfo = extractInstagramMediaId(instagramUrl);
-    let mediaUrl = null;
+    const mediaUrls = [];
 
     if (mediaInfo?.id) {
-      mediaUrl = await getInstagramMediaUrlViaGraphQL(mediaInfo.id);
+      const graphQlUrl = await getInstagramMediaUrlViaGraphQL(mediaInfo.id);
+      if (graphQlUrl) mediaUrls.push(graphQlUrl);
     }
 
-    if (!mediaUrl) {
-      mediaUrl = await getInstagramMediaUrlViaDirect(instagramUrl);
+    mediaUrls.push(...(await getInstagramMediaUrlsViaDirect(instagramUrl)));
+    const uniqueMediaUrls = [...new Set(mediaUrls)];
+
+    if (uniqueMediaUrls.length === 0) {
+      throw new Error("Instagram media URL not found");
     }
 
-    if (mediaUrl) {
-      const audioBuffer = await fetchBinaryFromUrl(mediaUrl, {
-        headers: {
-          Referer: instagramUrl,
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        },
-      });
-      return await transcribeAudioBufferWithGroq(audioBuffer, "instagram_video.mp4", "video/mp4");
+    for (const mediaUrl of uniqueMediaUrls) {
+      try {
+        const videoBuffer = await fetchBinaryFromUrl(
+          mediaUrl,
+          {
+            headers: {
+              Referer: instagramUrl,
+              Accept: "video/mp4,video/webm,video/*;q=0.9,*/*;q=0.8",
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            },
+          },
+          2,
+          60000
+        );
+        return await transcribeAudioBufferWithGroq(
+          videoBuffer,
+          "instagram_video.mp4",
+          "video/mp4"
+        );
+      } catch (err) {
+        lastError = err;
+      }
     }
   } catch (err) {
     lastError = err;
