@@ -36,7 +36,7 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   // Animated tools count state
   const [animatedToolCount, setAnimatedToolCount] = useState(0);
-  // Hero Background Video loaded state
+  // Hero background video state
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   useEffect(() => {
@@ -307,15 +307,12 @@ export default function Home() {
       {showConfetti && <ConfettiCelebration />}
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-white pt-16 sm:pt-24 lg:pt-32 pb-12 sm:pb-20">
-        {/* Background Video with Progressive Fallback */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-          {/* 1. Static Poster Snapshot (Loaded instantly) */}
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
-            style={{ backgroundImage: "url('/hero-poster.webp')" }}
-          />
+          {/* Subtle Ambient Fallback Blobs */}
+          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-orange-200/20 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-amber-200/20 blur-3xl" />
 
-          {/* 2. Optimized Video (Fades in smoothly when buffered) */}
+          {/* Smooth Fade-in Looping Video */}
           <video
             autoPlay
             loop
@@ -323,20 +320,15 @@ export default function Home() {
             playsInline
             preload="auto"
             onCanPlayThrough={() => setIsVideoLoaded(true)}
-            onLoadedData={() => setIsVideoLoaded(true)}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-out ${
-              isVideoLoaded ? "opacity-35" : "opacity-0"
+              isVideoLoaded ? "opacity-25 md:opacity-35" : "opacity-0"
             }`}
           >
-            <source src="/hero-bg-opt.mp4" type="video/mp4" />
+            <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
 
-          {/* 3. Soft overlay to ensure high text contrast and readable typography */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/80 to-white backdrop-blur-[0.5px]" />
-
-          {/* 4. Ambient decorative color blur */}
-          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-orange-200/30 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-amber-200/30 blur-3xl" />
+          {/* Contrast & Seamless Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/70 to-white pointer-events-none" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

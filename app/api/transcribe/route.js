@@ -555,7 +555,60 @@ async function getYouTubeAudioTranscript(videoUrl, videoId) {
   );
 }
 
-// Instagram Audio Extraction
+// Instagram Audio Extraction with Multi-Layer Fallback
+function getInstagramCookieString() {
+  const cookieStr = process.env.INSTAGRAM_COOKIE || process.env.INSTAGRAM_COOKIES;
+  if (cookieStr && typeof cookieStr === "string") return cookieStr.trim();
+  if (process.env.INSTAGRAM_SESSIONID) {
+    return `sessionid=${process.env.INSTAGRAM_SESSIONID}`;
+  }
+  return "";
+}
+
+async function getInstagramMediaUrlViaDirect(instagramUrl) {
+  try {
+    const { instagramGetUrl } = await INSTAGRAM_DIRECT_PROMISE;
+    const mediaData = await instagramGetUrl(instagramUrl);
+    const mediaUrl =
+      mediaData?.media_details?.find((item) => item?.type === "video")?.url ||
+      mediaData?.media_details?.[0]?.url ||
+      mediaData?.url_list?.find(Boolean);
+    return mediaUrl || null;
+  } catch {
+    return null;
+  }
+}
+
+async function getInstagramMediaUrlViaGraphQL(shortcode) {
+  try {
+    const cookie = getInstagramCookieString();
+    const res = await fetch("https://www.instagram.com/graphql/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+        "X-IG-App-ID": "936619743392459",
+        ...(cookie ? { Cookie: cookie } : {}),
+      },
+      body: new URLSearchParams({
+        variables: JSON.stringify({ shortcode }),
+        doc_id: "9510064595728286",
+      }),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    const media = data?.data?.xdt_shortcode_media;
+    if (media?.is_video && media?.video_url) {
+      return media.video_url;
+    }
+  } catch {
+    // fallback
+  }
+  return null;
+}
+
 async function getInstagramTranscript(instagramUrl) {
   const groqApiKey = process.env.GROQ_API_KEY;
 
@@ -565,31 +618,48 @@ async function getInstagramTranscript(instagramUrl) {
     );
   }
 
-  try {
-    const { instagramGetUrl } = await INSTAGRAM_DIRECT_PROMISE;
-    const mediaData = await instagramGetUrl(instagramUrl);
-    const mediaUrl =
-      mediaData?.media_details?.find((item) => item?.type === "video")?.url ||
-      mediaData?.media_details?.[0]?.url ||
-      mediaData?.url_list?.find(Boolean);
+  let lastError = null;
 
-    if (!mediaUrl) {
-      throw new Error("Instagram media URL not found");
+  // 1. Try High-Speed Cloud Stream Service (Loader.to)
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaStreamService(instagramUrl);
+    return await transcribeAudioBufferWithGroq(audioBuffer, "instagram_audio.mp3", "audio/mp3");
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 2. Try direct media URL extractors (GraphQL with cookie support + instagram-url-direct)
+  try {
+    const mediaInfo = extractInstagramMediaId(instagramUrl);
+    let mediaUrl = null;
+
+    if (mediaInfo?.id) {
+      mediaUrl = await getInstagramMediaUrlViaGraphQL(mediaInfo.id);
     }
 
-    const audioBuffer = await fetchBinaryFromUrl(mediaUrl, {
-      headers: {
-        Referer: instagramUrl,
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      },
-    });
-    return await transcribeAudioBufferWithGroq(audioBuffer);
-  } catch (error) {
-    throw new Error(
-      `Instagram processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
+    if (!mediaUrl) {
+      mediaUrl = await getInstagramMediaUrlViaDirect(instagramUrl);
+    }
+
+    if (mediaUrl) {
+      const audioBuffer = await fetchBinaryFromUrl(mediaUrl, {
+        headers: {
+          Referer: instagramUrl,
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        },
+      });
+      return await transcribeAudioBufferWithGroq(audioBuffer, "instagram_video.mp4", "video/mp4");
+    }
+  } catch (err) {
+    lastError = err;
   }
+
+  throw new Error(
+    `Instagram processing failed: Server-side access to this video was restricted (${
+      lastError instanceof Error ? lastError.message : "Media unreachable"
+    }). Tip: You can also switch to the 'Upload File' tab to transcribe the video directly!`
+  );
 }
 
 async function getInstagramTitle(mediaId, mediaType) {
