@@ -288,11 +288,59 @@ export default function VideoTranscriber() {
           </button>
         </form>
 
-        {/* Error State */}
+        {/* Error State with Quick Upload Solution */}
         {error && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900 flex flex-col gap-1">
-            <span className="font-semibold">⚠️ Transcription Issue</span>
-            <span>{error}</span>
+          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-950 flex flex-col gap-3">
+            <div className="flex items-start gap-2.5">
+              <span className="text-lg">⚠️</span>
+              <div className="flex flex-col gap-1">
+                <span className="font-semibold text-rose-900">Notice</span>
+                <span className="text-rose-800 leading-relaxed">{error}</span>
+              </div>
+            </div>
+
+            {/* Quick Upload Action Box */}
+            <div
+              onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files?.[0];
+                if (file) {
+                  setSelectedFile(file);
+                  setActiveTab("file");
+                  setError("");
+                  // Auto-submit file
+                  const fakeEvent = { preventDefault: () => {} };
+                  setTimeout(() => {
+                    const form = document.querySelector("form");
+                    if (form) form.requestSubmit();
+                  }, 50);
+                }
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onClick={() => {
+                setActiveTab("file");
+                setTimeout(() => fileInputRef.current?.click(), 100);
+              }}
+              className="mt-1 bg-white border-2 border-dashed border-rose-300 hover:border-slate-800 rounded-xl p-3.5 flex items-center justify-between gap-3 cursor-pointer transition shadow-xs"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📁</span>
+                <div>
+                  <p className="text-xs font-semibold text-slate-900">
+                    Quick Fix: Upload Video or Audio File Directly
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Click to browse or drop file here to get your transcript in seconds
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="text-xs font-semibold px-3 py-1.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition shrink-0"
+              >
+                Browse File
+              </button>
+            </div>
           </div>
         )}
 

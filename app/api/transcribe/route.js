@@ -480,8 +480,8 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
     const jobId = initData?.id;
     if (!jobId) throw new Error("No job ID returned from stream service");
 
-    // Poll for download url (up to 20 attempts ~ 25 seconds max)
-    for (let i = 0; i < 20; i++) {
+    // Poll for download url (up to 30 attempts ~ 36 seconds max)
+    for (let i = 0; i < 30; i++) {
       await new Promise((r) => setTimeout(r, 1200));
       const progRes = await fetch(
         `https://loader.to/ajax/progress.php?id=${jobId}`,
@@ -508,8 +508,7 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
       if (
         progData.text &&
         (progData.text.toLowerCase().includes("unavailable") ||
-          progData.text.toLowerCase().includes("removed") ||
-          progData.text.toLowerCase().includes("error"))
+          progData.text.toLowerCase().includes("removed"))
       ) {
         throw new Error(progData.text);
       }
@@ -656,9 +655,7 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   throw new Error(
-    `Instagram processing failed: Server-side access to this video was restricted (${
-      lastError instanceof Error ? lastError.message : "Media unreachable"
-    }). Tip: You can also switch to the 'Upload File' tab to transcribe the video directly!`
+    `Instagram server restricted automated download for this Reel. You can easily upload the video/audio file below to get your transcript instantly!`
   );
 }
 
