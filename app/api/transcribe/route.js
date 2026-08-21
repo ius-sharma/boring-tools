@@ -546,16 +546,9 @@ async function getYouTubeAudioBufferViaStreamService(videoUrl) {
     const jobId = initData?.id;
     if (!jobId) throw new Error("No job ID returned from stream service");
 
-<<<<<<< HEAD
-    // Poll for download url (up to 30 attempts ~ 36 seconds max)
-    for (let i = 0; i < 30; i++) {
-      await new Promise((r) => setTimeout(r, 1200));
-=======
-    // Poll for a download URL for up to ~30 seconds, but never leave a
-    // serverless request hanging on a stalled third-party stream service.
-    for (let i = 0; i < 20; i++) {
-      await new Promise((r) => setTimeout(r, 900));
->>>>>>> a49cdca79f00ac8b3a4bc2676517052997cb1a87
+    // Poll for a download URL for up to ~30 seconds
+    for (let i = 0; i < 25; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
       const progRes = await fetch(
         `https://loader.to/ajax/progress.php?id=${jobId}`,
         {
