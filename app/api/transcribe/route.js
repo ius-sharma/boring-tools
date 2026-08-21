@@ -78,7 +78,7 @@ function extractInstagramMediaId(url) {
   try {
     const urlObj = new URL(url);
     if (urlObj.hostname.includes("instagram.com")) {
-      const match = url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
+      const match = url.match(/\/(p|reel|reels|tv)\/([A-Za-z0-9_-]+)/i);
       if (match) {
         return {
           id: match[2],
@@ -654,7 +654,18 @@ async function getInstagramMediaUrlsViaDirect(instagramUrl) {
   }
 }
 
-async function getInstagramMediaUrlViaGraphQL(shortcode) {
+function normalizeInstagramMediaUrl(value) {
+  if (!value || typeof value !== "string") return null;
+  const normalized = decodeXmlEntities(value)
+    .replace(/\\\\\//g, "/")
+    .replace(/\\u0026/gi, "&")
+    .replace(/\\u002F/gi, "/")
+    .replace(/\\u003D/gi, "=")
+    .replace(/\\u003F/gi, "?");
+  return normalized.startsWith("http") ? normalized : null;
+}
+
+async function getInstagramMediaUrlsViaGraphQL(shortcode) {
   try {
     const cookie = getInstagramCookieString();
     const res = await fetch("https://www.instagram.com/graphql/query", {
@@ -673,16 +684,56 @@ async function getInstagramMediaUrlViaGraphQL(shortcode) {
       signal: AbortSignal.timeout(12000),
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) return [];
     const data = await res.json();
     const media = data?.data?.xdt_shortcode_media;
-    if (media?.is_video && media?.video_url) {
-      return media.video_url;
+    const urls = [];
+    if (media?.is_video && media?.video_url) urls.push(media.video_url);
+    for (const edge of media?.edge_sidecar_to_children?.edges || []) {
+      if (edge?.node?.is_video && edge?.node?.video_url) {
+        urls.push(edge.node.video_url);
+      }
     }
+    return [...new Set(urls.map(normalizeInstagramMediaUrl).filter(Boolean))];
   } catch {
-    // fallback
+    return [];
   }
-  return null;
+}
+
+async function getInstagramMediaUrlsViaPage(instagramUrl) {
+  try {
+    const response = await fetch(instagramUrl, {
+      headers: {
+        Accept: "text/html,application/xhtml+xml",
+        "Accept-Language": "en-US,en;q=0.9",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        ...(getInstagramCookieString()
+          ? { Cookie: getInstagramCookieString() }
+          : {}),
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) return [];
+    const html = await response.text();
+    const candidates = [];
+    const patterns = [
+      /<meta[^>]+property=["']og:video(?::secure_url)?["'][^>]+content=["']([^"']+)["']/gi,
+      /["']video_url["']\s*:\s*["']([^"']+)["']/gi,
+      /["']playback_url["']\s*:\s*["']([^"']+)["']/gi,
+      /https?:\\?\/\\?\/[^"'\\s<>]+?\.mp4[^"'\\s<>]*/gi,
+    ];
+    for (const pattern of patterns) {
+      for (const match of html.matchAll(pattern)) {
+        const value = normalizeInstagramMediaUrl(match[1] || match[0]);
+        if (value) candidates.push(value);
+      }
+    }
+    return [...new Set(candidates)];
+  } catch {
+    return [];
+  }
 }
 
 async function getInstagramTranscript(instagramUrl) {
@@ -710,11 +761,11 @@ async function getInstagramTranscript(instagramUrl) {
     const mediaUrls = [];
 
     if (mediaInfo?.id) {
-      const graphQlUrl = await getInstagramMediaUrlViaGraphQL(mediaInfo.id);
-      if (graphQlUrl) mediaUrls.push(graphQlUrl);
+      mediaUrls.push(...(await getInstagramMediaUrlsViaGraphQL(mediaInfo.id)));
     }
 
     mediaUrls.push(...(await getInstagramMediaUrlsViaDirect(instagramUrl)));
+    mediaUrls.push(...(await getInstagramMediaUrlsViaPage(instagramUrl)));
     const uniqueMediaUrls = [...new Set(mediaUrls)];
 
     if (uniqueMediaUrls.length === 0) {
