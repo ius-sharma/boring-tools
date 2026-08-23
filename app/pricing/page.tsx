@@ -3,11 +3,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "../components/AuthProvider";
+import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
 
 export default function PricingPage() {
   const [proBillingCycle, setProBillingCycle] = useState<"monthly" | "annual">("annual");
-  const { user, openAuthModal } = useAuth();
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const { user, openAuthModal, credits } = useAuth();
+  const { initiateCheckout, isProcessing } = useRazorpayCheckout();
+  const [customCredits, setCustomCredits] = useState<number>(50);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -46,29 +48,16 @@ export default function PricingPage() {
       return;
     }
 
-    if (!user) {
-      openAuthModal("Please sign in or create a free account to upgrade to Pro.");
+    if (planKey === "custom_credits" || planKey === "credit_pack_100" || planKey === "credits_100") {
+      await initiateCheckout({
+        plan: "custom_credits",
+        creditsCount: Math.max(10, customCredits),
+      });
       return;
     }
 
-    setCheckoutLoading(planKey);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planKey, billingCycle: proBillingCycle }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.message || "Payment checkout is in test mode. Stay tuned!");
-      }
-    } catch {
-      alert("Payment service initializing. Please try again in a moment.");
-    } finally {
-      setCheckoutLoading(null);
-    }
+    // Pro plan
+    await initiateCheckout({ plan: "pro", billingCycle: proBillingCycle });
   };
 
   // Reusable Single-Family Icons (Grayscale + Single Accent Checkmark)
@@ -242,10 +231,18 @@ export default function PricingPage() {
               <button
                 type="button"
                 onClick={() => handleAction("pro")}
-                disabled={checkoutLoading !== null}
-                className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-900 text-sm font-semibold rounded-xl border border-slate-300 transition shadow-xs disabled:opacity-50"
+                disabled={isProcessing !== null || credits.isPro}
+                className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl border transition shadow-xs disabled:opacity-75 ${
+                  credits.isPro
+                    ? "bg-slate-100 text-slate-500 border-slate-200 cursor-default"
+                    : "bg-white hover:bg-slate-50 text-slate-900 border-slate-300 active:scale-[0.99]"
+                }`}
               >
-                {checkoutLoading === "pro" ? "Loading..." : "Upgrade to Pro"}
+                {credits.isPro
+                  ? "✓ Current Plan"
+                  : isProcessing === "pro"
+                  ? "Initializing Checkout..."
+                  : "Upgrade to Pro"}
               </button>
 
               {/* 1px Hairline Divider */}
@@ -385,9 +382,14 @@ export default function PricingPage() {
               <button
                 type="button"
                 onClick={() => handleAction("pro")}
-                className="w-full py-1.5 px-3 bg-white hover:bg-slate-50 text-slate-900 text-xs font-semibold rounded-lg border border-slate-300 transition"
+                disabled={isProcessing !== null || credits.isPro}
+                className="w-full py-1.5 px-3 bg-white hover:bg-slate-50 text-slate-900 text-xs font-semibold rounded-lg border border-slate-300 transition disabled:opacity-75"
               >
-                Upgrade Pro ({proBillingCycle === "annual" ? "₹291/mo" : "₹399/mo"})
+                {credits.isPro
+                  ? "Current Plan"
+                  : isProcessing === "pro"
+                  ? "Loading..."
+                  : `Upgrade Pro (${proBillingCycle === "annual" ? "₹291/mo" : "₹399/mo"})`}
               </button>
             </div>
 
@@ -549,10 +551,9 @@ export default function PricingPage() {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          5. ADD-ONS / EXPANSION SECTION
-          Centered eyebrow label → H2 → subtext (same rhythm as hero)
+          5. ADD-ONS / EXPANSION SECTION (Custom Credits, Min 10)
       ───────────────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 border-t border-b border-slate-200 py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+      <section id="addons" className="bg-slate-50 border-t border-b border-slate-200 py-16 sm:py-24 px-4 sm:px-6 lg:px-8 scroll-mt-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Eyebrow Label */}
           <div className="text-xs font-bold uppercase tracking-widest text-[#ea580c] mb-2">
@@ -566,27 +567,84 @@ export default function PricingPage() {
 
           {/* Subtext */}
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
-            Purchase standalone credit packs that never expire. Add-on credits work with both Free and Pro accounts.
+            Choose any custom number of standalone credits (minimum 10). Standalone credits never expire and rollover forever with both Free and Pro accounts.
           </p>
 
-          {/* Add-on Card */}
-          <div className="mt-10 max-w-md mx-auto bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+          {/* Dynamic Custom Add-on Card */}
+          <div className="mt-10 max-w-2xl mx-auto bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6 text-left">
             <div>
-              <div className="text-base font-bold text-slate-900">100 AI Credit Pack</div>
+              <div className="text-base font-bold text-slate-900">Custom AI Credits Top-Up</div>
               <div className="text-xs text-slate-500 mt-0.5">Non-expiring standalone credit top-up</div>
-              <div className="text-lg font-extrabold text-slate-900 mt-2">
-                ₹99 <span className="text-xs font-normal text-slate-500">($1.99) one-time</span>
+              
+              {/* Preset buttons */}
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                {[10, 50, 100, 250, 500].map((count) => (
+                  <button
+                    key={count}
+                    type="button"
+                    onClick={() => setCustomCredits(count)}
+                    className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold border transition ${
+                      customCredits === count
+                        ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    {count}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleAction("credit_pack_100")}
-              disabled={checkoutLoading !== null}
-              className="w-full sm:w-auto py-2.5 px-5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition shadow-xs flex-shrink-0"
-            >
-              {checkoutLoading === "credit_pack_100" ? "Loading..." : "Buy 100 Credits"}
-            </button>
+            {/* Stepper + Dynamic Buy Button */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6">
+              <div>
+                <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                  Credits (min 10)
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCustomCredits((prev) => Math.max(10, prev - 10))}
+                    className="w-7 h-7 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm flex items-center justify-center transition active:scale-95"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    min={10}
+                    step={10}
+                    value={customCredits}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      setCustomCredits(isNaN(val) ? 10 : val);
+                    }}
+                    className="w-16 h-7 px-1 text-center text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setCustomCredits((prev) => prev + 10)}
+                    className="w-7 h-7 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-sm flex items-center justify-center transition active:scale-95"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className="text-center sm:text-right w-full sm:w-auto">
+                <div className="text-sm font-extrabold text-slate-900">
+                  ₹{Math.max(20, Math.round(customCredits * 1.99))}
+                  <span className="text-[11px] font-normal text-slate-500 ml-1">one-time</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleAction("custom_credits")}
+                  disabled={isProcessing !== null || customCredits < 10}
+                  className="mt-1.5 w-full sm:w-auto py-2 px-4 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl transition shadow-xs disabled:opacity-50 active:scale-[0.99]"
+                >
+                  {isProcessing === "custom_credits" ? "Opening..." : `Buy ${Math.max(10, customCredits)} Credits`}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

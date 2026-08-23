@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 import { AuthProvider } from "./components/AuthProvider";
 import AuthModal from "./components/AuthModal";
 import UpgradeModal from "./components/UpgradeModal";
+import PaymentSuccessModal from "./components/PaymentSuccessModal";
+import ToastNotification from "./components/ToastNotification";
 
 export default function RootLayout({
   children,
@@ -50,6 +52,8 @@ export default function RootLayout({
           <ToolContentFooter />
           <AuthModal />
           <UpgradeModal />
+          <PaymentSuccessModal />
+          <ToastNotification />
         </AuthProvider>
       </body>
     </html>

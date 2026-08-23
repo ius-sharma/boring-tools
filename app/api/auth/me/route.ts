@@ -28,12 +28,30 @@ export async function GET(req: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Fetch Profile
-    const { data: profile } = await admin
+    // Fetch Profile or auto-create if missing
+    let { data: profile } = await admin
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
+
+    if (!profile) {
+      const { data: newProfile } = await admin
+        .from("profiles")
+        .upsert(
+          {
+            id: user.id,
+            email: user.email || "",
+            full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "User",
+            avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" }
+        )
+        .select()
+        .single();
+      profile = newProfile;
+    }
 
     // Fetch Subscription
     const { data: sub } = await admin
@@ -49,9 +67,21 @@ export async function GET(req: NextRequest) {
       .eq("user_id", user.id)
       .single();
 
-    const isPro = sub?.status === "active" && (sub?.plan_tier === "pro_monthly" || sub?.plan_tier === "pro_yearly");
-    const balance = credits?.credits_balance ?? 10;
+    const isPro = (sub?.status === "active" && (sub?.plan_tier === "pro_monthly" || sub?.plan_tier === "pro_yearly" || sub?.plan_tier === "pro")) || profile?.plan_tier === "pro";
+    
+    // For Pro users, ensure user_credits table is updated to 500 if still at 0/10
+    let balance = credits?.credits_balance ?? (isPro ? 500 : 10);
     const bonus = credits?.bonus_credits ?? 0;
+
+    if (isPro && (!credits || credits.credits_balance === 0 || credits.daily_quota_limit < 500)) {
+      balance = 500;
+      await admin.from("user_credits").upsert({
+        user_id: user.id,
+        credits_balance: 500,
+        daily_quota_limit: 500,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "user_id" });
+    }
 
     return NextResponse.json({
       isLoggedIn: true,
@@ -65,12 +95,12 @@ export async function GET(req: NextRequest) {
         planTier: sub.plan_tier,
         status: sub.status,
         currentPeriodEnd: sub.current_period_end,
-      } : { planTier: "free", status: "active" },
+      } : { planTier: isPro ? "pro_monthly" : "free", status: isPro ? "active" : "active" },
       credits: {
-        creditsBalance: balance,
+        creditsBalance: isPro ? balance : balance,
         bonusCredits: bonus,
         dailyQuotaLimit: isPro ? 500 : (credits?.daily_quota_limit ?? 10),
-        totalAvailable: isPro ? 999999 : (balance + bonus),
+        totalAvailable: balance + bonus,
         isPro: !!isPro,
         isGuest: false,
       },

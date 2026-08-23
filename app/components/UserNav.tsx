@@ -82,7 +82,7 @@ export default function UserNav() {
 
             <div className="py-1">
               <Link
-                href="/pricing"
+                href={credits?.isPro ? "/billing" : "/pricing"}
                 onClick={() => setDropdownOpen(false)}
                 className="flex items-center gap-2.5 px-4 py-2 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition"
               >

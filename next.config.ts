@@ -44,6 +44,21 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      {
+        source: "/manage-subscription",
+        destination: "/billing",
+        permanent: true,
+      },
+      {
+        source: "/subscription",
+        destination: "/billing",
+        permanent: true,
+      },
+      {
+        source: "/account",
+        destination: "/billing",
+        permanent: true,
+      },
     ];
   },
 };

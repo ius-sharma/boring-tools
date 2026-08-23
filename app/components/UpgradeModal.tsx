@@ -3,9 +3,11 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "./AuthProvider";
+import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
 
 export default function UpgradeModal() {
   const { isUpgradeModalOpen, closeUpgradeModal, credits, user, upgradeModalData, loginWithGoogle } = useAuth();
+  const { initiateCheckout, isProcessing } = useRazorpayCheckout();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -130,21 +132,43 @@ export default function UpgradeModal() {
                 </div>
               </div>
 
-              <Link
-                href="/pricing"
-                onClick={closeUpgradeModal}
-                className="w-full h-[44px] bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-semibold rounded-xl transition flex items-center justify-center active:scale-[0.99]"
+              <button
+                type="button"
+                onClick={() =>
+                  initiateCheckout({
+                    plan: "pro_monthly",
+                    onSuccess: () => closeUpgradeModal(),
+                  })
+                }
+                disabled={isProcessing !== null}
+                className="w-full h-[44px] bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-semibold rounded-xl transition flex items-center justify-center active:scale-[0.99] disabled:opacity-75"
               >
-                Upgrade to Pro (from ₹399 / $7.99)
-              </Link>
+                {isProcessing === "pro_monthly" ? "Opening Razorpay..." : "Upgrade to Pro (₹499 / $9/mo)"}
+              </button>
 
-              <Link
-                href="/pricing#addons"
-                onClick={closeUpgradeModal}
-                className="w-full h-[40px] bg-white hover:bg-slate-50 text-slate-800 text-xs font-medium rounded-xl border border-slate-200 transition flex items-center justify-center active:scale-[0.99]"
+              <button
+                type="button"
+                onClick={() =>
+                  initiateCheckout({
+                    plan: "credits_100",
+                    onSuccess: () => closeUpgradeModal(),
+                  })
+                }
+                disabled={isProcessing !== null}
+                className="w-full h-[40px] bg-white hover:bg-slate-50 text-slate-800 text-xs font-medium rounded-xl border border-slate-200 transition flex items-center justify-center active:scale-[0.99] disabled:opacity-75"
               >
-                Or buy 100 Credits Pack (₹199 / $3)
-              </Link>
+                {isProcessing === "credits_100" ? "Opening Razorpay..." : "Or buy 100 Credits Pack (₹199)"}
+              </button>
+
+              <div className="text-center pt-1">
+                <Link
+                  href="/pricing"
+                  onClick={closeUpgradeModal}
+                  className="text-xs text-slate-500 hover:text-slate-800 transition underline underline-offset-2"
+                >
+                  View full feature comparison & yearly discount →
+                </Link>
+              </div>
             </div>
           )}
 
