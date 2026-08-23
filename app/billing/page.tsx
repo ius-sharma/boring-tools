@@ -430,23 +430,48 @@ export default function BillingPage() {
               <strong>{renewalDate || "the end of your current period"}</strong>. After that, your account will revert to the Free Plan (10 daily credits).
             </p>
 
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setIsCancelModalOpen(false)}
-                className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition"
+                onClick={async () => {
+                  setIsCanceling(true);
+                  try {
+                    const res = await fetch("/api/billing/reset-to-free", { method: "POST" });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message);
+                    await refreshUser();
+                    setIsCancelModalOpen(false);
+                    showToast("Account downgraded to Free Plan (10 Daily + your Bonus Credits).", "success");
+                  } catch (err: any) {
+                    showToast(err.message || "Failed to reset.", "error");
+                  } finally {
+                    setIsCanceling(false);
+                  }
+                }}
+                disabled={isCanceling}
+                className="w-full sm:w-auto text-xs text-slate-500 hover:text-rose-600 underline text-center sm:text-left transition"
               >
-                Keep Subscription
+                Downgrade to Free Immediately
               </button>
 
-              <button
-                type="button"
-                onClick={handleCancelSubscription}
-                disabled={isCanceling}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold rounded-xl transition disabled:opacity-50"
-              >
-                {isCanceling ? "Canceling..." : "Confirm Cancellation"}
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsCancelModalOpen(false)}
+                  className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 transition"
+                >
+                  Keep Pro
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCancelSubscription}
+                  disabled={isCanceling}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition disabled:opacity-50"
+                >
+                  {isCanceling ? "Canceling..." : "Cancel at Period End"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
