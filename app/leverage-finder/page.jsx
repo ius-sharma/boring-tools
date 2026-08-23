@@ -540,17 +540,12 @@ export default function LeverageFinder() {
         return;
       }
 
-      // Fallback to local
-      const fallback = analyzeContext(goal, time, resources, situation);
-      setResult(fallback);
-      setSource("Local Engine Fallback");
-      setError(payload?.error ? `Groq Llama is not configured yet (${payload.error}), so local fallback was used.` : "Local fallback was used.");
+      setResult(null);
+      setError(payload?.message || payload?.error || "Could not find leverage strategies.");
     } catch (err) {
       clearInterval(loadingInterval);
-      const fallback = analyzeContext(goal, time, resources, situation);
-      setResult(fallback);
-      setSource("Local Engine Fallback");
-      setError("Groq Llama request failed, so local fallback was used.");
+      setResult(null);
+      setError("Network or server request failed.");
     } finally {
       setIsLoading(false);
     }

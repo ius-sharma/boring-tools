@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -157,7 +158,7 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const topic = normalize(body?.topic);
@@ -228,3 +229,10 @@ export async function POST(request) {
     return NextResponse.json({ unable: true, message: "Unable to generate information for this topic." }, { status: 200 });
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "concept-explorer",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

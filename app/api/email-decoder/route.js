@@ -1,3 +1,5 @@
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 
@@ -55,18 +57,18 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
-    const { emailText } = body;
+    const emailInput = (body.emailText || body.text || "").trim();
 
-    if (!emailText || !emailText.trim()) {
+    if (!emailInput) {
       return Response.json({ error: "No email text provided" }, { status: 400 });
     }
 
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
-      return Response.json({ error: "Groq API key not configured" }, { status: 503 });
+      return Response.json({ error: "Groq API key not configured on server" }, { status: 503 });
     }
 
     const response = await fetch(GROQ_API_URL, {
@@ -82,11 +84,11 @@ export async function POST(request) {
         messages: [
           {
             role: "system",
-            content: "You are an expert communications strategist and subtext decoder. You analyze emails to reveal their true emotional undertone, hidden agenda, and next actions. You hate robotic, template-like placeholders. You write actual sample drafts matching the situation.",
+            content: "You are a corporate communication analysis AI. You decode intent, subtext, actions, deadlines, and write contextual email replies in JSON format.",
           },
           {
             role: "user",
-            content: buildPrompt(emailText),
+            content: buildPrompt(emailInput),
           },
         ],
       }),
@@ -125,3 +127,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "email-decoder",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

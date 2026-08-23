@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -153,7 +154,7 @@ Expected JSON format:
   return promptText;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const apiKey = process.env.GROQ_API_KEY;
@@ -222,3 +223,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "movie-series-recommendation",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

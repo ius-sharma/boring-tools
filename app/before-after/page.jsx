@@ -1244,14 +1244,15 @@ export default function BeforeAfterPage() {
         return;
       }
 
-      // API returned error or incomplete structure, run fallback
-      runLocalFallback(topicToSearch.trim(), payload?.error || "Invalid response format");
+      setIsLoading(false);
+      showToast(payload?.message || payload?.error || "Could not generate analysis for this topic.", "error");
     } catch (err) {
       if (loadingTimerRef.current) {
         window.clearInterval(loadingTimerRef.current);
         loadingTimerRef.current = null;
       }
-      runLocalFallback(topicToSearch.trim(), "Network or server failure");
+      setIsLoading(false);
+      showToast("Network or server request failed.", "error");
     }
   };
 

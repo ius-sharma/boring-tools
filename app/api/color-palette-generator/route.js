@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -115,7 +116,7 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const prompt = body?.prompt || "";
@@ -191,3 +192,10 @@ export async function POST(request) {
     return NextResponse.json(buildLocalResponse("", 5, []));
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "color-palette-generator",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

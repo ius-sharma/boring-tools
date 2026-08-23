@@ -49,9 +49,15 @@ export default function HookGenerator() {
         body: JSON.stringify({ topic, tone, platform }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        showToast("error", data?.message || data?.error || "Failed to generate hooks");
+        setResults([]);
+        return;
+      }
       setResults(data.hooks || []);
     } catch (error) {
       showToast("error", "Failed to generate hooks");
+      setResults([]);
     } finally {
       setLoading(false);
     }

@@ -170,6 +170,13 @@ export default function LinkedInPostFormatter() {
 
       const payload = await response.json();
 
+      if (!response.ok) {
+        setError(payload?.message || payload?.error || "Could not generate posts.");
+        setPosts([]);
+        setSource("");
+        return;
+      }
+
       if (Array.isArray(payload.posts) && payload.posts.length) {
         setPosts(payload.posts);
         setSelectedPostIdx(0);

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Innertube } from "youtubei.js";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -473,7 +474,7 @@ Required JSON Output format:
   }
 }
 
-export async function POST(req) {
+async function handlePost(req) {
   try {
     const body = await req.json();
     const inputUrl = body.url || body.playlistId;
@@ -488,24 +489,37 @@ export async function POST(req) {
     const playlistId = extractPlaylistId(inputUrl);
     if (!playlistId) {
       return NextResponse.json(
-        { error: "Invalid YouTube playlist URL or ID format. Please check the link." },
+        { error: "Invalid YouTube playlist URL or ID. Please check and try again." },
         { status: 400 }
       );
     }
 
-    // Attempt 1: Direct YouTube Scrape with modern & legacy parsers + deep search
-    let playlistData = await fetchPlaylistDataScrape(playlistId);
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    let playlistData = null;
 
-    // Attempt 2: Innertube fallback
-    if (!playlistData || !playlistData.videos || playlistData.videos.length === 0) {
-      playlistData = await fetchPlaylistDataInnertube(playlistId);
+    // Strategy 1: YouTube Data API v3 (Official & Fast)
+    if (apiKey) {
+      try {
+        playlistData = await fetchPlaylistViaOfficialAPI(playlistId, apiKey);
+      } catch (err) {
+        console.warn("Official API fetch failed, falling back to Innertube:", err.message);
+      }
+    }
+
+    // Strategy 2: Innertube scraper (Robust fallback without API keys)
+    if (!playlistData || playlistData.videos.length === 0) {
+      try {
+        playlistData = await fetchPlaylistViaInnertube(playlistId);
+      } catch (err) {
+        console.error("Innertube fetch also failed:", err.message);
+      }
     }
 
     if (!playlistData || !playlistData.videos || playlistData.videos.length === 0) {
       return NextResponse.json(
         {
           error:
-            "Could not fetch playlist details. The playlist might be private, unlisted, empty, or inaccessible.",
+            "Unable to retrieve playlist videos. The playlist may be private, deleted, or unlisted without public access.",
         },
         { status: 404 }
       );
@@ -513,20 +527,11 @@ export async function POST(req) {
 
     const { title, channelName, thumbnailUrl, videos } = playlistData;
 
-    // Duration Metrics
-    let totalSeconds = 0;
-    let missingDurationCount = 0;
-
-    videos.forEach((v) => {
-      if (v.durationSeconds > 0) {
-        totalSeconds += v.durationSeconds;
-      } else {
-        missingDurationCount++;
-      }
-    });
-
+    // Calculate Durations
+    const totalSeconds = videos.reduce((acc, v) => acc + (v.durationSeconds || 0), 0);
+    const missingDurationCount = videos.filter((v) => !v.durationSeconds).length;
+    const avgSeconds = videos.length > 0 ? Math.round(totalSeconds / videos.length) : 0;
     const totalHoursFloat = (totalSeconds / 3600).toFixed(2);
-    const avgSeconds = videos.length > 0 ? totalSeconds / videos.length : 0;
 
     // Speed Calculations Matrix
     const speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
@@ -583,3 +588,10 @@ export async function POST(req) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "youtube-playlist-analyzer",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

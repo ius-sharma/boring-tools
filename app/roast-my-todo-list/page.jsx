@@ -85,15 +85,11 @@ export default function RoastMyTodoList() {
         return;
       }
 
-      const fallback = buildLocalRoasts(todos, roastLevel);
-      setResults(fallback);
-      setSource("Local fallback");
-      setError(payload?.error ? "Groq is not configured yet, so local fallback was used." : "Local fallback was used.");
+      setResults([]);
+      setError(payload?.message || payload?.error || "Could not generate roasts.");
     } catch {
-      const fallback = buildLocalRoasts(todos, roastLevel);
-      setResults(fallback);
-      setSource("Local fallback");
-      setError("Groq request failed, so local fallback was used.");
+      setResults([]);
+      setError("Network or server request failed.");
     } finally {
       setIsLoading(false);
     }

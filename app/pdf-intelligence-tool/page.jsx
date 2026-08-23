@@ -596,13 +596,7 @@ export default function PdfIntelligenceTool() {
         keywords,
       });
 
-      let refined = fallbackRefinement;
-
-      try {
-        refined = await refineWithAi(fallbackRefinement);
-      } catch {
-        refined = { ...fallbackRefinement, source: "Local fallback" };
-      }
+      const refined = await refineWithAi(fallbackRefinement);
 
       setAnalysis({
         fileName: file.name,

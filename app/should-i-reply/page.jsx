@@ -143,15 +143,11 @@ export default function ShouldIReply() {
         return;
       }
 
-      const fallback = runAnalysisEngine();
-      setResult(fallback);
-      setSource("Local fallback");
-      setError(payload?.error ? `Groq is not configured yet (${payload.error}), so local fallback was used.` : "Local fallback was used.");
+      setResult(null);
+      setError(payload?.message || payload?.error || "Could not analyze message.");
     } catch {
-      const fallback = runAnalysisEngine();
-      setResult(fallback);
-      setSource("Local fallback");
-      setError("Groq request failed, so local fallback was used.");
+      setResult(null);
+      setError("Network or server request failed.");
     } finally {
       setIsLoading(false);
     }

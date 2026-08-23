@@ -231,24 +231,17 @@ export default function SecondMindPage() {
         return;
       }
 
-      // API returned error or incomplete structure
-      const fallback = runLocalAnalysis();
-      setResult(fallback);
-      setSource("Local fallback");
-      setError(payload?.error ? `LLM error (${payload.error}), so local fallback was used.` : "LLM response format incorrect; local fallback used.");
       setIsLoading(false);
-      showToast("success", "Analysis generated (local fallback)!");
+      setResult(null);
+      showToast("error", payload?.message || payload?.error || "Could not generate analysis.");
     } catch (err) {
       if (loadingTimerRef.current) {
         window.clearInterval(loadingTimerRef.current);
         loadingTimerRef.current = null;
       }
-      const fallback = runLocalAnalysis();
-      setResult(fallback);
-      setSource("Local fallback");
-      setError("API request failed; local fallback was used.");
       setIsLoading(false);
-      showToast("success", "Analysis generated (local fallback)!");
+      setResult(null);
+      showToast("error", "API request failed.");
     }
   };
 

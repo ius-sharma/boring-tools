@@ -1,3 +1,5 @@
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 
@@ -116,7 +118,7 @@ function buildLocalBullets(input, tone, count, jobDescription = "") {
   return { bullets, matchedKeywords: extractedKeywords };
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const input = normalize(body?.input);
@@ -198,3 +200,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "resume-bullets",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

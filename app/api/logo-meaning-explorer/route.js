@@ -1,3 +1,5 @@
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const VISION_MODEL = "qwen/qwen3.6-27b";
 
@@ -134,7 +136,7 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const { image, fileType } = body;
@@ -212,3 +214,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "logo-meaning-explorer",
+  costInCredits: 2,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

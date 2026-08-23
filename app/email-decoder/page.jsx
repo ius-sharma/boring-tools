@@ -400,17 +400,11 @@ export default function EmailDecoder() {
         return;
       }
 
-      // API returned error
-      const fallback = analyzeEmail(emailText);
-      setResult(fallback);
-      setSource("Local Heuristics");
-      setError(payload?.error ? `Backend error (${payload.error}). Running local fallback analysis.` : "API error. Running local fallback analysis.");
+      setResult(null);
+      setError(payload?.message || payload?.error || "Could not analyze this email.");
     } catch (err) {
-      // API call failed entirely (network or connection)
-      const fallback = analyzeEmail(emailText);
-      setResult(fallback);
-      setSource("Local Heuristics");
-      setError("Unable to connect to the backend server. Running local fallback analysis.");
+      setResult(null);
+      setError("Network or server request failed.");
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,8 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 function toNumber(value) {
   const num = Number(value);
   return Number.isFinite(num) ? num : null;
@@ -18,7 +20,7 @@ function parseCoords(input) {
   return { lat, lon };
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   const apiKey = process.env.GOOGLE_DIRECTIONS_KEY;
 
   if (!apiKey) {
@@ -74,3 +76,10 @@ export async function POST(request) {
     status: data.status || "OK",
   });
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "directions",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

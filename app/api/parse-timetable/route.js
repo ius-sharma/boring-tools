@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { extractText } from "unpdf";
 import mammoth from "mammoth";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -280,7 +281,7 @@ function extractSubjectsFallback(rawText) {
   return results;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
@@ -368,3 +369,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "parse-timetable",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

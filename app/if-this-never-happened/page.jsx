@@ -1547,13 +1547,13 @@ export default function IfThisNeverHappenedPage() {
         body: JSON.stringify({ topic: input }),
       });
 
+      if (loadingTimerRef.current) {
+        clearInterval(loadingTimerRef.current);
+        loadingTimerRef.current = null;
+      }
+
       if (res.ok) {
         const data = await res.json();
-        // Clear loading timer
-        if (loadingTimerRef.current) {
-          clearInterval(loadingTimerRef.current);
-          loadingTimerRef.current = null;
-        }
         setSelectedTopic(data);
         saveSearch(data.title);
         setTimelineStep("present");
@@ -1562,47 +1562,20 @@ export default function IfThisNeverHappenedPage() {
         showToast("success", "Alternate timeline simulated using AI!");
         return;
       }
-      
-      // If we got here, API request failed (e.g. 503 or key not configured)
-      console.warn("API simulation failed, falling back to local engine:", res.status);
-    } catch (e) {
-      console.warn("API simulation exception, falling back to local engine:", e);
-    }
 
-    // Fallback: Local database or procedural generation
-    setTimeout(() => {
+      const errData = await res.json().catch(() => ({}));
+      setIsLoading(false);
+      setShowSuggestions(false);
+      showToast("error", errData?.message || errData?.error || "Failed to simulate timeline.");
+    } catch (e) {
       if (loadingTimerRef.current) {
         clearInterval(loadingTimerRef.current);
         loadingTimerRef.current = null;
       }
-
-      // Try database mapping
-      const normalized = input.toLowerCase().trim();
-      let targetId = TOPIC_MAPPING[normalized];
-
-      if (!targetId) {
-        const match = Object.values(ALTERNATE_HISTORY_DB).find(
-          item => normalized.includes(item.shortTitle.toLowerCase()) || 
-                  item.title.toLowerCase().includes(normalized)
-        );
-        if (match) targetId = match.id;
-      }
-
-      let resultData = null;
-      if (targetId && ALTERNATE_HISTORY_DB[targetId]) {
-        resultData = ALTERNATE_HISTORY_DB[targetId];
-        saveSearch(resultData.title);
-      } else {
-        resultData = generateProceduralTopic(input);
-        saveSearch(resultData.title);
-      }
-
-      setSelectedTopic(resultData);
-      setTimelineStep("present");
       setIsLoading(false);
       setShowSuggestions(false);
-      showToast("success", "Timeline simulated locally (offline fallback)!");
-    }, 1200);
+      showToast("error", "Network or server request failed.");
+    }
   };
 
   const handleReset = () => {

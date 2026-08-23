@@ -518,14 +518,15 @@ export default function HistoryRepeatsPage() {
         return;
       }
 
-      // API returned error or incomplete structure, run fallback
-      runLocalFallback(topicToSearch, payload?.error || "Invalid response format");
+      setIsLoading(false);
+      showToast("error", payload?.message || payload?.error || "Could not find historical matches.");
     } catch (err) {
       if (loadingTimerRef.current) {
         window.clearInterval(loadingTimerRef.current);
         loadingTimerRef.current = null;
       }
-      runLocalFallback(topicToSearch, "API request failed");
+      setIsLoading(false);
+      showToast("error", "API request failed.");
     }
   };
 

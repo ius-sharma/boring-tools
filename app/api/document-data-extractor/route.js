@@ -1,3 +1,5 @@
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 
@@ -73,7 +75,7 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const { combinedText } = body;
@@ -99,11 +101,11 @@ export async function POST(request) {
       body: JSON.stringify({
         model: DEFAULT_MODEL,
         temperature: 0.2,
-        max_tokens: 1800,
+        max_tokens: 2500,
         messages: [
           {
             role: "system",
-            content: "You are an expert document data extractor AI. You parse document text and output structured JSON with exact entity fields.",
+            content: "You are an expert document data extractor. You analyze OCR, invoice, receipt, and contract text and output pure structured JSON extracting personal info, IDs, dates, financials, and links with high accuracy.",
           },
           {
             role: "user",
@@ -123,7 +125,7 @@ export async function POST(request) {
     const parsed = safeParseJson(rawContent);
 
     if (!parsed) {
-      return Response.json({ error: "Failed to parse data extraction response" }, { status: 500 });
+      return Response.json({ error: "Failed to parse extracted document data" }, { status: 500 });
     }
 
     const ensureArray = (arr) => (Array.isArray(arr) ? arr.map(String).map((s) => s.trim()).filter(Boolean) : []);
@@ -160,3 +162,10 @@ export async function POST(request) {
     return Response.json({ error: "Server error extracting document data", details: error.message }, { status: 500 });
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "document-data-extractor",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

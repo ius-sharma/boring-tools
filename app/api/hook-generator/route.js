@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ function buildPrompt({ topic, tone, platform }) {
   ].join("\n");
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const topic = normalize(body?.topic);
@@ -105,3 +106,10 @@ export async function POST(request) {
     return NextResponse.json({ hooks: buildLocalHooks("Error", "neutral", "social"), source: "Error fallback" });
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "hook-generator",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

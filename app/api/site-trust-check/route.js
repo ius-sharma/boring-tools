@@ -1,6 +1,8 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const DEFAULT_TIMEOUT_MS = 8000;
 const TRUST_HEADERS = [
   "strict-transport-security",
@@ -257,7 +259,7 @@ async function fetchWithTimeout(url, options = {}) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const mode = ["quick", "balanced", "deep"].includes(body?.mode) ? body.mode : "balanced";
@@ -345,3 +347,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "site-trust-check",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

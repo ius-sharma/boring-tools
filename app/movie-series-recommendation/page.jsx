@@ -608,13 +608,9 @@ export default function MovieSeriesRecommendationPage() {
       } else throw new Error("No recommendations returned.");
     } catch (err) {
       console.error(err);
-      setError("Unable to connect to the recommendation API. Showing local fallback titles.");
-      setRecommendations(fallbackDataset);
-      setResultsSource("fallback");
-      showToast("Offline mode: Using local fallback recommendations", "warning");
-      document.getElementById("recommendation-results")?.scrollIntoView({ behavior: "smooth" });
-      
-      loadPostersForRecommendations(fallbackDataset);
+      setError("Unable to load recommendations. Please try again or check your account quota.");
+      setRecommendations([]);
+      showToast("Failed to load recommendations", "error");
     } finally { setLoading(false); }
   };
 

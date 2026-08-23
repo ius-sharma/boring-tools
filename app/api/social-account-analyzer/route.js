@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { appendFile, mkdir, readFile } from "fs/promises";
 import path from "path";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
@@ -693,7 +694,7 @@ function validateLLMNarrative(llmResponse, stats, erVal, erLabel, authenticitySc
 }
 
 // ─── API Router Handler ───
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const platform = body?.platform;
@@ -892,3 +893,10 @@ ${JSON.stringify({
     return Response.json({ error: err instanceof Error ? err.message : "Analysis failed." }, { status: 500 });
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "social-account-analyzer",
+  costInCredits: 2,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

@@ -1,3 +1,5 @@
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
+
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 
@@ -46,7 +48,7 @@ function safeParseJson(content) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const { fear } = body;
@@ -73,10 +75,9 @@ export async function POST(request) {
         messages: [
           {
             role: "system",
-            content: "You are a professional cognitive reframing assistant called Fear Decomposer. You help users deconstruct their anxieties into structured analysis models. You output only valid JSON matching the requested schema.",
+            content: "You are a thoughtful cognitive psychologist and stoic philosopher. You deconstruct human fears into clear logical parts formatted as strict JSON.",
           },
           {
-            role: role => "user", // Workaround for typing, or just use string
             role: "user",
             content: buildPrompt(fear),
           },
@@ -113,3 +114,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "fear-decomposer",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

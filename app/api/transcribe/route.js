@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Innertube, Platform } from "youtubei.js";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -812,7 +813,7 @@ async function getInstagramTitle(mediaId, mediaType) {
   }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const contentType = request.headers.get("content-type") || "";
 
@@ -952,3 +953,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "transcribe",
+  costInCredits: 2,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

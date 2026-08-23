@@ -65,11 +65,11 @@ export default function ConceptExplorerPage() {
 
         const payload = await response.json();
 
-        if (payload?.unable) {
+        if (!response.ok || payload?.unable) {
           setResult(null);
           setActiveQuery(trimmed);
           setIsLoading(false);
-          setStatus(payload.message || "Unable to generate information for this topic.");
+          setStatus(payload?.message || payload?.error || "Unable to generate information for this topic.");
           updateRecentSearches(trimmed);
           return;
         }

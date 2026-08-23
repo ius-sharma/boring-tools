@@ -721,24 +721,9 @@ export default function CinematicPromptArchitect() {
       }, remainingDelay);
 
     } catch (err) {
-      console.warn("AI Enhancement API failed, falling back to local compiler:", err);
       clearInterval(stepInterval);
-      
-      // Error fallback to local compiler
-      const localPrompt = compileLocalPrompt();
-      
-      const elapsedTime = Date.now() - startTime;
-      const remainingDelay = Math.max(0, 1500 - elapsedTime);
-
-      setTimeout(() => {
-        setCompiledPrompt(localPrompt);
-        setIsGenerating(false);
-        triggerToast("Cinematic Prompt Compiled (Local Engine)!");
-        
-        setTimeout(() => {
-          bottomSectionRef.current?.scrollIntoView({ behavior: "smooth" });
-        }, 150);
-      }, remainingDelay);
+      setIsGenerating(false);
+      triggerToast(err instanceof Error ? err.message : "AI Generation failed.", "error");
     }
   };
 

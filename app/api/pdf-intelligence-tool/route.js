@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { extractPhones, normalizePhoneDisplay } from "../../pdf-intelligence-tool/phone-utils";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -493,7 +494,7 @@ async function callGroq(apiKey, payload) {
   return response;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const extractedText = normalizeWhitespace(body?.extractedText);
@@ -547,3 +548,10 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "pdf-intelligence-tool",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

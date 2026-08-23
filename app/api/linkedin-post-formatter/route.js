@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -143,7 +144,7 @@ function buildPrompt({ topic, tone, format, audience, keywords }) {
   ].join("\n");
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const topic = normalize(body?.topic);
@@ -257,3 +258,10 @@ function extractPosts(content) {
     );
   }
 }
+
+export const POST = withAuthAndQuota({
+  toolId: "linkedin-post-formatter",
+  costInCredits: 1,
+  allowGuestTrial: true,
+  guestCost: 1,
+}, handlePost);

@@ -1,367 +1,532 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 
+// 5 Milestone Data points for the interactive scrubber
+const MILESTONES = [
+  {
+    id: 0,
+    percent: 0,
+    date: "April 20, 2026",
+    headline: "Day 1: The 100 Days 100 Tools Challenge Begins",
+    description: "Ayush Sharma commits to building 100 browser-first, privacy-focused micro-utilities open-source.",
+  },
+  {
+    id: 1,
+    percent: 25,
+    date: "May 15, 2026",
+    headline: "Day 25: 25 Core Developer & Math Utilities Live",
+    description: "JSON formatter, Base converters, Age & EMI calculators launch with 100% client-side execution.",
+  },
+  {
+    id: 2,
+    percent: 50,
+    date: "June 09, 2026",
+    headline: "Day 50: Halfway Mark & Local Media Processing",
+    description: "Offline image compressors, GIF makers, and WebAssembly-powered audio tools deployed with zero server upload.",
+  },
+  {
+    id: 3,
+    percent: 75,
+    date: "July 04, 2026",
+    headline: "Day 75: PDF Intelligence & Document OCR Tools",
+    description: "Advanced document parsing, text extraction, and privacy-preserving analysis tools added to the library.",
+  },
+  {
+    id: 4,
+    percent: 100,
+    date: "July 28, 2026",
+    headline: "Day 100: 101 Tools Deployed & Global Release",
+    description: "100 consecutive days of shipping culminates in a full suite of 101 fast, privacy-first tools used worldwide.",
+  },
+];
+
 export default function AboutClient() {
-  const [formData, setFormData] = useState({
-    name: "",
-    contact: "",
-    toolIdea: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [activeMilestoneIndex, setActiveMilestoneIndex] = useState(4);
+  const scrubberTrackRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.toolIdea.trim()) return;
+  const activeMilestone = MILESTONES[activeMilestoneIndex];
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-    }, 500);
+  // Handle Scrubbing Interaction via Click or Drag
+  const handleScrubberInteraction = (clientX) => {
+    if (!scrubberTrackRef.current) return;
+    const rect = scrubberTrackRef.current.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const percent = (clickX / rect.width) * 100;
+
+    // Find closest milestone index
+    let closestIndex = 0;
+    let minDiff = 100;
+    MILESTONES.forEach((m, idx) => {
+      const diff = Math.abs(m.percent - percent);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = idx;
+      }
+    });
+
+    setActiveMilestoneIndex(closestIndex);
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    handleScrubberInteraction(e.clientX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      handleScrubberInteraction(e.clientX);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 font-sans">
-      {/* Hero Header */}
-      <header className="bg-white border-b border-slate-200/80 py-16 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="inline-flex items-center gap-2 rounded-md bg-amber-50 px-3 py-1 text-xs font-mono font-medium text-amber-800 border border-amber-200/60 mb-6">
-            100 DAYS • 100 TOOLS
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
-            Boring Name. <span className="text-amber-600">Useful Tools.</span>
-          </h1>
-
-          <p className="mt-4 text-lg text-slate-600 max-w-2xl leading-relaxed">
-            A curated library of fast, browser-first micro-utilities designed to solve daily tasks without signups, paywalls, or tracking.
-          </p>
-
-          {/* Minimal Metrics Grid */}
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-200 pt-8">
-            <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">101</p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Live Utilities</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">100%</p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Client-Side</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">0</p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Logins & Paywalls</p>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-semibold font-mono text-slate-900">Open</p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Source Repository</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-4xl px-4 sm:px-6 mt-12 space-y-12">
-        {/* Origin Story */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-xs">
-          <p className="text-xs font-mono font-semibold tracking-wider text-slate-600 uppercase mb-2">
-            BACKGROUND
-          </p>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Why BoringTools Exists</h2>
-
-          <div className="mt-5 space-y-4 text-slate-700 leading-relaxed text-base">
-            <p>
-              Every time I needed a basic utility—like converting an image, formatting text, calculating dates, or generating test data—I had to search Google and navigate cluttered websites full of aggressive popups, paywalls, cookie banners, and forced signups.
-            </p>
-            <p className="border-l-2 border-slate-900 pl-4 py-1 text-slate-900 font-medium bg-slate-50/80 rounded-r-lg">
-              Having to jump across multiple paywalled websites for simple micro-tasks was inefficient and frustrating. I wanted a clean, single destination for fast, essential tools.
-            </p>
-            <p>
-              That led me to start the <strong>100 Days, 100 Tools</strong> challenge as a solo developer. The goal was simple: build 100 lightweight, privacy-focused utilities where processing happens entirely in your browser.
-            </p>
-            <p className="border-l-2 border-slate-900 pl-4 py-1 text-slate-900 font-medium bg-slate-50/80 rounded-r-lg">
-              Today, <strong>28/07/2026</strong> (exactly 100 days since starting on <strong>20/04/2026</strong>), that milestone is fully accomplished! 100 days of consistency has turned this experiment into a comprehensive, browser-first ecosystem of daily micro-utilities.
-            </p>
-          </div>
-        </section>
-
-        {/* Core Philosophy Grid */}
-        <section>
-          <p className="text-xs font-mono font-semibold tracking-wider text-slate-600 uppercase mb-4">
-            PRINCIPLES
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-xl border border-slate-200 hover:border-orange-500 hover:shadow-xs transition-all duration-200 group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 flex items-center justify-center text-slate-700 mb-4 transition-colors duration-200">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-base">Privacy-First Architecture</h3>
-              <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
-                All data, files, and computations stay within your browser window. Nothing is transmitted to external servers.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-slate-200 hover:border-orange-500 hover:shadow-xs transition-all duration-200 group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 flex items-center justify-center text-slate-700 mb-4 transition-colors duration-200">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-base">Zero Friction</h3>
-              <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
-                No user accounts, mandatory subscriptions, or forced paywalls. Open any tool and use it instantly.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-slate-200 hover:border-orange-500 hover:shadow-xs transition-all duration-200 group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 flex items-center justify-center text-slate-700 mb-4 transition-colors duration-200">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-base">Open Source</h3>
-              <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
-                Entire codebase is public on GitHub. Anyone can review implementation details or submit new tools.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl border border-slate-200 hover:border-orange-500 hover:shadow-xs transition-all duration-200 group">
-              <div className="w-9 h-9 rounded-lg bg-slate-100 group-hover:bg-orange-50 group-hover:text-orange-600 flex items-center justify-center text-slate-700 mb-4 transition-colors duration-200">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-base">Unified Collection</h3>
-              <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
-                A single destination covering developer, design, productivity, math, and daily browser tools.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Developer Card (Minimal & Premium) */}
-        <section className="bg-slate-900 text-white rounded-2xl p-8 sm:p-10 border border-slate-800">
-          <p className="text-xs font-mono font-semibold tracking-wider text-slate-400 uppercase mb-3">
-            DEVELOPER
-          </p>
+    <div
+      className="min-h-screen bg-white text-[#0f172a] selection:bg-orange-100"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      style={
+        {
+          "--bg-page": "#ffffff",
+          "--bg-surface": "#f8fafc",
+          "--text-primary": "#0f172a",
+          "--text-muted": "#64748b",
+          "--text-faded": "#cbd5e1",
+          "--accent": "#ea580c",
+          "--accent-hover": "#c2410c",
+          "--border-subtle": "#e2e8f0",
+        }
+      }
+    >
+      {/* ─────────────────────────────────────────────────────────────
+          2. HERO SECTION (Two-Column Layout: Left ~55% / Right ~45%)
+          Stacks on mobile below ~900px
+      ───────────────────────────────────────────────────────────── */}
+      <section className="pt-16 pb-20 sm:pt-24 sm:pb-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-b border-slate-200">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Myself Ayush Sharma
-          </h2>
-
-          <p className="mt-4 text-slate-300 text-base leading-relaxed max-w-2xl">
-            I am a solo software developer building web applications and open-source tools. I created BoringTools to simplify everyday web workflows and build a clean, reliable toolkit for developers, creators, and users worldwide.
-          </p>
-
-          {/* Social Links Bar */}
-          <div className="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-3">
-            <a
-              href="https://github.com/ius-sharma"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
-            >
-              <svg className="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24">
-                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.55-3.88-1.55-.53-1.36-1.3-1.72-1.3-1.72-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.06 11.06 0 012.9-.39c.98.01 1.97.13 2.9.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.42.36.79 1.09.79 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.8.56C20.71 21.4 24 17.09 24 12 24 5.65 18.35.5 12 .5z" />
-              </svg>
-              GitHub
-            </a>
-
-            <a
-              href="https://instagram.com/ocn.ayush07"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
-            >
-              <svg className="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-              </svg>
-              Instagram
-            </a>
-
-            <a
-              href="https://www.linkedin.com/in/ayush-sharma-833163320/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
-            >
-              <svg className="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-              </svg>
-              LinkedIn
-            </a>
-
-            <a
-              href="https://www.youtube.com/@ocnayush"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
-            >
-              <svg className="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24">
-                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
-              </svg>
-              YouTube
-            </a>
-          </div>
-        </section>
-
-        {/* Other Projects / Smriti Tribute Section */}
-        <section className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-xs relative overflow-hidden group hover:border-amber-500 transition-all duration-300">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle,#fffbeb_0%,transparent_70%)] pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity"></div>
-          
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 rounded-md bg-amber-50 px-2.5 py-1 text-xs font-mono font-medium text-amber-800 border border-amber-250/60 mb-4">
-              SIDE PROJECT
+          {/* ── Left Column (~55% width) ── */}
+          <div className="lg:col-span-7">
+            {/* Small eyebrow label top */}
+            <div className="text-[13px] font-bold text-slate-500 uppercase tracking-widest mb-4">
+              OUR MISSION
             </div>
-            
-            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
-              Smriti <span className="text-sm font-normal text-slate-500">— A Digital Tribute Wall to My Teachers</span>
-            </h2>
-            
-            <p className="mt-4 text-slate-600 leading-relaxed text-base">
-              Besides building daily micro-utilities, I also created <strong>Smriti</strong>—a heartfelt digital sanctuary dedicated to honoring, remembering, and expressing gratitude to the teachers who shaped my journey. It acts as a digital time-capsule where students can leave messages of appreciation for their mentors.
+
+            {/* Two-line giant headline (Line 1 primary color, Line 2 muted/faded) */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.15]">
+              <span className="text-slate-900 block">Fast, private utilities for everyone.</span>
+              <span className="text-slate-400 block mt-1">Built open-source to eliminate paywalls and popups.</span>
+            </h1>
+
+            {/* Paragraph below (~16-18px, muted gray, max-w ~480px, 3 lines) */}
+            <p className="mt-6 text-base sm:text-lg text-slate-600 max-w-[480px] leading-relaxed">
+              A curated destination of 100+ browser-first micro-tools covering developer workflows, document intelligence, and daily calculations. Processed client-side with zero tracking.
             </p>
-            
-            <div className="mt-6">
-              <a
-                href="https://smritiius.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow-sm transition"
+
+            {/* Two pill buttons side by side (rounded-full) */}
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/#find-tools"
+                className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-full transition shadow-xs"
               >
-                <span>Visit Smriti Tribute Wall</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* Suggestion Form & GitHub Repository Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Form */}
-          <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 sm:p-8">
-            <h3 className="text-xl font-bold text-slate-900">Suggest a Tool</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              Have an idea for a tool or utility? Submit your suggestion below.
-            </p>
-
-            {submitted ? (
-              <div className="mt-6 p-5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                <p className="text-sm font-semibold text-slate-900">Suggestion Received</p>
-                <p className="text-xs text-slate-600 mt-1">Thank you for helping improve BoringTools.</p>
-                <button
-                  onClick={() => {
-                    setSubmitted(false);
-                    setFormData({ name: "", contact: "", toolIdea: "" });
-                  }}
-                  className="mt-3 text-xs text-amber-700 font-medium hover:underline cursor-pointer"
-                >
-                  Submit another response
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
-                      Name / Handle
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Optional"
-                      className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
-                      Contact Info
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.contact}
-                      onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                      placeholder="Optional (email or handle)"
-                      className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Tool Idea / Description *
-                  </label>
-                  <textarea
-                    required
-                    rows={3}
-                    value={formData.toolIdea}
-                    onChange={(e) => setFormData({ ...formData, toolIdea: e.target.value })}
-                    placeholder="Describe what tool you need..."
-                    className="w-full rounded-lg border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
-                  />
-                </div>
-
-                <div className="flex justify-end pt-1">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg transition disabled:opacity-50 cursor-pointer"
-                  >
-                    {loading ? "Submitting..." : "Submit Idea"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-
-          {/* GitHub Repository Box */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between">
-            <div>
-              <h3 className="text-lg font-bold text-slate-900">GitHub Repository</h3>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                BoringTools is open source. Check out the source code, open issues, or give the repository a star.
-              </p>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-100">
+                Explore 100+ Tools
+              </Link>
               <a
                 href="https://github.com/ius-sharma/boring-tools"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold rounded-lg transition"
+                className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-full border border-slate-300 transition shadow-xs"
               >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.93.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.55-3.88-1.55-.53-1.36-1.3-1.72-1.3-1.72-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11.06 11.06 0 012.9-.39c.98.01 1.97.13 2.9.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.42.36.79 1.09.79 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.8.56C20.71 21.4 24 17.09 24 12 24 5.65 18.35.5 12 .5z" />
-                </svg>
                 View on GitHub
               </a>
             </div>
           </div>
+
+          {/* ── Right Column (~45% width) ── */}
+          {/* Vertical stack of 4 link rows separated by 1px hairline divider */}
+          <div className="lg:col-span-5 flex flex-col divide-y divide-slate-200 border-t border-b lg:border-t-0 lg:border-b-0 border-slate-200">
+            
+            {/* Row 1 */}
+            <a
+              href="https://github.com/ius-sharma/boring-tools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-5 px-3 rounded-xl hover:bg-slate-50 transition group flex items-start justify-between gap-4"
+            >
+              <div>
+                <div className="text-base font-bold text-slate-900 group-hover:text-[#ea580c] transition">
+                  Open Source Ecosystem
+                </div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-1">
+                  100% public repository on GitHub welcoming contributions.
+                </div>
+              </div>
+              <span className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-lg">
+                ↗
+              </span>
+            </a>
+
+            {/* Row 2 */}
+            <div className="py-5 px-3 rounded-xl hover:bg-slate-50 transition group flex items-start justify-between gap-4 cursor-default">
+              <div>
+                <div className="text-base font-bold text-slate-900 group-hover:text-[#ea580c] transition">
+                  Browser-First Privacy
+                </div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-1">
+                  Computations happen locally in memory with zero document storage.
+                </div>
+              </div>
+              <span className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-lg">
+                ↗
+              </span>
+            </div>
+
+            {/* Row 3 */}
+            <Link
+              href="/pricing"
+              className="py-5 px-3 rounded-xl hover:bg-slate-50 transition group flex items-start justify-between gap-4"
+            >
+              <div>
+                <div className="text-base font-bold text-slate-900 group-hover:text-[#ea580c] transition">
+                  Zero Friction Architecture
+                </div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-1">
+                  70+ tools 100% free forever with no forced signups or paywalls.
+                </div>
+              </div>
+              <span className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-lg">
+                ↗
+              </span>
+            </Link>
+
+            {/* Row 4 */}
+            <a
+              href="https://github.com/ius-sharma"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-5 px-3 rounded-xl hover:bg-slate-50 transition group flex items-start justify-between gap-4"
+            >
+              <div>
+                <div className="text-base font-bold text-slate-900 group-hover:text-[#ea580c] transition">
+                  Built by Solo Developer
+                </div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-1">
+                  Created by Ayush Sharma over 100 consecutive days of shipping.
+                </div>
+              </div>
+              <span className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-lg">
+                ↗
+              </span>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. "AT OUR CORE" SECTION
+          Centered heading + subtext, 3-column shared bordered container
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-b border-slate-200">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            At our core
+          </h2>
+          <p className="mt-3 text-base text-slate-600 leading-relaxed">
+            The foundational engineering principles that guide how we design and deploy every utility.
+          </p>
         </div>
 
-        {/* Footer Link */}
-        <div className="pt-4 flex items-center justify-between border-t border-slate-200 text-xs text-slate-500">
-          <Link href="/" className="hover:text-slate-900 transition font-medium">
-            ← Back to all tools
-          </Link>
+        {/* 3-Column Shared Container with internal dividers */}
+        <div className="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-none grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+          
+          {/* Card 01 */}
+          <div className="p-8 sm:p-10 flex flex-col justify-between">
+            <div>
+              <div className="text-3xl font-extrabold text-slate-300 tracking-tight mb-6">
+                01
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                Speed & Simplicity
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Every tool loads in milliseconds with zero bloated dependencies. Simple inputs, instant outputs, and zero learning curve for users.
+              </p>
+            </div>
+          </div>
 
+          {/* Card 02 */}
+          <div className="p-8 sm:p-10 flex flex-col justify-between">
+            <div>
+              <div className="text-3xl font-extrabold text-slate-300 tracking-tight mb-6">
+                02
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                Zero-Compromise Privacy
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Your files and inputs stay inside your browser window. We never sell data, store documents, or inject tracking cookies into your session.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 03 */}
+          <div className="p-8 sm:p-10 flex flex-col justify-between">
+            <div>
+              <div className="text-3xl font-extrabold text-slate-300 tracking-tight mb-6">
+                03
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                Open & Accessible
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Free access for learners, creators, and engineers worldwide. Built to be a public, transparent digital utility for daily productivity.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. INTERACTIVE MILESTONE TIMELINE (Scrubber Component)
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-b border-slate-200">
+        <div className="text-center mb-12">
+          <div className="text-xs font-bold uppercase tracking-widest text-[#ea580c] mb-2">
+            MILESTONES & TIMELINE
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            From Day 1 challenge to 101 live tools
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Click or drag along the scrubber track to explore our 100-day journey.
+          </p>
+        </div>
+
+        {/* Scrubber Interactive Track */}
+        <div className="max-w-3xl mx-auto mb-12 select-none">
+          <div
+            ref={scrubberTrackRef}
+            onMouseDown={handleMouseDown}
+            className="relative h-7 flex items-center cursor-pointer group"
+          >
+            {/* Background Thin Track Line */}
+            <div className="absolute inset-x-0 h-1 bg-slate-200 rounded-full" />
+
+            {/* Highlighted Active Progress Line in --accent */}
+            <div
+              className="absolute left-0 h-1 bg-[#ea580c] rounded-full transition-all duration-200"
+              style={{ width: `${activeMilestone.percent}%` }}
+            />
+
+            {/* Evenly Spaced Dots */}
+            {MILESTONES.map((m, idx) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveMilestoneIndex(idx);
+                }}
+                className={`absolute w-3 h-3 -ml-1.5 rounded-full transition transform hover:scale-125 focus:outline-none ${
+                  idx <= activeMilestoneIndex
+                    ? "bg-[#ea580c] ring-2 ring-white"
+                    : "bg-slate-300 hover:bg-slate-400"
+                }`}
+                style={{ left: `${m.percent}%` }}
+                aria-label={`Milestone ${m.date}`}
+              />
+            ))}
+
+            {/* Draggable Active Handle (Larger filled dot) */}
+            <div
+              className="absolute w-5 h-5 -ml-2.5 bg-slate-900 border-2 border-white rounded-full shadow-md transition-all duration-200 transform scale-110 pointer-events-none flex items-center justify-center"
+              style={{ left: `${activeMilestone.percent}%` }}
+            >
+              <div className="w-1.5 h-1.5 bg-[#ea580c] rounded-full" />
+            </div>
+          </div>
+
+          {/* Date labels at both ends below the line */}
+          <div className="flex justify-between text-xs text-slate-400 font-mono mt-2">
+            <span>April 2026 (Day 1)</span>
+            <span>July 2026 (Day 100)</span>
+          </div>
+        </div>
+
+        {/* Dynamic Content Block Updating Based on Scrubber Handle */}
+        <div className="max-w-2xl mx-auto text-center p-8 bg-slate-50/80 rounded-2xl border border-slate-200/80 transition-all duration-300 animate-fade-in">
+          <div className="text-xs font-semibold uppercase tracking-wider text-[#ea580c] mb-2 font-mono">
+            {activeMilestone.date}
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mb-3">
+            {activeMilestone.headline}
+          </h3>
+          <p className="text-sm text-slate-600 leading-relaxed max-w-xl mx-auto">
+            {activeMilestone.description}
+          </p>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          5. DEVELOPMENT & OPEN SOURCE ROOTS
+          Authentic developer base, repository, and edge hosting
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-b border-slate-200">
+        {/* Header Row (Left text, Right CTA pill buttons) */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <div className="text-[13px] font-bold text-slate-500 uppercase tracking-widest mb-2">
+              DEVELOPMENT & ROOTS
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Built open-source in India, open for everyone.
+            </h2>
+            <p className="mt-2 text-sm text-slate-600 max-w-lg">
+              Crafted by solo developer Ayush Sharma. Designed to be a completely free, transparent digital toolkit powered by client-side browser execution.
+            </p>
+          </div>
+
+          {/* Two Pill Buttons on the Right (rounded-full) */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <a
+              href="https://github.com/ius-sharma/boring-tools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-full transition shadow-xs"
+            >
+              Star on GitHub
+            </a>
+            <Link
+              href="/contact"
+              className="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-full border border-slate-300 transition shadow-xs"
+            >
+              Get in Touch
+            </Link>
+          </div>
+        </div>
+
+        {/* 4-Column Grid of Authentic Detail Chips */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition flex items-center justify-between">
+            <span className="font-bold text-sm text-slate-800">Bihar, IN</span>
+            <span className="text-xs text-slate-400 font-mono">Developer Base</span>
+          </div>
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition flex items-center justify-between">
+            <span className="font-bold text-sm text-slate-800">GitHub</span>
+            <span className="text-xs text-slate-400 font-mono">100% Open Source</span>
+          </div>
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition flex items-center justify-between">
+            <span className="font-bold text-sm text-slate-800">Vercel Edge</span>
+            <span className="text-xs text-slate-400 font-mono">Global CDN</span>
+          </div>
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition flex items-center justify-between">
+            <span className="font-bold text-sm text-slate-800">Browser Sandbox</span>
+            <span className="text-xs text-slate-400 font-mono">Client-Side Privacy</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          6. "LATEST NEWS" SECTION
+          Heading + "All posts" link on row, 4-column image cards below
+      ───────────────────────────────────────────────────────────── */}
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-b border-slate-200">
+        {/* Row: Heading Left + "All posts" Right */}
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Latest news & releases
+          </h2>
           <a
-            href="https://github.com/ius-sharma/boring-tools/blob/main/CONTRIBUTING.md"
+            href="https://github.com/ius-sharma/boring-tools/releases"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-slate-900 transition font-medium"
+            className="text-xs sm:text-sm font-semibold text-[#ea580c] hover:underline flex items-center gap-1"
           >
-            Contributing Guide →
+            <span>All updates</span>
+            <span>→</span>
           </a>
         </div>
-      </main>
+
+        {/* 3-Card Horizontal Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          
+          {/* Card 1: 100 Days Milestone */}
+          <a
+            href="https://github.com/ius-sharma/boring-tools"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col group"
+          >
+            <div className="h-44 rounded-xl overflow-hidden border border-slate-200 shadow-xs group-hover:border-slate-300 transition bg-slate-100">
+              <img
+                src="/100days-101tools.png"
+                alt="100 Days 101 Tools Milestone"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="mt-3.5">
+              <div className="text-xs text-slate-400 font-mono">Jul 28, 2026</div>
+              <div className="text-sm font-bold text-slate-900 group-hover:text-[#ea580c] transition mt-1 leading-snug">
+                100 Days Challenge Complete: 101 Tools Deployed to Production
+              </div>
+            </div>
+          </a>
+
+          {/* Card 2: Smriti Tribute Wall */}
+          <a
+            href="https://smritiius.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col group"
+          >
+            <div className="h-44 rounded-xl overflow-hidden border border-slate-200 shadow-xs group-hover:border-slate-300 transition bg-slate-100">
+              <img
+                src="/smriti.png"
+                alt="Smriti Digital Tribute Wall"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="mt-3.5">
+              <div className="text-xs text-slate-400 font-mono">Jun 20, 2026</div>
+              <div className="text-sm font-bold text-slate-900 group-hover:text-[#ea580c] transition mt-1 leading-snug">
+                Smriti Digital Tribute Sanctuary for Teachers Released
+              </div>
+            </div>
+          </a>
+
+          {/* Card 3: PDF Intelligence & OCR Tool */}
+          <Link
+            href="/pdf-intelligence-tool"
+            className="flex flex-col group"
+          >
+            <div className="h-44 rounded-xl overflow-hidden border border-slate-200 shadow-xs group-hover:border-slate-300 transition bg-slate-900">
+              <img
+                src="/pdf-intelligence.png"
+                alt="PDF Intelligence Tool"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // If image not yet uploaded, show neutral dark background gracefully
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+            <div className="mt-3.5">
+              <div className="text-xs text-slate-400 font-mono">Aug 2026</div>
+              <div className="text-sm font-bold text-slate-900 group-hover:text-[#ea580c] transition mt-1 leading-snug">
+                AI PDF Intelligence & Document OCR Tool Launched for Power Users
+              </div>
+            </div>
+          </Link>
+
+        </div>
+      </section>
     </div>
   );
 }

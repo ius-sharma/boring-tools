@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from "./components/AuthProvider";
+import AuthModal from "./components/AuthModal";
+import UpgradeModal from "./components/UpgradeModal";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,13 +40,17 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <NavBar />
-        <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-end gap-3 p-3 sm:p-4 pointer-events-none">
-          <HomeButton />
-        </div>
-        <Analytics />
-        {children}
-        <ToolContentFooter />
+        <AuthProvider>
+          <NavBar />
+          <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-end gap-3 p-3 sm:p-4 pointer-events-none">
+            <HomeButton />
+          </div>
+          <Analytics />
+          {children}
+          <ToolContentFooter />
+          <AuthModal />
+          <UpgradeModal />
+        </AuthProvider>
       </body>
     </html>
   );

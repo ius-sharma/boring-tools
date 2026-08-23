@@ -242,12 +242,10 @@ export default function ResignationLetterGenerator() {
         setHistory(updated);
         localStorage.setItem("resignation_history", JSON.stringify(updated));
       } else {
-        showToast("error", data.error || "Generation failed. Using local compiler.");
-        handleGenerateTemplate();
+        showToast("error", data.message || data.error || "AI Generation failed.");
       }
     } catch {
-      showToast("error", "Network error. Compiling local template.");
-      handleGenerateTemplate();
+      showToast("error", "Network request failed.");
     } finally {
       setLoading(false);
     }

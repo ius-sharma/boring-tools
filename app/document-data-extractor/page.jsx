@@ -463,21 +463,19 @@ export default function DocumentDataExtractor() {
 
       if (combinedText && combinedText.length >= 10) {
         setProgress({ percent: 90, message: "Enriching extracted data with AI..." });
-        try {
-          const aiRes = await fetch("/api/document-data-extractor", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ combinedText }),
-          });
+        const aiRes = await fetch("/api/document-data-extractor", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ combinedText }),
+        });
 
-          if (aiRes.ok) {
-            const aiJson = await aiRes.json();
-            if (aiJson.success && aiJson.data) {
-              finalAnalysis = enrichAnalysisWithAiData(finalAnalysis, aiJson.data);
-            }
-          }
-        } catch {
-          // Fall back gracefully to local analysis
+        const aiJson = await aiRes.json();
+        if (!aiRes.ok) {
+          throw new Error(aiJson?.message || aiJson?.error || "AI extraction failed.");
+        }
+
+        if (aiJson.success && aiJson.data) {
+          finalAnalysis = enrichAnalysisWithAiData(finalAnalysis, aiJson.data);
         }
       }
 
