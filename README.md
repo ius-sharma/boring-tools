@@ -17,8 +17,8 @@
 **🌐 Try Now:** [boringtoolsai.com](https://www.boringtoolsai.com/)
 
 <video width="100%" controls>
-  <source src="./public/hero-bg.mp4" type="video/mp4">
-</video> -->
+  <source src="public/hero-bg.mp4" type="video/mp4">
+</video>
 
 ---
 
