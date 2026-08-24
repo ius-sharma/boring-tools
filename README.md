@@ -16,9 +16,7 @@
 
 **🌐 Try Now:** [boringtoolsai.com](https://www.boringtoolsai.com/)
 
-<video width="100%" controls>
-  <source src="public/readme-video.mp4" type="video/mp4">
-</video>
+[![BoringTools Demo](https://img.youtube.com/vi/xoq-7yGdHl4/0.jpg)](https://youtu.be/xoq-7yGdHl4)
 
 ---
 
