@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Innertube } from "youtubei.js";
 import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 export const runtime = "nodejs";
@@ -7,24 +6,6 @@ export const maxDuration = 120;
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
-
-let innertube = null;
-
-async function getInnertubeClient() {
-  if (!innertube) {
-    try {
-      innertube = await Innertube.create({
-        lang: "en",
-        location: "US",
-        retrieve_player: false,
-      });
-    } catch (e) {
-      console.error("Failed to initialize Innertube client:", e);
-      innertube = null;
-    }
-  }
-  return innertube;
-}
 
 function extractPlaylistId(input) {
   if (!input) return null;
@@ -39,7 +20,7 @@ function extractPlaylistId(input) {
   if (pathMatch) return pathMatch[1];
 
   // If user pasted raw playlist ID (starts with PL, UU, LL, FL, RD, OLAK5uy, etc.)
-  if (/^[a-zA-Z0-9_-]{10,50}$/.test(cleanInput)) {
+  if (/^[a-zA-Z0-9_-]{10,60}$/.test(cleanInput)) {
     return cleanInput;
   }
 
@@ -60,6 +41,17 @@ function parseDurationTextToSeconds(text) {
     return parts[0];
   }
   return 0;
+}
+
+function parseISO8601Duration(duration) {
+  if (!duration) return 0;
+  const match = duration.match(/P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+  const days = parseInt(match[1] || 0, 10);
+  const hours = parseInt(match[2] || 0, 10);
+  const minutes = parseInt(match[3] || 0, 10);
+  const seconds = parseInt(match[4] || 0, 10);
+  return days * 86400 + hours * 3600 + minutes * 60 + seconds;
 }
 
 function formatSecondsToHMS(totalSeconds) {
@@ -106,7 +98,88 @@ function extractLockupDuration(lockup) {
   return "0:00";
 }
 
-async function fetchPlaylistDataScrape(playlistId) {
+function extractVideosAndTokens(node, videoList, seenIds, playlistId) {
+  let nextToken = null;
+
+  function traverse(obj) {
+    if (!obj || typeof obj !== "object") return;
+
+    if (obj.playlistVideoRenderer) {
+      const vr = obj.playlistVideoRenderer;
+      if (vr.videoId && !seenIds.has(vr.videoId)) {
+        seenIds.add(vr.videoId);
+        const vId = vr.videoId;
+        const vTitle = vr.title?.runs?.[0]?.text || vr.title?.simpleText || `Video #${videoList.length + 1}`;
+        const durText = vr.lengthText?.simpleText || vr.lengthText?.runs?.[0]?.text || "0:00";
+        const durSecs = parseInt(vr.lengthSeconds, 10) || parseDurationTextToSeconds(durText);
+        const thumb = vr.thumbnail?.thumbnails?.[0]?.url || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+
+        videoList.push({
+          index: videoList.length + 1,
+          videoId: vId,
+          title: vTitle,
+          durationText: durText,
+          durationSeconds: durSecs,
+          thumbnail: thumb,
+          url: `https://www.youtube.com/watch?v=${vId}&list=${playlistId}`,
+        });
+      }
+      return;
+    }
+
+    if (obj.lockupViewModel) {
+      const lm = obj.lockupViewModel;
+      const vId = lm.contentId || lm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
+      if (vId && !seenIds.has(vId)) {
+        seenIds.add(vId);
+        const vTitle = lm.metadata?.lockupMetadataViewModel?.title?.content || `Video #${videoList.length + 1}`;
+        const durText = extractLockupDuration(lm);
+        const durSecs = parseDurationTextToSeconds(durText);
+        const thumb = lm.contentImage?.thumbnailViewModel?.image?.sources?.[0]?.url || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+
+        videoList.push({
+          index: videoList.length + 1,
+          videoId: vId,
+          title: vTitle,
+          durationText: durText,
+          durationSeconds: durSecs,
+          thumbnail: thumb,
+          url: `https://www.youtube.com/watch?v=${vId}&list=${playlistId}`,
+        });
+      }
+      return;
+    }
+
+    if (obj.continuationItemRenderer) {
+      const token = obj.continuationItemRenderer.continuationEndpoint?.continuationCommand?.token;
+      if (token) nextToken = token;
+      return;
+    }
+
+    if (obj.continuationItemViewModel) {
+      const token =
+        obj.continuationItemViewModel.continuationCommand?.continuationCommand?.token ||
+        obj.continuationItemViewModel.continuationCommand?.innertubeCommand?.continuationCommand?.token;
+      if (token) nextToken = token;
+      return;
+    }
+
+    for (const key of Object.keys(obj)) {
+      if (Array.isArray(obj[key])) {
+        for (const item of obj[key]) {
+          traverse(item);
+        }
+      } else if (typeof obj[key] === "object") {
+        traverse(obj[key]);
+      }
+    }
+  }
+
+  traverse(node);
+  return nextToken;
+}
+
+async function fetchPlaylistViaScrape(playlistId) {
   try {
     const url = `https://www.youtube.com/playlist?list=${playlistId}`;
     const res = await fetch(url, {
@@ -120,12 +193,18 @@ async function fetchPlaylistDataScrape(playlistId) {
     if (!res.ok) return null;
     const html = await res.text();
 
+    if (
+      html.includes("The playlist does not exist") ||
+      html.includes("This playlist isn't available anymore")
+    ) {
+      return null;
+    }
+
     const dataMatch = html.match(/var\s+ytInitialData\s*=\s*(\{.+?\});\s*(?:var|<\/script)/s);
     if (!dataMatch) return null;
 
     const ytData = JSON.parse(dataMatch[1]);
-    
-    // Extract Title
+
     let title = "YouTube Playlist";
     let channelName = "Creator";
     let thumbnailUrl = null;
@@ -140,13 +219,12 @@ async function fetchPlaylistDataScrape(playlistId) {
 
     const ogTitleMatch = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/);
     if (ogTitleMatch) {
-      const ogTitle = ogTitleMatch[1].replace(/ - YouTube$/, "");
+      const ogTitle = ogTitleMatch[1].replace(/ - YouTube$/, "").trim();
       if (ogTitle && (title === "YouTube Playlist" || !title)) {
         title = ogTitle;
       }
     }
 
-    // Extract Channel Name
     if (ytData?.sidebar?.playlistSidebarRenderer?.items) {
       for (const item of ytData.sidebar.playlistSidebarRenderer.items) {
         const owner = item?.playlistSidebarSecondaryInfoRenderer?.videoOwner?.videoOwnerRenderer;
@@ -157,146 +235,164 @@ async function fetchPlaylistDataScrape(playlistId) {
       }
     }
 
-    // Extract Videos across all rendering structures (lockupViewModel & playlistVideoRenderer)
-    const videoItems = [];
-    const contents = ytData?.contents?.twoColumnBrowseResultsRenderer?.tabs?.[0]?.tabRenderer?.content?.sectionListRenderer?.contents?.[0]?.itemSectionRenderer?.contents;
+    const videoList = [];
+    const seenIds = new Set();
 
-    if (Array.isArray(contents)) {
-      contents.forEach((item) => {
-        // Format 1: playlistVideoRenderer
-        if (item.playlistVideoRenderer) {
-          const vr = item.playlistVideoRenderer;
-          if (!vr.videoId) return;
+    let nextContinuationToken = extractVideosAndTokens(ytData, videoList, seenIds, playlistId);
 
-          const vId = vr.videoId;
-          const vTitle = vr.title?.runs?.[0]?.text || vr.title?.simpleText || `Video #${videoItems.length + 1}`;
-          const durText = vr.lengthText?.simpleText || vr.lengthText?.runs?.[0]?.text || "0:00";
-          const durSecs = parseInt(vr.lengthSeconds) || parseDurationTextToSeconds(durText);
-          const thumb = vr.thumbnail?.thumbnails?.[0]?.url || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+    const apiKeyMatch = html.match(/"INNERTUBE_API_KEY":"([^"]+)"/);
+    const innertubeKey = apiKeyMatch ? apiKeyMatch[1] : "";
+    const clientVersionMatch = html.match(/"INNERTUBE_CLIENT_VERSION":"([^"]+)"/);
+    const clientVersion = clientVersionMatch ? clientVersionMatch[1] : "2.20260820.08.00";
 
-          videoItems.push({
-            index: videoItems.length + 1,
-            videoId: vId,
-            title: vTitle,
-            durationText: durText,
-            durationSeconds: durSecs,
-            thumbnail: thumb,
-            url: `https://www.youtube.com/watch?v=${vId}&list=${playlistId}`,
-          });
+    // Fetch continuation pages (up to 10 pages / ~1000 videos max)
+    let pages = 0;
+    while (nextContinuationToken && pages < 10 && innertubeKey) {
+      pages++;
+      const prevCount = videoList.length;
+      const currentToken = nextContinuationToken;
+      nextContinuationToken = null;
+
+      try {
+        const browseRes = await fetch(`https://www.youtube.com/youtubei/v1/browse?key=${innertubeKey}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+          },
+          body: JSON.stringify({
+            context: {
+              client: {
+                clientName: "WEB",
+                clientVersion: clientVersion,
+                hl: "en",
+                gl: "US",
+              },
+            },
+            continuation: currentToken,
+          }),
+        });
+
+        if (!browseRes.ok) break;
+        const browseData = await browseRes.json();
+        const token = extractVideosAndTokens(browseData, videoList, seenIds, playlistId);
+        if (token) nextContinuationToken = token;
+
+        if (videoList.length === prevCount) {
+          break;
         }
-        // Format 2: lockupViewModel (Modern YouTube layout)
-        else if (item.lockupViewModel) {
-          const lm = item.lockupViewModel;
-          const vId = lm.contentId || lm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
-          if (!vId) return;
-
-          const vTitle = lm.metadata?.lockupMetadataViewModel?.title?.content || `Video #${videoItems.length + 1}`;
-          const durText = extractLockupDuration(lm);
-          const durSecs = parseDurationTextToSeconds(durText);
-          const thumb = lm.contentImage?.thumbnailViewModel?.image?.sources?.[0]?.url || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
-
-          videoItems.push({
-            index: videoItems.length + 1,
-            videoId: vId,
-            title: vTitle,
-            durationText: durText,
-            durationSeconds: durSecs,
-            thumbnail: thumb,
-            url: `https://www.youtube.com/watch?v=${vId}&list=${playlistId}`,
-          });
-        }
-      });
-    }
-
-    // Recursive search fallback if main items array didn't match
-    if (videoItems.length === 0) {
-      const seenIds = new Set();
-      function deepSearch(obj) {
-        if (!obj || typeof obj !== "object") return;
-        if (obj.videoId && typeof obj.videoId === "string" && !seenIds.has(obj.videoId)) {
-          seenIds.add(obj.videoId);
-          const vId = obj.videoId;
-          const vTitle = obj.title?.runs?.[0]?.text || obj.title?.simpleText || obj.title || `Video #${videoItems.length + 1}`;
-          const durText = obj.lengthText?.simpleText || obj.lengthText?.runs?.[0]?.text || "0:00";
-          const durSecs = parseInt(obj.lengthSeconds) || parseDurationTextToSeconds(durText);
-          
-          videoItems.push({
-            index: videoItems.length + 1,
-            videoId: vId,
-            title: typeof vTitle === "string" ? vTitle : `Video #${videoItems.length + 1}`,
-            durationText: durText,
-            durationSeconds: durSecs,
-            thumbnail: `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`,
-            url: `https://www.youtube.com/watch?v=${vId}&list=${playlistId}`,
-          });
-          return;
-        }
-        for (const key of Object.keys(obj)) {
-          if (Array.isArray(obj[key])) {
-            obj[key].forEach((child) => deepSearch(child));
-          } else if (typeof obj[key] === "object") {
-            deepSearch(obj[key]);
-          }
-        }
+      } catch {
+        break;
       }
-      deepSearch(ytData);
     }
 
-    if (videoItems.length > 0) {
+    if (videoList.length > 0) {
       return {
         title,
         channelName,
-        thumbnailUrl: thumbnailUrl || videoItems[0]?.thumbnail,
-        videos: videoItems,
+        thumbnailUrl: thumbnailUrl || videoList[0]?.thumbnail,
+        videos: videoList,
       };
     }
+
     return null;
   } catch (err) {
-    console.error("Scrape playlist error:", err);
+    console.error("fetchPlaylistViaScrape error:", err);
     return null;
   }
 }
 
-async function fetchPlaylistDataInnertube(playlistId) {
+async function fetchPlaylistViaOfficialAPI(playlistId, apiKey) {
   try {
-    const yt = await getInnertubeClient();
-    if (!yt) return null;
+    const plRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${apiKey}`
+    );
+    if (!plRes.ok) throw new Error(`Playlist meta fetch failed: ${plRes.status}`);
+    const plData = await plRes.json();
+    const plItem = plData.items?.[0];
+    if (!plItem) return null;
 
-    const playlist = await yt.getPlaylist(playlistId);
-    if (!playlist || !playlist.info) return null;
+    const title = plItem.snippet?.title || "YouTube Playlist";
+    const channelName = plItem.snippet?.channelTitle || "Creator";
+    const thumbnailUrl =
+      plItem.snippet?.thumbnails?.high?.url ||
+      plItem.snippet?.thumbnails?.medium?.url ||
+      plItem.snippet?.thumbnails?.default?.url;
 
-    const title = playlist.info.title || "YouTube Playlist";
-    const channelName = playlist.info.author?.name || "Creator";
-    const thumbnailUrl = playlist.info.thumbnails?.[0]?.url;
+    const rawVideos = [];
+    let pageToken = "";
 
-    const videos = [];
-    if (playlist.videos && Array.isArray(playlist.videos)) {
-      playlist.videos.forEach((v, index) => {
-        if (!v.id) return;
-        const durationSecs = v.duration?.seconds || parseDurationTextToSeconds(v.duration?.text);
-        videos.push({
-          index: index + 1,
-          videoId: v.id,
-          title: v.title?.text || `Video #${index + 1}`,
-          durationText: v.duration?.text || formatSecondsToHMS(durationSecs),
-          durationSeconds: durationSecs,
-          thumbnail: v.thumbnails?.[0]?.url || `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`,
-          url: `https://www.youtube.com/watch?v=${v.id}&list=${playlistId}`,
+    do {
+      const itemsUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=50&playlistId=${playlistId}&key=${apiKey}${
+        pageToken ? `&pageToken=${pageToken}` : ""
+      }`;
+      const itemsRes = await fetch(itemsUrl);
+      if (!itemsRes.ok) break;
+      const itemsData = await itemsRes.json();
+      const items = itemsData.items || [];
+
+      for (const it of items) {
+        const videoId = it.contentDetails?.videoId || it.snippet?.resourceId?.videoId;
+        if (!videoId) continue;
+        rawVideos.push({
+          videoId,
+          title: it.snippet?.title || `Video #${rawVideos.length + 1}`,
+          thumbnail:
+            it.snippet?.thumbnails?.high?.url ||
+            it.snippet?.thumbnails?.medium?.url ||
+            `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          url: `https://www.youtube.com/watch?v=${videoId}&list=${playlistId}`,
         });
-      });
+      }
+
+      pageToken = itemsData.nextPageToken;
+    } while (pageToken && rawVideos.length < 500);
+
+    if (rawVideos.length === 0) return null;
+
+    const videoIds = rawVideos.map((v) => v.videoId);
+    const durationMap = new Map();
+
+    for (let i = 0; i < videoIds.length; i += 50) {
+      const chunk = videoIds.slice(i, i + 50);
+      const vRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${chunk.join(",")}&key=${apiKey}`
+      );
+      if (vRes.ok) {
+        const vData = await vRes.json();
+        for (const v of vData.items || []) {
+          const isoDur = v.contentDetails?.duration;
+          const secs = parseISO8601Duration(isoDur);
+          durationMap.set(v.id, {
+            durationSeconds: secs,
+            durationText: formatSecondsToHMS(secs),
+          });
+        }
+      }
     }
 
-    if (videos.length > 0) {
+    const videos = rawVideos.map((v, index) => {
+      const durInfo = durationMap.get(v.videoId) || { durationSeconds: 0, durationText: "0:00" };
       return {
-        title,
-        channelName,
-        thumbnailUrl: thumbnailUrl || videos[0]?.thumbnail,
-        videos,
+        index: index + 1,
+        videoId: v.videoId,
+        title: v.title,
+        durationText: durInfo.durationText,
+        durationSeconds: durInfo.durationSeconds,
+        thumbnail: v.thumbnail,
+        url: v.url,
       };
-    }
-    return null;
+    });
+
+    return {
+      title,
+      channelName,
+      thumbnailUrl: thumbnailUrl || videos[0]?.thumbnail,
+      videos,
+    };
   } catch (err) {
-    console.error("Innertube playlist fetch error:", err);
+    console.error("fetchPlaylistViaOfficialAPI error:", err);
     return null;
   }
 }
@@ -497,21 +593,21 @@ async function handlePost(req) {
     const apiKey = process.env.YOUTUBE_API_KEY;
     let playlistData = null;
 
-    // Strategy 1: YouTube Data API v3 (Official & Fast)
+    // Strategy 1: YouTube Data API v3 (Official & Fast if key configured)
     if (apiKey) {
       try {
         playlistData = await fetchPlaylistViaOfficialAPI(playlistId, apiKey);
       } catch (err) {
-        console.warn("Official API fetch failed, falling back to Innertube:", err.message);
+        console.warn("Official API fetch failed, falling back to scraper:", err.message);
       }
     }
 
-    // Strategy 2: Innertube scraper (Robust fallback without API keys)
-    if (!playlistData || playlistData.videos.length === 0) {
+    // Strategy 2: Scraper engine (Robust, supports modern lockup layout & browse continuations)
+    if (!playlistData || !playlistData.videos || playlistData.videos.length === 0) {
       try {
-        playlistData = await fetchPlaylistViaInnertube(playlistId);
+        playlistData = await fetchPlaylistViaScrape(playlistId);
       } catch (err) {
-        console.error("Innertube fetch also failed:", err.message);
+        console.error("Scraper fetch failed:", err.message);
       }
     }
 

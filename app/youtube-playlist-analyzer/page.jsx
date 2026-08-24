@@ -17,8 +17,8 @@ const SAMPLE_PLAYLISTS = [
     url: "https://www.youtube.com/playlist?list=PL9gnSGHSqcnr_DxHsP7AW9ftq0AtAyYqJ",
   },
   {
-    name: "Complete Web Dev - freeCodeCamp",
-    url: "https://www.youtube.com/playlist?list=PL4cUxeGkcC9gcuWYETsmEih0ud7HlR06z",
+    name: "JavaScript - Traversy Media",
+    url: "https://www.youtube.com/playlist?list=PLillGF-RfqbbnEGy3ROiLWk7JMCuSyQtX",
   },
 ];
 
