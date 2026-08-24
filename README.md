@@ -357,6 +357,3 @@ Built with ❤️, ☕, and an unhealthy obsession with browser APIs.
   <strong>Build → Fail → Learn → Improve → Repeat.</strong><br>
   <em>Thanks for stopping by. (BTW, Cristiano is the GOAT 🐐)</em>
 </p>
-```
-
----
