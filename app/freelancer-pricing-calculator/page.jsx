@@ -14,6 +14,79 @@ const CURRENCIES = [
   { value: "JPY", label: "Japanese Yen (¥)", symbol: "¥" },
 ];
 
+const CURRENCY_PRESETS = {
+  INR: {
+    desiredIncome: "100000",
+    softwareCost: "4000",
+    equipmentCost: "3000",
+    internetCost: "1500",
+    officeCost: "5000",
+    otherExpenses: "2500",
+    clientBudget: "40000",
+    pdfPrefix: "INR ",
+  },
+  USD: {
+    desiredIncome: "5000",
+    softwareCost: "150",
+    equipmentCost: "100",
+    internetCost: "70",
+    officeCost: "250",
+    otherExpenses: "100",
+    clientBudget: "2000",
+    pdfPrefix: "$",
+  },
+  EUR: {
+    desiredIncome: "4500",
+    softwareCost: "140",
+    equipmentCost: "90",
+    internetCost: "65",
+    officeCost: "230",
+    otherExpenses: "95",
+    clientBudget: "1800",
+    pdfPrefix: "EUR ",
+  },
+  GBP: {
+    desiredIncome: "4000",
+    softwareCost: "120",
+    equipmentCost: "80",
+    internetCost: "60",
+    officeCost: "200",
+    otherExpenses: "80",
+    clientBudget: "1600",
+    pdfPrefix: "GBP ",
+  },
+  CAD: {
+    desiredIncome: "6000",
+    softwareCost: "180",
+    equipmentCost: "120",
+    internetCost: "85",
+    officeCost: "300",
+    otherExpenses: "120",
+    clientBudget: "2400",
+    pdfPrefix: "CAD $",
+  },
+  AUD: {
+    desiredIncome: "6500",
+    softwareCost: "190",
+    equipmentCost: "130",
+    internetCost: "90",
+    officeCost: "320",
+    otherExpenses: "130",
+    clientBudget: "2600",
+    pdfPrefix: "AUD $",
+  },
+  JPY: {
+    desiredIncome: "550000",
+    softwareCost: "20000",
+    equipmentCost: "15000",
+    internetCost: "10000",
+    officeCost: "35000",
+    otherExpenses: "15000",
+    clientBudget: "200000",
+    pdfPrefix: "JPY ",
+  },
+};
+
 const INDUSTRIES = [
   { id: "Development", label: "Software Development", multiplier: 1.15 },
   { id: "Design", label: "UI/UX & Product Design", multiplier: 1.10 },
@@ -45,10 +118,75 @@ const EXPERIENCE_LEVELS = [
   { id: "expert", label: "Expert / Thought Leader (8+ yrs)", desc: "Top tier authority", multiplier: 1.75 },
 ];
 
+const DEFAULT_PROFILES = {
+  "Full-Stack Web Dev": {
+    desiredIncome: "120000",
+    softwareCost: "5000",
+    equipmentCost: "4000",
+    internetCost: "2000",
+    officeCost: "6000",
+    otherExpenses: "3000",
+    taxPercent: "20",
+    savingsPercent: "15",
+    profitPercent: "15",
+    workingDaysMonth: "20",
+    hoursPerDay: "8",
+    billablePercent: "65",
+    vacationDaysYear: "20",
+    sickDaysYear: "10",
+    experience: "senior",
+    industry: "Development",
+    currency: "INR",
+    projectName: "Full-Stack Web Application",
+    clientName: "Acme Enterprises",
+    projectHours: "50",
+    revisionRounds: "2",
+    urgency: "normal",
+    complexity: "complex",
+    clientBudget: "80000",
+    discountPercent: 0,
+    scenario4Days: false,
+    scenarioIncrease20: false,
+    scenarioReduceBillable: false,
+    scenarioHireAssistant: false,
+  },
+  "UI/UX Designer": {
+    desiredIncome: "90000",
+    softwareCost: "3500",
+    equipmentCost: "2500",
+    internetCost: "1500",
+    officeCost: "4000",
+    otherExpenses: "2000",
+    taxPercent: "18",
+    savingsPercent: "10",
+    profitPercent: "15",
+    workingDaysMonth: "20",
+    hoursPerDay: "7",
+    billablePercent: "70",
+    vacationDaysYear: "20",
+    sickDaysYear: "8",
+    experience: "intermediate",
+    industry: "Design",
+    currency: "INR",
+    projectName: "Mobile App Design System",
+    clientName: "Nova Digital",
+    projectHours: "35",
+    revisionRounds: "3",
+    urgency: "normal",
+    complexity: "medium",
+    clientBudget: "45000",
+    discountPercent: 0,
+    scenario4Days: false,
+    scenarioIncrease20: false,
+    scenarioReduceBillable: false,
+    scenarioHireAssistant: false,
+  },
+};
+
 function toFloat(val, fallback = 0) {
   if (val === "" || val === null || val === undefined) return fallback;
   const num = parseFloat(val);
-  return isNaN(num) ? fallback : num;
+  return isNaN(num) ? fallback : Math.max(0, num);
 }
 
 function formatVal(val, currSymbol = "₹") {
@@ -107,7 +245,7 @@ export default function FreelancerPricingCalculator() {
 
   // Profile Storage State
   const [profileName, setProfileName] = useState("");
-  const [savedProfiles, setSavedProfiles] = useState({});
+  const [savedProfiles, setSavedProfiles] = useState(DEFAULT_PROFILES);
   const [activeProfileKey, setActiveProfileKey] = useState("Default");
   const [showGuide, setShowGuide] = useState(false);
 
@@ -129,20 +267,47 @@ export default function FreelancerPricingCalculator() {
       const saved = localStorage.getItem("freelancer-pricing-calculator-profiles");
       if (saved) {
         const parsed = JSON.parse(saved);
-        setSavedProfiles(parsed);
+        setSavedProfiles({ ...DEFAULT_PROFILES, ...parsed });
       }
     } catch (e) {
-      console.error(e);
+      console.error("Failed to load saved profiles from localStorage:", e);
     }
   }, []);
+
+  // Handle currency switching with sensible default conversion
+  const handleCurrencyChange = (newCurrency) => {
+    const oldCurrency = currency;
+    setCurrency(newCurrency);
+
+    const oldPreset = CURRENCY_PRESETS[oldCurrency];
+    const newPreset = CURRENCY_PRESETS[newCurrency];
+
+    if (oldPreset && newPreset) {
+      // If current inputs match the previous default preset, update smoothly to new preset
+      if (desiredIncome === oldPreset.desiredIncome) {
+        setDesiredIncome(newPreset.desiredIncome);
+        setSoftwareCost(newPreset.softwareCost);
+        setEquipmentCost(newPreset.equipmentCost);
+        setInternetCost(newPreset.internetCost);
+        setOfficeCost(newPreset.officeCost);
+        setOtherExpenses(newPreset.otherExpenses);
+        setClientBudget(newPreset.clientBudget);
+        showToast(`Switched currency to ${newCurrency}. Updated baseline defaults.`);
+      }
+    }
+  };
 
   // Save current profile to local storage
   const handleSaveProfile = () => {
     const nameToSave = profileName.trim() || `Profile ${Object.keys(savedProfiles).length + 1}`;
     const profileData = {
       desiredIncome, softwareCost, equipmentCost, internetCost, officeCost, otherExpenses,
-      taxPercent, savingsPercent, profitPercent, workingDaysMonth, hoursPerDay,
-      billablePercent, vacationDaysYear, sickDaysYear, experience, industry, currency
+      taxPercent, savingsPercent, profitPercent,
+      workingDaysMonth, hoursPerDay, billablePercent, vacationDaysYear, sickDaysYear,
+      experience, industry, currency,
+      projectName, clientName, projectHours, revisionRounds, urgency, complexity,
+      clientBudget, discountPercent,
+      scenario4Days, scenarioIncrease20, scenarioReduceBillable, scenarioHireAssistant
     };
     const updated = { ...savedProfiles, [nameToSave]: profileData };
     setSavedProfiles(updated);
@@ -159,23 +324,36 @@ export default function FreelancerPricingCalculator() {
   const handleLoadProfile = (key) => {
     const prof = savedProfiles[key];
     if (!prof) return;
-    if (prof.desiredIncome !== undefined) setDesiredIncome(prof.desiredIncome);
-    if (prof.softwareCost !== undefined) setSoftwareCost(prof.softwareCost);
-    if (prof.equipmentCost !== undefined) setEquipmentCost(prof.equipmentCost);
-    if (prof.internetCost !== undefined) setInternetCost(prof.internetCost);
-    if (prof.officeCost !== undefined) setOfficeCost(prof.officeCost);
-    if (prof.otherExpenses !== undefined) setOtherExpenses(prof.otherExpenses);
-    if (prof.taxPercent !== undefined) setTaxPercent(prof.taxPercent);
-    if (prof.savingsPercent !== undefined) setSavingsPercent(prof.savingsPercent);
-    if (prof.profitPercent !== undefined) setProfitPercent(prof.profitPercent);
-    if (prof.workingDaysMonth !== undefined) setWorkingDaysMonth(prof.workingDaysMonth);
-    if (prof.hoursPerDay !== undefined) setHoursPerDay(prof.hoursPerDay);
-    if (prof.billablePercent !== undefined) setBillablePercent(prof.billablePercent);
-    if (prof.vacationDaysYear !== undefined) setVacationDaysYear(prof.vacationDaysYear);
-    if (prof.sickDaysYear !== undefined) setSickDaysYear(prof.sickDaysYear);
+    if (prof.desiredIncome !== undefined) setDesiredIncome(String(prof.desiredIncome));
+    if (prof.softwareCost !== undefined) setSoftwareCost(String(prof.softwareCost));
+    if (prof.equipmentCost !== undefined) setEquipmentCost(String(prof.equipmentCost));
+    if (prof.internetCost !== undefined) setInternetCost(String(prof.internetCost));
+    if (prof.officeCost !== undefined) setOfficeCost(String(prof.officeCost));
+    if (prof.otherExpenses !== undefined) setOtherExpenses(String(prof.otherExpenses));
+    if (prof.taxPercent !== undefined) setTaxPercent(String(prof.taxPercent));
+    if (prof.savingsPercent !== undefined) setSavingsPercent(String(prof.savingsPercent));
+    if (prof.profitPercent !== undefined) setProfitPercent(String(prof.profitPercent));
+    if (prof.workingDaysMonth !== undefined) setWorkingDaysMonth(String(prof.workingDaysMonth));
+    if (prof.hoursPerDay !== undefined) setHoursPerDay(String(prof.hoursPerDay));
+    if (prof.billablePercent !== undefined) setBillablePercent(String(prof.billablePercent));
+    if (prof.vacationDaysYear !== undefined) setVacationDaysYear(String(prof.vacationDaysYear));
+    if (prof.sickDaysYear !== undefined) setSickDaysYear(String(prof.sickDaysYear));
     if (prof.experience !== undefined) setExperience(prof.experience);
     if (prof.industry !== undefined) setIndustry(prof.industry);
     if (prof.currency !== undefined) setCurrency(prof.currency);
+    if (prof.projectName !== undefined) setProjectName(prof.projectName);
+    if (prof.clientName !== undefined) setClientName(prof.clientName);
+    if (prof.projectHours !== undefined) setProjectHours(String(prof.projectHours));
+    if (prof.revisionRounds !== undefined) setRevisionRounds(String(prof.revisionRounds));
+    if (prof.urgency !== undefined) setUrgency(prof.urgency);
+    if (prof.complexity !== undefined) setComplexity(prof.complexity);
+    if (prof.clientBudget !== undefined) setClientBudget(String(prof.clientBudget));
+    if (prof.discountPercent !== undefined) setDiscountPercent(Number(prof.discountPercent) || 0);
+    if (prof.scenario4Days !== undefined) setScenario4Days(Boolean(prof.scenario4Days));
+    if (prof.scenarioIncrease20 !== undefined) setScenarioIncrease20(Boolean(prof.scenarioIncrease20));
+    if (prof.scenarioReduceBillable !== undefined) setScenarioReduceBillable(Boolean(prof.scenarioReduceBillable));
+    if (prof.scenarioHireAssistant !== undefined) setScenarioHireAssistant(Boolean(prof.scenarioHireAssistant));
+
     setActiveProfileKey(key);
     showToast(`Loaded profile "${key}"`);
   };
@@ -184,6 +362,9 @@ export default function FreelancerPricingCalculator() {
     const updated = { ...savedProfiles };
     delete updated[key];
     setSavedProfiles(updated);
+    if (activeProfileKey === key) {
+      setActiveProfileKey("Default");
+    }
     try {
       localStorage.setItem("freelancer-pricing-calculator-profiles", JSON.stringify(updated));
       showToast(`Profile deleted.`);
@@ -194,51 +375,55 @@ export default function FreelancerPricingCalculator() {
 
   // --- CORE CALCULATION ENGINE ---
   const calculations = useMemo(() => {
-    // Basic inputs
+    // Basic inputs with safe sanitization
     let incomeGoal = toFloat(desiredIncome, 100000);
     let software = toFloat(softwareCost, 0);
     let equipment = toFloat(equipmentCost, 0);
     let internet = toFloat(internetCost, 0);
     let office = toFloat(officeCost, 0);
     let other = toFloat(otherExpenses, 0);
-    let taxPct = toFloat(taxPercent, 20);
-    let savPct = toFloat(savingsPercent, 10);
-    let profPct = toFloat(profitPercent, 15);
 
-    let workDaysM = toFloat(workingDaysMonth, 20);
-    let hrsDay = toFloat(hoursPerDay, 8);
-    let billPct = toFloat(billablePercent, 60);
-    let vacDaysY = toFloat(vacationDaysYear, 20);
-    let sickDaysY = toFloat(sickDaysYear, 10);
+    // Percentage sanitization (clamped to realistic limits)
+    let taxPct = Math.min(80, Math.max(0, toFloat(taxPercent, 20)));
+    let savPct = Math.min(50, Math.max(0, toFloat(savingsPercent, 10)));
+    let profPct = Math.min(60, Math.max(0, toFloat(profitPercent, 15)));
+
+    let workDaysM = Math.max(1, toFloat(workingDaysMonth, 20));
+    let hrsDay = Math.max(1, Math.min(24, toFloat(hoursPerDay, 8)));
+    let billPct = Math.max(10, Math.min(100, toFloat(billablePercent, 60)));
+    let vacDaysY = Math.max(0, toFloat(vacationDaysYear, 20));
+    let sickDaysY = Math.max(0, toFloat(sickDaysYear, 10));
 
     // Scenario Adjustments
     if (scenario4Days) {
       workDaysM = workDaysM * 0.8; // 4 days instead of 5
     }
     if (scenarioReduceBillable) {
-      billPct = Math.max(30, billPct - 15); // reduce billable hours
+      billPct = Math.max(20, billPct - 15); // reduce billable hours
     }
     if (scenarioHireAssistant) {
-      software += 12000; // assistant / overhead costs
+      const assistantOverhead = currency === "INR" ? 12000 : (currency === "JPY" ? 40000 : 350);
+      software += assistantOverhead;
       billPct = Math.min(90, billPct + 15); // increased billable efficiency
     }
 
     const totalBusinessCosts = software + equipment + internet + office + other;
     const baseNetRequired = incomeGoal + totalBusinessCosts;
 
-    // Allocation logic: Total Gross Revenue required to achieve Net Goal after Taxes, Savings, Profit
+    // Financial Allocation Accounting:
+    // Total Gross Revenue covers: Business Costs + Net Income Goal + Monthly Taxes + Monthly Savings + Monthly Profit
     // Gross * (1 - (Tax% + Savings% + Profit%)/100) = Base Net Required
-    const combinedDeductionRate = Math.min(0.70, (taxPct + savPct + profPct) / 100);
-    const totalRequiredGrossMonthly = combinedDeductionRate < 1 
+    const combinedDeductionRate = Math.min(0.80, (taxPct + savPct + profPct) / 100);
+    const totalRequiredGrossMonthly = combinedDeductionRate < 1
       ? baseNetRequired / (1 - combinedDeductionRate)
-      : baseNetRequired * 1.5;
+      : baseNetRequired * 2;
 
     const monthlyTaxes = totalRequiredGrossMonthly * (taxPct / 100);
     const monthlySavings = totalRequiredGrossMonthly * (savPct / 100);
     const monthlyProfit = totalRequiredGrossMonthly * (profPct / 100);
     const netPersonalIncome = incomeGoal;
 
-    // Workload Breakdown
+    // Workload Capacity Breakdown
     const totalWorkingDaysYear = Math.max(10, (workDaysM * 12) - vacDaysY - sickDaysY);
     const totalAvailableHoursYear = totalWorkingDaysYear * hrsDay;
     const totalBillableHoursYear = totalAvailableHoursYear * (billPct / 100);
@@ -247,11 +432,11 @@ export default function FreelancerPricingCalculator() {
 
     // Rate Derivations
     // Break-even hourly rate covers personal income + business expenses + taxes only
-    const breakEvenMonthly = (incomeGoal + totalBusinessCosts) / (1 - (taxPct / 100));
-    const breakEvenHourlyRate = breakEvenMonthly / effectiveBillableHoursMonth;
+    const breakEvenMonthly = (incomeGoal + totalBusinessCosts) / Math.max(0.1, 1 - (taxPct / 100));
+    const breakEvenHourlyRate = Math.max(1, breakEvenMonthly / effectiveBillableHoursMonth);
 
     // Minimum safe rate covers full revenue requirement (including savings & profit)
-    const minimumHourlyRate = totalRequiredGrossMonthly / effectiveBillableHoursMonth;
+    const minimumHourlyRate = Math.max(1, totalRequiredGrossMonthly / effectiveBillableHoursMonth);
 
     // Multipliers
     const expObj = EXPERIENCE_LEVELS.find((e) => e.id === experience) || EXPERIENCE_LEVELS[1];
@@ -264,12 +449,12 @@ export default function FreelancerPricingCalculator() {
       combinedMultiplier *= 1.20;
     }
 
-    const recommendedHourlyRate = minimumHourlyRate * combinedMultiplier;
+    const recommendedHourlyRate = Math.max(1, minimumHourlyRate * combinedMultiplier);
     const dailyRate = recommendedHourlyRate * (hrsDay * (billPct / 100));
-    const weeklyRate = dailyRate * (workDaysM / 4.33);
+    const weeklyRate = dailyRate * (workDaysM / 4.333);
     const monthlyRate = recommendedHourlyRate * effectiveBillableHoursMonth;
 
-    // Price Tiers / Benchmarks
+    // Price Benchmarks
     const breakEvenRate = breakEvenHourlyRate;
     const lowestSafePrice = minimumHourlyRate;
     const idealPrice = recommendedHourlyRate;
@@ -277,12 +462,18 @@ export default function FreelancerPricingCalculator() {
     const luxuryPrice = idealPrice * 1.70;
 
     // Project Calculations
-    const hrs = toFloat(projectHours, 40);
-    const revRounds = toFloat(revisionRounds, 2);
+    const hrs = Math.max(1, toFloat(projectHours, 40));
+    const revRounds = Math.max(0, toFloat(revisionRounds, 2));
     const revisionMultiplier = 1 + (revRounds * 0.08);
 
-    const baseProjectQuote = hrs * recommendedHourlyRate * revisionMultiplier;
-    const finalDiscountedQuote = baseProjectQuote * (1 - (discountPercent / 100));
+    const baseProjectQuote = Math.round(hrs * recommendedHourlyRate * revisionMultiplier);
+    const finalDiscountedQuote = Math.max(0, Math.round(baseProjectQuote * (1 - (discountPercent / 100))));
+
+    // Package Tier Quotes (Guaranteed Consistent Scaling)
+    const budgetTierQuote = Math.round(hrs * breakEvenRate * 1.05); // Baseline break-even + 1 revision
+    const standardTierQuote = baseProjectQuote; // User's customized scope + revisions
+    const premiumTierQuote = Math.max(Math.round(standardTierQuote * 1.15), Math.round(hrs * premiumPrice * 1.15)); // Fast speed + 4 revisions
+    const enterpriseTierQuote = Math.max(Math.round(premiumTierQuote * 1.20), Math.round(hrs * luxuryPrice * 1.30)); // Dedicated SLA + Unlimited
 
     // Project Profitability Status
     const projectCostBreakEven = hrs * breakEvenHourlyRate;
@@ -305,7 +496,7 @@ export default function FreelancerPricingCalculator() {
       statusColor = "text-rose-600 bg-rose-50 border-rose-200";
     }
 
-    // Negotiation Evaluation
+    // Negotiation Evaluation & Counter-Offer Analysis
     const cBudget = toFloat(clientBudget, 0);
     let negotiationVerdict = "Accept";
     let negotiationColor = "bg-emerald-500 text-white";
@@ -316,36 +507,45 @@ export default function FreelancerPricingCalculator() {
       negotiationVerdict = "Accept";
       negotiationColor = "bg-emerald-500 text-white";
       negotiationDesc = "Excellent! The client budget aligns with your recommended premium quote.";
-    } else if (cBudget >= projectCostBreakEven * 1.1) {
+    } else if (cBudget >= projectCostBreakEven * 1.05) {
+      const suggestedHours = Math.max(1, Math.round(cBudget / Math.max(1, recommendedHourlyRate)));
       negotiationVerdict = "Negotiate";
       negotiationColor = "bg-amber-500 text-white";
-      negotiationDesc = `Workable budget, but leaves less profit. Recommend reducing scope by ${Math.round((1 - cBudget / baseProjectQuote) * 100)}% or reducing revision rounds.`;
+      negotiationDesc = `Workable budget (${Math.round((cBudget / baseProjectQuote) * 100)}% of quote). Counter-offer by scoping to ~${suggestedHours} billable hours or reducing revision rounds.`;
     } else {
+      const suggestedHours = Math.max(1, Math.round(cBudget / Math.max(1, breakEvenHourlyRate)));
       negotiationVerdict = "Reject";
       negotiationColor = "bg-rose-500 text-white";
-      negotiationDesc = "Warning: This budget is below your break-even cost of doing business. Accepting will cause a loss.";
+      negotiationDesc = `Warning: Budget is below break-even cost (${formatVal(projectCostBreakEven, currencySymbol)}). To accept, cap scope to max ${suggestedHours} hours with 1 revision round.`;
     }
 
     // Smart Insights Generation
     const insights = [];
     if (billPct < 50) {
       insights.push({ type: "warning", title: "Low Billable Ratio", text: `Only ${billPct}% of your hours produce revenue. You spend ${100 - billPct}% on unpaid admin/marketing tasks. Streamline your workflow to boost earnings.` });
+    } else if (billPct > 80) {
+      insights.push({ type: "warning", title: "High Burnout Risk", text: `Billing ${billPct}% of working hours leaves little buffer for sales, invoicing, and professional development. Consider pacing at 60-70%.` });
     } else {
       insights.push({ type: "success", title: "Strong Billable Efficiency", text: `${billPct}% of your working hours are billable, maximizing revenue density.` });
     }
 
-    if (recommendedHourlyRate > minimumHourlyRate * 1.4) {
-      insights.push({ type: "success", title: "High Value Positioning", text: `Your experience (${expObj.label}) and urgency/complexity multipliers add ${Math.round((combinedMultiplier - 1) * 100)}% premium to your baseline rates.` });
+    if (recommendedHourlyRate > minimumHourlyRate * 1.35) {
+      insights.push({ type: "success", title: "High Value Positioning", text: `Your experience (${expObj.label}) and urgency/complexity multipliers add ${Math.round((combinedMultiplier - 1) * 100)}% premium over baseline cost.` });
     } else if (combinedMultiplier <= 1.0) {
-      insights.push({ type: "info", title: "Pricing Opportunity", text: `You are charging close to base rates. Increasing rates by 20% would add ${formatVal(totalRequiredGrossMonthly * 0.2, currencySymbol)} extra profit every month.` });
+      insights.push({ type: "info", title: "Pricing Opportunity", text: `You are charging close to baseline rates. Increasing rates by 20% would add ${formatVal(totalRequiredGrossMonthly * 0.2, currencySymbol)} extra profit every month.` });
     }
 
     if (savPct < 10) {
       insights.push({ type: "warning", title: "Low Emergency Reserve", text: `Your savings target is set to ${savPct}%. Freelancers should aim for at least 10-15% emergency reserve for dry spells.` });
     }
 
-    if (discountPercent > 20) {
-      insights.push({ type: "warning", title: "Aggressive Discount Alert", text: `Giving a ${discountPercent}% discount reduces your project quote by ${formatVal(baseProjectQuote * (discountPercent / 100), currencySymbol)}.` });
+    if (discountPercent > 15) {
+      const discountAmount = baseProjectQuote * (discountPercent / 100);
+      insights.push({ type: "warning", title: "Aggressive Discount Alert", text: `Giving a ${discountPercent}% discount reduces your project revenue by ${formatVal(discountAmount, currencySymbol)}.` });
+    }
+
+    if (revRounds > 3) {
+      insights.push({ type: "info", title: "Scope Revision Buffer", text: `With ${revRounds} revision rounds, your quote includes a ${Math.round((revisionMultiplier - 1) * 100)}% buffer to protect against scope creep.` });
     }
 
     return {
@@ -371,6 +571,10 @@ export default function FreelancerPricingCalculator() {
       luxuryPrice,
       baseProjectQuote,
       finalDiscountedQuote,
+      budgetTierQuote,
+      standardTierQuote,
+      premiumTierQuote,
+      enterpriseTierQuote,
       projectCostBreakEven,
       projectProfit,
       projectProfitMarginPct,
@@ -388,10 +592,10 @@ export default function FreelancerPricingCalculator() {
     taxPercent, savingsPercent, profitPercent, workingDaysMonth, hoursPerDay, billablePercent,
     vacationDaysYear, sickDaysYear, projectHours, revisionRounds, urgency, complexity,
     industry, experience, clientBudget, discountPercent, scenario4Days, scenarioIncrease20,
-    scenarioReduceBillable, scenarioHireAssistant, currencySymbol
+    scenarioReduceBillable, scenarioHireAssistant, currencySymbol, currency
   ]);
 
-  // Export PDF proposal/quote
+  // Export PDF proposal/quote (WinAnsi Unicode Safe)
   const handleExportPDF = async () => {
     try {
       const pdfDoc = await PDFDocument.create();
@@ -399,8 +603,14 @@ export default function FreelancerPricingCalculator() {
       const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+      // Safe ASCII prefix for PDF to prevent WinAnsi character encoding errors with ₹, €, £, etc.
+      const safePrefix = CURRENCY_PRESETS[currency]?.pdfPrefix || `${currency} `;
+      const formatPdfVal = (num) => `${safePrefix}${Math.round(Number(num) || 0).toLocaleString("en-US")}`;
+
       const drawText = (text, x, y, size = 12, isBold = false, color = rgb(0.1, 0.1, 0.1)) => {
-        page.drawText(text, { x, y, size, font: isBold ? font : regularFont, color });
+        // Sanitize string to standard printable ASCII range
+        const safeText = String(text ?? "").replace(/[^\x20-\x7E]/g, " ");
+        page.drawText(safeText, { x, y, size, font: isBold ? font : regularFont, color });
       };
 
       // Header Banner
@@ -411,74 +621,84 @@ export default function FreelancerPricingCalculator() {
         height: 80,
         color: rgb(0.96, 0.62, 0.04),
       });
-      drawText("FREELANCE PRICING PROPOSAL", 40, 755, 22, true, rgb(1, 1, 1));
-      drawText(`Generated via BoringTools Freelancer Calculator`, 40, 735, 10, false, rgb(1, 1, 1));
+      drawText("FREELANCE PRICING PROPOSAL", 40, 755, 20, true, rgb(1, 1, 1));
+      drawText("Generated via BoringTools Freelancer Calculator", 40, 735, 10, false, rgb(1, 1, 1));
 
       let y = 680;
-      drawText(`Project: ${projectName}`, 40, y, 14, true);
-      drawText(`Client: ${clientName}`, 350, y, 14, true);
+      drawText(`Project: ${projectName.substring(0, 32)}`, 40, y, 13, true);
+      drawText(`Client: ${clientName.substring(0, 32)}`, 350, y, 13, true);
       y -= 25;
       drawText(`Date: ${new Date().toLocaleDateString()}`, 40, y, 10, false, rgb(0.4, 0.4, 0.4));
       drawText(`Currency: ${currency}`, 350, y, 10, false, rgb(0.4, 0.4, 0.4));
 
-      y -= 35;
+      y -= 30;
       page.drawLine({ start: { x: 40, y }, end: { x: 560, y }, thickness: 1, color: rgb(0.8, 0.8, 0.8) });
 
-      y -= 30;
-      drawText("PROJECT RATE SUMMARY", 40, y, 13, true, rgb(0.9, 0.4, 0.0));
       y -= 25;
-      drawText(`Estimated Scope: ${projectHours} Hours`, 40, y, 11);
-      drawText(`Revision Rounds Included: ${revisionRounds}`, 300, y, 11);
-      y -= 20;
-      drawText(`Urgency Level: ${urgency.toUpperCase()}`, 40, y, 11);
-      drawText(`Complexity: ${complexity.toUpperCase()}`, 300, y, 11);
+      drawText("PROJECT RATE SUMMARY", 40, y, 12, true, rgb(0.9, 0.4, 0.0));
+      y -= 22;
+      drawText(`Estimated Scope: ${projectHours} Hours`, 40, y, 10);
+      drawText(`Revision Rounds Included: ${revisionRounds}`, 300, y, 10);
+      y -= 18;
+      drawText(`Urgency Level: ${urgency.toUpperCase()}`, 40, y, 10);
+      drawText(`Complexity: ${complexity.toUpperCase()}`, 300, y, 10);
 
-      y -= 35;
+      y -= 30;
       // Box for final quote
       page.drawRectangle({
         x: 40,
         y: y - 50,
         width: 520,
-        height: 60,
+        height: 55,
         color: rgb(0.98, 0.95, 0.9),
         borderColor: rgb(0.96, 0.62, 0.04),
         borderWidth: 1,
       });
 
-      drawText("TOTAL RECOMMENDED PROJECT QUOTE", 60, y - 15, 11, true, rgb(0.3, 0.3, 0.3));
-      const finalAmountStr = `${currencySymbol}${Math.round(calculations.finalDiscountedQuote).toLocaleString()}`;
-      drawText(finalAmountStr, 60, y - 40, 22, true, rgb(0.8, 0.3, 0.0));
+      drawText("TOTAL RECOMMENDED PROJECT QUOTE", 60, y - 16, 10, true, rgb(0.3, 0.3, 0.3));
+      const finalAmountStr = formatPdfVal(calculations.finalDiscountedQuote);
+      drawText(finalAmountStr, 60, y - 40, 20, true, rgb(0.8, 0.3, 0.0));
 
       if (discountPercent > 0) {
         drawText(`(Includes ${discountPercent}% Discount)`, 320, y - 35, 10, false, rgb(0.5, 0.5, 0.5));
       }
 
-      y -= 90;
-      drawText("FREELANCER HOURLY & BENCHMARK RATES", 40, y, 13, true, rgb(0.9, 0.4, 0.0));
-      y -= 25;
-      drawText(`Recommended Hourly Rate: ${currencySymbol}${Math.round(calculations.recommendedHourlyRate).toLocaleString()}/hr`, 40, y, 11, true);
-      drawText(`Daily Rate (Billable): ${currencySymbol}${Math.round(calculations.dailyRate).toLocaleString()}/day`, 300, y, 11);
-      y -= 20;
-      drawText(`Break-even Rate: ${currencySymbol}${Math.round(calculations.breakEvenHourlyRate).toLocaleString()}/hr`, 40, y, 11);
-      drawText(`Monthly Target Revenue: ${currencySymbol}${Math.round(calculations.totalRequiredGrossMonthly).toLocaleString()}/mo`, 300, y, 11);
+      y -= 80;
+      drawText("FREELANCER HOURLY & BENCHMARK RATES", 40, y, 12, true, rgb(0.9, 0.4, 0.0));
+      y -= 22;
+      drawText(`Recommended Hourly Rate: ${formatPdfVal(calculations.recommendedHourlyRate)}/hr`, 40, y, 10, true);
+      drawText(`Daily Rate (Billable): ${formatPdfVal(calculations.dailyRate)}/day`, 300, y, 10);
+      y -= 18;
+      drawText(`Break-even Rate: ${formatPdfVal(calculations.breakEvenHourlyRate)}/hr`, 40, y, 10);
+      drawText(`Monthly Target Revenue: ${formatPdfVal(calculations.totalRequiredGrossMonthly)}/mo`, 300, y, 10);
+
+      y -= 35;
+      drawText("ALTERNATIVE PACKAGE TIERS", 40, y, 12, true, rgb(0.9, 0.4, 0.0));
+      y -= 22;
+      drawText(`• Budget Tier: ${formatPdfVal(calculations.budgetTierQuote)} (Essential scope, 1 rev)`, 40, y, 10);
+      drawText(`• Standard Tier: ${formatPdfVal(calculations.baseProjectQuote)} (Full scope, ${revisionRounds} revs)`, 300, y, 10);
+      y -= 18;
+      drawText(`• Premium Tier: ${formatPdfVal(calculations.premiumTierQuote)} (4 revs + priority)`, 40, y, 10);
+      drawText(`• Enterprise Tier: ${formatPdfVal(calculations.enterpriseTierQuote)} (Unlimited revs + SLA)`, 300, y, 10);
+
+      y -= 35;
+      drawText("RECOMMENDED PAYMENT TERMS", 40, y, 12, true, rgb(0.9, 0.4, 0.0));
+      y -= 22;
+      drawText(`• 50% Upfront Deposit: ${formatPdfVal(calculations.finalDiscountedQuote * 0.5)}`, 50, y, 10);
+      drawText(`• 25% Mid-Project Milestone: ${formatPdfVal(calculations.finalDiscountedQuote * 0.25)}`, 50, y, 10);
+      drawText(`• 25% Final Delivery & Handover: ${formatPdfVal(calculations.finalDiscountedQuote * 0.25)}`, 50, y, 10);
 
       y -= 40;
-      drawText("RECOMMENDED PAYMENT TERMS", 40, y, 13, true, rgb(0.9, 0.4, 0.0));
+      drawText("Quote valid for 30 days from date of issue.", 40, y, 9, false, rgb(0.5, 0.5, 0.5));
       y -= 25;
-      drawText(`• 50% Upfront Deposit: ${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.5).toLocaleString()}`, 50, y, 11);
-      y -= 20;
-      drawText(`• 25% Mid-Project Milestone: ${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.25).toLocaleString()}`, 50, y, 11);
-      y -= 20;
-      drawText(`• 25% Final Delivery: ${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.25).toLocaleString()}`, 50, y, 11);
-
-      y -= 50;
-      drawText("Thank you for your business!", 220, y, 12, true, rgb(0.4, 0.4, 0.4));
+      drawText("Thank you for your business!", 220, y, 12, true, rgb(0.3, 0.3, 0.3));
 
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = `${projectName.replace(/\s+/g, "_")}_Pricing_Quote.pdf`;
+      const safeFileName = (projectName || "Freelance_Project").replace(/[^a-zA-Z0-9_-]/g, "_");
+      link.download = `${safeFileName}_Pricing_Quote.pdf`;
       link.click();
       showToast("PDF Quote generated & downloaded!");
     } catch (err) {
@@ -487,14 +707,22 @@ export default function FreelancerPricingCalculator() {
     }
   };
 
-  // Export CSV
+  // Export CSV (RFC 4180 Escaped)
   const handleExportCSV = () => {
+    const escapeCsv = (str) => {
+      const s = String(str ?? "");
+      return `"${s.replace(/"/g, '""')}"`;
+    };
+
     const rows = [
       ["Metric", "Value"],
       ["Currency", currency],
       ["Desired Monthly Income", desiredIncome],
       ["Monthly Business Expenses", calculations.totalBusinessCosts],
       ["Total Required Gross Revenue / Month", calculations.totalRequiredGrossMonthly],
+      ["Monthly Tax Reserve", calculations.monthlyTaxes],
+      ["Monthly Emergency Savings", calculations.monthlySavings],
+      ["Monthly Retained Profit", calculations.monthlyProfit],
       ["Effective Billable Hours / Month", calculations.effectiveBillableHoursMonth.toFixed(1)],
       ["Break-even Hourly Rate", calculations.breakEvenHourlyRate.toFixed(2)],
       ["Recommended Hourly Rate", calculations.recommendedHourlyRate.toFixed(2)],
@@ -502,18 +730,25 @@ export default function FreelancerPricingCalculator() {
       ["Weekly Rate", calculations.weeklyRate.toFixed(2)],
       ["Monthly Target Rate", calculations.monthlyRate.toFixed(2)],
       ["Project Name", projectName],
-      ["Project Hours", projectHours],
+      ["Client Name", clientName],
+      ["Project Estimated Hours", projectHours],
+      ["Revision Rounds Included", revisionRounds],
       ["Base Project Quote", calculations.baseProjectQuote.toFixed(2)],
       ["Discount %", discountPercent],
       ["Final Discounted Quote", calculations.finalDiscountedQuote.toFixed(2)],
+      ["Budget Tier Quote", calculations.budgetTierQuote],
+      ["Premium Tier Quote", calculations.premiumTierQuote],
+      ["Enterprise Tier Quote", calculations.enterpriseTierQuote],
       ["Project Profitability Status", calculations.profitabilityStatus],
+      ["Client Budget Verdict", calculations.negotiationVerdict],
     ];
 
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => `${escapeCsv(e[0])},${escapeCsv(e[1])}`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Freelancer_Pricing_${projectName.replace(/\s+/g, "_")}.csv`);
+    const safeFileName = (projectName || "Freelancer_Pricing").replace(/[^a-zA-Z0-9_-]/g, "_");
+    link.setAttribute("download", `${safeFileName}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -524,19 +759,32 @@ export default function FreelancerPricingCalculator() {
   const handleCopyPricing = () => {
     const text = `📋 PRICING PROPOSAL - ${projectName}
 Client: ${clientName}
-Estimated Hours: ${projectHours} hrs
-Revisions Included: ${revisionRounds} rounds
+Date: ${new Date().toLocaleDateString()}
+Currency: ${currency} (${currencySymbol})
 
-Rates Breakdown:
-- Hourly Rate: ${currencySymbol}${Math.round(calculations.recommendedHourlyRate).toLocaleString()}/hr
-- Total Project Quote: ${currencySymbol}${Math.round(calculations.finalDiscountedQuote).toLocaleString()}
+Scope & Deliverables:
+• Estimated Billable Hours: ${projectHours} hrs
+• Revision Rounds Included: ${revisionRounds} rounds
+• Urgency Level: ${urgency.toUpperCase()}
+• Complexity: ${complexity.toUpperCase()}
 
-Payment Terms:
-- 50% Upfront Deposit (${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.5).toLocaleString()})
-- 25% Milestone (${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.25).toLocaleString()})
-- 25% Final Delivery (${currencySymbol}${Math.round(calculations.finalDiscountedQuote * 0.25).toLocaleString()})
+Rate Breakdown:
+• Recommended Hourly Rate: ${formatVal(calculations.recommendedHourlyRate, currencySymbol)}/hr
+• Base Project Quote: ${formatVal(calculations.baseProjectQuote, currencySymbol)}
+${discountPercent > 0 ? `• Discount Applied: ${discountPercent}% (-${formatVal(calculations.baseProjectQuote * (discountPercent / 100), currencySymbol)})\n• Final Discounted Quote: ${formatVal(calculations.finalDiscountedQuote, currencySymbol)}` : `• Total Project Quote: ${formatVal(calculations.finalDiscountedQuote, currencySymbol)}`}
 
-Calculated using BoringTools Freelancer Pricing Calculator.`;
+Alternative Package Tiers:
+• Budget Tier: ${formatVal(calculations.budgetTierQuote, currencySymbol)} (Essential deliverables, 1 revision)
+• Standard Tier: ${formatVal(calculations.baseProjectQuote, currencySymbol)} (Full scope, ${revisionRounds} revisions)
+• Premium Tier: ${formatVal(calculations.premiumTierQuote, currencySymbol)} (Priority turnaround, 4 revisions + consultation)
+• Enterprise Tier: ${formatVal(calculations.enterpriseTierQuote, currencySymbol)} (Dedicated SLA, unlimited revisions)
+
+Payment Terms & Milestones:
+• 50% Upfront Deposit: ${formatVal(calculations.finalDiscountedQuote * 0.5, currencySymbol)}
+• 25% Mid-Project Milestone: ${formatVal(calculations.finalDiscountedQuote * 0.25, currencySymbol)}
+• 25% Final Delivery: ${formatVal(calculations.finalDiscountedQuote * 0.25, currencySymbol)}
+
+Generated via BoringTools Freelancer Pricing Calculator.`;
 
     navigator.clipboard.writeText(text);
     showToast("Pricing summary copied to clipboard!");
@@ -590,7 +838,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
               <ThemedDropdown
                 options={CURRENCIES}
                 value={currency}
-                onChange={setCurrency}
+                onChange={handleCurrencyChange}
                 className="w-full text-sm"
               />
             </div>
@@ -598,7 +846,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
             <div className="flex items-center gap-2 mt-4 sm:mt-0">
               <button
                 onClick={handleExportPDF}
-                className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center gap-1.5"
+                className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -607,7 +855,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
               </button>
               <button
                 onClick={handleCopyPricing}
-                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center gap-1.5"
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
@@ -638,7 +886,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
               </div>
               <button
                 onClick={() => setShowGuide(false)}
-                className="text-xs font-semibold text-slate-500 hover:text-slate-800 p-1.5 hover:bg-white rounded-lg transition"
+                className="text-xs font-semibold text-slate-500 hover:text-slate-800 p-1.5 hover:bg-white rounded-lg transition cursor-pointer"
               >
                 Close ✕
               </button>
@@ -792,7 +1040,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
               <select
                 value={activeProfileKey}
                 onChange={(e) => handleLoadProfile(e.target.value)}
-                className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
               >
                 <option value="Default">Select Saved Profile...</option>
                 {Object.keys(savedProfiles).map((k) => (
@@ -810,14 +1058,14 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
             />
             <button
               onClick={handleSaveProfile}
-              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-medium transition"
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-medium transition cursor-pointer"
             >
               Save Profile
             </button>
             {activeProfileKey !== "Default" && savedProfiles[activeProfileKey] && (
               <button
                 onClick={() => handleDeleteProfile(activeProfileKey)}
-                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-medium transition"
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-medium transition cursor-pointer"
               >
                 Delete
               </button>
@@ -1068,7 +1316,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:ring-2 focus:ring-amber-500 focus:outline-none cursor-pointer"
                   >
                     {INDUSTRIES.map((i) => (
                       <option key={i.id} value={i.id}>{i.label}</option>
@@ -1086,7 +1334,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
                       key={lvl.id}
                       type="button"
                       onClick={() => setComplexity(lvl.id)}
-                      className={`p-3 rounded-xl border text-left text-xs transition ${
+                      className={`p-3 rounded-xl border text-left text-xs transition cursor-pointer ${
                         complexity === lvl.id
                           ? "border-amber-500 bg-amber-50/50 ring-2 ring-amber-400 text-slate-900 font-semibold"
                           : "border-slate-200 hover:border-slate-300 text-slate-600 bg-white"
@@ -1108,7 +1356,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
                       key={u.id}
                       type="button"
                       onClick={() => setUrgency(u.id)}
-                      className={`p-3 rounded-xl border text-left text-xs transition ${
+                      className={`p-3 rounded-xl border text-left text-xs transition cursor-pointer ${
                         urgency === u.id
                           ? "border-amber-500 bg-amber-50/50 ring-2 ring-amber-400 text-slate-900 font-semibold"
                           : "border-slate-200 hover:border-slate-300 text-slate-600 bg-white"
@@ -1140,7 +1388,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
                     key={exp.id}
                     type="button"
                     onClick={() => setExperience(exp.id)}
-                    className={`p-3.5 rounded-xl border text-left text-xs transition ${
+                    className={`p-3.5 rounded-xl border text-left text-xs transition cursor-pointer ${
                       experience === exp.id
                         ? "border-amber-500 bg-amber-50/50 ring-2 ring-amber-400 text-slate-900 font-semibold"
                         : "border-slate-200 hover:border-slate-300 text-slate-600 bg-white"
@@ -1286,7 +1534,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                   <span className="text-xs font-bold text-slate-700 block">Budget Tier</span>
-                  <span className="text-lg font-bold text-slate-900">{formatVal(projectHours * calculations.breakEvenRate, currencySymbol)}</span>
+                  <span className="text-lg font-bold text-slate-900">{formatVal(calculations.budgetTierQuote, currencySymbol)}</span>
                   <ul className="text-[10px] text-slate-500 mt-2 space-y-1">
                     <li>• Essential deliverables</li>
                     <li>• 1 Revision round</li>
@@ -1306,7 +1554,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
 
                 <div className="p-3 bg-purple-50/60 rounded-xl border border-purple-200">
                   <span className="text-xs font-bold text-purple-900 block">Premium Tier</span>
-                  <span className="text-lg font-bold text-purple-900">{formatVal(projectHours * calculations.premiumPrice, currencySymbol)}</span>
+                  <span className="text-lg font-bold text-purple-900">{formatVal(calculations.premiumTierQuote, currencySymbol)}</span>
                   <ul className="text-[10px] text-purple-800 mt-2 space-y-1">
                     <li>• Fast turnaround</li>
                     <li>• 4 Revision rounds</li>
@@ -1316,7 +1564,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
 
                 <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200">
                   <span className="text-xs font-bold text-emerald-900 block">Enterprise Tier</span>
-                  <span className="text-lg font-bold text-emerald-900">{formatVal(projectHours * calculations.luxuryPrice, currencySymbol)}</span>
+                  <span className="text-lg font-bold text-emerald-900">{formatVal(calculations.enterpriseTierQuote, currencySymbol)}</span>
                   <ul className="text-[10px] text-emerald-800 mt-2 space-y-1">
                     <li>• Dedicated priority</li>
                     <li>• Unlimited revisions</li>
@@ -1455,12 +1703,12 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
             <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
               <svg viewBox="0 0 100 100" className="w-56 h-56 transform -rotate-90">
                 {(() => {
-                  const total = calculations.totalRequiredGrossMonthly || 1;
-                  const incomePct = (calculations.netPersonalIncome / total) * 100;
-                  const costsPct = (calculations.totalBusinessCosts / total) * 100;
-                  const taxesPct = (calculations.monthlyTaxes / total) * 100;
-                  const savingsPct = (calculations.monthlySavings / total) * 100;
-                  const profitPct = (calculations.monthlyProfit / total) * 100;
+                  const total = Math.max(1, calculations.totalRequiredGrossMonthly || 1);
+                  const incomePct = Math.max(0, (calculations.netPersonalIncome / total) * 100);
+                  const costsPct = Math.max(0, (calculations.totalBusinessCosts / total) * 100);
+                  const taxesPct = Math.max(0, (calculations.monthlyTaxes / total) * 100);
+                  const savingsPct = Math.max(0, (calculations.monthlySavings / total) * 100);
+                  const profitPct = Math.max(0, (calculations.monthlyProfit / total) * 100);
 
                   let accumulated = 0;
                   const slices = [
@@ -1530,7 +1778,7 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
                   { label: "Premium", val: calculations.premiumPrice, color: "bg-purple-500" },
                   { label: "Enterprise", val: calculations.luxuryPrice, color: "bg-emerald-500" },
                 ].map((bar, i) => {
-                  const maxVal = calculations.luxuryPrice || 1;
+                  const maxVal = Math.max(1, calculations.luxuryPrice || 1);
                   const widthPct = Math.min(100, Math.max(15, (bar.val / maxVal) * 100));
 
                   return (
@@ -1561,19 +1809,19 @@ Calculated using BoringTools Freelancer Pricing Calculator.`;
           <div className="flex items-center gap-3">
             <button
               onClick={handleExportCSV}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
             >
               Export CSV
             </button>
             <button
               onClick={() => window.print()}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
             >
               Print Summary
             </button>
             <button
               onClick={handleExportPDF}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-xs"
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-xs cursor-pointer"
             >
               Download PDF Quote
             </button>
