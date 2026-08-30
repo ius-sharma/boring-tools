@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import UserNav from "./UserNav";
 import { tools } from "../tools-data";
 
@@ -15,8 +15,10 @@ export default function NavBar() {
   const searchContainerRef = useRef(null);
   const mobileSearchInputRef = useRef(null);
   const mobileSearchContainerRef = useRef(null);
+  const mobileResultsRef = useRef(null);
   const navRef = useRef(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   // Handle Search Input Filtering
   useEffect(() => {
@@ -43,15 +45,17 @@ export default function NavBar() {
         !searchContainerRef.current || !searchContainerRef.current.contains(event.target);
       const isOutsideMobile =
         !mobileSearchContainerRef.current || !mobileSearchContainerRef.current.contains(event.target);
+      const isOutsideMobileResults =
+        !mobileResultsRef.current || !mobileResultsRef.current.contains(event.target);
 
-      if (isOutsideDesktop && isOutsideMobile) {
+      if (isOutsideDesktop && isOutsideMobile && isOutsideMobileResults) {
         setIsSearchExpanded(false);
         setTimeout(() => {
           setSearchQuery("");
           setSearchResults([]);
         }, 300);
       }
-      if (navRef.current && !navRef.current.contains(event.target)) {
+      if (navRef.current && !navRef.current.contains(event.target) && isOutsideMobileResults) {
         setMobileMenuOpen(false);
       }
     };
@@ -109,6 +113,14 @@ export default function NavBar() {
       setSearchQuery("");
       setSearchResults([]);
     }, 300);
+  };
+
+  const handleToolSelect = (e, href) => {
+    e.preventDefault();
+    setIsSearchExpanded(false);
+    setSearchQuery("");
+    setSearchResults([]);
+    router.push(href);
   };
 
   const hasSearchContent = isSearchExpanded && Boolean(searchQuery.trim());
@@ -256,8 +268,8 @@ export default function NavBar() {
                         <Link
                           key={tool.id}
                           href={tool.href}
-                          onClick={handleCloseSearch}
-                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-orange-50 hover:text-orange-700 transition group"
+                          onClick={(e) => handleToolSelect(e, tool.href)}
+                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-orange-50 hover:text-orange-700 transition group cursor-pointer"
                         >
                           <div className="min-w-0 pr-2">
                             <div className="font-semibold text-slate-900 group-hover:text-orange-700 text-xs sm:text-sm truncate">
@@ -433,6 +445,7 @@ export default function NavBar() {
 
         {/* Results Card */}
         <div
+          ref={mobileResultsRef}
           className={`fixed inset-x-3 top-[4.5rem] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 max-h-[65vh] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top ${
             hasSearchContent
               ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
@@ -446,8 +459,8 @@ export default function NavBar() {
                   <Link
                     key={tool.id}
                     href={tool.href}
-                    onClick={handleCloseSearch}
-                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-orange-50 hover:text-orange-700 active:bg-orange-100 transition group"
+                    onClick={(e) => handleToolSelect(e, tool.href)}
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-orange-50 hover:text-orange-700 active:bg-orange-100 transition group cursor-pointer"
                   >
                     <div className="min-w-0 pr-2">
                       <div className="font-semibold text-slate-900 group-hover:text-orange-700 text-sm truncate">
