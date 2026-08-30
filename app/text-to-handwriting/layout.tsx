@@ -1,30 +1,37 @@
+import React from "react";
 import type { Metadata } from "next";
+import { tools } from "@/app/tools-data";
+import { constructToolMetadata, getWebApplicationSchema } from "@/lib/seo";
+import StructuredData from "@/app/components/StructuredData";
+import Breadcrumbs from "@/app/components/Breadcrumbs";
 
-export const metadata: Metadata = {
-  title: "Text to Handwriting Image Converter – Generate Realistic Handwritten Notes Online",
+const tool = tools.find((t) => t.id === "text-to-handwriting") || {
+  id: "text-to-handwriting",
+  name: "Text to Handwriting Image Converter",
+  href: "/text-to-handwriting",
+  category: "Documents",
   description: "Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors and export as PNG, PDF or JPG directly from your browser.",
-  keywords: [
-    "text to handwriting",
-    "handwriting generator",
-    "handwritten notes converter",
-    "convert text to image",
-    "realistic handwriting",
-    "online handwriting creator",
-    "ruled notebook paper generator",
-    "free text to handwriting",
-    "boring tools"
-  ],
-  openGraph: {
-    title: "Text to Handwriting Image Converter – Generate Realistic Handwritten Notes Online",
-    description: "Convert typed text into realistic handwritten pages using multiple handwriting styles, notebook papers, ink colors and export as PNG, PDF or JPG directly from your browser.",
-    type: "website",
-  },
+  status: "Live",
 };
 
-export default function TextToHandwritingLayout({
+export const metadata: Metadata = constructToolMetadata(tool);
+
+export default function ToolLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  const schema = getWebApplicationSchema(tool);
+
+  return (
+    <>
+      <StructuredData data={schema} />
+      <Breadcrumbs
+        category={tool.category}
+        toolName={tool.name}
+        toolHref={tool.href}
+      />
+      {children}
+    </>
+  );
 }

@@ -1,18 +1,37 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /* Remove source maps in production to reduce bundle overhead and protect code structure */
+  productionBrowserSourceMaps: false,
+
+  /* Disable X-Powered-By header for security and clean headers */
+  poweredByHeader: false,
+
+  /* Enable compression for production responses */
+  compress: true,
+
+  /* React Strict Mode */
+  reactStrictMode: true,
+
+  /* Compiler optimizations: remove debug console statements in production */
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
+  },
+
   experimental: {
     proxyClientMaxBodySize: "4mb",
+    optimizePackageImports: ["@vercel/analytics", "marked", "zod"],
   },
+
   async headers() {
     return [
       {
         // SharedArrayBuffer is required by the browser-side LibreOffice WASM engine
         // (DOC to PDF Converter). Scoped to this page only so other tools'
         // third-party assets (flags, TMDB images, AdSense) are not affected by COEP.
-        // Both the converter page and the WASM engine files need cross-origin
-        // isolation; keeping this scoped so other tools' third-party assets are untouched.
         source: "/(doc-to-pdf-converter|wasm)/:path*",
         headers: [
           {
@@ -27,6 +46,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
   async redirects() {
     return [
       {

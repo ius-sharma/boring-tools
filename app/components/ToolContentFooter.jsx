@@ -11,13 +11,8 @@ export default function ToolContentFooter() {
   const pathname = usePathname();
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // Check if we are on the homepage
-  if (pathname === "/") {
-    return null;
-  }
-
   // Find the current tool based on the pathname
-  const toolId = pathname.replace(/^\//, "");
+  const toolId = pathname ? pathname.replace(/^\//, "") : "";
   const tool = tools.find((t) => t.id === toolId && t.status === "Live");
 
   // Custom rich content for popular tools to make them extra high quality
@@ -215,6 +210,10 @@ export default function ToolContentFooter() {
   }, [tool]);
 
   const faqSchema = content?.faqs ? getFaqSchema(content.faqs) : null;
+
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <div className="w-full bg-slate-50 border-t border-slate-200 mt-12">
