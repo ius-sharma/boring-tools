@@ -1,8 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import Link from "next/link";
 import { tools } from "../tools-data";
+import StructuredData from "./StructuredData";
+import { getFaqSchema } from "@/lib/seo";
 
 export default function ToolContentFooter() {
   const pathname = usePathname();
@@ -194,8 +197,29 @@ export default function ToolContentFooter() {
 
   const content = getToolContent();
 
+  const relatedTools = useMemo(() => {
+    if (!tool) return [];
+    const sameCategory = tools.filter(
+      (t) => t.category === tool.category && t.id !== tool.id && t.status === "Live"
+    );
+    if (sameCategory.length >= 4) {
+      return sameCategory.slice(0, 4);
+    }
+    const otherTools = tools.filter(
+      (t) =>
+        t.id !== tool.id &&
+        t.status === "Live" &&
+        !sameCategory.some((sc) => sc.id === t.id)
+    );
+    return [...sameCategory, ...otherTools].slice(0, 4);
+  }, [tool]);
+
+  const faqSchema = content?.faqs ? getFaqSchema(content.faqs) : null;
+
   return (
     <div className="w-full bg-slate-50 border-t border-slate-200 mt-12">
+      {faqSchema && <StructuredData data={faqSchema} />}
+
       {/* Tool Info Guide (Only rendered on valid tool pages) */}
       {content && (
         <section className="mx-auto max-w-4xl px-6 py-12 sm:py-16">
@@ -248,6 +272,55 @@ export default function ToolContentFooter() {
               ))}
             </div>
           </div>
+
+          {/* Related Tools Cross-Links Section */}
+          {relatedTools.length > 0 && (
+            <div className="border-t border-slate-200 pt-10 mt-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    Related {tool?.category || "Browser"} Tools
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    Discover other free, client-side tools in this category
+                  </p>
+                </div>
+                <Link
+                  href="/#find-tools"
+                  className="text-xs font-semibold text-orange-600 hover:text-orange-700 transition hidden sm:inline"
+                >
+                  View All Tools →
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {relatedTools.map((rt) => (
+                  <Link
+                    key={rt.id}
+                    href={rt.href}
+                    className="p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm transition group flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                          {rt.category}
+                        </span>
+                        <span className="text-xs text-slate-400 group-hover:text-orange-600 transition">
+                          →
+                        </span>
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition">
+                        {rt.name}
+                      </h4>
+                      <p className="text-xs text-slate-500 line-clamp-2 mt-1">
+                        {rt.description}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       )}
 
@@ -257,10 +330,19 @@ export default function ToolContentFooter() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <h3 className="font-bold text-white mb-3 text-lg">BoringTools</h3>
-              <p className="text-sm text-slate-400">100 practical browser-first tools built in 100 days. No signup. No tracking.</p>
+              <p className="text-sm text-slate-400">
+                100 practical browser-first tools built in 100 days. No signup. No tracking.
+              </p>
               <div className="mt-4 pt-4 border-t border-slate-900">
-                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Other Projects</p>
-                <a href="https://smritiius.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-1 text-sm text-slate-300 hover:text-amber-300 transition group font-medium">
+                <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
+                  Other Projects
+                </p>
+                <a
+                  href="https://smritiius.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 mt-1 text-sm text-slate-300 hover:text-amber-300 transition group font-medium"
+                >
                   <span>Smriti (Tribute Wall)</span>
                   <span className="text-xs text-slate-500 group-hover:text-amber-300">→</span>
                 </a>
@@ -270,19 +352,24 @@ export default function ToolContentFooter() {
               <h4 className="font-semibold text-white mb-3">Links</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="/" className="hover:text-amber-300 transition">
+                  <Link href="/" className="hover:text-amber-300 transition">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about" className="hover:text-amber-300 transition">
+                  <Link href="/about" className="hover:text-amber-300 transition">
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/contact" className="hover:text-amber-300 transition">
+                  <Link href="/contact" className="hover:text-amber-300 transition">
                     Contact
-                  </a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pricing" className="hover:text-amber-300 transition">
+                    Pricing
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -290,14 +377,14 @@ export default function ToolContentFooter() {
               <h4 className="font-semibold text-white mb-3">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="/privacy-policy" className="hover:text-amber-300 transition">
+                  <Link href="/privacy-policy" className="hover:text-amber-300 transition">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/terms-of-service" className="hover:text-amber-300 transition">
+                  <Link href="/terms-of-service" className="hover:text-amber-300 transition">
                     Terms of Service
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -305,12 +392,22 @@ export default function ToolContentFooter() {
               <h4 className="font-semibold text-white mb-3">Follow Us</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="https://www.instagram.com/ius.sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition">
+                  <a
+                    href="https://www.instagram.com/ius.sharma"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-amber-300 transition"
+                  >
                     Instagram
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition">
+                  <a
+                    href="https://github.com/ius-sharma"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-amber-300 transition"
+                  >
                     GitHub
                   </a>
                 </li>
@@ -319,10 +416,21 @@ export default function ToolContentFooter() {
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
             <p>© 2026 BoringTools. All rights reserved.</p>
-            <p className="text-xs text-slate-600 mt-2">Developed by <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition text-slate-400 font-medium">Ayush Sharma</a></p>
+            <p className="text-xs text-slate-600 mt-2">
+              Developed by{" "}
+              <a
+                href="https://github.com/ius-sharma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-amber-300 transition text-slate-400 font-medium"
+              >
+                Ayush Sharma
+              </a>
+            </p>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
