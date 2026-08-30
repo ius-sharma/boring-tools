@@ -126,7 +126,7 @@ export default function YouTubeTitleGenerator() {
     await copyText(titles.join("\n"));
   };
 
-  const useExample = (value) => {
+  const handleApplyExample = (value) => {
     setTopic(value);
     setError("");
     setCopyNote("");
@@ -263,7 +263,7 @@ export default function YouTubeTitleGenerator() {
               <p className="mt-1 text-sm text-slate-600">Click one to load a fast starting point.</p>
             </div>
             <button
-              onClick={() => useExample(exampleList[0])}
+              onClick={() => handleApplyExample(exampleList[0])}
               className="inline-flex items-center justify-center rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-orange-400 hover:bg-orange-50"
             >
               Use first example
@@ -274,7 +274,7 @@ export default function YouTubeTitleGenerator() {
             {exampleList.map((example) => (
               <button
                 key={example}
-                onClick={() => useExample(example)}
+                onClick={() => handleApplyExample(example)}
                 className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-orange-400 hover:bg-orange-50"
               >
                 {example}

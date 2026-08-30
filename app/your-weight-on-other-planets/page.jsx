@@ -146,9 +146,6 @@ const PLANET_OPTIONS = PLANET_DATA.map(p => ({
 const TOOL_STATUS = "live"; // Set to "live" to deploy and enable routing
 
 export default function PlanetsWeightPage() {
-  if (TOOL_STATUS === "upcoming") {
-    return <ComingSoon toolName="Your Weight on Other Planets" />;
-  }
   const [weight, setWeight] = useState(70);
   const [unit, setUnit] = useState("kg"); // "kg" or "lbs"
   const [height, setHeight] = useState("");
@@ -160,14 +157,6 @@ export default function PlanetsWeightPage() {
   const [comparePlanetB, setComparePlanetB] = useState("mars");
   
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-
-  useEffect(() => {
-    const prevTitle = document.title;
-    document.title = "Your Weight on Other Planets | Boring Tools";
-    return () => {
-      document.title = prevTitle;
-    };
-  }, []);
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });

@@ -747,7 +747,7 @@ ${c.learningOutcomes.map((o) => `- ${o}`).join("\n")}
               <div className="divide-y divide-gray-100 max-h-96 overflow-y-auto border border-gray-200 rounded-xl">
                 {processedVideos.length === 0 ? (
                   <div className="p-8 text-center text-xs text-gray-500">
-                    No videos match your search term "{searchQuery}".
+                    No videos match your search term &quot;{searchQuery}&quot;.
                   </div>
                 ) : (
                   processedVideos.map((video) => (
