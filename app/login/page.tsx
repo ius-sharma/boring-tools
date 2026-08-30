@@ -251,6 +251,11 @@ function LoginFormContent() {
             </span>
             <span>{magicLinkMode ? "Using Passwordless Magic Link" : "Continue with Magic Link"}</span>
           </button>
+          {magicLinkMode && (
+            <p className="text-[11px] text-slate-500 text-center pt-1">
+              Note: Magic link will be sent from <strong>Supabase</strong> (check Spam if needed).
+            </p>
+          )}
         </div>
 
         {/* ─── 1px Hairline Rule (No 'OR' text divider) ─── */}
@@ -259,13 +264,23 @@ function LoginFormContent() {
         {/* Message / Status Alert */}
         {message && (
           <div
-            className={`mb-5 p-3 rounded-xl text-xs font-medium leading-relaxed ${
+            className={`mb-5 p-3.5 rounded-xl text-xs leading-relaxed ${
               message.type === "success"
-                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                ? "bg-emerald-50 text-emerald-900 border border-emerald-200"
                 : "bg-rose-50 text-rose-800 border border-rose-200"
             }`}
           >
-            {message.text}
+            <p className="font-semibold">{message.text}</p>
+            {message.type === "success" && (
+              <div className="mt-2.5 pt-2.5 border-t border-emerald-200/80 text-[11px] text-emerald-800 space-y-1">
+                <p className="font-medium text-emerald-900">
+                  📩 <strong>Sender Information:</strong> Auth email is dispatched by <strong>Supabase</strong> (<code className="bg-emerald-100/80 text-emerald-900 px-1 py-0.5 rounded text-[10px]">noreply@mail.app.supabase.io</code>).
+                </p>
+                <p className="text-emerald-700">
+                  If you don&apos;t see it in your primary inbox, please check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+                </p>
+              </div>
+            )}
           </div>
         )}
 

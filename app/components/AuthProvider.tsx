@@ -11,7 +11,7 @@ export interface UserState {
 }
 
 export interface SubscriptionState {
-  planTier: "free" | "pro_monthly" | "pro_yearly";
+  planTier: "free" | "starter_monthly" | "starter_yearly" | "pro_monthly" | "pro_yearly" | string;
   status: string;
   currentPeriodEnd?: string;
 }

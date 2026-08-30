@@ -6,8 +6,8 @@ import { useAuth } from "../components/AuthProvider";
 import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
 
 export default function PricingPage() {
-  const [proBillingCycle, setProBillingCycle] = useState<"monthly" | "annual">("annual");
-  const { user, openAuthModal, credits } = useAuth();
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
+  const { user, openAuthModal, credits, subscription } = useAuth();
   const { initiateCheckout, isProcessing } = useRazorpayCheckout();
   const [customCredits, setCustomCredits] = useState<number>(50);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
@@ -56,8 +56,13 @@ export default function PricingPage() {
       return;
     }
 
+    if (planKey === "starter") {
+      await initiateCheckout({ plan: "starter", billingCycle });
+      return;
+    }
+
     // Pro plan
-    await initiateCheckout({ plan: "pro", billingCycle: proBillingCycle });
+    await initiateCheckout({ plan: "pro", billingCycle });
   };
 
   // Reusable Single-Family Icons (Grayscale + Single Accent Checkmark)
@@ -95,22 +100,48 @@ export default function PricingPage() {
       }
     >
       {/* ─────────────────────────────────────────────────────────────
-          1. HERO SECTION (Large centered H1 + 1-line subtext)
-          Generous padding (~120px desktop, ~64px mobile)
+          1. HERO SECTION (Large centered H1 + Toggle)
       ───────────────────────────────────────────────────────────── */}
-      <section className="pt-16 pb-12 sm:pt-28 sm:pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+      <section className="pt-16 pb-10 sm:pt-24 sm:pb-14 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900">
           Simple, transparent pricing
         </h1>
         <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-          Use 70+ tools for free forever. Upgrade to Pro for high-speed AI power, batch processing, and 100MB file limits.
+          Use 70+ tools for free forever. Upgrade for high-speed AI capacity, batch processing, and 100MB file limits.
         </p>
+
+        {/* Global Monthly / Annual Toggle */}
+        <div className="mt-8 inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium">
+          <button
+            type="button"
+            onClick={() => setBillingCycle("monthly")}
+            className={`px-4 py-1.5 rounded-lg transition ${
+              billingCycle === "monthly"
+                ? "bg-white text-slate-900 shadow-xs font-semibold"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            Monthly billing
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillingCycle("annual")}
+            className={`px-4 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
+              billingCycle === "annual"
+                ? "bg-white text-slate-900 shadow-xs font-semibold"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            <span>Annual billing</span>
+            <span className="px-1.5 py-0.5 text-[10px] font-bold bg-orange-100 text-[#ea580c] rounded-md">Save 20%</span>
+          </button>
+        </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
           2. PRICING CARDS ROW (3 equal-width cards)
       ───────────────────────────────────────────────────────────── */}
-      <section ref={cardsRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-28">
+      <section ref={cardsRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           
           {/* ──── CARD 1: FREE (Starter) ──── */}
@@ -132,13 +163,13 @@ export default function PricingPage() {
                 Essential client utilities and daily AI trial quota for individuals.
               </p>
 
-              {/* Primary CTA (ONLY ONE CARD GETS FILLED ACCENT BUTTON) */}
+              {/* CTA */}
               <button
                 type="button"
                 onClick={() => handleAction("free")}
-                className="w-full py-2.5 px-4 bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-semibold rounded-xl transition shadow-sm"
+                className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-semibold rounded-xl transition shadow-xs"
               >
-                {user ? "Current Plan" : "Get started free"}
+                {user && !credits.isPro ? "Current Plan" : "Get started free"}
               </button>
 
               {/* 1px Hairline Divider */}
@@ -175,67 +206,118 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* ──── CARD 2: PRO (Power Users) ──── */}
-          <div className="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm flex flex-col justify-between relative">
+          {/* ──── CARD 2: STARTER (The Decoy) ──── */}
+          <div className="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>
-              {/* Plan Name + INLINE Segmented Toggle (Right-aligned next to plan name) */}
+              {/* Plan Name */}
               <div className="flex items-center justify-between h-8 mb-4">
-                <span className="text-lg font-bold text-slate-900">Pro</span>
-                
-                {/* Inline Toggle */}
-                <div className="inline-flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
-                  <button
-                    type="button"
-                    onClick={() => setProBillingCycle("monthly")}
-                    className={`px-2.5 py-1 rounded-md font-medium transition ${
-                      proBillingCycle === "monthly"
-                        ? "bg-white text-slate-900 shadow-xs"
-                        : "text-slate-500 hover:text-slate-900"
-                    }`}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setProBillingCycle("annual")}
-                    className={`px-2.5 py-1 rounded-md font-medium transition flex items-center gap-1 ${
-                      proBillingCycle === "annual"
-                        ? "bg-white text-slate-900 shadow-xs"
-                        : "text-slate-500 hover:text-slate-900"
-                    }`}
-                  >
-                    <span>Annual</span>
-                    <span className="text-[10px] font-bold text-[#ea580c]">-30%</span>
-                  </button>
-                </div>
+                <span className="text-lg font-bold text-slate-900">Starter</span>
+                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Essential</span>
               </div>
 
               {/* Price */}
               <div className="mb-2">
                 <div className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
-                  {proBillingCycle === "annual" ? "₹291" : "₹399"}
+                  {billingCycle === "annual" ? "₹199" : "₹249"}
                 </div>
                 <div className="text-xs text-slate-500 font-medium mt-1">
-                  {proBillingCycle === "annual"
-                    ? "per month, billed annually (₹3,499/yr)"
+                  {billingCycle === "annual"
+                    ? "per month, billed annually (₹2,388/yr)"
                     : "per month, billed monthly"}
                 </div>
               </div>
 
               {/* One-line Description */}
               <p className="text-sm text-slate-600 mt-3 mb-6 min-h-[40px]">
-                High-speed AI limits, heavy file processing, and priority infrastructure.
+                Light AI toolkit with ad-free workspace for casual everyday usage.
               </p>
 
-              {/* Secondary / Outline Button */}
+              {/* Secondary CTA Button */}
+              <button
+                type="button"
+                onClick={() => handleAction("starter")}
+                disabled={isProcessing !== null}
+                className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-900 text-sm font-semibold rounded-xl border border-slate-300 transition shadow-xs disabled:opacity-75 active:scale-[0.99]"
+              >
+                {isProcessing === "starter" ? "Opening..." : "Get Starter"}
+              </button>
+
+              {/* 1px Hairline Divider */}
+              <hr className="my-6 border-slate-200" />
+
+              {/* Included in Plan */}
+              <div className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
+                Included in Starter:
+              </div>
+
+              {/* Checklist */}
+              <ul className="space-y-3 text-sm text-slate-700">
+                <li className="flex items-start gap-2.5">
+                  <CheckIcon />
+                  <span><strong>100 High-speed AI credits</strong> / month</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckIcon />
+                  <span><strong>25MB file upload limits</strong></span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckIcon />
+                  <span><strong>100% Ad-free</strong> clean interface</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckIcon />
+                  <span>Standard cloud processing speed</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <CheckIcon />
+                  <span>Email support</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* ──── CARD 3: PRO (The Target / Most Popular - Highlighted) ──── */}
+          <div className="bg-white rounded-2xl p-7 border-2 border-[#ea580c] shadow-md flex flex-col justify-between relative ring-1 ring-[#ea580c]/10">
+            {/* Top Center Floating Highlight Badge */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#ea580c] text-white text-[11px] font-bold py-0.5 px-3 rounded-full shadow-xs uppercase tracking-wider whitespace-nowrap">
+              Most Popular
+            </div>
+
+            <div>
+              {/* Plan Name */}
+              <div className="flex items-center justify-between h-8 mb-4">
+                <span className="text-lg font-bold text-slate-900">Pro</span>
+                <span className="text-xs font-semibold text-[#ea580c] bg-orange-50 px-2 py-0.5 rounded-md border border-orange-200">
+                  5x Credits
+                </span>
+              </div>
+
+              {/* Price */}
+              <div className="mb-2">
+                <div className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+                  {billingCycle === "annual" ? "₹249" : "₹299"}
+                </div>
+                <div className="text-xs text-slate-500 font-medium mt-1">
+                  {billingCycle === "annual"
+                    ? "per month, billed annually (₹2,988/yr)"
+                    : "per month, billed monthly"}
+                </div>
+              </div>
+
+              {/* One-line Description */}
+              <p className="text-sm text-slate-600 mt-3 mb-6 min-h-[40px]">
+                High-speed AI limits, heavy file processing, and priority cloud infrastructure.
+              </p>
+
+              {/* Primary Filled Accent Button */}
               <button
                 type="button"
                 onClick={() => handleAction("pro")}
                 disabled={isProcessing !== null || credits.isPro}
-                className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl border transition shadow-xs disabled:opacity-75 ${
+                className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl transition shadow-sm disabled:opacity-75 ${
                   credits.isPro
-                    ? "bg-slate-100 text-slate-500 border-slate-200 cursor-default"
-                    : "bg-white hover:bg-slate-50 text-slate-900 border-slate-300 active:scale-[0.99]"
+                    ? "bg-slate-100 text-slate-500 border border-slate-200 cursor-default"
+                    : "bg-[#ea580c] hover:bg-[#c2410c] text-white active:scale-[0.99]"
                 }`}
               >
                 {credits.isPro
@@ -269,11 +351,11 @@ export default function PricingPage() {
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckIcon />
-                  <span><strong>100% Ad-free</strong> clean interface</span>
+                  <span><strong>Priority cloud execution queue</strong></span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckIcon />
-                  <span><strong>Priority cloud execution queue</strong></span>
+                  <span><strong>100% Ad-free</strong> clean interface</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <CheckIcon />
@@ -283,68 +365,26 @@ export default function PricingPage() {
             </div>
           </div>
 
-          {/* ──── CARD 3: TEAM & ENTERPRISE ──── */}
-          <div className="bg-white rounded-2xl p-7 border border-slate-200 shadow-sm flex flex-col justify-between">
-            <div>
-              {/* Plan Name */}
-              <div className="flex items-center justify-between h-8 mb-4">
-                <span className="text-lg font-bold text-slate-900">Team & Enterprise</span>
-              </div>
+        </div>
 
-              {/* Price */}
-              <div className="mb-2">
-                <div className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">Custom</div>
-                <div className="text-xs text-slate-500 font-medium mt-1">per organization / year</div>
-              </div>
-
-              {/* One-line Description */}
-              <p className="text-sm text-slate-600 mt-3 mb-6 min-h-[40px]">
-                Dedicated API throughput, custom rate limits, and SLA support for teams.
-              </p>
-
-              {/* Neutral Dark "Contact Us" Style Button */}
-              <button
-                type="button"
-                onClick={() => handleAction("enterprise")}
-                className="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition shadow-xs"
-              >
-                Contact sales
-              </button>
-
-              {/* 1px Hairline Divider */}
-              <hr className="my-6 border-slate-200" />
-
-              {/* Included in Plan */}
-              <div className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">
-                Included in Team:
-              </div>
-
-              {/* Checklist */}
-              <ul className="space-y-3 text-sm text-slate-700">
-                <li className="flex items-start gap-2.5">
-                  <CheckIcon />
-                  <span>Unlimited shared team credit pool</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckIcon />
-                  <span>Dedicated API key access & webhooks</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckIcon />
-                  <span>500MB file processing limit</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckIcon />
-                  <span>99.9% uptime SLA & dedicated manager</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckIcon />
-                  <span>Custom GST invoice & security audit review</span>
-                </li>
-              </ul>
+        {/* ──── ENTERPRISE & TEAM BANNER ──── */}
+        <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-base font-bold text-slate-900">Need Custom Limits, Team Workspaces, or API Access?</span>
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-200 text-slate-700 uppercase">Enterprise</span>
             </div>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+              Dedicated API throughput, unlimited shared team credit pool, 500MB upload limits, 99.9% uptime SLA, and custom GST invoices.
+            </p>
           </div>
-
+          <button
+            type="button"
+            onClick={() => handleAction("enterprise")}
+            className="w-full md:w-auto py-2.5 px-5 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold rounded-xl transition whitespace-nowrap shadow-xs active:scale-[0.99]"
+          >
+            Contact enterprise sales →
+          </button>
         </div>
       </section>
 
@@ -362,18 +402,30 @@ export default function PricingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-12 gap-4 items-center py-3">
             {/* Left Title Column */}
-            <div className="col-span-4 font-bold text-sm text-slate-900">
+            <div className="col-span-3 font-bold text-sm text-slate-900">
               Compare all features
             </div>
             
             {/* Free CTA Column */}
-            <div className="col-span-2 text-center">
+            <div className="col-span-3 text-center">
               <button
                 type="button"
                 onClick={() => handleAction("free")}
-                className="w-full py-1.5 px-3 bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-semibold rounded-lg transition"
+                className="w-full py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold rounded-lg transition"
               >
                 Get Free
+              </button>
+            </div>
+
+            {/* Starter CTA Column */}
+            <div className="col-span-3 text-center">
+              <button
+                type="button"
+                onClick={() => handleAction("starter")}
+                disabled={isProcessing !== null}
+                className="w-full py-1.5 px-3 bg-white hover:bg-slate-50 text-slate-900 text-xs font-semibold rounded-lg border border-slate-300 transition disabled:opacity-75"
+              >
+                {isProcessing === "starter" ? "Loading..." : `Get Starter (${billingCycle === "annual" ? "₹199/mo" : "₹249/mo"})`}
               </button>
             </div>
 
@@ -383,24 +435,13 @@ export default function PricingPage() {
                 type="button"
                 onClick={() => handleAction("pro")}
                 disabled={isProcessing !== null || credits.isPro}
-                className="w-full py-1.5 px-3 bg-white hover:bg-slate-50 text-slate-900 text-xs font-semibold rounded-lg border border-slate-300 transition disabled:opacity-75"
+                className="w-full py-1.5 px-3 bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-semibold rounded-lg transition disabled:opacity-75 shadow-xs"
               >
                 {credits.isPro
                   ? "Current Plan"
                   : isProcessing === "pro"
                   ? "Loading..."
-                  : `Upgrade Pro (${proBillingCycle === "annual" ? "₹291/mo" : "₹399/mo"})`}
-              </button>
-            </div>
-
-            {/* Enterprise CTA Column */}
-            <div className="col-span-3 text-center">
-              <button
-                type="button"
-                onClick={() => handleAction("enterprise")}
-                className="w-full py-1.5 px-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition"
-              >
-                Contact Sales
+                  : `Upgrade Pro (${billingCycle === "annual" ? "₹249/mo" : "₹299/mo"})`}
               </button>
             </div>
           </div>
@@ -424,10 +465,10 @@ export default function PricingPage() {
                   Free
                 </th>
                 <th className="py-4 px-6 text-center text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Pro
+                  Starter (₹249/mo)
                 </th>
-                <th className="py-4 px-6 text-center text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Team & Enterprise
+                <th className="py-4 px-6 text-center text-xs font-bold text-slate-900 uppercase tracking-wider bg-orange-50/40">
+                  Pro (₹299/mo)
                 </th>
               </tr>
             </thead>
@@ -448,7 +489,7 @@ export default function PricingPage() {
                 </td>
                 <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
                 <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
-                <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
+                <td className="py-4 px-6 text-center bg-orange-50/20"><div className="flex justify-center"><CheckIcon /></div></td>
               </tr>
 
               <tr>
@@ -457,8 +498,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">PDF intelligence, DOC conversion & text extraction</div>
                 </td>
                 <td className="py-4 px-6 text-center text-xs text-slate-600">Basic (5MB)</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Advanced (100MB)</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Enterprise (500MB)</td>
+                <td className="py-4 px-6 text-center text-xs text-slate-600">Standard (25MB)</td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">Advanced (100MB)</td>
               </tr>
 
               <tr>
@@ -467,8 +508,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">Process multiple images or documents simultaneously</div>
                 </td>
                 <td className="py-4 px-6 text-center"><DashIcon /></td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Up to 50 files</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Unlimited batch</td>
+                <td className="py-4 px-6 text-center"><DashIcon /></td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">Up to 50 files</td>
               </tr>
 
               {/* ─── SECTION 2: AI & COMPUTE QUOTAS ─── */}
@@ -484,8 +525,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">Allocated credits for server-side AI & Groq tools</div>
                 </td>
                 <td className="py-4 px-6 text-center text-xs text-slate-600">10 / day (300/mo)</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">500+ / month</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Custom Pool</td>
+                <td className="py-4 px-6 text-center text-xs text-slate-600">100 / month</td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">500+ / month</td>
               </tr>
 
               <tr>
@@ -494,8 +535,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">LLM reasoning and prompt architecture capacity</div>
                 </td>
                 <td className="py-4 px-6 text-center text-xs text-slate-600">Standard 8B</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">High-Capacity 70B</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Dedicated 70B + Custom</td>
+                <td className="py-4 px-6 text-center text-xs text-slate-600">Standard 8B</td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">High-Capacity 70B</td>
               </tr>
 
               <tr>
@@ -504,8 +545,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">Maximum API requests allowed per minute</div>
                 </td>
                 <td className="py-4 px-6 text-center text-xs text-slate-600">5 req / min</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">60 req / min</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Custom / Unlimited</td>
+                <td className="py-4 px-6 text-center text-xs text-slate-600">20 req / min</td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">60 req / min</td>
               </tr>
 
               {/* ─── SECTION 3: INFRASTRUCTURE & SUPPORT ─── */}
@@ -522,7 +563,7 @@ export default function PricingPage() {
                 </td>
                 <td className="py-4 px-6 text-center"><DashIcon /></td>
                 <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
-                <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
+                <td className="py-4 px-6 text-center bg-orange-50/20"><div className="flex justify-center"><CheckIcon /></div></td>
               </tr>
 
               <tr>
@@ -531,8 +572,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">Skip processing queues during peak server traffic</div>
                 </td>
                 <td className="py-4 px-6 text-center"><DashIcon /></td>
-                <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
-                <td className="py-4 px-6 text-center"><div className="flex justify-center"><CheckIcon /></div></td>
+                <td className="py-4 px-6 text-center"><DashIcon /></td>
+                <td className="py-4 px-6 text-center bg-orange-50/20"><div className="flex justify-center"><CheckIcon /></div></td>
               </tr>
 
               <tr>
@@ -541,8 +582,8 @@ export default function PricingPage() {
                   <div className="text-xs text-slate-500 mt-0.5">Assistance with troubleshooting and integrations</div>
                 </td>
                 <td className="py-4 px-6 text-center text-xs text-slate-600">Community</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Priority Email</td>
-                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900">Dedicated Slack / SLA</td>
+                <td className="py-4 px-6 text-center text-xs text-slate-600">Standard Email</td>
+                <td className="py-4 px-6 text-center text-xs font-semibold text-slate-900 bg-orange-50/20">Priority VIP Email</td>
               </tr>
 
             </tbody>
@@ -578,18 +619,24 @@ export default function PricingPage() {
               
               {/* Preset buttons */}
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                {[10, 50, 100, 250, 500].map((count) => (
+                {[
+                  { count: 10, label: "10" },
+                  { count: 50, label: "50" },
+                  { count: 100, label: "100" },
+                  { count: 200, label: "200" },
+                  { count: 500, label: "500" },
+                ].map((tier) => (
                   <button
-                    key={count}
+                    key={tier.count}
                     type="button"
-                    onClick={() => setCustomCredits(count)}
+                    onClick={() => setCustomCredits(tier.count)}
                     className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold border transition ${
-                      customCredits === count
+                      customCredits === tier.count
                         ? "bg-slate-900 text-white border-slate-900 shadow-xs"
                         : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
                     }`}
                   >
-                    {count}
+                    {tier.label}
                   </button>
                 ))}
               </div>
@@ -632,7 +679,15 @@ export default function PricingPage() {
 
               <div className="text-center sm:text-right w-full sm:w-auto">
                 <div className="text-sm font-extrabold text-slate-900">
-                  ₹{Math.max(20, Math.round(customCredits * 1.99))}
+                  ₹{(() => {
+                    const c = Math.max(10, customCredits);
+                    if (c <= 10) return 25;
+                    if (c <= 50) return Math.round(25 + ((c - 10) / 40) * 74);
+                    if (c <= 100) return Math.round(99 + ((c - 50) / 50) * 50);
+                    if (c <= 200) return Math.round(149 + ((c - 100) / 100) * 100);
+                    if (c <= 500) return Math.round(249 + ((c - 200) / 300) * 50);
+                    return Math.round(299 + (c - 500) * 0.50);
+                  })()}
                   <span className="text-[11px] font-normal text-slate-500 ml-1">one-time</span>
                 </div>
                 <button

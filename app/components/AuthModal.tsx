@@ -139,6 +139,14 @@ export default function AuthModal() {
             <p className="text-xs text-emerald-700 mt-1">
               Check your inbox at <span className="font-medium">{email}</span> to log in instantly.
             </p>
+            <div className="mt-3 p-2.5 bg-white/90 rounded-lg border border-emerald-200/70 text-left text-xs text-slate-600">
+              <p className="font-semibold text-slate-800 flex items-center gap-1.5 mb-1 text-[11px]">
+                <span>📩</span> Email sender notice:
+              </p>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                The login link is sent from <strong>Supabase</strong> (<code className="text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">noreply@mail.app.supabase.io</code>). If you don&apos;t see it in your inbox, please check your <strong>Spam</strong> or <strong>Promotions</strong> folder.
+              </p>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleEmailSubmit} className="space-y-3">
@@ -162,6 +170,9 @@ export default function AuthModal() {
             >
               {loading ? "Sending link..." : "Send Magic Link"}
             </button>
+            <p className="text-[11px] text-slate-400 text-center">
+              Login email will be delivered via <strong>Supabase</strong>. Check Spam if needed.
+            </p>
           </form>
         )}
 

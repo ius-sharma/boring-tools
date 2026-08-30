@@ -77,6 +77,10 @@ export default function BillingPage() {
   const planName =
     subscription?.planTier === "pro_yearly"
       ? "Boring Tools Pro (Yearly)"
+      : subscription?.planTier === "starter_yearly"
+      ? "Boring Tools Starter (Yearly)"
+      : subscription?.planTier === "starter_monthly"
+      ? "Boring Tools Starter (Monthly)"
       : isPro
       ? "Boring Tools Pro (Monthly)"
       : "Boring Tools Free Tier";
@@ -145,7 +149,7 @@ export default function BillingPage() {
                   <>
                     <p>
                       <strong>Billing Rate:</strong>{" "}
-                      {subscription?.planTier === "pro_yearly" ? "₹3,999 / year" : "₹499 / month"} (Secured via Razorpay)
+                      {subscription?.planTier === "pro_yearly" ? "₹3,499 / year" : "₹399 / month"} (Secured via Razorpay)
                     </p>
                     {renewalDate && (
                       <p className="text-slate-500">
@@ -190,7 +194,7 @@ export default function BillingPage() {
                   disabled={isProcessing !== null}
                   className="px-6 py-2.5 bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs sm:text-sm font-semibold rounded-xl transition shadow-sm active:scale-[0.99] disabled:opacity-50"
                 >
-                  {isProcessing === "pro_monthly" ? "Opening Razorpay..." : "Upgrade to Pro (₹499/mo) →"}
+                  {isProcessing === "pro_monthly" ? "Opening Razorpay..." : "Upgrade to Pro (₹399/mo) →"}
                 </button>
               )}
             </div>
@@ -265,18 +269,24 @@ export default function BillingPage() {
               {/* Quick Preset Buttons */}
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-medium text-slate-500 mr-1">Quick Select:</span>
-                {[10, 50, 100, 250, 500].map((count) => (
+                {[
+                  { count: 10, label: "10" },
+                  { count: 50, label: "50" },
+                  { count: 100, label: "100" },
+                  { count: 200, label: "200" },
+                  { count: 500, label: "500" },
+                ].map((tier) => (
                   <button
-                    key={count}
+                    key={tier.count}
                     type="button"
-                    onClick={() => setCustomCredits(count)}
+                    onClick={() => setCustomCredits(tier.count)}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold border transition ${
-                      customCredits === count
+                      customCredits === tier.count
                         ? "bg-slate-900 text-white border-slate-900 shadow-xs"
                         : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
                     }`}
                   >
-                    {count} Credits
+                    {tier.label} {tier.count >= 500 ? "Credits (Best Value)" : "Credits"}
                   </button>
                 ))}
               </div>
@@ -329,7 +339,15 @@ export default function BillingPage() {
                   Total Price
                 </div>
                 <div className="text-xl font-extrabold text-slate-900 mt-0.5">
-                  ₹{Math.max(20, Math.round(customCredits * 1.99))}
+                  ₹{(() => {
+                    const c = Math.max(10, customCredits);
+                    if (c <= 10) return 25;
+                    if (c <= 50) return Math.round(25 + ((c - 10) / 40) * 74);
+                    if (c <= 100) return Math.round(99 + ((c - 50) / 50) * 50);
+                    if (c <= 200) return Math.round(149 + ((c - 100) / 100) * 100);
+                    if (c <= 500) return Math.round(249 + ((c - 200) / 300) * 50);
+                    return Math.round(299 + (c - 500) * 0.50);
+                  })()}
                   <span className="text-xs font-normal text-slate-500 ml-1">one-time</span>
                 </div>
 

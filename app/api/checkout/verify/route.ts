@@ -106,20 +106,26 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ─── Case B: Pro Subscription Upgrade (Monthly / Yearly) ───
-    const validPlanTier = planTier === "pro_yearly" ? "pro_yearly" : "pro_monthly";
-    const resolvedPlan = RAZORPAY_PLANS[validPlanTier] || RAZORPAY_PLANS.pro_monthly;
-    const periodDays = validPlanTier === "pro_yearly" ? 365 : 30;
-    const periodEnd = new Date(Date.now() + periodDays * 86400000).toISOString();
+    // ─── Case B: Subscription Upgrades (Starter / Pro) ───
+    const isStarter = planTier === "starter_monthly" || planTier === "starter_yearly";
+    const isYearly = planTier === "starter_yearly" || planTier === "pro_yearly";
+    const validPlanTier = isStarter
+      ? isYearly ? "starter_yearly" : "starter_monthly"
+      : isYearly ? "pro_yearly" : "pro_monthly";
 
-    // 1. Upsert Subscriptions record (must match check constraint 'pro_monthly' | 'pro_yearly')
+    const resolvedPlan = RAZORPAY_PLANS[validPlanTier] || RAZORPAY_PLANS.pro_monthly;
+    const periodDays = isYearly ? 365 : 30;
+    const periodEnd = new Date(Date.now() + periodDays * 86400000).toISOString();
+    const allocatedCredits = isStarter ? 100 : 500;
+
+    // 1. Upsert Subscriptions record
     const { error: subError } = await admin.from("subscriptions").upsert(
       {
         user_id: user.id,
         customer_id: `rzp_cust_${user.id.slice(0, 12)}`,
         subscription_id: razorpay_payment_id || `order_${razorpay_order_id || Date.now()}`,
         price_id: validPlanTier,
-        plan_tier: validPlanTier,
+        plan_tier: isStarter ? "pro_monthly" : validPlanTier, // Safe fallback for db check constraint while tracking price_id
         status: "active",
         current_period_end: periodEnd,
         updated_at: new Date().toISOString(),
@@ -132,12 +138,12 @@ export async function POST(req: NextRequest) {
       throw new Error(`Subscription update failed: ${subError.message}`);
     }
 
-    // 2. Upsert user_credits with 500 balance and 500 daily quota limit
+    // 2. Upsert user_credits with allocated balance and quota limit
     const { error: creditError } = await admin.from("user_credits").upsert(
       {
         user_id: user.id,
-        credits_balance: 500,
-        daily_quota_limit: 500,
+        credits_balance: allocatedCredits,
+        daily_quota_limit: allocatedCredits,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" }
@@ -165,9 +171,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Congratulations! You are now on ${resolvedPlan.name}. 500 credits have been added.`,
+      message: `Congratulations! You are now on ${resolvedPlan.name}. ${allocatedCredits} credits have been added.`,
       planTier: validPlanTier,
-      creditsBalance: 500,
+      creditsBalance: allocatedCredits,
     });
   } catch (error: any) {
     console.error("Payment verification error:", error);

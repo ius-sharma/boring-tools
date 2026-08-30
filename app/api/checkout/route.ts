@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
       customCredits = calc.credits;
       planName = `${calc.credits} AI Bonus Credits Pack`;
     } else {
-      if (planKey === "pro") {
+      if (planKey === "starter") {
+        planKey = billingCycle === "annual" || billingCycle === "yearly" ? "starter_yearly" : "starter_monthly";
+      } else if (planKey === "pro") {
         planKey = billingCycle === "annual" || billingCycle === "yearly" ? "pro_yearly" : "pro_monthly";
       }
       const planConfig = RAZORPAY_PLANS[planKey] || RAZORPAY_PLANS.pro_monthly;
