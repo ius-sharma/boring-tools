@@ -1,0 +1,88 @@
+# BoringTools
+
+> A curated collection of 70+ fast, free, browser-first tools with zero sign-up required and 100% client-side privacy.
+
+## Overview
+BoringTools (https://boringtools.vercel.app) is an open-source productivity and utility ecosystem developed by Ayush Sharma. Every tool runs directly inside the user's browser using modern Web APIs, WebAssembly (WASM), and Web Workers. No files or private data are uploaded to servers unless explicitly requested by the user.
+
+## Core Features & Philosophy
+- **Client-Side Privacy**: File processing (PDFs, images, videos, audio, text) happens locally on your machine.
+- **Zero Friction**: Instant access without paywalls, email collection, or mandatory account creation.
+- **Fast & Responsive**: Built with Next.js, React, and Tailwind CSS.
+
+## Tool Directory by Category
+
+### Media & Design
+- [Background Remover](https://boringtools.vercel.app/background-remover): 100% browser-based AI background remover. No server uploads.
+- [GIF Maker from Images](https://boringtools.vercel.app/gif-maker): Create animated GIFs with custom transitions, delays, text overlays, and filters.
+- [Image Compressor / Resizer](https://boringtools.vercel.app/image-compressor): Compress and resize JPG, PNG, and WebP images locally.
+- [Image to ASCII](https://boringtools.vercel.app/image-to-ascii): Convert images into ASCII art with text, HTML, and PNG export options.
+- [Audio Waveform Trimmer](https://boringtools.vercel.app/audio-waveform-trimmer): Visual audio trimmer and format converter.
+- [Video to Audio Converter](https://boringtools.vercel.app/video-to-audio-converter): Extract MP3, WAV, M4A, or FLAC audio from video files locally.
+- [Video Transcriber](https://boringtools.vercel.app/video-transcriber): Transcribe speech in videos to text in real-time.
+- [Color Palette Generator](https://boringtools.vercel.app/color-palette-generator): Generate harmonious palettes and export CSS/HEX codes.
+- [Cinematic AI Prompt Architect](https://boringtools.vercel.app/cinematic-ai-prompt-architect): Craft production-ready Midjourney/DALL-E prompts.
+- [Logo Meaning Explorer](https://boringtools.vercel.app/logo-meaning-explorer): Discover psychology and symbolism behind brand logos.
+
+### Document & PDF Utilities
+- [PDF Intelligence Tool](https://boringtools.vercel.app/pdf-intelligence-tool): Summarize PDFs, extract key insights, contacts, and links offline.
+- [DOC to PDF Converter](https://boringtools.vercel.app/doc-to-pdf-converter): Convert Word (.docx) documents to PDF using LibreOffice WASM in-browser.
+- [Image to PDF Converter](https://boringtools.vercel.app/image-to-pdf-converter): Combine multiple photos into a single PDF.
+- [Document Data Extractor](https://boringtools.vercel.app/document-data-extractor): Extract emails, phone numbers, tables, and dates from documents.
+- [Terms & Conditions Simplifier](https://boringtools.vercel.app/terms-conditions-simplifier): Plain-language summary of legal agreements.
+- [Text to Handwriting Converter](https://boringtools.vercel.app/text-to-handwriting): Turn typed text into realistic handwritten notebook pages.
+
+### Developer & Technical Tools
+- [JSON Formatter & Validator](https://boringtools.vercel.app/json-formatter): Format, validate, and minify JSON data.
+- [Fake Data Generator](https://boringtools.vercel.app/fake-data-generator): Generate test names, addresses, emails, and SQL inserts.
+- [QR Generator](https://boringtools.vercel.app/qr-generator): Create custom QR codes for URLs, WiFi credentials, and text.
+- [Base Converter](https://boringtools.vercel.app/base-converter): Convert between Binary, Decimal, Hexadecimal, and Octal.
+- [Markdown Previewer](https://boringtools.vercel.app/markdown-previewer): Real-time GitHub-flavored markdown editor and HTML exporter.
+- [Aspect Ratio Calculator](https://boringtools.vercel.app/aspect-ratio-calculator): Calculate dimensions maintaining 16:9, 4:3, or custom ratios.
+- [File Name Sanitizer](https://boringtools.vercel.app/file-name-sanitizer): Clean messy filenames for safe cross-platform file storage.
+
+### Security & Privacy
+- [Can I Trust This Website?](https://boringtools.vercel.app/can-i-trust-this-website): Audit domain trust indicators, SSL, and safety signals.
+- [Link Intelligence](https://boringtools.vercel.app/link-intelligence): Strip tracking tags (UTM/fbclid), analyze redirect chains, and check safety.
+- [Password Generator](https://boringtools.vercel.app/password-generator): Generate cryptographically strong random passwords locally.
+- [News Accuracy Checker](https://boringtools.vercel.app/news-accuracy-checker): Analyze news stories for clickbait, emotional wording, and citations.
+
+### Finance & Business
+- [Freelancer Pricing Calculator](https://boringtools.vercel.app/freelancer-pricing-calculator): Calculate hourly, daily, and fixed project rates.
+- [SIP Calculator](https://boringtools.vercel.app/sip-calculator): Calculate mutual fund compounding growth with charts.
+- [EMI Calculator](https://boringtools.vercel.app/emi-calculator): Calculate home/car loan monthly installments and amortizations.
+- [Discount Calculator](https://boringtools.vercel.app/discount-calculator): Calculate savings, stacked coupons, and tax additions.
+- [GST Calculator](https://boringtools.vercel.app/gst-calculator): Calculate GST-inclusive and exclusive totals.
+- [Cash Runway Calculator](https://boringtools.vercel.app/cash-runway-calculator): Calculate startup runway and monthly burn rate.
+- [Invoice Generator](https://boringtools.vercel.app/invoice-generator): Generate and download clean PDF invoices in seconds.
+- [Subscription Tracker](https://boringtools.vercel.app/subscription-tracker): Track recurring software subscriptions and expenses.
+
+### Health & Daily Life
+- [BMI Calculator](https://boringtools.vercel.app/bmi-calculator): Calculate Body Mass Index and healthy weight ranges.
+- [Water Intake Calculator](https://boringtools.vercel.app/water-intake-calculator): Calculate daily hydration targets by weight and climate.
+- [Calorie Calculator](https://boringtools.vercel.app/calorie-calculator): Calculate BMR, TDEE, and macro breakdown for fitness goals.
+- [Sleep Cycle Calculator](https://boringtools.vercel.app/sleep-cycle-calculator): Optimize wake-up times according to 90-minute sleep cycles.
+- [Age Calculator](https://boringtools.vercel.app/age-calculator): Exact age in years, months, days, hours, and minutes.
+- [Days Between Dates](https://boringtools.vercel.app/days-between-dates): Precise date duration calculator.
+- [Time Zone Converter](https://boringtools.vercel.app/time-zone-converter): Coordinate meetings across global timezones.
+
+### Productivity & Self-Organization
+- [Pomodoro Timer](https://boringtools.vercel.app/pomodoro-timer): Focus timer with customizable work/break intervals.
+- [Reaction Time Tester](https://boringtools.vercel.app/reaction-time-tester): Benchmark reflex speed and mouse precision.
+- [Typing Speed Tester](https://boringtools.vercel.app/typing-speed-tester): Real-time WPM and accuracy typing test.
+- [To-Do List](https://boringtools.vercel.app/to-do-list): Local storage task manager with priority tags.
+- [Clipboard History Manager](https://boringtools.vercel.app/clipboard-history-manager): Keep multiple text snippets organized offline.
+- [Digital Declutter Assistant](https://boringtools.vercel.app/digital-declutter-assistant): Identify duplicate and oversized local files.
+- [Digital Time Capsule](https://boringtools.vercel.app/digital-time-capsule): Lock letters, photos, and voice notes until a future date.
+
+### Education & Curiosity
+- [Geography Quiz & Map Explorer](https://boringtools.vercel.app/geography-quiz): Interactive world map quiz for countries, capitals, and flags.
+- [Playlist IQ (YouTube Playlist Analyzer)](https://boringtools.vercel.app/youtube-playlist-analyzer): Calculate playlist duration at various speeds.
+- [What Happened Today In History](https://boringtools.vercel.app/what-happened-today): Explore historical events on today's date.
+- [Cosmic Calendar](https://boringtools.vercel.app/cosmic-calendar): Compress cosmic history into a single calendar year.
+- [Cosmic Address](https://boringtools.vercel.app/cosmic-address): Trace your address from Earth to the observable universe.
+- [Your Weight on Other Planets](https://boringtools.vercel.app/your-weight-on-other-planets): Gravity simulator for planets in our solar system.
+
+## Optional Resources
+- [Full Tool Catalog](https://boringtools.vercel.app/llms-full.txt): Comprehensive technical breakdown of every single tool.
+- [Sitemap](https://boringtools.vercel.app/sitemap.xml): Machine-readable XML sitemap.

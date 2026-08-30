@@ -3,48 +3,55 @@ import { tools } from "./tools-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://boringtools.vercel.app";
+  const now = new Date();
 
-  const staticPages = [
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
+      lastModified: now,
+      changeFrequency: "daily",
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/pricing`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/terms-of-service`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.3,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
     },
   ];
 
-  // Map all "Live" tools to sitemap entries
-  const toolPages = tools
+  // Map all "Live" tools to sitemap entries with priority boosting for featured tools
+  const toolPages: MetadataRoute.Sitemap = tools
     .filter((tool) => tool.status === "Live")
     .map((tool) => ({
       url: `${baseUrl}${tool.href}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
+      lastModified: now,
+      changeFrequency: tool.isFeatured ? "weekly" : "monthly",
+      priority: tool.isFeatured ? 0.9 : 0.8,
     }));
 
   return [...staticPages, ...toolPages];
