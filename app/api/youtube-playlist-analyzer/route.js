@@ -101,8 +101,38 @@ function extractLockupDuration(lockup) {
 function extractVideosAndTokens(node, videoList, seenIds, playlistId) {
   let nextToken = null;
 
+  function extractTokenFromObj(obj) {
+    if (!obj || typeof obj !== "object") return null;
+    if (obj.continuationItemRenderer) {
+      return obj.continuationItemRenderer.continuationEndpoint?.continuationCommand?.token || null;
+    }
+    if (obj.continuationItemViewModel) {
+      return (
+        obj.continuationItemViewModel.continuationCommand?.continuationCommand?.token ||
+        obj.continuationItemViewModel.continuationCommand?.innertubeCommand?.continuationCommand?.token ||
+        null
+      );
+    }
+    return null;
+  }
+
   function traverse(obj) {
     if (!obj || typeof obj !== "object") return;
+
+    if (Array.isArray(obj)) {
+      let arrayToken = null;
+      for (const item of obj) {
+        const t = extractTokenFromObj(item);
+        if (t) {
+          arrayToken = t;
+        }
+        traverse(item);
+      }
+      if (arrayToken && !nextToken) {
+        nextToken = arrayToken;
+      }
+      return;
+    }
 
     if (obj.playlistVideoRenderer) {
       const vr = obj.playlistVideoRenderer;
@@ -150,28 +180,15 @@ function extractVideosAndTokens(node, videoList, seenIds, playlistId) {
       return;
     }
 
-    if (obj.continuationItemRenderer) {
-      const token = obj.continuationItemRenderer.continuationEndpoint?.continuationCommand?.token;
-      if (token) nextToken = token;
-      return;
-    }
-
-    if (obj.continuationItemViewModel) {
-      const token =
-        obj.continuationItemViewModel.continuationCommand?.continuationCommand?.token ||
-        obj.continuationItemViewModel.continuationCommand?.innertubeCommand?.continuationCommand?.token;
-      if (token) nextToken = token;
+    const singleToken = extractTokenFromObj(obj);
+    if (singleToken && !nextToken) {
+      nextToken = singleToken;
       return;
     }
 
     for (const key of Object.keys(obj)) {
-      if (Array.isArray(obj[key])) {
-        for (const item of obj[key]) {
-          traverse(item);
-        }
-      } else if (typeof obj[key] === "object") {
-        traverse(obj[key]);
-      }
+      if (key === "sidebar" || key === "engagementPanels") continue;
+      traverse(obj[key]);
     }
   }
 
@@ -242,12 +259,15 @@ async function fetchPlaylistViaScrape(playlistId) {
 
     const apiKeyMatch = html.match(/"INNERTUBE_API_KEY":"([^"]+)"/);
     const innertubeKey = apiKeyMatch ? apiKeyMatch[1] : "";
-    const clientVersionMatch = html.match(/"INNERTUBE_CLIENT_VERSION":"([^"]+)"/);
-    const clientVersion = clientVersionMatch ? clientVersionMatch[1] : "2.20260820.08.00";
+    const rawClientVersionMatch = html.match(/"INNERTUBE_CLIENT_VERSION":"([^"]+)"/);
+    const rawClientVersion = rawClientVersionMatch ? rawClientVersionMatch[1] : "2.20260828.01.00";
+    const clientVersion = rawClientVersion.split("-")[0];
+    const visitorDataMatch = html.match(/"VISITOR_DATA":"([^"]+)"/);
+    const visitorData = visitorDataMatch ? visitorDataMatch[1] : (ytData.responseContext?.visitorData || "");
 
-    // Fetch continuation pages (up to 10 pages / ~1000 videos max)
+    // Fetch continuation pages (up to 25 pages / ~2500 videos max)
     let pages = 0;
-    while (nextContinuationToken && pages < 10 && innertubeKey) {
+    while (nextContinuationToken && pages < 25 && innertubeKey) {
       pages++;
       const prevCount = videoList.length;
       const currentToken = nextContinuationToken;
@@ -260,6 +280,10 @@ async function fetchPlaylistViaScrape(playlistId) {
             "Content-Type": "application/json",
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "X-YouTube-Client-Name": "1",
+            "X-YouTube-Client-Version": clientVersion,
+            "Origin": "https://www.youtube.com",
+            "Referer": `https://www.youtube.com/playlist?list=${playlistId}`,
           },
           body: JSON.stringify({
             context: {
@@ -268,6 +292,7 @@ async function fetchPlaylistViaScrape(playlistId) {
                 clientVersion: clientVersion,
                 hl: "en",
                 gl: "US",
+                visitorData: visitorData || undefined,
               },
             },
             continuation: currentToken,
@@ -347,7 +372,7 @@ async function fetchPlaylistViaOfficialAPI(playlistId, apiKey) {
       }
 
       pageToken = itemsData.nextPageToken;
-    } while (pageToken && rawVideos.length < 500);
+    } while (pageToken && rawVideos.length < 1000);
 
     if (rawVideos.length === 0) return null;
 
