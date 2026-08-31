@@ -7,6 +7,7 @@ export default function VideoTranscriber() {
   const [url, setUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0); // 0: Idle, 1: Downloading, 2: Transcribing, 3: Completed
   const [statusMessage, setStatusMessage] = useState("");
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState("");
@@ -15,46 +16,134 @@ export default function VideoTranscriber() {
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef(null);
 
+  const isInstagramUrl = (u) => {
+    try {
+      const urlObj = new URL(u);
+      return urlObj.hostname.includes("instagram.com");
+    } catch {
+      return false;
+    }
+  };
+
   const handleTranscribe = async (e) => {
-    e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
     setError("");
     setTranscript("");
     setVideoTitle("");
     setSourceType("");
 
     if (activeTab === "url") {
-      if (!url.trim()) {
+      const targetUrl = url.trim();
+      if (!targetUrl) {
         setError("Please enter a valid video URL");
         return;
       }
 
       setLoading(true);
-      setStatusMessage("Extracting transcript / processing audio...");
 
-      try {
-        const response = await fetch("/api/transcribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: url.trim() }),
-        });
+      // Dedicated 2-Step Flow for Instagram
+      if (isInstagramUrl(targetUrl)) {
+        try {
+          // STEP 1: Download Video Stream
+          setCurrentStep(1);
+          setStatusMessage("Step 1/2: Resolving & downloading Instagram video...");
 
-        const data = await response.json();
+          let videoBlob = null;
+          let reelTitle = "Instagram Reel";
 
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to transcribe video");
+          try {
+            const resolveRes = await fetch("/api/download-reel", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ url: targetUrl }),
+            });
+
+            const resolveData = await resolveRes.json();
+
+            if (resolveRes.ok && resolveData.videoUrl) {
+              const streamRes = await fetch(resolveData.videoUrl);
+              if (streamRes.ok) {
+                videoBlob = await streamRes.blob();
+                reelTitle = resolveData.title || "Instagram Reel";
+              }
+            }
+          } catch {
+            // Fallback to server-side pipeline
+          }
+
+          // STEP 2: Transcribe via Whisper
+          setCurrentStep(2);
+          setStatusMessage("Step 2/2: Transcribing audio with Whisper AI...");
+
+          let response;
+          if (videoBlob) {
+            const formData = new FormData();
+            formData.append("file", videoBlob, "instagram_reel.mp4");
+            response = await fetch("/api/transcribe", {
+              method: "POST",
+              body: formData,
+            });
+          } else {
+            // Server-side fallback
+            response = await fetch("/api/transcribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ url: targetUrl }),
+            });
+          }
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to transcribe video");
+          }
+
+          setCurrentStep(3);
+          setTranscript(data.transcript);
+          setVideoTitle(data.title || reelTitle);
+          setSourceType(data.source || "instagram");
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "An error occurred");
+          setCurrentStep(0);
+        } finally {
+          setLoading(false);
+          setStatusMessage("");
         }
+      } else {
+        // Standard YouTube / Video URL Flow
+        try {
+          setCurrentStep(1);
+          setStatusMessage("Step 1/2: Fetching video audio / captions...");
 
-        setTranscript(data.transcript);
-        setVideoTitle(data.title || "Video Transcript");
-        setSourceType(data.source || "online");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-        setStatusMessage("");
+          const response = await fetch("/api/transcribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: targetUrl }),
+          });
+
+          setCurrentStep(2);
+          setStatusMessage("Step 2/2: Processing Whisper transcript...");
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Failed to transcribe video");
+          }
+
+          setCurrentStep(3);
+          setTranscript(data.transcript);
+          setVideoTitle(data.title || "Video Transcript");
+          setSourceType(data.source || "online");
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "An error occurred");
+          setCurrentStep(0);
+        } finally {
+          setLoading(false);
+          setStatusMessage("");
+        }
       }
     } else {
-      // File Upload Mode
+      // Direct File Upload Mode (Step 2 & 3)
       if (!selectedFile) {
         setError("Please select an audio or video file first.");
         return;
@@ -66,7 +155,8 @@ export default function VideoTranscriber() {
       }
 
       setLoading(true);
-      setStatusMessage("Uploading and transcribing with Whisper AI...");
+      setCurrentStep(2);
+      setStatusMessage("Transcribing audio file with Whisper AI...");
 
       try {
         const formData = new FormData();
@@ -83,11 +173,13 @@ export default function VideoTranscriber() {
           throw new Error(data.error || "Failed to transcribe audio file");
         }
 
+        setCurrentStep(3);
         setTranscript(data.transcript);
         setVideoTitle(data.title || selectedFile.name);
         setSourceType("file-upload");
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
+        setCurrentStep(0);
       } finally {
         setLoading(false);
         setStatusMessage("");
@@ -172,6 +264,7 @@ export default function VideoTranscriber() {
             onClick={() => {
               setActiveTab("url");
               setError("");
+              setCurrentStep(0);
             }}
             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
               activeTab === "url"
@@ -186,6 +279,7 @@ export default function VideoTranscriber() {
             onClick={() => {
               setActiveTab("file");
               setError("");
+              setCurrentStep(0);
             }}
             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
               activeTab === "file"
@@ -253,6 +347,25 @@ export default function VideoTranscriber() {
             </div>
           )}
 
+          {/* Real-time Progress Steps Indicator */}
+          {loading && (
+            <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between text-xs font-semibold text-blue-900">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+                  {statusMessage || "Processing..."}
+                </span>
+                <span>{currentStep === 1 ? "Step 1 of 2" : "Step 2 of 2"}</span>
+              </div>
+              <div className="w-full bg-blue-100 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: currentStep === 1 ? "45%" : "85%" }}
+                />
+              </div>
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
@@ -273,14 +386,14 @@ export default function VideoTranscriber() {
                     r="10"
                     stroke="currentColor"
                     strokeWidth="4"
-                  ></circle>
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+                  />
                 </svg>
-                <span>{statusMessage || "Transcribing..."}</span>
+                <span>Processing...</span>
               </>
             ) : (
               "Transcribe Video"
@@ -309,7 +422,6 @@ export default function VideoTranscriber() {
                   setActiveTab("file");
                   setError("");
                   // Auto-submit file
-                  const fakeEvent = { preventDefault: () => {} };
                   setTimeout(() => {
                     const form = document.querySelector("form");
                     if (form) form.requestSubmit();
@@ -327,10 +439,10 @@ export default function VideoTranscriber() {
                 <span className="text-2xl">📁</span>
                 <div>
                   <p className="text-xs font-semibold text-slate-900">
-                    Quick Fix: Upload Video or Audio File Directly
+                    Upload Video or Audio File Directly
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Click to browse or drop file here to get your transcript in seconds
+                    Click to browse or drop file here to get your transcript instantly
                   </p>
                 </div>
               </div>
@@ -344,7 +456,7 @@ export default function VideoTranscriber() {
           </div>
         )}
 
-        {/* Transcript Output */}
+        {/* Transcript Output (Step 3: Results) */}
         {transcript && (
           <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
@@ -394,10 +506,10 @@ export default function VideoTranscriber() {
             How it works & Tips
           </p>
           <ul className="mt-2 space-y-1.5 text-xs text-slate-700">
-            <li>• <strong>YouTube Videos & Shorts</strong>: Fetches instant captions or uses Groq Whisper AI.</li>
-            <li>• <strong>Instagram Reels & Videos</strong>: Transcribes spoken speech accurately.</li>
-            <li>• <strong>Upload Mode</strong>: Upload any audio or video file directly if YouTube restricts cloud access.</li>
-            <li>• Powered by Whisper AI & High-Speed Audio Extractors.</li>
+            <li>• <strong>YouTube Videos & Shorts</strong>: Fetches instant captions or uses Whisper AI.</li>
+            <li>• <strong>Instagram Reels & Videos</strong>: Downloads media stream and transcribes audio.</li>
+            <li>• <strong>Upload Mode</strong>: Upload any audio/video directly for instant transcription.</li>
+            <li>• Powered by Whisper AI Speech Recognition.</li>
           </ul>
         </div>
       </div>
@@ -410,5 +522,3 @@ export default function VideoTranscriber() {
     </div>
   );
 }
-
-

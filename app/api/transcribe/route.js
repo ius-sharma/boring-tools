@@ -620,6 +620,22 @@ async function getYouTubeAudioTranscript(videoUrl, videoId) {
     lastError = err;
   }
 
+  // 4. Try Cobalt Stream Fallback
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaCobalt(videoUrl);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 5. Try Piped API Fallback
+  try {
+    const audioBuffer = await getYouTubeAudioBufferViaPiped(videoId);
+    return await transcribeAudioBufferWithGroq(audioBuffer);
+  } catch (err) {
+    lastError = err;
+  }
+
   throw new Error(
     `Audio transcription failed: YouTube blocked direct audio extraction and fallback streamers were unreachable. (Detail: ${
       lastError instanceof Error ? lastError.message : "Stream unreachable"
@@ -856,7 +872,35 @@ async function getInstagramTranscript(instagramUrl) {
 
   let lastError = null;
 
-  // 1. Try High-Speed Cloud Stream Service (Loader.to)
+  // 1. Try yt-dlp Direct Engine
+  try {
+    const { exec } = await import("child_process");
+    const { promisify } = await import("util");
+    const execAsync = promisify(exec);
+    const ytdlpCommand = process.env.YT_DLP_PATH || "python -m yt_dlp";
+    const { stdout } = await execAsync(`${ytdlpCommand} -g "${instagramUrl}"`, { timeout: 25000 });
+    const urls = stdout
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    for (const directUrl of urls) {
+      try {
+        const videoBuffer = await fetchBinaryFromUrl(directUrl, {}, 2, 60000);
+        return await transcribeAudioBufferWithGroq(
+          videoBuffer,
+          "instagram_audio.mp4",
+          "video/mp4"
+        );
+      } catch (err) {
+        lastError = err;
+      }
+    }
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 2. Try High-Speed Cloud Stream Service (Loader.to)
   try {
     const audioBuffer = await getYouTubeAudioBufferViaStreamService(instagramUrl);
     return await transcribeAudioBufferWithGroq(audioBuffer, "instagram_audio.mp3", "audio/mp3");
@@ -864,7 +908,7 @@ async function getInstagramTranscript(instagramUrl) {
     lastError = err;
   }
 
-  // 2. Try Apify Actor if API token exists
+  // 3. Try Apify Actor if API token exists
   try {
     const apifyUrls = await getInstagramMediaUrlsViaApify(instagramUrl);
     for (const mediaUrl of apifyUrls) {
@@ -930,7 +974,7 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   throw new Error(
-    `Instagram server restricted automated download for this Reel. (Tip: Meta blocks server IP scraping on unauthenticated links. You can add INSTAGRAM_SESSIONID in .env.local for 100% bypass, or upload the audio/video file directly below!)`
+    "Instagram restricted direct download for this Reel. Please upload the video or audio file directly below to get your transcript in seconds!"
   );
 }
 
