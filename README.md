@@ -140,6 +140,7 @@ ESLint + Prettier + TypeScript Strict Mode
 20. **QR Generator** — `/qr-generator`
 22. **File Name Sanitizer** — `/file-name-sanitizer`
 26. **PDF Intelligence Tool** — `/pdf-intelligence-tool`
+**PDF Merger** — `/pdf-merger`
 27. **Terms & Conditions Simplifier** — `/terms-conditions-simplifier`
 28. **Document Data Extractor** — `/document-data-extractor`
 29. **Resume Bullet Rewriter** — `/resume-bullet-rewriter`

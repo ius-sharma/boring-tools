@@ -637,6 +637,23 @@ function getInstagramCookieString() {
   return "";
 }
 
+function shortcodeToInstagramPk(shortcode) {
+  if (!shortcode || typeof shortcode !== "string") return null;
+  try {
+    let id = BigInt(0);
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    for (let i = 0; i < shortcode.length; i++) {
+      const char = shortcode[i];
+      const val = BigInt(alphabet.indexOf(char));
+      if (val === BigInt(-1)) return null;
+      id = id * BigInt(64) + val;
+    }
+    return id.toString();
+  } catch {
+    return null;
+  }
+}
+
 async function getInstagramMediaUrlsViaDirect(instagramUrl) {
   try {
     const { instagramGetUrl } = await INSTAGRAM_DIRECT_PROMISE;
@@ -664,33 +681,126 @@ function normalizeInstagramMediaUrl(value) {
   return normalized.startsWith("http") ? normalized : null;
 }
 
-async function getInstagramMediaUrlsViaGraphQL(shortcode) {
+async function getInstagramMediaUrlsViaMobileApi(shortcode) {
+  const pk = shortcodeToInstagramPk(shortcode);
+  if (!pk) return [];
   try {
     const cookie = getInstagramCookieString();
-    const res = await fetch("https://www.instagram.com/graphql/query", {
-      method: "POST",
+    const res = await fetch(`https://i.instagram.com/api/v1/media/${pk}/info/`, {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+          "Instagram 275.0.0.27.98 Android (33/13; 420dpi; 1080x2400; Xiaomi; M2012K11AC; alioth; qcom; en_US; 455243105)",
         "X-IG-App-ID": "936619743392459",
+        Accept: "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
         ...(cookie ? { Cookie: cookie } : {}),
       },
-      body: new URLSearchParams({
-        variables: JSON.stringify({ shortcode }),
-        doc_id: "9510064595728286",
-      }),
       signal: AbortSignal.timeout(12000),
     });
 
     if (!res.ok) return [];
     const data = await res.json();
-    const media = data?.data?.xdt_shortcode_media;
+    const item = data?.items?.[0];
     const urls = [];
-    if (media?.is_video && media?.video_url) urls.push(media.video_url);
-    for (const edge of media?.edge_sidecar_to_children?.edges || []) {
-      if (edge?.node?.is_video && edge?.node?.video_url) {
-        urls.push(edge.node.video_url);
+
+    if (item?.video_versions?.length) {
+      for (const v of item.video_versions) {
+        if (v?.url) urls.push(v.url);
+      }
+    }
+
+    if (item?.carousel_media?.length) {
+      for (const cm of item.carousel_media) {
+        for (const v of cm?.video_versions || []) {
+          if (v?.url) urls.push(v.url);
+        }
+      }
+    }
+
+    return [...new Set(urls.map(normalizeInstagramMediaUrl).filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
+
+async function getInstagramMediaUrlsViaGraphQL(shortcode) {
+  const docIds = [
+    "9510064595728286",
+    "8845758582119845",
+    "7393437144078837",
+    "1001786164500042",
+  ];
+
+  const cookie = getInstagramCookieString();
+
+  for (const docId of docIds) {
+    try {
+      const res = await fetch("https://www.instagram.com/graphql/query", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+          "X-IG-App-ID": "936619743392459",
+          "X-ASBD-ID": "129477",
+          "X-IG-WWW-Claim": "0",
+          "X-Requested-With": "XMLHttpRequest",
+          Referer: `https://www.instagram.com/p/${shortcode}/`,
+          Origin: "https://www.instagram.com",
+          ...(cookie ? { Cookie: cookie } : {}),
+        },
+        body: new URLSearchParams({
+          variables: JSON.stringify({ shortcode }),
+          doc_id: docId,
+        }),
+        signal: AbortSignal.timeout(12000),
+      });
+
+      if (!res.ok) continue;
+      const data = await res.json();
+      const media = data?.data?.xdt_shortcode_media;
+      const urls = [];
+      if (media?.is_video && media?.video_url) urls.push(media.video_url);
+      for (const edge of media?.edge_sidecar_to_children?.edges || []) {
+        if (edge?.node?.is_video && edge?.node?.video_url) {
+          urls.push(edge.node.video_url);
+        }
+      }
+      const valid = [...new Set(urls.map(normalizeInstagramMediaUrl).filter(Boolean))];
+      if (valid.length > 0) return valid;
+    } catch {
+      // Continue to next docId
+    }
+  }
+  return [];
+}
+
+async function getInstagramMediaUrlsViaApify(instagramUrl) {
+  const token = process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN;
+  if (!token) return [];
+
+  try {
+    const runRes = await fetch(
+      `https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items?token=${token}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          directUrls: [instagramUrl],
+          resultsType: "posts",
+          resultsLimit: 1,
+        }),
+        signal: AbortSignal.timeout(30000),
+      }
+    );
+
+    if (!runRes.ok) return [];
+    const items = await runRes.json();
+    const urls = [];
+    for (const item of items) {
+      if (item?.videoUrl) urls.push(item.videoUrl);
+      for (const child of item?.childPosts || []) {
+        if (child?.videoUrl) urls.push(child.videoUrl);
       }
     }
     return [...new Set(urls.map(normalizeInstagramMediaUrl).filter(Boolean))];
@@ -754,12 +864,32 @@ async function getInstagramTranscript(instagramUrl) {
     lastError = err;
   }
 
-  // 2. Try direct media URL extractors (GraphQL with cookie support + instagram-url-direct)
+  // 2. Try Apify Actor if API token exists
+  try {
+    const apifyUrls = await getInstagramMediaUrlsViaApify(instagramUrl);
+    for (const mediaUrl of apifyUrls) {
+      try {
+        const videoBuffer = await fetchBinaryFromUrl(mediaUrl, {}, 2, 60000);
+        return await transcribeAudioBufferWithGroq(
+          videoBuffer,
+          "instagram_video.mp4",
+          "video/mp4"
+        );
+      } catch (err) {
+        lastError = err;
+      }
+    }
+  } catch (err) {
+    lastError = err;
+  }
+
+  // 3. Try multi-layer direct media extractors (Mobile API + GraphQL + Direct + Page Scraper)
   try {
     const mediaInfo = extractInstagramMediaId(instagramUrl);
     const mediaUrls = [];
 
     if (mediaInfo?.id) {
+      mediaUrls.push(...(await getInstagramMediaUrlsViaMobileApi(mediaInfo.id)));
       mediaUrls.push(...(await getInstagramMediaUrlsViaGraphQL(mediaInfo.id)));
     }
 
@@ -800,7 +930,7 @@ async function getInstagramTranscript(instagramUrl) {
   }
 
   throw new Error(
-    `Instagram server restricted automated download for this Reel. You can easily upload the video/audio file below to get your transcript instantly!`
+    `Instagram server restricted automated download for this Reel. (Tip: Meta blocks server IP scraping on unauthenticated links. You can add INSTAGRAM_SESSIONID in .env.local for 100% bypass, or upload the audio/video file directly below!)`
   );
 }
 
