@@ -145,7 +145,9 @@ export default function ThemedDropdown({
     return value || placeholder;
   }, [options, value, placeholder]);
 
-  // Positioning
+  const [placement, setPlacement] = useState("down"); // "down" | "up"
+
+  // Collision-Aware Positioning (Mistake #4: Flip it before it clips)
   useEffect(() => {
     if (!open || inlineMenu) {
       setMenuStyle(null);
@@ -153,14 +155,49 @@ export default function ThemedDropdown({
     }
 
     const update = () => {
-      if (triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect();
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      // Dropdown menu expected height
+      const measuredHeight = menuRef.current ? menuRef.current.offsetHeight : 0;
+      const expectedHeight = measuredHeight > 0 ? measuredHeight : 260;
+
+      // Flip up if not enough space below AND there is more space above
+      const flipUp = spaceBelow < expectedHeight && spaceAbove > spaceBelow;
+      setPlacement(flipUp ? "up" : "down");
+
+      // Horizontal clamp so dropdown never cuts off outside screen edges
+      const minW = rect.width;
+      let left = rect.left;
+      if (left + minW > viewportWidth - 12) {
+        left = Math.max(12, viewportWidth - minW - 12);
+      }
+
+      if (flipUp) {
         setMenuStyle({
           position: "fixed",
-          left: `${rect.left}px`,
-          top: `${rect.bottom + 8}px`,
+          left: `${left}px`,
+          bottom: `${viewportHeight - rect.top + 6}px`,
+          top: "auto",
+          width: `${rect.width}px`,
           minWidth: `${rect.width}px`,
-          maxWidth: "max-content",
+          maxHeight: `${Math.max(150, Math.min(360, spaceAbove - 16))}px`,
+          zIndex: 99999,
+        });
+      } else {
+        setMenuStyle({
+          position: "fixed",
+          left: `${left}px`,
+          top: `${rect.bottom + 6}px`,
+          bottom: "auto",
+          width: `${rect.width}px`,
+          minWidth: `${rect.width}px`,
+          maxHeight: `${Math.max(150, Math.min(360, spaceBelow - 16))}px`,
           zIndex: 99999,
         });
       }
@@ -432,14 +469,30 @@ export default function ThemedDropdown({
 
           if (triggerRef.current) {
             const rect = triggerRef.current.getBoundingClientRect();
-            const computed = {
-              position: "fixed",
-              left: `${rect.left}px`,
-              top: `${rect.bottom + 8}px`,
-              minWidth: `${rect.width}px`,
-              maxWidth: "max-content",
-              zIndex: 99999,
-            };
+            const viewportHeight = window.innerHeight;
+            const spaceBelow = viewportHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            const flipUp = spaceBelow < 260 && spaceAbove > spaceBelow;
+
+            const computed = flipUp
+              ? {
+                  position: "fixed",
+                  left: `${rect.left}px`,
+                  bottom: `${viewportHeight - rect.top + 6}px`,
+                  top: "auto",
+                  width: `${rect.width}px`,
+                  minWidth: `${rect.width}px`,
+                  zIndex: 99999,
+                }
+              : {
+                  position: "fixed",
+                  left: `${rect.left}px`,
+                  top: `${rect.bottom + 6}px`,
+                  bottom: "auto",
+                  width: `${rect.width}px`,
+                  minWidth: `${rect.width}px`,
+                  zIndex: 99999,
+                };
             const styleToUse = menuStyle || computed;
             return createPortal(
               cloneElement(menu, { style: inlineMenu ? undefined : styleToUse }),
