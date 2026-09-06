@@ -1923,6 +1923,19 @@ export default function FakeDataGenerator() {
                     onChange={setCountry}
                   />
                 </div>
+
+                <div className="flex flex-col gap-1.5 col-span-2 pt-1">
+                  <label className="text-xs font-semibold text-slate-500 uppercase">Include Fields (Multi-Select)</label>
+                  <ThemedDropdown
+                    multiple={true}
+                    ariaLabel="Select fields to include"
+                    value={selectedFields}
+                    options={DEFAULT_FIELDS.map((f) => ({ value: f.id, label: `${f.label} (${f.category})` }))}
+                    onChange={setSelectedFields}
+                    placeholder="Select fields to include..."
+                    searchPlaceholder="Type to filter fields..."
+                  />
+                </div>
               </div>
 
               {/* AI toggle */}

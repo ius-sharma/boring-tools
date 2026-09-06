@@ -13,6 +13,8 @@ export default function ThemedDropdown({
   searchable,
   searchPlaceholder = "Type to filter...",
   className = "",
+  multiple = false,
+  showChips = true,
 }) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,8 +27,15 @@ export default function ThemedDropdown({
   const [menuStyle, setMenuStyle] = useState(null);
   const [mounted, setMounted] = useState(false);
 
-  // Auto-enable search if more than 5 options (when list scrolls), or if explicitly requested via searchable prop
+  // Auto-enable search if more than 5 options, or if explicitly requested via searchable prop
   const isSearchable = searchable !== undefined ? Boolean(searchable) : options.length > 5;
+
+  // Normalized selected values for multi-select
+  const selectedValues = useMemo(() => {
+    if (!multiple) return [];
+    if (Array.isArray(value)) return value;
+    return value !== undefined && value !== null && value !== "" ? [value] : [];
+  }, [value, multiple]);
 
   // Filter options based on user search query
   const filteredOptions = useMemo(() => {
@@ -88,6 +97,21 @@ export default function ThemedDropdown({
     }
   }, [open, isSearchable]);
 
+  // Option selection logic (Mistake #3: Multi-select stays open)
+  const handleOptionClick = (optionValue) => {
+    if (multiple) {
+      const isSelected = selectedValues.includes(optionValue);
+      const updated = isSelected
+        ? selectedValues.filter((v) => v !== optionValue)
+        : [...selectedValues, optionValue];
+      onChange?.(updated);
+      // Stays open! Do not close dropdown!
+    } else {
+      onChange?.(optionValue);
+      setOpen(false);
+    }
+  };
+
   // Keyboard navigation inside menu
   const handleKeyDown = (e) => {
     if (!open) return;
@@ -106,16 +130,14 @@ export default function ThemedDropdown({
       e.preventDefault();
       if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
         const chosen = filteredOptions[highlightedIndex];
-        onChange(chosen.value);
-        setOpen(false);
+        handleOptionClick(chosen.value);
       } else if (filteredOptions.length === 1) {
-        onChange(filteredOptions[0].value);
-        setOpen(false);
+        handleOptionClick(filteredOptions[0].value);
       }
     }
   };
 
-  const selectedLabel = useMemo(() => {
+  const selectedSingleLabel = useMemo(() => {
     if (options && options.length > 0) {
       const found = options.find((option) => option.value === value);
       if (found) return found.label;
@@ -163,23 +185,75 @@ export default function ThemedDropdown({
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         ref={triggerRef}
-        className="theme-dropdown-trigger w-full flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-4 text-left text-base text-slate-900 shadow-sm transition hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-500"
+        className="theme-dropdown-trigger w-full flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 sm:py-3.5 text-left text-base text-slate-900 shadow-sm transition hover:bg-orange-50/50 focus:outline-none focus:ring-2 focus:ring-orange-500 min-h-[52px]"
       >
-        <span className="truncate font-medium">{selectedLabel}</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className={`theme-dropdown-chevron h-5 w-5 shrink-0 transition-transform ${
-            open ? "rotate-180" : "rotate-0"
-          }`}
-        >
-          <path
-            fillRule="evenodd"
-            d="M5.22 7.72a.75.75 0 0 1 1.06.02L10 11.637l3.72-3.896a.75.75 0 1 1 1.08 1.04l-4.25 4.45a.75.75 0 0 1-1.08 0l-4.25-4.45a.75.75 0 0 1 .02-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
+        {multiple ? (
+          <div className="flex flex-wrap items-center gap-1.5 flex-1 min-w-0 pr-2">
+            {selectedValues.length === 0 ? (
+              <span className="truncate text-slate-400 font-medium">{placeholder}</span>
+            ) : showChips ? (
+              <>
+                {selectedValues.slice(0, 3).map((val) => {
+                  const opt = options.find((o) => o.value === val);
+                  const lbl = opt ? opt.label : val;
+                  return (
+                    <span
+                      key={val}
+                      className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-lg max-w-[130px] shrink-0"
+                    >
+                      <span className="truncate">{lbl}</span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOptionClick(val);
+                        }}
+                        className="hover:text-orange-950 font-bold ml-0.5 cursor-pointer leading-none"
+                        aria-label={`Remove ${lbl}`}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  );
+                })}
+                {selectedValues.length > 3 && (
+                  <span className="text-xs font-semibold text-orange-700 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-lg shrink-0">
+                    +{selectedValues.length - 3} more
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="truncate font-semibold text-slate-800">
+                {selectedValues.length} selected
+              </span>
+            )}
+          </div>
+        ) : (
+          <span className="truncate font-medium">{selectedSingleLabel}</span>
+        )}
+
+        <div className="flex items-center gap-2 shrink-0">
+          {multiple && selectedValues.length > 0 && !showChips && (
+            <span className="bg-orange-100 text-orange-800 text-xs font-bold px-2 py-0.5 rounded-full">
+              {selectedValues.length}
+            </span>
+          )}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className={`theme-dropdown-chevron h-5 w-5 shrink-0 transition-transform ${
+              open ? "rotate-180" : "rotate-0"
+            }`}
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.22 7.72a.75.75 0 0 1 1.06.02L10 11.637l3.72-3.896a.75.75 0 1 1 1.08 1.04l-4.25 4.45a.75.75 0 0 1-1.08 0l-4.25-4.45a.75.75 0 0 1 .02-1.06Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
       </button>
 
       {open && mounted && (
@@ -194,7 +268,7 @@ export default function ThemedDropdown({
               }`}
               style={inlineMenu ? undefined : menuStyle}
             >
-              {/* Type-to-filter search input (Mistake #1 Fix: Over 10 options? Let them type.) */}
+              {/* Type-to-filter search input (Mistake #1: Over 10 options? Let them type.) */}
               {isSearchable && (
                 <div className="p-2 border-b border-slate-100 bg-white">
                   <div className="relative flex items-center">
@@ -247,7 +321,9 @@ export default function ThemedDropdown({
                   </div>
                 ) : (
                   filteredOptions.map((option, idx) => {
-                    const active = option.value === value;
+                    const isSelected = multiple
+                      ? selectedValues.includes(option.value)
+                      : option.value === value;
                     const isHighlighted = idx === highlightedIndex;
 
                     return (
@@ -255,22 +331,48 @@ export default function ThemedDropdown({
                         key={option.value}
                         type="button"
                         role="option"
-                        aria-selected={active}
+                        aria-selected={isSelected}
                         onMouseEnter={() => setHighlightedIndex(idx)}
-                        onClick={() => {
-                          onChange(option.value);
-                          setOpen(false);
-                        }}
-                        className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-left text-sm transition ${
-                          active
-                            ? "theme-dropdown-option-active"
+                        onClick={() => handleOptionClick(option.value)}
+                        className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-left text-sm transition cursor-pointer ${
+                          isSelected
+                            ? multiple
+                              ? "bg-orange-50/80 text-orange-950 font-medium"
+                              : "theme-dropdown-option-active font-medium"
                             : isHighlighted
                             ? "bg-amber-50 text-slate-900"
                             : "theme-dropdown-option text-slate-700"
                         }`}
                       >
-                        <span className="font-medium truncate">{option.label}</span>
-                        {active && (
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          {/* Multi-select Checkbox (Mistake #3: Checkboxes use kar) */}
+                          {multiple && (
+                            <div
+                              className={`h-4 w-4 shrink-0 rounded border transition-colors flex items-center justify-center ${
+                                isSelected
+                                  ? "bg-orange-500 border-orange-500 text-white"
+                                  : "border-slate-300 bg-white"
+                              }`}
+                            >
+                              {isSelected && (
+                                <svg
+                                  className="h-3 w-3"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                          )}
+                          <span className="truncate">{option.label}</span>
+                        </div>
+
+                        {!multiple && isSelected && (
                           <svg
                             className="h-4 w-4 shrink-0 text-white ml-2"
                             fill="none"
@@ -290,6 +392,39 @@ export default function ThemedDropdown({
                   })
                 )}
               </div>
+
+              {/* Multi-select Sticky Footer with Live Count & Done Button (Mistake #3) */}
+              {multiple && (
+                <div className="sticky bottom-0 border-t border-slate-100 bg-slate-50/95 backdrop-blur-xs px-3 py-2 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-slate-600">
+                      {selectedValues.length} selected
+                    </span>
+                    {selectedValues.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onChange?.([]);
+                        }}
+                        className="text-xs text-slate-400 hover:text-red-600 transition underline underline-offset-2"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpen(false);
+                    }}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs px-3.5 py-1.5 rounded-lg shadow-sm transition active:scale-95 cursor-pointer"
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
             </div>
           );
 
