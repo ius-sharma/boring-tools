@@ -54,9 +54,9 @@ export default function RoastMyTodoList() {
   const [error, setError] = useState("");
 
   const roastLevelOptions = [
-    { value: "mild", label: "Mild" },
-    { value: "medium", label: "Medium" },
-    { value: "savage", label: "Savage" },
+    { value: "mild", label: "Mild", badge: "Gentle" },
+    { value: "medium", label: "Medium", badge: "Balanced" },
+    { value: "savage", label: "Savage", badge: "🔥 Brutal", badgeHighlight: true },
   ];
 
   const todos = useMemo(
@@ -129,15 +129,16 @@ export default function RoastMyTodoList() {
           <div className="rounded-2xl border border-slate-200 bg-white p-4 flex flex-col gap-4">
             <h2 className="text-base font-semibold text-slate-900">Roast controls</h2>
 
-            <label className="text-sm text-slate-700 flex flex-col gap-2">
-              Roast level
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-semibold text-slate-700">Roast Level</span>
               <ThemedDropdown
                 ariaLabel="Select roast level"
                 value={roastLevel}
                 options={roastLevelOptions}
                 onChange={setRoastLevel}
+                segmented={true}
               />
-            </label>
+            </div>
 
             <button
               type="button"

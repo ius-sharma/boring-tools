@@ -258,8 +258,8 @@ export default function DistanceBetweenCities() {
             {/* sample picker removed */}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <ThemedDropdown ariaLabel="Unit" value={unit} options={[{ value: 'km', label: 'Kilometers' }, { value: 'mi', label: 'Miles' }]} onChange={(v) => setUnit(v)} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+            <ThemedDropdown ariaLabel="Unit" value={unit} options={[{ value: 'km', label: 'Kilometers' }, { value: 'mi', label: 'Miles' }]} onChange={(v) => setUnit(v)} segmented={true} />
             <div />
             <button onClick={compute} disabled={loading} className="flex-1 border border-orange-500 text-orange-600 py-3 rounded-lg font-semibold hover:bg-orange-500 hover:text-white transition">{loading ? 'Computing...' : 'Compute Distances'}</button>
           </div>

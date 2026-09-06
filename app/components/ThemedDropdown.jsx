@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, cloneElement } from "react";
 import { createPortal } from "react-dom";
+import ThemedSegmentedControl from "./ThemedSegmentedControl";
 
 export default function ThemedDropdown({
   value,
@@ -15,7 +16,20 @@ export default function ThemedDropdown({
   className = "",
   multiple = false,
   showChips = true,
+  segmented = false,
 }) {
+  if (segmented) {
+    return (
+      <ThemedSegmentedControl
+        value={value}
+        options={options}
+        onChange={onChange}
+        ariaLabel={ariaLabel}
+        className={className}
+      />
+    );
+  }
+
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);

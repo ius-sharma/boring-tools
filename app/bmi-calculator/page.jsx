@@ -392,11 +392,12 @@ export default function BmiCalculatorPage() {
                     value={heightUnit}
                     options={HEIGHT_UNIT_OPTIONS}
                     onChange={(value) => setHeightUnit(value)}
+                    segmented={true}
                   />
                 </label>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_120px]">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_140px]">
                 <label className="flex flex-col gap-2">
                   <span className="text-sm font-medium text-slate-900">Weight</span>
                   <input
@@ -418,6 +419,7 @@ export default function BmiCalculatorPage() {
                     value={weightUnit}
                     options={WEIGHT_UNIT_OPTIONS}
                     onChange={(value) => setWeightUnit(value)}
+                    segmented={true}
                   />
                 </label>
               </div>
