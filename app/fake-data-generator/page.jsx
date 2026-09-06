@@ -689,7 +689,23 @@ export default function FakeDataGenerator() {
   const SQL_DIALECT_OPTIONS = [
     { value: "mysql", label: "MySQL" },
     { value: "postgresql", label: "PostgreSQL" },
-    { value: "sqlite", label: "SQLite" }
+    { value: "sqlite", label: "SQLite" },
+    {
+      value: "snowflake",
+      label: "Snowflake Warehouse",
+      disabled: true,
+      reason: "Pro Plan",
+      actionText: "Upgrade →",
+      actionHref: "/pricing",
+    },
+    {
+      value: "oracle",
+      label: "Oracle Enterprise",
+      disabled: true,
+      reason: "Enterprise",
+      actionText: "Upgrade →",
+      actionHref: "/pricing",
+    },
   ];
 
   const CUSTOM_TYPE_OPTIONS = [

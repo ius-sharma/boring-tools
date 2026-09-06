@@ -130,8 +130,10 @@ export default function ThemedDropdown({
       e.preventDefault();
       if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
         const chosen = filteredOptions[highlightedIndex];
-        handleOptionClick(chosen.value);
-      } else if (filteredOptions.length === 1) {
+        if (!chosen.disabled) {
+          handleOptionClick(chosen.value);
+        }
+      } else if (filteredOptions.length === 1 && !filteredOptions[0].disabled) {
         handleOptionClick(filteredOptions[0].value);
       }
     }
@@ -358,32 +360,39 @@ export default function ThemedDropdown({
                   </div>
                 ) : (
                   filteredOptions.map((option, idx) => {
+                    const isDisabled = Boolean(option.disabled);
                     const isSelected = multiple
                       ? selectedValues.includes(option.value)
                       : option.value === value;
-                    const isHighlighted = idx === highlightedIndex;
+                    const isHighlighted = idx === highlightedIndex && !isDisabled;
 
                     return (
-                      <button
+                      <div
                         key={option.value}
-                        type="button"
                         role="option"
                         aria-selected={isSelected}
-                        onMouseEnter={() => setHighlightedIndex(idx)}
-                        onClick={() => handleOptionClick(option.value)}
-                        className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-left text-sm transition cursor-pointer ${
-                          isSelected
+                        aria-disabled={isDisabled}
+                        onMouseEnter={() => !isDisabled && setHighlightedIndex(idx)}
+                        onClick={() => {
+                          if (!isDisabled) {
+                            handleOptionClick(option.value);
+                          }
+                        }}
+                        className={`flex w-full items-center justify-between rounded-lg px-3.5 py-2.5 text-left text-sm transition ${
+                          isDisabled
+                            ? "bg-slate-50/70 text-slate-400 cursor-not-allowed border border-dashed border-slate-200/70 select-none my-0.5"
+                            : isSelected
                             ? multiple
-                              ? "bg-orange-50/80 text-orange-950 font-medium"
-                              : "theme-dropdown-option-active font-medium"
+                              ? "bg-orange-50/80 text-orange-950 font-medium cursor-pointer"
+                              : "theme-dropdown-option-active font-medium cursor-pointer"
                             : isHighlighted
-                            ? "bg-amber-50 text-slate-900"
-                            : "theme-dropdown-option text-slate-700"
+                            ? "bg-amber-50 text-slate-900 cursor-pointer"
+                            : "theme-dropdown-option text-slate-700 cursor-pointer"
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          {/* Multi-select Checkbox (Mistake #3: Checkboxes use kar) */}
-                          {multiple && (
+                          {/* Multi-select Checkbox */}
+                          {multiple && !isDisabled && (
                             <div
                               className={`h-4 w-4 shrink-0 rounded border transition-colors flex items-center justify-center ${
                                 isSelected
@@ -406,25 +415,56 @@ export default function ThemedDropdown({
                               )}
                             </div>
                           )}
-                          <span className="truncate">{option.label}</span>
+                          <span className={`truncate ${isDisabled ? "text-slate-400 font-normal" : "font-medium"}`}>
+                            {option.label}
+                          </span>
                         </div>
 
-                        {!multiple && isSelected && (
-                          <svg
-                            className="h-4 w-4 shrink-0 text-white ml-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2.5"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
+                        {/* Mistake #5 Fix: Reasons, Not Grey */}
+                        {isDisabled ? (
+                          <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                            {(option.reason || option.disabledReason) && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-100/90 border border-amber-200/80 px-2 py-0.5 rounded-md">
+                                <svg className="w-2.5 h-2.5 text-amber-700 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                </svg>
+                                {option.reason || option.disabledReason}
+                              </span>
+                            )}
+                            {(option.actionText || option.disabledAction) && (
+                              <a
+                                href={option.actionHref || "/pricing"}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (option.onAction) {
+                                    e.preventDefault();
+                                    option.onAction();
+                                  }
+                                }}
+                                className="inline-flex items-center text-[11px] font-bold text-orange-600 hover:text-orange-700 hover:underline px-1 py-0.5 rounded transition cursor-pointer"
+                              >
+                                {option.actionText || option.disabledAction}
+                              </a>
+                            )}
+                          </div>
+                        ) : (
+                          !multiple && isSelected && (
+                            <svg
+                              className="h-4 w-4 shrink-0 text-white ml-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2.5"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          )
                         )}
-                      </button>
+                      </div>
                     );
                   })
                 )}

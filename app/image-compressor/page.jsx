@@ -40,6 +40,22 @@ export default function ImageCompressor() {
 		{ value: "image/jpeg", label: "JPEG" },
 		{ value: "image/webp", label: "WebP" },
 		{ value: "image/png", label: "PNG" },
+		{
+			value: "image/avif",
+			label: "AVIF (Next-Gen)",
+			disabled: true,
+			reason: "Pro Plan",
+			actionText: "Upgrade →",
+			actionHref: "/pricing",
+		},
+		{
+			value: "image/svg+xml",
+			label: "SVG Vector",
+			disabled: true,
+			reason: "Beta",
+			actionText: "Request access →",
+			actionHref: "/pricing",
+		},
 	];
 
 	useEffect(() => {
