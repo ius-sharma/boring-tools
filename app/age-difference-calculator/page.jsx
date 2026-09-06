@@ -1,6 +1,7 @@
 "use client";
 
 import ComingSoon from "@/app/components/ComingSoon";
+import ThemedDatePicker from "@/app/components/ThemedDatePicker";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const DAY_MS = 86400000;
@@ -414,11 +415,11 @@ export default function AgeDifferenceCalculatorPage() {
               className="w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
             />
 
-            <input
-              type="date"
+            <ThemedDatePicker
               value={person1Dob}
-              onChange={(event) => setPerson1Dob(event.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              onChange={setPerson1Dob}
+              placeholder="DD/MM/YYYY (e.g. 12/03/1994)"
+              ariaLabel="Person 1 date of birth"
             />
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -475,11 +476,11 @@ export default function AgeDifferenceCalculatorPage() {
               className="w-full rounded-xl border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
             />
 
-            <input
-              type="date"
+            <ThemedDatePicker
               value={person2Dob}
-              onChange={(event) => setPerson2Dob(event.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 p-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 transition"
+              onChange={setPerson2Dob}
+              placeholder="DD/MM/YYYY (e.g. 15/08/1998)"
+              ariaLabel="Person 2 date of birth"
             />
 
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">

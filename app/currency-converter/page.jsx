@@ -13,7 +13,13 @@ export default function CurrencyConverter() {
   const [error, setError] = useState("");
   const [showToast, setShowToast] = useState(false);
 
-  const currencies = ["USD", "EUR", "INR", "GBP", "JPY", "AUD", "CAD"];
+  const currencies = [
+    "USD", "EUR", "INR", "GBP", "JPY", "AUD", "CAD",
+    "AED", "ARS", "BRL", "CHF", "CLP", "CNY", "CZK",
+    "DKK", "EGP", "HKD", "HUF", "IDR", "ILS", "KRW",
+    "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RUB",
+    "SAR", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"
+  ];
 
   useEffect(() => {
     const fetchRate = async () => {

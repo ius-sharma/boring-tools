@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 
+import ThemedDatePicker from "../components/ThemedDatePicker";
+
 export default function AgeCalculator() {
   const [dob, setDob] = useState("");
   const [age, setAge] = useState(null);
@@ -54,11 +56,14 @@ export default function AgeCalculator() {
           <p className="text-slate-500 text-base">Calculate exact age in years, months, and days</p>
         </div>
 
-        <input
-          type="date"
+        <ThemedDatePicker
           value={dob}
-          onChange={(e) => setDob(e.target.value)}
-          className="w-full p-4 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 transition text-base text-slate-900"
+          onChange={(newDate) => {
+            setDob(newDate);
+            setError("");
+          }}
+          placeholder="DD/MM/YYYY (e.g. 12/03/1994)"
+          ariaLabel="Date of birth"
         />
 
         <button

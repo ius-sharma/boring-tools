@@ -25,8 +25,8 @@ export default function ThemedDropdown({
   const [menuStyle, setMenuStyle] = useState(null);
   const [mounted, setMounted] = useState(false);
 
-  // Auto-enable search if 10+ options, or if explicitly requested via searchable prop
-  const isSearchable = searchable !== undefined ? Boolean(searchable) : options.length >= 10;
+  // Auto-enable search if more than 5 options (when list scrolls), or if explicitly requested via searchable prop
+  const isSearchable = searchable !== undefined ? Boolean(searchable) : options.length > 5;
 
   // Filter options based on user search query
   const filteredOptions = useMemo(() => {
