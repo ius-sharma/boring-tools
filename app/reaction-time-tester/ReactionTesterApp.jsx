@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { recordRecentTool } from "@/lib/storage/toolPreferences";
 
 // Local storage key
 const STORAGE_KEY = "boringtools_reaction_tester_v2";
@@ -215,6 +216,7 @@ export default function ReactionTesterApp() {
         }));
       }
     } catch (e) {}
+    recordRecentTool("reaction-time-tester");
   }, []);
 
   const saveStoredData = useCallback((newData) => {

@@ -1,7 +1,8 @@
 "use client";
-
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
+import ShareResultCardModal from "../components/ShareResultCardModal";
+import { recordRecentTool } from "@/lib/storage/toolPreferences";
 
 const roastSets = {
   mild: [
@@ -52,6 +53,11 @@ export default function RoastMyTodoList() {
   const [source, setSource] = useState("Local fallback");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [shareCard, setShareCard] = useState(null);
+
+  useEffect(() => {
+    recordRecentTool("roast-my-todo-list");
+  }, []);
 
   const roastLevelOptions = [
     { value: "mild", label: "Mild", badge: "Gentle" },
@@ -174,15 +180,50 @@ export default function RoastMyTodoList() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {results.map((item, index) => (
-                <div key={`${item.todo}-${index}`} className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col gap-2">
-                  <p className="text-sm font-semibold text-slate-900">{item.todo}</p>
-                  <p className="text-sm text-slate-700">{item.roast}</p>
-                  <p className="text-xs text-slate-500">Next move: {item.action}</p>
+                <div key={`${item.todo}-${index}`} className="rounded-xl border border-slate-200 bg-white p-4 flex flex-col justify-between gap-3">
+                  <div className="space-y-1.5">
+                    <p className="text-sm font-semibold text-slate-900">{item.todo}</p>
+                    <p className="text-sm text-slate-700 italic">"{item.roast}"</p>
+                    <p className="text-xs text-emerald-700 font-medium pt-1">Next move: {item.action}</p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShareCard({
+                          type: "roast",
+                          todo: item.todo,
+                          roast: item.roast,
+                          action: item.action,
+                          level: roastLevel,
+                        })
+                      }
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700 px-2.5 py-1 rounded-lg hover:bg-orange-50 transition cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                      Share Card
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        <ShareResultCardModal
+          isOpen={Boolean(shareCard)}
+          onClose={() => setShareCard(null)}
+          data={shareCard}
+          filename="boringtools-todo-roast.png"
+          tweetText={
+            shareCard
+              ? `My to-do list just got roasted: "${shareCard.roast}" 🔥`
+              : "Check out my to-do list roast!"
+          }
+          shareUrl="https://www.boringtoolsai.com/roast-my-todo-list"
+        />
       </div>
 
       <style jsx global>{`

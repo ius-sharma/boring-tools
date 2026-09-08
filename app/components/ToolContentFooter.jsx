@@ -6,6 +6,7 @@ import Link from "next/link";
 import { tools } from "../tools-data";
 import StructuredData from "./StructuredData";
 import { getFaqSchema } from "@/lib/seo";
+import PrivacyTrustBadge from "./PrivacyTrustBadge";
 
 export default function ToolContentFooter() {
   const pathname = usePathname();
@@ -223,6 +224,9 @@ export default function ToolContentFooter() {
       {content && (
         <section className="mx-auto max-w-4xl px-6 py-12 sm:py-16">
           <div className="border-b border-slate-200 pb-10">
+            <div className="mb-4">
+              <PrivacyTrustBadge />
+            </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-6">
               {content.title}
             </h2>
