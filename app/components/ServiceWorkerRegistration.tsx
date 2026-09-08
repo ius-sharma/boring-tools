@@ -7,21 +7,41 @@ export default function ServiceWorkerRegistration() {
   const [justReconnected, setJustReconnected] = useState(false);
 
   useEffect(() => {
-    // 1. Register Service Worker in production/supporting environments
+    // 1. Service Worker: Only register on live production domain (never localhost)
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      // Register after page has loaded to not delay initial paint
-      const registerSW = () => {
-        navigator.serviceWorker
-          .register("/service-worker.js")
-          .catch((err) => {
-            console.debug("ServiceWorker registration note:", err);
-          });
-      };
+      const isLocalhost =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.endsWith(".local");
 
-      if (document.readyState === "complete") {
-        registerSW();
+      if (isLocalhost) {
+        // Unregister service worker and clear caches to avoid stale chunks in development
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister();
+          }
+        });
+        if ("caches" in window) {
+          caches.keys().then((keys) => {
+            for (const key of keys) {
+              caches.delete(key);
+            }
+          });
+        }
       } else {
-        window.addEventListener("load", registerSW);
+        const registerSW = () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .catch((err) => {
+              console.debug("ServiceWorker registration note:", err);
+            });
+        };
+
+        if (document.readyState === "complete") {
+          registerSW();
+        } else {
+          window.addEventListener("load", registerSW);
+        }
       }
     }
 

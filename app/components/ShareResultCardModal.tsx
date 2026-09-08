@@ -39,31 +39,41 @@ export default function ShareResultCardModal({
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
 
-  // Reset theme to white when modal opens
+  // Generate card immediately when modal opens with white default
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && data) {
       setSelectedTheme("white");
+      setIsGenerating(true);
+      generateShareCard(data, "white")
+        .then((url) => {
+          setImageUrl(url);
+          setIsGenerating(false);
+        })
+        .catch((err) => {
+          console.error("Initial card render error:", err);
+          showToast("Failed to render card", "error");
+          setIsGenerating(false);
+        });
+    } else {
+      setImageUrl(null);
     }
-  }, [isOpen]);
+  }, [isOpen, data]);
 
-  // Generate card when data, open status, or selectedTheme changes
-  const renderCard = useCallback(async () => {
-    if (!isOpen || !data) return;
+  // Handle clicking a theme - generates immediately
+  const handleThemeSelect = async (newTheme: CardTheme) => {
+    setSelectedTheme(newTheme);
+    if (!data) return;
     setIsGenerating(true);
     try {
-      const url = await generateShareCard(data, selectedTheme);
+      const url = await generateShareCard(data, newTheme);
       setImageUrl(url);
     } catch (err) {
-      console.error("Failed to generate share card:", err);
-      showToast("Failed to render card", "error");
+      console.error("Theme render error:", err);
+      showToast("Failed to render card theme", "error");
     } finally {
       setIsGenerating(false);
     }
-  }, [isOpen, data, selectedTheme]);
-
-  useEffect(() => {
-    renderCard();
-  }, [renderCard]);
+  };
 
   if (!isOpen || !data) return null;
 
@@ -166,7 +176,7 @@ export default function ShareResultCardModal({
                 <button
                   key={th.id}
                   type="button"
-                  onClick={() => setSelectedTheme(th.id)}
+                  onClick={() => handleThemeSelect(th.id)}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition cursor-pointer border ${
                     isActive
                       ? "bg-white text-slate-900 border-slate-300 shadow-xs ring-1 ring-orange-500/50"
@@ -191,6 +201,7 @@ export default function ShareResultCardModal({
           ) : (
             <div className="w-full flex justify-center">
               <img
+                key={imageUrl}
                 src={imageUrl}
                 alt="Shareable result card preview"
                 className="w-full max-h-[340px] object-contain rounded-xl border border-slate-200/80 shadow-lg transition-all duration-200"

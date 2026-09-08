@@ -186,8 +186,32 @@ function roundRect(
   ctx.closePath();
 }
 
-const FONT_SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
-const FONT_MONO = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+const FONT_SANS = "system-ui, -apple-system, sans-serif";
+const FONT_MONO = "monospace";
+
+let cachedLogoImg: HTMLImageElement | null = null;
+
+/**
+ * Loads the official BoringTools logo image from /boringtools-logo.png
+ */
+function getLogoImage(): Promise<HTMLImageElement> {
+  if (cachedLogoImg && cachedLogoImg.complete && cachedLogoImg.naturalWidth > 0) {
+    return Promise.resolve(cachedLogoImg);
+  }
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") {
+      return reject(new Error("Window not available"));
+    }
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      cachedLogoImg = img;
+      resolve(img);
+    };
+    img.onerror = (err) => reject(err);
+    img.src = "/boringtools-logo.png";
+  });
+}
 
 /**
  * Generates an aesthetic branded share card as a PNG data URL.
@@ -235,30 +259,37 @@ export async function generateShareCard(
   roundRect(ctx, 36, 36, width - 72, height - 72, 24);
   ctx.stroke();
 
-  // 3. Top Header: BoringTools Brand Logo & Category
+  // 3. Top Header: Official BoringTools Brand Logo & Category
   const headerY = 88;
   const leftMargin = 76;
+  const logoW = 34;
+  const logoH = 38;
+  const logoY = headerY - 28;
 
-  // Logo mark circle
-  ctx.fillStyle = theme.accent;
-  roundRect(ctx, leftMargin, headerY - 22, 30, 30, 8);
-  ctx.fill();
-
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `bold 16px ${FONT_SANS}`;
-  ctx.textAlign = "center";
-  ctx.fillText("B", leftMargin + 15, headerY);
-  ctx.textAlign = "left";
+  try {
+    const logoImg = await getLogoImage();
+    if (logoImg.naturalWidth === 1024) {
+      // Crop to the crisp BT monogram inside the 1024x1024 image
+      ctx.drawImage(logoImg, 320, 270, 380, 424, leftMargin, logoY, logoW, logoH);
+    } else {
+      ctx.drawImage(logoImg, leftMargin, logoY, logoW, logoH);
+    }
+  } catch (err) {
+    // Fallback if logo fails to load
+    ctx.fillStyle = theme.accent;
+    roundRect(ctx, leftMargin, headerY - 24, 32, 32, 8);
+    ctx.fill();
+  }
 
   // Logo text
   ctx.font = `bold 24px ${FONT_SANS}`;
   ctx.fillStyle = theme.textPrimary;
-  ctx.fillText("BoringTools", leftMargin + 40, headerY);
+  ctx.fillText("BoringTools", leftMargin + logoW + 12, headerY);
 
   const logoWidth = ctx.measureText("BoringTools").width;
   ctx.font = `500 15px ${FONT_SANS}`;
   ctx.fillStyle = theme.textMuted;
-  ctx.fillText("• 100% In-Browser & Private", leftMargin + 40 + logoWidth + 14, headerY);
+  ctx.fillText("• 100% In-Browser & Private", leftMargin + logoW + 12 + logoWidth + 14, headerY);
 
   // Top Right "Verified Result" Pill Badge
   const badgeText = "VERIFIED RESULT";
@@ -371,15 +402,16 @@ export async function generateShareCard(
 
     // Giant Milliseconds Display
     const statY = contentStartY + 145;
+    const timeStr = String(data.timeMs);
     ctx.fillStyle = theme.textPrimary;
-    ctx.font = `900 115px ${FONT_MONO}`;
-    const timeStr = `${data.timeMs}`;
+    ctx.font = `bold 96px ${FONT_MONO}`;
     ctx.fillText(timeStr, leftMargin, statY);
 
     const timeWidth = ctx.measureText(timeStr).width;
     ctx.fillStyle = theme.accent;
-    ctx.font = `bold 38px ${FONT_SANS}`;
-    ctx.fillText("ms", leftMargin + timeWidth + 18, statY - 14);
+    ctx.font = `bold 34px ${FONT_SANS}`;
+    const msX = Math.max(leftMargin + timeWidth + 24, leftMargin + 240);
+    ctx.fillText("ms", msX, statY - 14);
 
     // Bento stat boxes
     const bentoY = statY + 36;
@@ -436,15 +468,16 @@ export async function generateShareCard(
 
     // Giant WPM Display
     const statY = contentStartY + 145;
+    const wpmStr = String(data.wpm);
     ctx.fillStyle = theme.textPrimary;
-    ctx.font = `900 115px ${FONT_MONO}`;
-    const wpmStr = `${data.wpm}`;
+    ctx.font = `bold 96px ${FONT_MONO}`;
     ctx.fillText(wpmStr, leftMargin, statY);
 
     const wpmWidth = ctx.measureText(wpmStr).width;
     ctx.fillStyle = theme.accent;
-    ctx.font = `bold 38px ${FONT_SANS}`;
-    ctx.fillText("WPM", leftMargin + wpmWidth + 18, statY - 14);
+    ctx.font = `bold 34px ${FONT_SANS}`;
+    const wpmX = Math.max(leftMargin + wpmWidth + 24, leftMargin + 180);
+    ctx.fillText("WPM", wpmX, statY - 14);
 
     // Bento Row with 3 Cards (Accuracy, Rank, Total Chars)
     const bentoY = statY + 36;
