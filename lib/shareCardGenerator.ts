@@ -1,6 +1,7 @@
 "use client";
 
 export type CardType = "roast" | "reaction" | "typing";
+export type CardTheme = "white" | "dark" | "sunset" | "mint";
 
 export interface RoastCardData {
   type: "roast";
@@ -27,6 +28,115 @@ export interface TypingCardData {
 }
 
 export type ShareCardData = RoastCardData | ReactionCardData | TypingCardData;
+
+export interface ThemeConfig {
+  id: CardTheme;
+  name: string;
+  bgGradStart: string;
+  bgGradEnd: string;
+  outerBorder: string;
+  textPrimary: string;
+  textSecondary: string;
+  textMuted: string;
+  accent: string;
+  cardBg: string;
+  cardBorder: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+  verifiedBg: string;
+  verifiedText: string;
+  verifiedBorder: string;
+  footerLine: string;
+  footerText: string;
+}
+
+export const THEME_CONFIGS: Record<CardTheme, ThemeConfig> = {
+  white: {
+    id: "white",
+    name: "Core White",
+    bgGradStart: "#ffffff",
+    bgGradEnd: "#f8fafc",
+    outerBorder: "#e2e8f0",
+    textPrimary: "#0f172a",
+    textSecondary: "#334155",
+    textMuted: "#64748b",
+    accent: "#ea580c",
+    cardBg: "#f8fafc",
+    cardBorder: "#e2e8f0",
+    badgeBg: "#fff7ed",
+    badgeText: "#c2410c",
+    badgeBorder: "#fed7aa",
+    verifiedBg: "#f1f5f9",
+    verifiedText: "#475569",
+    verifiedBorder: "#cbd5e1",
+    footerLine: "#f1f5f9",
+    footerText: "#64748b",
+  },
+  dark: {
+    id: "dark",
+    name: "Dark Slate",
+    bgGradStart: "#090d16",
+    bgGradEnd: "#0f172a",
+    outerBorder: "rgba(255, 255, 255, 0.09)",
+    textPrimary: "#ffffff",
+    textSecondary: "#e2e8f0",
+    textMuted: "#94a3b8",
+    accent: "#f97316",
+    cardBg: "rgba(255, 255, 255, 0.04)",
+    cardBorder: "rgba(255, 255, 255, 0.08)",
+    badgeBg: "rgba(249, 115, 22, 0.15)",
+    badgeText: "#fb923c",
+    badgeBorder: "rgba(249, 115, 22, 0.35)",
+    verifiedBg: "rgba(255, 255, 255, 0.06)",
+    verifiedText: "#94a3b8",
+    verifiedBorder: "rgba(255, 255, 255, 0.12)",
+    footerLine: "rgba(255, 255, 255, 0.08)",
+    footerText: "#64748b",
+  },
+  sunset: {
+    id: "sunset",
+    name: "Warm Sunset",
+    bgGradStart: "#fffaf5",
+    bgGradEnd: "#ffedd5",
+    outerBorder: "#fed7aa",
+    textPrimary: "#431407",
+    textSecondary: "#7c2d12",
+    textMuted: "#9a3412",
+    accent: "#ea580c",
+    cardBg: "#ffffff",
+    cardBorder: "#fed7aa",
+    badgeBg: "#ea580c",
+    badgeText: "#ffffff",
+    badgeBorder: "#ea580c",
+    verifiedBg: "#ffffff",
+    verifiedText: "#9a3412",
+    verifiedBorder: "#fed7aa",
+    footerLine: "#fed7aa",
+    footerText: "#9a3412",
+  },
+  mint: {
+    id: "mint",
+    name: "Fresh Mint",
+    bgGradStart: "#f0fdf4",
+    bgGradEnd: "#dcfce7",
+    outerBorder: "#bbf7d0",
+    textPrimary: "#064e3b",
+    textSecondary: "#065f46",
+    textMuted: "#047857",
+    accent: "#059669",
+    cardBg: "#ffffff",
+    cardBorder: "#bbf7d0",
+    badgeBg: "#059669",
+    badgeText: "#ffffff",
+    badgeBorder: "#059669",
+    verifiedBg: "#ffffff",
+    verifiedText: "#047857",
+    verifiedBorder: "#bbf7d0",
+    footerLine: "#bbf7d0",
+    footerText: "#047857",
+  },
+};
 
 /**
  * Wraps text into multiple lines given a max width on canvas context.
@@ -76,10 +186,17 @@ function roundRect(
   ctx.closePath();
 }
 
+const FONT_SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+const FONT_MONO = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace';
+
 /**
  * Generates an aesthetic branded share card as a PNG data URL.
+ * Defaults to "white" (Core BoringTools theme).
  */
-export async function generateShareCard(data: ShareCardData): Promise<string> {
+export async function generateShareCard(
+  data: ShareCardData,
+  themeId: CardTheme = "white"
+): Promise<string> {
   const width = 1200;
   const height = 630;
   const canvas = document.createElement("canvas");
@@ -88,175 +205,334 @@ export async function generateShareCard(data: ShareCardData): Promise<string> {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas context not available");
 
-  // 1. Background Gradient (Dark Tech Luxury)
+  const theme = THEME_CONFIGS[themeId] || THEME_CONFIGS.white;
+
+  // 1. Background Fill
   const bgGrad = ctx.createLinearGradient(0, 0, width, height);
-  bgGrad.addColorStop(0, "#090d16");
-  bgGrad.addColorStop(0.5, "#0f172a");
-  bgGrad.addColorStop(1, "#090d16");
+  bgGrad.addColorStop(0, theme.bgGradStart);
+  bgGrad.addColorStop(1, theme.bgGradEnd);
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
 
-  // Subtle ambient glow
-  const glow = ctx.createRadialGradient(width * 0.8, 100, 10, width * 0.8, 100, 450);
-  glow.addColorStop(0, "rgba(249, 115, 22, 0.15)");
-  glow.addColorStop(1, "rgba(249, 115, 22, 0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, width, height);
-
-  // Card Border Frame
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.lineWidth = 2;
-  roundRect(ctx, 32, 32, width - 64, height - 64, 24);
-  ctx.stroke();
-
-  // Top Header: BoringTools Logo & Category
-  ctx.font = "bold 26px sans-serif";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("BoringTools", 72, 88);
-
-  ctx.font = "500 16px sans-serif";
-  ctx.fillStyle = "#94a3b8";
-  ctx.fillText("• 100% In-Browser & Privacy-First", 236, 88);
-
-  // Right Top Tag
-  ctx.fillStyle = "rgba(249, 115, 22, 0.15)";
-  roundRect(ctx, width - 240, 62, 168, 36, 18);
-  ctx.fill();
-  ctx.strokeStyle = "rgba(249, 115, 22, 0.4)";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  ctx.fillStyle = "#fb923c";
-  ctx.font = "bold 13px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("VERIFIED RESULT", width - 156, 85);
-  ctx.textAlign = "left";
-
-  // Content rendering based on card type
-  if (data.type === "roast") {
-    // Badge
-    ctx.fillStyle = "#ea580c";
-    ctx.font = "bold 14px sans-serif";
-    ctx.fillText(`TODO ROAST • ${data.level.toUpperCase()} MODE`, 72, 160);
-
-    // Todo box
-    ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
-    roundRect(ctx, 72, 184, width - 144, 76, 16);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
-    ctx.stroke();
-
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "14px sans-serif";
-    ctx.fillText("Pending Task:", 96, 216);
-
-    ctx.fillStyle = "#f8fafc";
-    ctx.font = "bold 22px sans-serif";
-    const todoLines = wrapText(ctx, data.todo, width - 220);
-    ctx.fillText(todoLines[0] || data.todo, 96, 244);
-
-    // Roast Text
-    ctx.fillStyle = "#f97316";
-    ctx.font = "bold 36px serif";
-    ctx.fillText('“', 72, 310);
-
-    ctx.fillStyle = "#f1f5f9";
-    ctx.font = "bold 32px sans-serif";
-    const roastLines = wrapText(ctx, data.roast, width - 200);
-    let startY = 320;
-    roastLines.slice(0, 3).forEach((line) => {
-      ctx.fillText(line, 96, startY);
-      startY += 44;
-    });
-
-    // Action item
-    ctx.fillStyle = "#10b981";
-    ctx.font = "bold 15px sans-serif";
-    ctx.fillText("Recommended Action:", 96, 470);
-
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = "18px sans-serif";
-    ctx.fillText(data.action, 280, 470);
-  } else if (data.type === "reaction") {
-    // Reaction Speed card
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 15px sans-serif";
-    ctx.fillText("HUMAN BENCHMARK • REACTION TIME", 72, 160);
-
-    // Giant Milliseconds
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 110px monospace";
-    ctx.fillText(`${data.timeMs}`, 72, 290);
-
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 36px sans-serif";
-    ctx.fillText("ms", 72 + ctx.measureText(`${data.timeMs}`).width + 16, 290);
-
-    // Rating Badge
-    ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
-    roundRect(ctx, 72, 330, 420, 56, 16);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-    ctx.stroke();
-
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 22px sans-serif";
-    ctx.fillText(data.rating, 96, 366);
-
-    if (data.percentile) {
-      ctx.fillStyle = "#cbd5e1";
-      ctx.font = "18px sans-serif";
-      ctx.fillText(data.percentile, 72, 430);
-    }
-  } else if (data.type === "typing") {
-    // Typing Speed card
-    ctx.fillStyle = "#a855f7";
-    ctx.font = "bold 15px sans-serif";
-    ctx.fillText("KEYBOARD BENCHMARK • TYPING SPEED", 72, 160);
-
-    // Giant WPM
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 110px monospace";
-    ctx.fillText(`${data.wpm}`, 72, 290);
-
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 36px sans-serif";
-    ctx.fillText("WPM", 72 + ctx.measureText(`${data.wpm}`).width + 16, 290);
-
-    // Accuracy & Rank
-    ctx.fillStyle = "rgba(168, 85, 247, 0.15)";
-    roundRect(ctx, 72, 330, 320, 56, 16);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(168, 85, 247, 0.4)";
-    ctx.stroke();
-
-    ctx.fillStyle = "#c084fc";
-    ctx.font = "bold 22px sans-serif";
-    ctx.fillText(`Accuracy: ${data.accuracy}%`, 96, 366);
-
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = "20px sans-serif";
-    ctx.fillText(`Rank: ${data.rank}`, 420, 366);
+  // Subtle accent ambient glow in top-right
+  if (themeId === "dark") {
+    const glow = ctx.createRadialGradient(width * 0.82, 110, 10, width * 0.82, 110, 420);
+    glow.addColorStop(0, "rgba(249, 115, 22, 0.14)");
+    glow.addColorStop(1, "rgba(249, 115, 22, 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, height);
+  } else if (themeId === "white") {
+    const glow = ctx.createRadialGradient(width * 0.88, 90, 10, width * 0.88, 90, 360);
+    glow.addColorStop(0, "rgba(234, 88, 12, 0.05)");
+    glow.addColorStop(1, "rgba(234, 88, 12, 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, height);
   }
 
-  // Bottom Footer
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(72, height - 90);
-  ctx.lineTo(width - 72, height - 90);
+  // 2. Outer Card Border Frame
+  ctx.strokeStyle = theme.outerBorder;
+  ctx.lineWidth = 2;
+  roundRect(ctx, 36, 36, width - 72, height - 72, 24);
   ctx.stroke();
 
-  ctx.fillStyle = "#64748b";
-  ctx.font = "14px sans-serif";
-  ctx.fillText("Try it yourself free with zero login:", 72, height - 56);
+  // 3. Top Header: BoringTools Brand Logo & Category
+  const headerY = 88;
+  const leftMargin = 76;
 
-  ctx.fillStyle = "#f97316";
-  ctx.font = "bold 15px sans-serif";
-  ctx.fillText("boringtoolsai.com", 336, height - 56);
+  // Logo mark circle
+  ctx.fillStyle = theme.accent;
+  roundRect(ctx, leftMargin, headerY - 22, 30, 30, 8);
+  ctx.fill();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `bold 16px ${FONT_SANS}`;
+  ctx.textAlign = "center";
+  ctx.fillText("B", leftMargin + 15, headerY);
+  ctx.textAlign = "left";
+
+  // Logo text
+  ctx.font = `bold 24px ${FONT_SANS}`;
+  ctx.fillStyle = theme.textPrimary;
+  ctx.fillText("BoringTools", leftMargin + 40, headerY);
+
+  const logoWidth = ctx.measureText("BoringTools").width;
+  ctx.font = `500 15px ${FONT_SANS}`;
+  ctx.fillStyle = theme.textMuted;
+  ctx.fillText("• 100% In-Browser & Private", leftMargin + 40 + logoWidth + 14, headerY);
+
+  // Top Right "Verified Result" Pill Badge
+  const badgeText = "VERIFIED RESULT";
+  ctx.font = `bold 12px ${FONT_SANS}`;
+  const badgeWidth = ctx.measureText(badgeText).width + 36;
+  const badgeX = width - leftMargin - badgeWidth;
+  const badgeY = headerY - 20;
+
+  ctx.fillStyle = theme.verifiedBg;
+  roundRect(ctx, badgeX, badgeY, badgeWidth, 34, 17);
+  ctx.fill();
+  ctx.strokeStyle = theme.verifiedBorder;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Green verified dot
+  ctx.fillStyle = "#10b981";
+  ctx.beginPath();
+  ctx.arc(badgeX + 16, badgeY + 17, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = theme.verifiedText;
+  ctx.font = `bold 12px ${FONT_SANS}`;
+  ctx.fillText(badgeText, badgeX + 26, badgeY + 21);
+
+  // 4. Content Rendering Based On Type
+  const contentStartY = 150;
+  const contentWidth = width - leftMargin * 2;
+
+  if (data.type === "roast") {
+    // Mode Tag
+    const modeText = `TODO ROAST • ${data.level.toUpperCase()} MODE`;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    const modeWidth = ctx.measureText(modeText).width + 24;
+    ctx.fillStyle = theme.badgeBg;
+    roundRect(ctx, leftMargin, contentStartY, modeWidth, 28, 14);
+    ctx.fill();
+    ctx.strokeStyle = theme.badgeBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.badgeText;
+    ctx.fillText(modeText, leftMargin + 12, contentStartY + 18);
+
+    // Pending Task Card
+    const taskBoxY = contentStartY + 40;
+    const taskBoxHeight = 74;
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, leftMargin, taskBoxY, contentWidth, taskBoxHeight, 14);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 11px ${FONT_SANS}`;
+    ctx.fillText("PENDING TASK:", leftMargin + 20, taskBoxY + 26);
+
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `600 19px ${FONT_SANS}`;
+    const todoLines = wrapText(ctx, data.todo, contentWidth - 44);
+    ctx.fillText(todoLines[0] || data.todo, leftMargin + 20, taskBoxY + 52);
+
+    // Roast Blockquote Area
+    const roastStartY = taskBoxY + taskBoxHeight + 24;
+    ctx.fillStyle = theme.accent;
+    roundRect(ctx, leftMargin, roastStartY, 4, 94, 2);
+    ctx.fill();
+
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `bold 26px ${FONT_SANS}`;
+    const roastLines = wrapText(ctx, `"${data.roast}"`, contentWidth - 36);
+    let currentRoastY = roastStartY + 26;
+    roastLines.slice(0, 3).forEach((line) => {
+      ctx.fillText(line, leftMargin + 24, currentRoastY);
+      currentRoastY += 36;
+    });
+
+    // Action Item Pill Box
+    const actionY = 460;
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, leftMargin, actionY, contentWidth, 54, 12);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("ACTION:", leftMargin + 20, actionY + 32);
+
+    ctx.fillStyle = theme.textSecondary;
+    ctx.font = `500 16px ${FONT_SANS}`;
+    const actionLines = wrapText(ctx, data.action, contentWidth - 140);
+    ctx.fillText(actionLines[0] || data.action, leftMargin + 85, actionY + 32);
+  } else if (data.type === "reaction") {
+    // Benchmark Mode Tag
+    const tagText = "HUMAN BENCHMARK • REACTION TIME";
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    const tagWidth = ctx.measureText(tagText).width + 24;
+    ctx.fillStyle = theme.badgeBg;
+    roundRect(ctx, leftMargin, contentStartY, tagWidth, 28, 14);
+    ctx.fill();
+    ctx.strokeStyle = theme.badgeBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.badgeText;
+    ctx.fillText(tagText, leftMargin + 12, contentStartY + 18);
+
+    // Giant Milliseconds Display
+    const statY = contentStartY + 145;
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `900 115px ${FONT_MONO}`;
+    const timeStr = `${data.timeMs}`;
+    ctx.fillText(timeStr, leftMargin, statY);
+
+    const timeWidth = ctx.measureText(timeStr).width;
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 38px ${FONT_SANS}`;
+    ctx.fillText("ms", leftMargin + timeWidth + 18, statY - 14);
+
+    // Bento stat boxes
+    const bentoY = statY + 36;
+    const bentoHeight = 84;
+    const bentoW1 = (contentWidth - 24) * 0.55;
+    const bentoW2 = (contentWidth - 24) * 0.45;
+
+    // Box 1: Rating
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, leftMargin, bentoY, bentoW1, bentoHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("PERFORMANCE RATING", leftMargin + 24, bentoY + 30);
+
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 24px ${FONT_SANS}`;
+    ctx.fillText(data.rating, leftMargin + 24, bentoY + 62);
+
+    // Box 2: Percentile
+    const box2X = leftMargin + bentoW1 + 24;
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, box2X, bentoY, bentoW2, bentoHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("GLOBAL PERCENTILE", box2X + 24, bentoY + 30);
+
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `bold 22px ${FONT_SANS}`;
+    ctx.fillText(data.percentile || "Top Reflex Speed ⚡", box2X + 24, bentoY + 62);
+  } else if (data.type === "typing") {
+    // Benchmark Mode Tag
+    const tagText = "KEYBOARD BENCHMARK • TYPING SPEED";
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    const tagWidth = ctx.measureText(tagText).width + 24;
+    ctx.fillStyle = theme.badgeBg;
+    roundRect(ctx, leftMargin, contentStartY, tagWidth, 28, 14);
+    ctx.fill();
+    ctx.strokeStyle = theme.badgeBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.badgeText;
+    ctx.fillText(tagText, leftMargin + 12, contentStartY + 18);
+
+    // Giant WPM Display
+    const statY = contentStartY + 145;
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `900 115px ${FONT_MONO}`;
+    const wpmStr = `${data.wpm}`;
+    ctx.fillText(wpmStr, leftMargin, statY);
+
+    const wpmWidth = ctx.measureText(wpmStr).width;
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 38px ${FONT_SANS}`;
+    ctx.fillText("WPM", leftMargin + wpmWidth + 18, statY - 14);
+
+    // Bento Row with 3 Cards (Accuracy, Rank, Total Chars)
+    const bentoY = statY + 36;
+    const bentoHeight = 84;
+    const gap = 16;
+    const cardW = (contentWidth - gap * 2) / 3;
+
+    // Card 1: Accuracy
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, leftMargin, bentoY, cardW, bentoHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("ACCURACY", leftMargin + 20, bentoY + 30);
+
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 26px ${FONT_MONO}`;
+    ctx.fillText(`${data.accuracy}%`, leftMargin + 20, bentoY + 62);
+
+    // Card 2: Rank
+    const card2X = leftMargin + cardW + gap;
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, card2X, bentoY, cardW, bentoHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("SPEED RANK", card2X + 20, bentoY + 30);
+
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `bold 22px ${FONT_SANS}`;
+    ctx.fillText(data.rank, card2X + 20, bentoY + 62);
+
+    // Card 3: Chars or Status
+    const card3X = leftMargin + (cardW + gap) * 2;
+    ctx.fillStyle = theme.cardBg;
+    roundRect(ctx, card3X, bentoY, cardW, bentoHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = theme.textMuted;
+    ctx.font = `bold 12px ${FONT_SANS}`;
+    ctx.fillText("KEYSTROKES", card3X + 20, bentoY + 30);
+
+    ctx.fillStyle = theme.textPrimary;
+    ctx.font = `bold 22px ${FONT_MONO}`;
+    ctx.fillText(`${data.chars ?? "Verified"}`, card3X + 20, bentoY + 62);
+  }
+
+  // 5. Bottom Separator Line & Branded Footer
+  const footerLineY = height - 88;
+  ctx.strokeStyle = theme.footerLine;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(leftMargin, footerLineY);
+  ctx.lineTo(width - leftMargin, footerLineY);
+  ctx.stroke();
+
+  // Footer Left
+  const footerTextY = height - 54;
+  ctx.fillStyle = theme.footerText;
+  ctx.font = `500 14px ${FONT_SANS}`;
+  ctx.fillText("Free & Private in your browser at:", leftMargin, footerTextY);
+
+  const freeTextWidth = ctx.measureText("Free & Private in your browser at:").width;
+  ctx.fillStyle = theme.accent;
+  ctx.font = `bold 15px ${FONT_SANS}`;
+  ctx.fillText("boringtoolsai.com", leftMargin + freeTextWidth + 8, footerTextY);
+
+  // Footer Right Tag
+  const rightTag = "100% Client-Side";
+  ctx.font = `600 13px ${FONT_SANS}`;
+  const rightTagWidth = ctx.measureText(rightTag).width;
+  ctx.fillStyle = theme.textMuted;
+  ctx.fillText(rightTag, width - leftMargin - rightTagWidth, footerTextY);
 
   return canvas.toDataURL("image/png");
 }
+
 
 /**
  * Downloads a dataUrl to user device.
