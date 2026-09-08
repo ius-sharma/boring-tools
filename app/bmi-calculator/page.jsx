@@ -3,6 +3,9 @@
 import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
+import { useShareableParam } from "@/lib/useShareableState";
+import { recordRecentTool } from "@/lib/storage/toolPreferences";
+import ShareCalculationButton from "../components/ShareCalculationButton";
 
 const TOOL_STATUS = "live";
 
@@ -121,14 +124,18 @@ export default function BmiCalculatorPage() {
     return <ComingSoon toolName="BMI Calculator" />;
   }
 
-  const [heightUnit, setHeightUnit] = useState("cm");
-  const [weightUnit, setWeightUnit] = useState("kg");
-  const [heightCmInput, setHeightCmInput] = useState("170");
-  const [heightFtInput, setHeightFtInput] = useState("5");
-  const [heightInInput, setHeightInInput] = useState("8");
-  const [weightInput, setWeightInput] = useState("65");
+  const [heightUnit, setHeightUnit] = useShareableParam("hUnit", "cm");
+  const [weightUnit, setWeightUnit] = useShareableParam("wUnit", "kg");
+  const [heightCmInput, setHeightCmInput] = useShareableParam("cm", "170");
+  const [heightFtInput, setHeightFtInput] = useShareableParam("ft", "5");
+  const [heightInInput, setHeightInInput] = useShareableParam("in", "8");
+  const [weightInput, setWeightInput] = useShareableParam("weight", "65");
   const [toast, setToast] = useState({ type: "", message: "" });
   const toastTimerRef = useRef(null);
+
+  useEffect(() => {
+    recordRecentTool("bmi-calculator");
+  }, []);
 
   const validationError = useMemo(() => {
     const parsedWeight = parseNumber(weightInput);
@@ -522,6 +529,7 @@ export default function BmiCalculatorPage() {
           >
             Download report
           </button>
+          <ShareCalculationButton label="Share BMI" className="py-3 px-4 text-sm font-semibold rounded-xl" />
           <button
             type="button"
             onClick={resetCalculator}

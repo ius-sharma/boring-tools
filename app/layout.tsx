@@ -99,6 +99,7 @@ import AuthModal from "./components/AuthModal";
 import UpgradeModal from "./components/UpgradeModal";
 import PaymentSuccessModal from "./components/PaymentSuccessModal";
 import ToastNotification from "./components/ToastNotification";
+import CommandPalette from "./components/CommandPalette";
 
 export default function RootLayout({
   children,
@@ -136,6 +137,7 @@ export default function RootLayout({
           <UpgradeModal />
           <PaymentSuccessModal />
           <ToastNotification />
+          <CommandPalette />
         </AuthProvider>
       </body>
     </html>

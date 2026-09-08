@@ -2,6 +2,9 @@
 
 import ComingSoon from "@/app/components/ComingSoon";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useShareableParam } from "@/lib/useShareableState";
+import { recordRecentTool } from "@/lib/storage/toolPreferences";
+import ShareCalculationButton from "@/app/components/ShareCalculationButton";
 
 const MONTHS_IN_YEAR = 12;
 const TOOL_STATUS = "live";
@@ -74,11 +77,15 @@ export default function SipCalculatorPage() {
     return <ComingSoon toolName="SIP Calculator" />;
   }
 
-  const [monthlyInvestment, setMonthlyInvestment] = useState("5000");
-  const [annualReturn, setAnnualReturn] = useState("12");
-  const [years, setYears] = useState("10");
+  const [monthlyInvestment, setMonthlyInvestment] = useShareableParam("investment", "5000");
+  const [annualReturn, setAnnualReturn] = useShareableParam("return", "12");
+  const [years, setYears] = useShareableParam("years", "10");
   const [toast, setToast] = useState({ type: "", message: "" });
   const toastTimerRef = useRef(null);
+
+  useEffect(() => {
+    recordRecentTool("sip-calculator");
+  }, []);
 
   const result = useMemo(() => {
     const monthly = toNumber(monthlyInvestment);
@@ -248,13 +255,16 @@ export default function SipCalculatorPage() {
               <p className="text-sm text-slate-500">Everything runs in your browser. No server needed.</p>
             </div>
 
-            <button
-              type="button"
-              onClick={resetCalculator}
-              className="inline-flex items-center justify-center rounded-full border border-orange-500 px-4 py-2 text-sm font-semibold text-orange-600 transition hover:-translate-y-px hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 md:mt-1"
-            >
-              Reset
-            </button>
+            <div className="flex items-center gap-2 md:mt-1">
+              <ShareCalculationButton label="Share Calculation" />
+              <button
+                type="button"
+                onClick={resetCalculator}
+                className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-600 hover:text-orange-600 hover:border-orange-300 hover:bg-orange-50/40 transition cursor-pointer"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
