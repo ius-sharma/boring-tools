@@ -13,11 +13,11 @@ export default function PrivacyTrustBadge({
 }: PrivacyTrustBadgeProps) {
   return (
     <div
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-200/80 bg-emerald-50/60 text-slate-700 text-xs font-medium select-none ${className}`}
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-orange-200/80 bg-orange-50/70 text-slate-700 text-xs font-medium select-none ${className}`}
       title="Runs entirely in your browser. Your data never leaves your device."
     >
       <svg
-        className="w-3.5 h-3.5 text-emerald-600 shrink-0"
+        className="w-3.5 h-3.5 text-orange-500 shrink-0"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
