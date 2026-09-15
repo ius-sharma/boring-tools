@@ -86,7 +86,7 @@ export default function Breadcrumbs({
         </ol>
 
         <div className="shrink-0">
-          <PrivacyTrustBadge compact align="right" />
+          <PrivacyTrustBadge compact />
         </div>
       </nav>
     </>
