@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { getBreadcrumbSchema } from "@/lib/seo";
 import StructuredData from "./StructuredData";
+import PrivacyTrustBadge from "./PrivacyTrustBadge";
 
 interface BreadcrumbsProps {
   category?: string;
@@ -39,7 +40,7 @@ export default function Breadcrumbs({
       <StructuredData data={schema} />
       <nav
         aria-label="Breadcrumb"
-        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 text-xs font-medium text-slate-500"
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 text-xs font-medium text-slate-500 flex items-center justify-between gap-3 flex-wrap"
       >
         <ol className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           <li>
@@ -83,6 +84,10 @@ export default function Breadcrumbs({
             {toolName}
           </li>
         </ol>
+
+        <div className="shrink-0">
+          <PrivacyTrustBadge compact align="right" />
+        </div>
       </nav>
     </>
   );
