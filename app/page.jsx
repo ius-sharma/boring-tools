@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "./components/ThemedDropdown";
 import ConfettiCelebration from "./components/ConfettiCelebration";
+import PrivacyTrustBadge from "./components/PrivacyTrustBadge";
 
 import { tools, liveToolIds, featuredToolIds, availableTools } from "./tools-data";
 import { useToolPreferences, recordRecentTool } from "@/lib/storage/toolPreferences";
@@ -354,7 +355,7 @@ export default function Home() {
             <p className="text-sm font-semibold uppercase tracking-widest text-orange-600 mb-4">Built daily in public</p>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6">BoringTools</h1>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-              100 practical tools. Built in 100 days. No signup. No clutter. Just what you need.
+              100 practical tools. Built in 100 days. No signup, no clutter. Just get the job done.
             </p>
             <div className="mb-8 flex justify-center gap-6 text-sm sm:text-base">
               <span className="text-slate-700 font-semibold">
@@ -372,6 +373,9 @@ export default function Home() {
             >
               Explore Tools
             </a>
+            <div className="mt-6 flex justify-center">
+              <PrivacyTrustBadge />
+            </div>
           </div>
         </div>
       </section>
@@ -394,7 +398,7 @@ export default function Home() {
             </div>
             <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
               <p className="text-sm font-semibold text-orange-600 mb-1">Browser-Based</p>
-              <p className="text-slate-600 text-xs">Works offline, saves locally</p>
+              <p className="text-slate-600 text-xs">Data never leaves your device</p>
             </div>
           </div>
         </div>
@@ -478,6 +482,12 @@ export default function Home() {
                     {tool.name}
                   </h3>
                   <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-slate-500 font-medium relative z-10">
+                    <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span>Runs in browser · Data stays on device</span>
+                  </div>
                 </a>
               );
             })}
@@ -741,6 +751,12 @@ export default function Home() {
                         {tool.name}
                       </h3>
                       <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium relative z-10">
+                        <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span>Runs in browser · Data stays on device</span>
+                      </div>
                     </a>
                   );
                 })}
@@ -917,7 +933,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <h3 className="font-bold text-white mb-3">BoringTools</h3>
-              <p className="text-sm text-slate-400">100 practical tools built in 100 days</p>
+              <p className="text-sm text-slate-400">100 practical tools built in 100 days. No signup, no clutter. Just get the job done.</p>
               <div className="mt-4 pt-4 border-t border-slate-900">
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Other Projects</p>
                 <a href="https://smritiius.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-1 text-sm text-slate-300 hover:text-amber-300 transition group font-medium">

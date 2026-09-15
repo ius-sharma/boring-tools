@@ -334,7 +334,7 @@ export default function ToolContentFooter() {
             <div>
               <h3 className="font-bold text-white mb-3 text-lg">BoringTools</h3>
               <p className="text-sm text-slate-400">
-                100 practical browser-first tools built in 100 days. No signup. No tracking.
+                100 practical browser-first tools built in 100 days. No signup, no clutter. Just get the job done.
               </p>
               <div className="mt-4 pt-4 border-t border-slate-900">
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
