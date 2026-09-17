@@ -1,21 +1,13 @@
 import React from "react";
 import Link from "next/link";
 
-interface ContextualToolBridgeProps {
-  label?: string;
-  description: string;
-  toolName: string;
-  href: string;
-  badge?: string;
-}
-
 export default function ContextualToolBridge({
   label = "Suggested Next Step",
   description,
   toolName,
   href,
   badge = "Free & Private",
-}: ContextualToolBridgeProps) {
+}) {
   return (
     <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4 transition hover:border-slate-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
