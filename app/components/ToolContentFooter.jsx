@@ -150,6 +150,81 @@ export default function ToolContentFooter() {
           a: "Because this app respects your privacy and runs entirely local, we do not require your email. Instead, you can download a standard iCalendar (.ics) file when locking a capsule. Importing this file adds a reminder to your native calendar (Google Calendar, Apple Calendar, Outlook, etc.), which will notify you exactly when the capsule is ready to be opened. If you explicitly opt-in to email reminders, we will prompt you for your address and register it offline."
         }
       ]
+    },
+    "youtube-playlist-analyzer": {
+      title: "Complete Guide to YouTube Playlist Duration & Study Planning",
+      overview: "Calculating the total duration of a YouTube playlist helps students, developers, and creators plan their learning roadmap accurately. Playlist IQ calculates the cumulative runtime of any public playlist and calculates the exact completion time across standard playback speeds (1.25x, 1.5x, 1.75x, and 2x) without requiring any sign-up.",
+      importance: "When preparing for interviews or working through a tutorial series on YouTube, knowing the exact study time commitment is essential. For instance, a 20-hour video series takes only 13 hours and 20 minutes at 1.5x speed. By setting daily target hours, you can see the precise date you will complete the course, preventing study burnout.",
+      howToUse: [
+        "Paste the URL or ID of any public YouTube playlist into the input field.",
+        "Click 'Analyze Playlist' to calculate total runtime, video count, and duration breakdown.",
+        "Toggle playback speeds (1x, 1.25x, 1.5x, 1.75x, 2x) to benchmark your accelerated study time.",
+        "Set your daily study commitment (e.g. 1 hour/day) to generate your estimated completion date."
+      ],
+      faqs: [
+        {
+          q: "Can I analyze unlisted or private YouTube playlists?",
+          a: "Unlisted playlists can be analyzed if you have their shareable link. However, private playlists cannot be accessed because YouTube restricts data retrieval for private content."
+        },
+        {
+          q: "Does this tool require a YouTube API key or sign up?",
+          a: "No. BoringTools handles playlist calculations directly with zero registration and zero API key requirement from your end."
+        },
+        {
+          q: "How are playback speed durations calculated?",
+          a: "Playback speed duration is calculated by dividing total seconds by the speed multiplier (e.g., Duration / 1.5 for 1.5x speed), reflecting real-world accelerated playback."
+        }
+      ]
+    },
+    "pdf-merger": {
+      title: "Browser-First PDF Merger — Combine Documents with Complete Privacy",
+      overview: "Merging multiple PDF documents into a single cohesive file is a frequent requirement for job applications, academic submissions, invoices, and legal contracts. This utility merges PDF files 100% locally in your browser using WebAssembly, ensuring your confidential documents are never uploaded to remote servers.",
+      importance: "Traditional online PDF websites require uploading files to third-party cloud servers, posing significant security and data privacy risks. By performing the entire PDF byte manipulation inside your browser sandbox, BoringTools guarantees that your files remain private, secure, and entirely under your control.",
+      howToUse: [
+        "Drag and drop or select two or more PDF files from your device.",
+        "Rearrange and reorder files into your preferred sequence using the interactive list.",
+        "Click 'Merge PDFs' to combine the documents instantly in your browser.",
+        "Download your consolidated PDF document with zero wait time and zero watermarks."
+      ],
+      faqs: [
+        {
+          q: "Is there any file size limit for merging PDFs?",
+          a: "Because merging happens directly in your browser using your local machine's memory, there are no artificial file size limits. You can combine large documents smoothly as long as your device has available RAM."
+        },
+        {
+          q: "Are my uploaded PDFs stored on any server?",
+          a: "No. Your PDF files never leave your device. The entire merge process is 100% client-side, making it completely confidential and compliant with strict privacy requirements."
+        },
+        {
+          q: "Can I reorder documents before merging?",
+          a: "Yes! You can reorder the documents to ensure the final merged PDF matches your exact desired order."
+        }
+      ]
+    },
+    "qr-generator": {
+      title: "High-Resolution Custom QR Code Generator Guide",
+      overview: "QR (Quick Response) codes provide an instant bridge between physical surfaces and digital links. This generator creates crisp, vector-grade QR codes for website URLs, contact details, Wi-Fi passwords, and plain text with custom color palettes and high-contrast styling.",
+      importance: "Standard black-and-white QR codes often look generic and clash with brand designs. With custom color palettes and built-in Reed-Solomon error correction, your generated QR codes remain 100% readable by smartphone cameras while matching your brand identity.",
+      howToUse: [
+        "Choose the QR content type (URL, Plain Text, or Wi-Fi credentials).",
+        "Enter or paste your destination link or information into the input field.",
+        "Customize foreground and background colors to match your brand palette.",
+        "Download your high-resolution QR code instantly ready for print or web display."
+      ],
+      faqs: [
+        {
+          q: "Do these QR codes ever expire?",
+          a: "No. These are static QR codes that directly encode your text or URL into the matrix pattern. They will never expire and do not depend on external redirect services."
+        },
+        {
+          q: "Will custom colored QR codes scan reliably?",
+          a: "Yes, provided you maintain sufficient contrast between the darker foreground and lighter background. Avoid using light foreground colors on white backgrounds."
+        },
+        {
+          q: "Can I use generated QR codes for commercial projects?",
+          a: "Yes, all generated QR codes are 100% free for both personal and commercial use with zero attribution or signup needed."
+        }
+      ]
     }
   };
 
@@ -196,6 +271,28 @@ export default function ToolContentFooter() {
 
   const relatedTools = useMemo(() => {
     if (!tool) return [];
+
+    // Prioritize curated relatedToolIds if present
+    if (tool.relatedToolIds && tool.relatedToolIds.length > 0) {
+      const explicitTools = tool.relatedToolIds
+        .map((id) => tools.find((t) => t.id === id && t.status === "Live"))
+        .filter(Boolean);
+
+      if (explicitTools.length >= 4) {
+        return explicitTools.slice(0, 4);
+      }
+
+      const remainder = tools.filter(
+        (t) =>
+          t.id !== tool.id &&
+          t.status === "Live" &&
+          !explicitTools.some((et) => et.id === t.id) &&
+          t.category === tool.category
+      );
+
+      return [...explicitTools, ...remainder].slice(0, 4);
+    }
+
     const sameCategory = tools.filter(
       (t) => t.category === tool.category && t.id !== tool.id && t.status === "Live"
     );

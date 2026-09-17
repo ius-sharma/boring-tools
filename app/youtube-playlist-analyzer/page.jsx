@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import ContextualToolBridge from "../components/ContextualToolBridge";
 
 const SAMPLE_PLAYLISTS = [
   {
@@ -782,6 +783,14 @@ ${c.learningOutcomes.map((o) => `- ${o}`).join("\n")}
                 )}
               </div>
             </div>
+
+            <ContextualToolBridge
+              label="Next Tool"
+              description="Working on YouTube content? Generate high-CTR titles or convert videos to audio."
+              toolName="YouTube Title Generator"
+              href="/youtube-title-generator"
+              badge="Free & Instant"
+            />
           </div>
         )}
       </div>

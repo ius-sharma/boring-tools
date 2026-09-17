@@ -136,26 +136,31 @@ export function getFaqSchema(faqs: { q: string; a: string }[]) {
  */
 export function constructToolMetadata(tool: Tool): Metadata {
   const toolUrl = `${SITE_CONFIG.url}${tool.href}`;
-  const cleanTitle = `${tool.name} — Free Browser Tool`;
-  const cleanDesc = `${tool.description} Fast, free, and 100% private in your browser with zero sign-up.`;
+  const cleanTitle = tool.seoTitle || `${tool.name} — Free Browser Tool`;
+  const cleanDesc =
+    tool.seoDescription ||
+    `${tool.description} Fast, free, and 100% private in your browser with zero sign-up.`;
+
+  const combinedKeywords = [
+    ...(tool.keywords || []),
+    tool.name,
+    `${tool.name} online`,
+    `free ${tool.name.toLowerCase()}`,
+    tool.category,
+    "browser utility",
+    "boring tools",
+    "client-side tool",
+  ];
 
   return {
     title: cleanTitle,
     description: cleanDesc,
-    keywords: [
-      tool.name,
-      `${tool.name} online`,
-      `free ${tool.name.toLowerCase()}`,
-      tool.category,
-      "browser utility",
-      "boring tools",
-      "client-side tool",
-    ],
+    keywords: Array.from(new Set(combinedKeywords)),
     alternates: {
       canonical: toolUrl,
     },
     openGraph: {
-      title: `${tool.name} | BoringTools`,
+      title: cleanTitle,
       description: cleanDesc,
       url: toolUrl,
       siteName: SITE_CONFIG.name,
@@ -165,13 +170,13 @@ export function constructToolMetadata(tool: Tool): Metadata {
           url: `${SITE_CONFIG.url}/boringtools-logo.png`,
           width: 1200,
           height: 630,
-          alt: `${tool.name} — BoringTools`,
+          alt: cleanTitle,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${tool.name} | BoringTools`,
+      title: cleanTitle,
       description: cleanDesc,
       images: [`${SITE_CONFIG.url}/boringtools-logo.png`],
     },

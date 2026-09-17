@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
+import ContextualToolBridge from "../components/ContextualToolBridge";
 
 function formatFileSize(bytes) {
 	if (!bytes && bytes !== 0) return "0 B";
@@ -367,13 +368,23 @@ export default function ImageCompressor() {
 						</div>
 
 						{resultBlob && (
-							<div className="ic-stats-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
-								<p className="text-sm text-slate-500">Savings</p>
-								<p className="ic-heading text-base font-semibold text-slate-900">
-									{formatFileSize(savings.saved)} saved ({savings.percent}%)
-								</p>
-								<p className="ic-muted text-sm text-slate-700">A smaller file is easier to share and upload.</p>
-							</div>
+							<>
+								<div className="ic-stats-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
+									<p className="text-sm text-slate-500">Savings</p>
+									<p className="ic-heading text-base font-semibold text-slate-900">
+										{formatFileSize(savings.saved)} saved ({savings.percent}%)
+									</p>
+									<p className="ic-muted text-sm text-slate-700">A smaller file is easier to share and upload.</p>
+								</div>
+
+								<ContextualToolBridge
+									label="Next Step"
+									description="Need to combine your compressed images into a single document?"
+									toolName="Image to PDF Converter"
+									href="/image-to-pdf-converter"
+									badge="100% Offline"
+								/>
+							</>
 						)}
 					</div>
 
