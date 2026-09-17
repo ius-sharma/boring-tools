@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import Link from "next/link";
+import { GitHubIcon } from "../components/KoboyoIcons";
 
 // 5 Milestone Data points for the interactive scrubber
 const MILESTONES = [
@@ -140,9 +141,10 @@ export default function AboutClient() {
                 href="https://github.com/ius-sharma/boring-tools"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-full border border-slate-300 transition shadow-xs"
+                className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 text-sm font-semibold rounded-full border border-slate-300 transition shadow-xs inline-flex items-center gap-2"
               >
-                View on GitHub
+                <GitHubIcon className="w-4 h-4 text-slate-800" />
+                <span>View on GitHub</span>
               </a>
             </div>
           </div>
@@ -399,9 +401,10 @@ export default function AboutClient() {
               href="https://github.com/ius-sharma/boring-tools"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-full transition shadow-xs"
+              className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-full transition shadow-xs inline-flex items-center gap-2"
             >
-              Star on GitHub
+              <GitHubIcon className="w-3.5 h-3.5 text-white" />
+              <span>Star on GitHub</span>
             </a>
             <Link
               href="/contact"

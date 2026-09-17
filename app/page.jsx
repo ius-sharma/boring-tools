@@ -14,6 +14,8 @@ import {
   KoboyoGlobe,
   KoboyoShield,
   CategoryIcon,
+  InstagramIcon,
+  GitHubIcon,
 } from "./components/KoboyoIcons";
 
 import { tools, liveToolIds, featuredToolIds, availableTools } from "./tools-data";
@@ -997,15 +999,31 @@ export default function Home() {
             </div>
             <div>
               <h4 className="font-semibold text-white mb-3">Follow</h4>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2.5 text-sm">
                 <li>
-                  <a href="https://www.instagram.com/ius.sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition">
-                    Instagram
+                  <a
+                    href="https://www.instagram.com/ius.sharma"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 text-slate-400 hover:text-pink-400 transition group"
+                  >
+                    <span className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/40 group-hover:bg-pink-500/10 transition">
+                      <InstagramIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-pink-400 transition" />
+                    </span>
+                    <span>Instagram</span>
                   </a>
                 </li>
                 <li>
-                  <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition">
-                    GitHub
+                  <a
+                    href="https://github.com/ius-sharma"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 text-slate-400 hover:text-white transition group"
+                  >
+                    <span className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition">
+                      <GitHubIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition" />
+                    </span>
+                    <span>GitHub</span>
                   </a>
                 </li>
               </ul>
@@ -1013,7 +1031,18 @@ export default function Home() {
           </div>
           <div className="border-t border-slate-700 pt-8 text-center text-sm">
             <p>© 2026 BoringTools. All rights reserved.</p>
-            <p className="text-xs text-slate-500 mt-2">Developed by <a href="https://github.com/ius-sharma" target="_blank" rel="noopener noreferrer" className="hover:text-amber-300 transition text-slate-400 font-medium">Ayush Sharma</a></p>
+            <p className="text-xs text-slate-500 mt-2">
+              Developed by{" "}
+              <a
+                href="https://github.com/ius-sharma"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-amber-300 transition text-slate-400 font-medium inline-flex items-center gap-1.5"
+              >
+                <GitHubIcon className="w-3.5 h-3.5 inline text-slate-500 hover:text-amber-300" />
+                Ayush Sharma
+              </a>
+            </p>
           </div>
         </div>
       </footer>

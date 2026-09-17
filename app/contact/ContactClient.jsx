@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { GitHubIcon } from "../components/KoboyoIcons";
 
 const QUESTIONS_TO_CYCLE = [
   "How do I upgrade to Boring Tools Pro?",
@@ -187,7 +188,10 @@ export default function ContactClient() {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-between gap-3 px-5 py-2.5 rounded-full border border-slate-300 hover:border-slate-900 text-slate-800 hover:text-slate-900 text-xs sm:text-sm font-medium transition"
               >
-                <span>Visit GitHub Repo</span>
+                <span className="inline-flex items-center gap-2">
+                  <GitHubIcon className="w-4 h-4 text-slate-800" />
+                  <span>Visit GitHub Repo</span>
+                </span>
                 <span className="text-slate-400 font-mono text-sm">→</span>
               </a>
             </div>

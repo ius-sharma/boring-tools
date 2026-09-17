@@ -7,6 +7,7 @@ import { tools } from "../tools-data";
 import StructuredData from "./StructuredData";
 import { getFaqSchema } from "@/lib/seo";
 import PrivacyTrustBadge from "./PrivacyTrustBadge";
+import { InstagramIcon, GitHubIcon } from "./KoboyoIcons";
 
 export default function ToolContentFooter() {
   const pathname = usePathname();
@@ -393,15 +394,18 @@ export default function ToolContentFooter() {
             </div>
             <div>
               <h4 className="font-semibold text-white mb-3">Follow Us</h4>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2.5 text-sm">
                 <li>
                   <a
                     href="https://www.instagram.com/ius.sharma"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-amber-300 transition"
+                    className="inline-flex items-center gap-2.5 text-slate-400 hover:text-pink-400 transition group"
                   >
-                    Instagram
+                    <span className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-pink-500/40 group-hover:bg-pink-500/10 transition">
+                      <InstagramIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-pink-400 transition" />
+                    </span>
+                    <span>Instagram</span>
                   </a>
                 </li>
                 <li>
@@ -409,9 +413,12 @@ export default function ToolContentFooter() {
                     href="https://github.com/ius-sharma"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-amber-300 transition"
+                    className="inline-flex items-center gap-2.5 text-slate-400 hover:text-white transition group"
                   >
-                    GitHub
+                    <span className="w-6 h-6 rounded-md bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/10 transition">
+                      <GitHubIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition" />
+                    </span>
+                    <span>GitHub</span>
                   </a>
                 </li>
               </ul>
@@ -425,8 +432,9 @@ export default function ToolContentFooter() {
                 href="https://github.com/ius-sharma"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-amber-300 transition text-slate-400 font-medium"
+                className="hover:text-amber-300 transition text-slate-400 font-medium inline-flex items-center gap-1.5"
               >
+                <GitHubIcon className="w-3.5 h-3.5 inline text-slate-500 hover:text-amber-300" />
                 Ayush Sharma
               </a>
             </p>
