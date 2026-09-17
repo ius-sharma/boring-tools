@@ -4,6 +4,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ThemedDropdown from "./components/ThemedDropdown";
 import ConfettiCelebration from "./components/ConfettiCelebration";
 import PrivacyTrustBadge from "./components/PrivacyTrustBadge";
+import {
+  KoboyoStar,
+  KoboyoClock,
+  KoboyoTrophy,
+  KoboyoSparkles,
+  KoboyoKey,
+  KoboyoRocket,
+  KoboyoGlobe,
+  KoboyoShield,
+  CategoryIcon,
+} from "./components/KoboyoIcons";
 
 import { tools, liveToolIds, featuredToolIds, availableTools } from "./tools-data";
 import { useToolPreferences, recordRecentTool } from "@/lib/storage/toolPreferences";
@@ -384,21 +395,41 @@ export default function Home() {
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
-              <p className="text-sm font-semibold text-orange-600 mb-1">No Signup</p>
-              <p className="text-slate-600 text-xs">Use instantly, no account needed</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                <KoboyoKey className="w-4 h-4 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-orange-600 mb-1">No Signup</p>
+                <p className="text-slate-600 text-xs">Use instantly, no account needed</p>
+              </div>
             </div>
-            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
-              <p className="text-sm font-semibold text-orange-600 mb-1">Free Forever</p>
-              <p className="text-slate-600 text-xs">All tools are completely free</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                <KoboyoSparkles className="w-4 h-4 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-orange-600 mb-1">Free Forever</p>
+                <p className="text-slate-600 text-xs">All tools are completely free</p>
+              </div>
             </div>
-            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
-              <p className="text-sm font-semibold text-orange-600 mb-1">Fast & Simple</p>
-              <p className="text-slate-600 text-xs">Minimal UI, instant results</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                <KoboyoRocket className="w-4 h-4 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-orange-600 mb-1">Fast & Simple</p>
+                <p className="text-slate-600 text-xs">Minimal UI, instant results</p>
+              </div>
             </div>
-            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50">
-              <p className="text-sm font-semibold text-orange-600 mb-1">Browser-Based</p>
-              <p className="text-slate-600 text-xs">Data never leaves your device</p>
+            <div className="p-4 rounded-lg border border-slate-200 bg-slate-50 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                <KoboyoGlobe className="w-4 h-4 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-orange-600 mb-1">Browser-Based</p>
+                <p className="text-slate-600 text-xs">Data never leaves your device</p>
+              </div>
             </div>
           </div>
         </div>
@@ -445,14 +476,12 @@ export default function Home() {
                     <div className="flex items-center gap-1.5">
                       {isTimeCapsule ? (
                         <span className="text-[10px] font-bold tracking-wider bg-gradient-to-r from-amber-600 to-amber-500 text-white px-2.5 py-1 rounded-full uppercase shadow-xs flex items-center gap-1.5 animate-pulse">
-                          <svg className="w-3 h-3 text-amber-200" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
-                          </svg>
+                          <KoboyoTrophy className="w-3 h-3 text-amber-200" />
                           Milestone #100
                         </span>
                       ) : isPlaylistIQ ? (
                         <span className="text-[10px] font-bold tracking-wider bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-2.5 py-1 rounded-full uppercase shadow-xs flex items-center gap-1.5 animate-pulse">
-                          ⚡ Featured AI
+                          <KoboyoSparkles className="w-3 h-3 text-sky-200" /> Featured AI
                         </span>
                       ) : (
                         tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
@@ -472,9 +501,7 @@ export default function Home() {
                             : "text-slate-300 hover:text-amber-500 hover:bg-slate-100 opacity-60 group-hover:opacity-100"
                         }`}
                       >
-                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
+                        <KoboyoStar className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -483,9 +510,7 @@ export default function Home() {
                   </h3>
                   <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-slate-500 font-medium relative z-10">
-                    <svg className="w-3.5 h-3.5 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
+                    <KoboyoShield className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                     <span>Runs in browser · Data stays on device</span>
                   </div>
                 </a>
@@ -512,8 +537,11 @@ export default function Home() {
                     setQuery(cat);
                     setTimeout(() => findToolsRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
                   }}
-                  className="p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-400 hover:bg-orange-50 transition text-center"
+                  className="p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-400 hover:bg-orange-50 transition text-center flex flex-col items-center group cursor-pointer"
                 >
+                  <div className="w-9 h-9 rounded-lg bg-orange-50 group-hover:bg-orange-100 text-orange-600 flex items-center justify-center mb-2.5 transition">
+                    <CategoryIcon category={cat} className="w-4 h-4 text-orange-600" />
+                  </div>
                   <p className="font-semibold text-slate-900 mb-1">{cat}</p>
                   <p className="text-xs text-slate-500">{count} tools</p>
                 </button>
@@ -597,9 +625,7 @@ export default function Home() {
               {pinnedToolsList.length > 0 && (
                 <div className="mb-3.5">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-orange-600 mb-2 flex items-center gap-1.5">
-                    <svg className="w-3 h-3 fill-amber-500 text-amber-500" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                    <KoboyoStar className="w-3 h-3 text-amber-500" />
                     Pinned ({pinnedToolsList.length})
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -618,10 +644,10 @@ export default function Home() {
                             e.stopPropagation();
                             togglePin(tool.id);
                           }}
-                          className="text-amber-500 hover:text-amber-700 cursor-pointer"
+                          className="text-amber-500 hover:text-amber-700 cursor-pointer p-0.5"
                           title="Unpin"
                         >
-                          ★
+                          <KoboyoStar className="w-3 h-3" />
                         </button>
                       </a>
                     ))}
@@ -632,9 +658,7 @@ export default function Home() {
               {recentToolsList.length > 0 && (
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
-                    <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <KoboyoClock className="w-3 h-3 text-slate-400" />
                     Recently Visited
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -713,14 +737,12 @@ export default function Home() {
                         <div className="flex items-center gap-1.5">
                           {isTimeCapsule ? (
                             <span className="text-[9px] font-bold tracking-wider bg-gradient-to-r from-amber-600 to-amber-500 text-white px-2 py-0.5 rounded-full uppercase shadow-xs flex items-center gap-1 animate-pulse">
-                              <svg className="w-2.5 h-2.5 text-amber-200" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a2 2 0 002 2h4a2 2 0 002-2V6h-1a1 1 0 110-2h1V3a1 1 0 112 0v1h1a1 1 0 110 2h-1v1a4 4 0 01-4 4H8a4 4 0 01-4-4V6H3a1 1 0 110-2h1V3a1 1 0 011-1zm3 12a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
-                              </svg>
+                              <KoboyoTrophy className="w-2.5 h-2.5 text-amber-200" />
                               #100
                             </span>
                           ) : isPlaylistIQ ? (
                             <span className="text-[9px] font-bold tracking-wider bg-gradient-to-r from-sky-600 to-indigo-600 text-white px-2 py-0.5 rounded-full uppercase shadow-xs flex items-center gap-1 animate-pulse">
-                              ⚡ AI
+                              <KoboyoSparkles className="w-2.5 h-2.5 text-sky-200" /> AI
                             </span>
                           ) : (
                             tool.isNew && <span className="text-xs font-semibold bg-orange-100 text-orange-700 px-2 py-1 rounded">New</span>
@@ -741,9 +763,7 @@ export default function Home() {
                                 : "text-slate-300 hover:text-amber-500 hover:bg-slate-100 opacity-60 group-hover:opacity-100"
                             }`}
                           >
-                            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                            <KoboyoStar className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
@@ -752,9 +772,7 @@ export default function Home() {
                       </h3>
                       <p className="text-sm text-slate-600 relative z-10">{tool.description}</p>
                       <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-1.5 text-[10px] text-slate-500 font-medium relative z-10">
-                        <svg className="w-3 h-3 text-orange-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+                        <KoboyoShield className="w-3 h-3 text-orange-500 shrink-0" />
                         <span>Runs in browser · Data stays on device</span>
                       </div>
                     </a>
