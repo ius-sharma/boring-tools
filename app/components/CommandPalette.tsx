@@ -173,16 +173,11 @@ export default function CommandPalette() {
         <div className="flex items-center px-4 py-3.5 border-b border-slate-100 bg-white">
           <svg
             className="w-4 h-4 text-slate-400 shrink-0 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+            fill="currentColor"
+            viewBox="0 0 135 131"
+            aria-hidden="true"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
+            <path d="M39.8 8.9A47.5 47.5 0 0 0 7 54c0 13.1 4.3 23.5 13.4 32.5A46 46 0 0 0 54.1 100c11.4 0 21.4-3.6 31.3-11.4.8-.5 7.4 5.5 18.6 16.9 9.6 9.7 18.3 18 19.3 18.6 2.4 1.4 5.9-.7 5.5-3.2-.2-1.1-8.6-10.2-18.8-20.4L91.6 82l1.7-3a58 58 0 0 0 6.4-21.6 46.5 46.5 0 0 0-34.1-49 55 55 0 0 0-25.8.5m29.7 8.9a39 39 0 0 1 22.1 44.1c-6.4 30.8-42.2 41.4-65.7 19.4-18.2-17-13.6-48.8 9-62.1a37 37 0 0 1 34.6-1.4" />
           </svg>
           <input
             ref={inputRef}
@@ -201,8 +196,8 @@ export default function CommandPalette() {
               className="p-1 text-slate-400 hover:text-slate-600 rounded transition cursor-pointer"
               title="Clear search"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 105 107" aria-hidden="true">
+                <path d="M72.7 26.2 52 47.5l-20-20A191 191 0 0 0 10 7.2c-2.7-.4-5.2 1.6-4.8 4 .2 1 9.4 11 20.6 22.1L46 53.5l-19.1 20c-10.4 11-19.5 21-20.1 22.3-1.6 3.1 2 7 5.1 5.6 1.1-.5 10.4-9.8 20.6-20.7A325 325 0 0 1 52.1 61c.6 0 10.2 9.2 21.3 20.5A206 206 0 0 0 95.2 102c1.8 0 4.8-3.1 4.8-5 0-.8-9.3-10.7-20.7-22.2L58.6 54l3.4-3.7 20.7-21.4C92.2 19.3 100 10.6 100 9.7c0-1.6-3.5-4.7-5.5-4.7-.5-.1-10.3 9.5-21.8 21.2" />
               </svg>
             </button>
           )}
