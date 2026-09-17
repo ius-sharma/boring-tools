@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { KoboyoCopy } from "../components/KoboyoIcons";
 
 export default function JsonFormatter() {
   const [input, setInput] = useState("");
@@ -86,12 +87,10 @@ export default function JsonFormatter() {
 
         <button
           onClick={copyToClipboard}
-          className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
           disabled={!output}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15.75H6A2.25 2.25 0 013.75 13.5v-9A2.25 2.25 0 016 2.25h9A2.25 2.25 0 0117.25 4.5v2.25m-9 9h9A2.25 2.25 0 0019.5 13.5v6A2.25 2.25 0 0117.25 22.5h-9A2.25 2.25 0 016 20.25v-6z" />
-          </svg>
+          <KoboyoCopy className="w-4 h-4" />
           Copy Output
         </button>
 

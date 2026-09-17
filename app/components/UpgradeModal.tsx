@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "./AuthProvider";
 import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
+import { KoboyoCross, KoboyoSparkles, KoboyoCheck } from "./KoboyoIcons";
 
 export default function UpgradeModal() {
   const { isUpgradeModalOpen, closeUpgradeModal, credits, user, upgradeModalData, loginWithGoogle } = useAuth();
@@ -42,20 +43,16 @@ export default function UpgradeModal() {
         {/* Close Button */}
         <button
           onClick={closeUpgradeModal}
-          className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+          className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer"
           aria-label="Close modal"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <KoboyoCross className="w-4 h-4" />
         </button>
 
         <div className="p-6 sm:p-8">
           {/* Top Icon Badge */}
           <div className="w-12 h-12 bg-orange-50 border border-orange-200 text-[#ea580c] rounded-xl flex items-center justify-center mb-5">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+            <KoboyoSparkles className="w-6 h-6 text-orange-600" />
           </div>
 
           {/* Heading & Subtitle */}
@@ -119,15 +116,15 @@ export default function UpgradeModal() {
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2 text-xs text-slate-700">
                 <div className="font-semibold text-slate-900 text-[13px] mb-1">Boring Tools Pro:</div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>500+ credits / month with rollover</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>Unlimited 70+ client-side tools (always free)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
+                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>Priority server queue & 100MB file uploads</span>
                 </div>
               </div>

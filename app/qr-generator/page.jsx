@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import QRCode from "qrcode";
+import { KoboyoDownload } from "../components/KoboyoIcons";
 
 export default function QRGenerator() {
   const [text, setText] = useState("");
@@ -63,8 +64,9 @@ export default function QRGenerator() {
             <a
               href={qr}
               download="qrcode.png"
-              className="w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900"
+              className="w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
             >
+              <KoboyoDownload className="w-4 h-4" />
               Download QR
             </a>
           </div>
