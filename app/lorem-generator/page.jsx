@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import ThemedDropdown from "../components/ThemedDropdown";
+import { KoboyoCopy } from "../components/KoboyoIcons";
 
 const loremWords = [
   "lorem", "ipsum", "dolor", "sit", "amet",
@@ -116,8 +117,9 @@ export default function LoremGenerator() {
           <button
             onClick={copyText}
             disabled={!output}
-            className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900 ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full border border-slate-900 text-slate-900 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-slate-900 hover:text-white transition focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer ${!output ? "opacity-50 cursor-not-allowed" : ""}`}
           >
+            <KoboyoCopy className="w-4 h-4" />
             Copy
           </button>
         </div>

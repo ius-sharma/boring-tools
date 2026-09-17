@@ -236,12 +236,17 @@ export function KoboyoCross({ className = "w-4 h-4" }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 106 108"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       className={className}
     >
-      <path d="M72.7 26.2 52 47.5l-20-20A191 191 0 0 0 10 7.2c-2.7-.4-5.2 1.6-4.8 4 .2 1 9.4 11 20.6 22.1L46 53.5l-19.1 20c-10.4 11-19.5 21-20.1 22.3-1.6 3.1 2 7 5.1 5.6 1.1-.5 10.4-9.8 20.6-20.7A325 325 0 0 1 52.1 61c.6 0 10.2 9.2 21.3 20.5A206 206 0 0 0 95.2 102c1.8 0 4.8-3.1 4.8-5 0-.8-9.3-10.7-20.7-22.2L58.6 54l3.4-3.7 20.7-21.4C92.2 19.3 100 10.6 100 9.7c0-1.6-3.5-4.7-5.5-4.7-.5-.1-10.3 9.5-21.8 21.2" />
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
@@ -250,12 +255,17 @@ export function KoboyoCopy({ className = "w-4 h-4" }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 160 170"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       className={className}
     >
-      <path d="M42.8 14.2c-8.5 1.5-17.2 8.4-19.8 15.6-1.5 4.3-1.8 16.5-1.8 62.4 0 53.2.2 57.5 2.5 61.8 3.5 6.5 10.4 10.8 19.5 12.1 3.5.5 44.8.5 48.4 0 8.8-1.3 15.6-5.8 19-12.4 2.2-4.3 2.4-8.8 2.4-50.5V64.8l-15.6-15.8c-12-12.2-16.2-16.1-17.7-16.4-1.2-.2-15-2.2-36.9-18.4zm54.7 18.2c-.3 1.7 4.2 8.3 8.3 12.1l5.5 5.2h-12.3c-11.2 0-12.6-.3-12.6-2.5 0-1.4 8.7-13.8 11.1-14.8m-50.9 8.2c16.3.3 26.5.6 28 1 2.3.6 2.4 1.8 2.4 21.6v20.8h20.7c19.8 0 21 .1 21.6 2.4.4 1.5.7 14.8.7 34.6 0 35-.2 37.1-2.9 41.2-3.1 4.7-7.8 7.1-15.8 7.9-3.9.4-45.5.4-49.4 0-8.2-.8-13.6-3.8-16.8-9.4-2.1-3.7-2.3-7.5-2.3-47.5 0-38.6.3-43.9 2.2-47.5 2.8-5.3 7.1-8.3 14.8-9.1zm69.8 31.8c-.8 1.4-1.2 16.2-1.2 38.6 0 33.6-.3 36.6-2.8 40.5-3.3 5.2-9 8.4-18.2 9.9l-4.2.7.5 3.3c.7 4.6 3.8 11.8 7.3 14.5 4.8 3.8 10.6 4.8 37.8 4.8 28.7 0 32.7-.8 37.4-4.5 3.6-2.8 6.5-9.3 7.3-15.6.5-3.8.5-54.8 0-60.8-.9-9.5-5.9-17-15.2-22.3-3.6-2-4.5-2.2-26.7-9.5z" />
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
   );
 }
@@ -264,12 +274,18 @@ export function KoboyoDownload({ className = "w-4 h-4" }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 160 160"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       className={className}
     >
-      <path d="M72.5 12.5c-2.8 1.1-4.5 3.7-4.5 7.2v39.1L53.7 44.5c-9.1-9.1-15.6-14-17.7-13.3-3.6 1.2-5.7 5.1-4.7 8.9.6 2.3 3.9 6.2 18.2 20.4l17.4 17.3 17.5-17.3c14.2-14.2 17.6-18.1 18.2-20.4 1-3.8-1.1-7.7-4.7-8.9-2.1-.7-8.6 4.2-17.7 13.3L84 58.8V19.7c0-4.5-2.7-7.9-7-8.2-1.5-.1-3.5.4-4.5 1zm-48 82.2c-2.4 1.1-4.5 3.7-4.5 6.3 0 1.9 2.5 4.6 4.8 5.2 2.6.7 18.6 1 47.2 1 28.6 0 44.6-.3 47.2-1 2.3-.6 4.8-3.3 4.8-5.2 0-2.6-2.1-5.2-4.5-6.3-2.6-1.2-17.4-1.4-47.5-1.4s-44.9.2-47.5 1.4zm6.2 24.3c-2.5 1.2-4.7 3.9-4.7 6.3 0 2.2 2.5 4.8 4.9 5.4 2.8.7 17.8 1 41.1 1 23.3 0 38.3-.3 41.1-1 2.4-.6 4.9-3.2 4.9-5.4 0-2.4-2.2-5.1-4.7-6.3-2.6-1.2-17.2-1.5-41.3-1.5s-38.7.3-41.3 1.5z" />
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
     </svg>
   );
 }
@@ -278,12 +294,78 @@ export function KoboyoShare({ className = "w-4 h-4" }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 160 160"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       className={className}
     >
-      <path d="M121.5 21.2c-9.8 1.4-17.5 9-19.1 18.8-.9 5.6.3 12.3 3.3 17.1l-47.2 26.6c-4.4-4.5-10.3-7.2-16.7-7.6-12.7-.9-23.8 8.4-25.2 21.1-1.4 12.7 7.9 24.1 20.6 25.5 6.7.7 13.5-1.6 18.3-6.1l49.8 27.8c-1.3 4.2-1.3 8.8-.1 13.2 3.1 11.2 14.1 18.6 25.6 17.2 11.6-1.4 19.9-11.2 19.3-22.9-.6-11.8-10.1-21-21.9-21.2-6.5-.1-12.7 2.6-17 7.3l-48.7-27.2c.4-2.1.4-4.3 0-6.4l46.2-26c4.6 5.1 11.1 8.2 18.2 8.3 12.9.2 23.7-9.7 24.6-22.6.9-13.4-9.3-24.8-22.8-25.8-2.6-.2-5.7 0-7 .7zm5.5 13.5c6.5.6 11.4 6 10.9 12.5-.5 6.5-6 11.4-12.5 10.9-6.5-.5-11.4-6-10.9-12.5.5-6.5 6-11.4 12.5-10.9zm-86.4 46.2c6.5.6 11.4 6 10.9 12.5-.5 6.5-6 11.4-12.5 10.9-6.5-.5-11.4-6-10.9-12.5.5-6.5 6-11.4 12.5-10.9zm86.4 46.2c6.5.6 11.4 6 10.9 12.5-.5 6.5-6 11.4-12.5 10.9-6.5-.5-11.4-6-10.9-12.5.5-6.5 6-11.4 12.5-10.9z" />
+      <circle cx="18" cy="5" r="3" />
+      <circle cx="6" cy="12" r="3" />
+      <circle cx="18" cy="19" r="3" />
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+export function ThemePaletteIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z" />
+    </svg>
+  );
+}
+
+export function LightningIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" fillOpacity="0.15" />
     </svg>
   );
 }

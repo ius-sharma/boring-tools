@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "./AuthProvider";
 import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
-import { KoboyoCross, KoboyoSparkles, KoboyoCheck } from "./KoboyoIcons";
+import { KoboyoCross, LightningIcon, CheckIcon } from "./KoboyoIcons";
 
 export default function UpgradeModal() {
   const { isUpgradeModalOpen, closeUpgradeModal, credits, user, upgradeModalData, loginWithGoogle } = useAuth();
@@ -52,7 +52,7 @@ export default function UpgradeModal() {
         <div className="p-6 sm:p-8">
           {/* Top Icon Badge */}
           <div className="w-12 h-12 bg-orange-50 border border-orange-200 text-[#ea580c] rounded-xl flex items-center justify-center mb-5">
-            <KoboyoSparkles className="w-6 h-6 text-orange-600" />
+            <LightningIcon className="w-6 h-6 text-orange-600" />
           </div>
 
           {/* Heading & Subtitle */}
@@ -116,15 +116,15 @@ export default function UpgradeModal() {
               <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-2 text-xs text-slate-700">
                 <div className="font-semibold text-slate-900 text-[13px] mb-1">Boring Tools Pro:</div>
                 <div className="flex items-center gap-2">
-                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <CheckIcon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>500+ credits / month with rollover</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <CheckIcon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>Unlimited 70+ client-side tools (always free)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <CheckIcon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>Priority server queue & 100MB file uploads</span>
                 </div>
               </div>

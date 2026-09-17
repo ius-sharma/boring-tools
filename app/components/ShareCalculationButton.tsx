@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { copyShareableLink } from "@/lib/useShareableState";
-import { KoboyoCheck, KoboyoShare } from "./KoboyoIcons";
+import { CheckIcon, KoboyoShare } from "./KoboyoIcons";
 
 interface ShareCalculationButtonProps {
   label?: string;
@@ -39,7 +39,7 @@ export default function ShareCalculationButton({
     >
       {isCopied ? (
         <>
-          <KoboyoCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <CheckIcon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
           <span>Link Copied!</span>
         </>
       ) : (

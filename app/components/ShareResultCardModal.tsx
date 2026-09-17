@@ -14,7 +14,7 @@ import {
   KoboyoCopy,
   KoboyoDownload,
   KoboyoShare,
-  KoboyoSparkles,
+  ThemePaletteIcon,
   InstagramIcon,
   TwitterXIcon,
 } from "./KoboyoIcons";
@@ -213,7 +213,7 @@ export default function ShareResultCardModal({
         {/* Color Theme Selector Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-2.5 bg-slate-50/80 border-b border-slate-200/70">
           <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
-            <KoboyoSparkles className="w-3.5 h-3.5 text-orange-500" />
+            <ThemePaletteIcon className="w-3.5 h-3.5 text-orange-500" />
             <span>Theme:</span>
           </div>
 
@@ -310,7 +310,7 @@ export default function ShareResultCardModal({
               onClick={handleDownload}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-orange-600 hover:bg-orange-700 text-white transition cursor-pointer shadow-xs"
             >
-              <KoboyoDownload className="w-3.5 h-3.5 fill-current" />
+              <KoboyoDownload className="w-3.5 h-3.5" />
               <span>Download PNG</span>
             </button>
           </div>
