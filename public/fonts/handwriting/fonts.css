@@ -1,248 +1,279 @@
+/* latin-ext */
 @font-face {
   font-family: 'Architects Daughter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/architects-daughter-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-1-bd870814.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Architects Daughter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/architects-daughter-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-2-963a5f57.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* cyrillic-ext */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-3-8aac91ea.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
-
+/* cyrillic */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-4-12c256a4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-5-60fd7fa9.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-6-14ecf1bb.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* cyrillic-ext */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-3-8aac91ea.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
-
+/* cyrillic */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-4-12c256a4.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-5-60fd7fa9.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/caveat-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-6-14ecf1bb.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* vietnamese */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-7-9bcc4162.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-8-438f68b6.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-9-958aab68.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* vietnamese */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-7-9bcc4162.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-8-438f68b6.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Dancing Script';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/handwriting/dancing-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-9-958aab68.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin */
 @font-face {
   font-family: 'Gochi Hand';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/gochi-hand-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-10-79d2536e.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin */
 @font-face {
   font-family: 'Homemade Apple';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/homemade-apple-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-11-0af1ba30.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Indie Flower';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/indie-flower-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-12-089dbe3d.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Indie Flower';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/indie-flower-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-13-a0e6262e.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* cyrillic */
 @font-face {
   font-family: 'Marck Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/marck-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-14-d1cd543d.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Marck Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/marck-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-15-2896f3bd.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Marck Script';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/marck-script-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-16-d9dd83d5.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* vietnamese */
 @font-face {
   font-family: 'Patrick Hand';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/patrick-hand-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-17-e3b1c71d.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Patrick Hand';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/patrick-hand-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-18-1c28a784.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Patrick Hand';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/patrick-hand-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-19-4f20a5ff.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin */
 @font-face {
   font-family: 'Reenie Beanie';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/reenie-beanie-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-20-0add1b59.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Sacramento';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/sacramento-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-21-96ff5c76.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Sacramento';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/sacramento-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-22-7740d50e.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-
+/* latin-ext */
 @font-face {
   font-family: 'Shadows Into Light';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/shadows-into-light-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-23-f0f7bceb.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+/* latin */
 @font-face {
   font-family: 'Shadows Into Light';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/handwriting/shadows-into-light-400-normal.woff2') format('woff2');
+  src: url(/fonts/handwriting/font-24-29ad7f4b.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
-

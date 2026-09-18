@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import https from "https";
+import crypto from "crypto";
 
 const TARGET_DIR = path.resolve("public/fonts/handwriting");
 if (!fs.existsSync(TARGET_DIR)) {
@@ -75,56 +76,43 @@ async function run() {
   console.log("Fetching Google Fonts CSS from:", cssUrl);
   const rawCss = await fetchText(cssUrl);
 
-  const fontFaceRegex = /@font-face\s*\{([^}]+)\}/g;
+  const urlRegex = /url\((https:\/\/[^)]+)\)/g;
   let match;
-  let localCss = "";
+  const urls = new Set();
+  while ((match = urlRegex.exec(rawCss)) !== null) {
+    urls.add(match[1]);
+  }
 
-  const downloadedMap = new Map();
+  console.log(`Found ${urls.size} unique font file URLs to download.`);
 
-  while ((match = fontFaceRegex.exec(rawCss)) !== null) {
-    const block = match[1];
+  const urlMap = new Map();
+  let counter = 1;
 
-    const familyMatch = block.match(/font-family:\s*['"]?([^'";]+)['"]?/i);
-    const styleMatch = block.match(/font-style:\s*([^;]+);/i);
-    const weightMatch = block.match(/font-weight:\s*([^;]+);/i);
-    const srcMatch = block.match(/src:\s*url\((https:\/\/[^)]+)\)\s*format\(['"]?([^'"]+)['"]?\)/i);
+  for (const remoteUrl of urls) {
+    // Derive a clean, readable name from url
+    const urlHash = crypto.createHash("md5").update(remoteUrl).digest("hex").slice(0, 8);
+    const parsedPath = path.basename(new URL(remoteUrl).pathname);
+    const ext = path.extname(parsedPath) || ".woff2";
+    const fileName = `font-${counter++}-${urlHash}${ext}`;
+    const localFilePath = path.join(TARGET_DIR, fileName);
 
-    if (familyMatch && srcMatch) {
-      const family = familyMatch[1].trim();
-      const style = styleMatch ? styleMatch[1].trim() : "normal";
-      const weight = weightMatch ? weightMatch[1].trim() : "400";
-      const remoteUrl = srcMatch[1].trim();
-      const format = srcMatch[2].trim();
+    console.log(`Downloading (${counter - 1}/${urls.size}): ${remoteUrl} -> ${fileName}`);
+    await downloadBinary(remoteUrl, localFilePath);
+    urlMap.set(remoteUrl, `/fonts/handwriting/${fileName}`);
+  }
 
-      const safeFamilyName = family.toLowerCase().replace(/[^a-z0-9]/g, "-");
-      const safeFileName = `${safeFamilyName}-${weight}-${style}.${format === "woff2" ? "woff2" : "woff"}`;
-      const localFilePath = path.join(TARGET_DIR, safeFileName);
-      const publicUrl = `/fonts/handwriting/${safeFileName}`;
-
-      if (!downloadedMap.has(remoteUrl)) {
-        console.log(`Downloading font: ${family} (${weight}, ${style}) -> ${safeFileName}`);
-        await downloadBinary(remoteUrl, localFilePath);
-        downloadedMap.set(remoteUrl, publicUrl);
-      }
-
-      localCss += `@font-face {
-  font-family: '${family}';
-  font-style: ${style};
-  font-weight: ${weight};
-  font-display: swap;
-  src: url('${downloadedMap.get(remoteUrl)}') format('${format}');
-}
-
-`;
-    }
+  // Replace all remote URLs in rawCss with local paths
+  let localizedCss = rawCss;
+  for (const [remoteUrl, localUrl] of urlMap.entries()) {
+    localizedCss = localizedCss.replaceAll(remoteUrl, localUrl);
   }
 
   const cssPath = path.join(TARGET_DIR, "fonts.css");
-  fs.writeFileSync(cssPath, localCss, "utf8");
-  console.log(`Successfully generated ${cssPath} with ${downloadedMap.size} fonts.`);
+  fs.writeFileSync(cssPath, localizedCss, "utf8");
+  console.log(`\nSuccessfully wrote ${cssPath} with all local assets!`);
 }
 
 run().catch((err) => {
-  console.error("Failed to download fonts:", err);
+  console.error("Failed:", err);
   process.exit(1);
 });
