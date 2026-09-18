@@ -242,6 +242,13 @@ export default function PricingPage() {
                 {isProcessing === "starter" ? "Opening..." : "Get Starter"}
               </button>
 
+              {/* Auto-renewal legal disclosure */}
+              <p className="text-[11px] text-slate-500 text-center mt-2 leading-tight">
+                {billingCycle === "annual"
+                  ? "Renews annually at ₹2,388/yr. Cancel anytime in Billing Settings."
+                  : "Renews monthly at ₹249/mo. Cancel anytime in Billing Settings."}
+              </p>
+
               {/* 1px Hairline Divider */}
               <hr className="my-6 border-slate-200" />
 
@@ -326,6 +333,15 @@ export default function PricingPage() {
                   ? "Initializing Checkout..."
                   : "Upgrade to Pro"}
               </button>
+
+              {/* Auto-renewal legal disclosure */}
+              {!credits.isPro && (
+                <p className="text-[11px] text-slate-500 text-center mt-2 leading-tight">
+                  {billingCycle === "annual"
+                    ? "Renews annually at ₹2,988/yr. Cancel anytime in Billing Settings."
+                    : "Renews monthly at ₹299/mo. Cancel anytime in Billing Settings."}
+                </p>
+              )}
 
               {/* 1px Hairline Divider */}
               <hr className="my-6 border-slate-200" />

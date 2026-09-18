@@ -143,6 +143,10 @@ export default function UpgradeModal() {
                 {isProcessing === "pro_monthly" ? "Opening Razorpay..." : "Upgrade to Pro (₹499 / $9/mo)"}
               </button>
 
+              <p className="text-[11px] text-slate-500 text-center -mt-1 mb-2 leading-tight">
+                Renews automatically every month. Cancel anytime with 1-click in your account.
+              </p>
+
               <button
                 type="button"
                 onClick={() =>
