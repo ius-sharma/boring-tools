@@ -109,7 +109,16 @@ async function run() {
 
   const cssPath = path.join(TARGET_DIR, "fonts.css");
   fs.writeFileSync(cssPath, localizedCss, "utf8");
-  console.log(`\nSuccessfully wrote ${cssPath} with all local assets!`);
+
+  // Clean up any extraneous or old font files in TARGET_DIR
+  const currentFiles = fs.readdirSync(TARGET_DIR);
+  for (const f of currentFiles) {
+    if (f !== "fonts.css" && !f.startsWith("font-")) {
+      fs.unlinkSync(path.join(TARGET_DIR, f));
+    }
+  }
+
+  console.log(`\nSuccessfully wrote ${cssPath} with all local assets and cleaned up extra files!`);
 }
 
 run().catch((err) => {

@@ -170,9 +170,9 @@ export default function TextToHandwritingPage() {
   useEffect(() => {
     setIsMounted(true);
     
-    // Load Fonts dynamically
+    // Load Fonts locally (GDPR compliant, zero external IP leakage)
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Dancing+Script:wght@400;700&family=Homemade+Apple&family=Indie+Flower&family=Just+Me+Again+Down+Here&family=Ms+Madi&family=Nanum+Pen+Script&family=Reenie+Beanie&family=Shadows+Into+Light&family=Architects+Daughter&family=Patrick+Hand&family=Gochi+Hand&family=Sacramento&family=Marck+Script&display=swap";
+    link.href = "/fonts/handwriting/fonts.css";
     link.rel = "stylesheet";
     document.head.appendChild(link);
 
