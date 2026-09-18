@@ -11,7 +11,7 @@ export const SITE_CONFIG = {
   authorUrl: "https://github.com/ius-sharma",
   links: {
     github: "https://github.com/ius-sharma/boring-tools",
-    instagram: "https://www.instagram.com/ius.sharma",
+    instagram: "https://www.instagram.com/ocn.ayush07/",
     authorGithub: "https://github.com/ius-sharma",
   },
 };

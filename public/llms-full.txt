@@ -108,5 +108,5 @@
 ## Contact & Links
 - Website: https://boringtools.vercel.app
 - Developer: Ayush Sharma (https://github.com/ius-sharma)
-- Instagram: https://www.instagram.com/ius.sharma
+- Instagram: https://www.instagram.com/ocn.ayush07/
 - Sitemap: https://boringtools.vercel.app/sitemap.xml

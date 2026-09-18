@@ -494,7 +494,7 @@ export default function ToolContentFooter() {
               <ul className="space-y-2.5 text-sm">
                 <li>
                   <a
-                    href="https://www.instagram.com/ius.sharma"
+                    href="https://www.instagram.com/ocn.ayush07/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2.5 text-slate-400 hover:text-pink-400 transition group"

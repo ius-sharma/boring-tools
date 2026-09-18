@@ -347,7 +347,7 @@ Built with ❤️, ☕, and an unhealthy obsession with browser APIs.
 
 [![GitHub](https://img.shields.io/badge/GitHub-ius--sharma-181717?style=for-the-badge&logo=github)](https://github.com/ius-sharma)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Ayush%20Sharma-0A66C2?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/ayush-sharma-833163320)
-[![Instagram](https://img.shields.io/badge/Instagram-ius.ayush-E4405F?style=for-the-badge&logo=instagram)](https://instagram.com/ius.ayush)
+[![Instagram](https://img.shields.io/badge/Instagram-ocn.ayush07-E4405F?style=for-the-badge&logo=instagram)](https://www.instagram.com/ocn.ayush07/)
 [![YouTube](https://img.shields.io/badge/YouTube-@ocnayush-FF0000?style=for-the-badge&logo=youtube)](https://youtube.com/@ocnayush)
 
 ---
