@@ -49,7 +49,21 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-3">4. Contact Us</h2>
+            <h2 className="text-2xl font-semibold text-slate-900 mb-3">4. Children&apos;s Privacy (COPPA Compliance)</h2>
+            <p>
+              BoringTools is intended for general audiences aged 13 and older (or 16 in jurisdictions where required by law, such as the EU and UK). We do not knowingly collect, solicit, or maintain personal identifiable information from children under the age of 13. If you believe a child under 13 has registered an account or provided us with personal information, please contact us immediately and we will promptly delete that information from our records.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900 mb-3">5. Zero Keystroke Logging &amp; No Session Replay</h2>
+            <p>
+              We do not run invasive session replay scripts (such as Hotjar, Clarity, or FullStory) or keystroke loggers. Any text, numbers, or documents entered into our tools, calculators, or converters remain strictly isolated within your browser memory and are never monitored or recorded.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900 mb-3">6. Contact Us</h2>
             <p>
               If you have any questions or suggestions about our Privacy Policy, please reach out through our <a href="/contact" className="text-orange-600 font-semibold hover:underline">Contact Page</a> or via GitHub.
             </p>

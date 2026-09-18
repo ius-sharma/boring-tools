@@ -176,9 +176,27 @@ export default function AuthModal() {
           </form>
         )}
 
-        {/* Terms footer */}
-        <p className="text-center text-[11px] text-slate-400 mt-5">
-          By continuing, you agree to our Terms of Service & Privacy Policy.
+        {/* Terms & Age Confirmation footer */}
+        <p className="text-center text-[11px] text-slate-500 mt-5 leading-relaxed">
+          By continuing, you confirm that you are at least 13 years old and agree to our{" "}
+          <a
+            href="/terms-of-service"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-700 underline font-medium hover:text-slate-900"
+          >
+            Terms of Service
+          </a>{" "}
+          &{" "}
+          <a
+            href="/privacy-policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-700 underline font-medium hover:text-slate-900"
+          >
+            Privacy Policy
+          </a>
+          .
         </p>
       </div>
     </div>

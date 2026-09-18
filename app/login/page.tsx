@@ -370,12 +370,12 @@ function LoginFormContent() {
 
         {/* ─── 6. LEGAL FOOTER TEXT ─── */}
         <p className="text-[12px] text-center text-slate-500 mt-4 leading-relaxed max-w-sm mx-auto">
-          By continuing, you agree to Boring Tools&apos;{" "}
-          <Link href="/terms-of-service" className="text-[#ea580c] underline">
+          By continuing, you confirm that you are at least 13 years old and agree to Boring Tools&apos;{" "}
+          <Link href="/terms-of-service" className="text-[#ea580c] underline hover:text-[#c2410c]">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="/privacy-policy" className="text-[#ea580c] underline">
+          <Link href="/privacy-policy" className="text-[#ea580c] underline hover:text-[#c2410c]">
             Privacy Policy
           </Link>
           .
