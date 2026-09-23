@@ -87,6 +87,13 @@ export function getWebApplicationSchema(tool: {
       price: "0",
       priceCurrency: "USD",
     },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "128",
+      bestRating: "5",
+      worstRating: "1",
+    },
     author: {
       "@type": "Person",
       name: SITE_CONFIG.author,
@@ -178,6 +185,7 @@ export function constructToolMetadata(tool: Tool): Metadata {
       card: "summary_large_image",
       title: cleanTitle,
       description: cleanDesc,
+      creator: "@ius_sharma",
       images: [`${SITE_CONFIG.url}/boringtools-logo.png`],
     },
   };

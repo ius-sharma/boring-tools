@@ -66,6 +66,7 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/boringtools-logo.png`,
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: "BoringTools — 100 Days 100 Browser Tools",
       },
     ],
@@ -76,6 +77,7 @@ export const metadata: Metadata = {
     description:
       "100% client-side privacy. Fast, free micro-tools for media, PDFs, documents, developer utilities, and calculations.",
     creator: "@ius_sharma",
+    site: "@ius_sharma",
     images: [`${SITE_CONFIG.url}/boringtools-logo.png`],
   },
   robots: {
@@ -101,6 +103,7 @@ import PaymentSuccessModal from "./components/PaymentSuccessModal";
 import ToastNotification from "./components/ToastNotification";
 import CommandPalette from "./components/CommandPalette";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import FeedbackWidget from "./components/FeedbackWidget";
 
 export default function RootLayout({
   children,
@@ -134,6 +137,7 @@ export default function RootLayout({
           <Analytics />
           {children}
           <ToolContentFooter />
+          <FeedbackWidget />
           <AuthModal />
           <UpgradeModal />
           <PaymentSuccessModal />

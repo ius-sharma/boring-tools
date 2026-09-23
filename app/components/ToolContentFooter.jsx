@@ -8,6 +8,7 @@ import StructuredData from "./StructuredData";
 import { getFaqSchema } from "@/lib/seo";
 import PrivacyTrustBadge from "./PrivacyTrustBadge";
 import { InstagramIcon, GitHubIcon } from "./KoboyoIcons";
+import { openFeedbackWidget } from "./FeedbackWidget";
 
 export default function ToolContentFooter() {
   const pathname = usePathname();
@@ -471,6 +472,15 @@ export default function ToolContentFooter() {
                   <Link href="/pricing" className="hover:text-amber-300 transition">
                     Pricing
                   </Link>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => openFeedbackWidget()}
+                    className="hover:text-amber-300 transition cursor-pointer text-left"
+                  >
+                    Feedback & Reviews
+                  </button>
                 </li>
               </ul>
             </div>
