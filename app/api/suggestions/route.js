@@ -308,9 +308,13 @@ export async function POST(request) {
       createdAt: new Date().toISOString(),
       name: normalize(body?.name),
       email: normalize(body?.email).toLowerCase(),
-      category: normalize(body?.category, "New Tool Idea"),
+      category: normalize(body?.category, "Review"),
       suggestion,
-      source: "homepage",
+      rating: body?.rating !== undefined && body?.rating !== null ? Number(body.rating) : null,
+      toolId: normalize(body?.toolId),
+      toolName: normalize(body?.toolName),
+      url: normalize(body?.url),
+      source: normalize(body?.source, "feedback-widget"),
       pipeline: "local-queue",
     };
 
@@ -334,6 +338,23 @@ export async function POST(request) {
         status: "failed",
         message: error instanceof Error ? error.message : "Google Sheets sync failed",
       };
+    }
+
+    // Optional webhook forwarding (e.g., Discord, Slack, Zapier, Make)
+    const webhookUrl = normalize(process.env.FEEDBACK_WEBHOOK_URL);
+    if (webhookUrl) {
+      try {
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            event: "user_feedback",
+            data: entry,
+          }),
+        });
+      } catch (webhookErr) {
+        console.error("Optional feedback webhook dispatch failed:", webhookErr);
+      }
     }
 
     return Response.json({

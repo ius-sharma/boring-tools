@@ -51,3 +51,14 @@ next-env.d.ts
 scratch
 
 supabase
+
+brag-output/
+brag-output-2026-09-22-003114
+
+# Marketing materials (private/internal)
+marketing/
+Marketing/
+
+# Temporary security audit
+.tmp_sec_audit/
+
