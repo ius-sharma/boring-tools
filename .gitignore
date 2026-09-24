@@ -61,4 +61,5 @@ Marketing/
 
 # Temporary security audit
 .tmp_sec_audit/
-
+scripts/build-submission-hub.mjs
+scripts/verify-directories.mjs
