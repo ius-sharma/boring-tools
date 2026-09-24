@@ -16,7 +16,7 @@ interface HistoryItem {
 }
 
 export default function BillingPage() {
-  const { user, credits, subscription, refreshUser, openAuthModal } = useAuth();
+  const { user, credits, subscription, refreshUser, openAuthModal, logout } = useAuth();
   const { initiateCheckout, isProcessing } = useRazorpayCheckout();
 
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -24,6 +24,12 @@ export default function BillingPage() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
   const [customCredits, setCustomCredits] = useState<number>(50);
+
+  // DPDP Act 2023 Data Principal Rights states
+  const [isExportingData, setIsExportingData] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   // Fetch billing history on mount
   useEffect(() => {
@@ -69,6 +75,70 @@ export default function BillingPage() {
       showToast(err.message || "Could not cancel subscription.", "error");
     } finally {
       setIsCanceling(false);
+    }
+  };
+
+  // DPDP Section 11: Right to Access (Download JSON)
+  const handleDownloadData = async () => {
+    if (!user) {
+      openAuthModal("Sign in to download your personal data archive.");
+      return;
+    }
+    setIsExportingData(true);
+    try {
+      const res = await fetch("/api/user/data-rights");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to download your data.");
+      }
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "boringtools-user-data.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Personal data archive downloaded (DPDP Act Sec 11).", "success");
+    } catch (err: any) {
+      showToast(err.message || "Failed to download personal data.", "error");
+    } finally {
+      setIsExportingData(false);
+    }
+  };
+
+  // DPDP Section 12(2): Right to Erasure (Delete Account & Purge Data)
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setIsDeletingAccount(true);
+    try {
+      const res = await fetch("/api/user/data-rights", { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete account.");
+      }
+
+      // Purge all browser local storage and session storage
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+      } catch (storageErr) {
+        console.warn("Storage purge warning:", storageErr);
+      }
+
+      setIsDeleteModalOpen(false);
+      showToast("Account and personal data completely erased under DPDP Act 2023.", "success");
+
+      // Sign out and reload/redirect
+      await logout();
+      window.location.href = "/";
+    } catch (err: any) {
+      showToast(err.message || "Could not delete account. Please try again.", "error");
+      setIsDeletingAccount(false);
     }
   };
 
@@ -426,6 +496,153 @@ export default function BillingPage() {
           )}
         </div>
 
+        {/* ─────────────────────────────────────────────────────────────
+            6. PRIVACY & DATA PRINCIPAL RIGHTS CARD (DPDP ACT 2023)
+        ───────────────────────────────────────────────────────────── */}
+        <div className="border border-slate-200 bg-white rounded-2xl overflow-hidden shadow-xs">
+          <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 text-orange-700">
+                  DPDP Act 2023 Compliant
+                </span>
+                <span className="text-xs text-slate-400">•</span>
+                <span className="text-xs text-slate-500 font-medium">Data Principal Rights</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
+                Privacy &amp; Data Principal Rights
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Pursuant to India&apos;s Digital Personal Data Protection Act, 2023, you retain absolute ownership and statutory control over your personal data.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Right to Access Card (Section 11) */}
+              <div className="p-4 sm:p-5 rounded-xl border border-slate-200/90 bg-slate-50/40 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-7 h-7 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center text-xs">
+                      📥
+                    </div>
+                    <h4 className="text-sm font-semibold text-slate-900">
+                      Right to Access (Section 11)
+                    </h4>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Obtain a machine-readable summary of your personal data processed by BoringTools, including identity metadata, credit balance, plan tier, and tool usage logs.
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-200/60">
+                  {user ? (
+                    <button
+                      type="button"
+                      onClick={handleDownloadData}
+                      disabled={isExportingData}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold rounded-xl transition shadow-xs disabled:opacity-50"
+                    >
+                      {isExportingData ? (
+                        <>
+                          <svg className="animate-spin -ml-0.5 mr-1 h-3.5 w-3.5 text-slate-700" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                          </svg>
+                          <span>Exporting JSON...</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                          <span>Download My Data</span>
+                        </>
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openAuthModal("Sign in to download your personal data archive")}
+                      className="px-4 py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium rounded-xl transition"
+                    >
+                      Sign In to Download Data
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Right to Erasure Card (Section 12(2)) */}
+              <div className="p-4 sm:p-5 rounded-xl border border-rose-200/80 bg-rose-50/30 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center text-xs">
+                      🗑️
+                    </div>
+                    <h4 className="text-sm font-semibold text-rose-950">
+                      Right to Erasure (Section 12(2))
+                    </h4>
+                  </div>
+                  <p className="text-xs text-rose-900/80 leading-relaxed">
+                    Permanently delete your account, authentication tokens, profile attributes, credit balances, and tool audit logs from our databases and local browser cache.
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-rose-200/60">
+                  {user ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeleteConfirmText("");
+                        setIsDeleteModalOpen(true);
+                      }}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition shadow-xs"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      <span>Delete Account &amp; Purge Data</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openAuthModal("Sign in to manage your account")}
+                      className="px-4 py-2 bg-white hover:bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium rounded-xl transition"
+                    >
+                      Sign In to Manage Account
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right to Nominate Notice (Section 14) */}
+            <div className="flex items-start gap-3 p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl text-xs text-amber-950 leading-relaxed">
+              <div className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-semibold text-amber-900">
+                  Right to Nominate (Section 14, DPDP Act 2023)
+                </p>
+                <p className="mt-0.5 text-amber-800">
+                  You have the statutory right to nominate any individual who shall, in the event of death or incapacity, exercise your rights as a Data Principal. To designate or modify a nominee for your BoringTools account, please contact our Data Protection Officer directly at{" "}
+                  <a
+                    href="mailto:grievance@boringtoolsai.com?subject=DPDP%20Nomination%20Request"
+                    className="font-semibold underline hover:text-amber-950"
+                  >
+                    grievance@boringtoolsai.com
+                  </a>
+                  .
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
@@ -490,6 +707,72 @@ export default function BillingPage() {
                   {isCanceling ? "Canceling..." : "Cancel at Period End"}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          MODAL: CONFIRM ACCOUNT DELETION & DATA PURGE (DPDP SEC 12(2))
+      ───────────────────────────────────────────────────────────── */}
+      {isDeleteModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+          onClick={() => !isDeletingAccount && setIsDeleteModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-rose-200 p-6 sm:p-7 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-11 h-11 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mb-3">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Delete Account &amp; Purge All Data?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+              In accordance with <strong>Section 12(2) of the DPDP Act 2023</strong>, this will immediately and permanently erase your account, active subscriptions, purchased credit balances, and all activity logs.
+            </p>
+
+            <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+              ⚠️ <strong>Warning:</strong> This action is irreversible. All remaining credits and history will be permanently forfeited.
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                Type <span className="font-mono font-bold text-rose-600 select-all">DELETE</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                disabled={isDeletingAccount}
+                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition"
+              />
+            </div>
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeletingAccount}
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 transition"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={deleteConfirmText.trim().toUpperCase() !== "DELETE" || isDeletingAccount}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl transition disabled:opacity-40 disabled:cursor-not-allowed shadow-xs"
+              >
+                {isDeletingAccount ? "Erasing Data..." : "Permanently Delete Account"}
+              </button>
             </div>
           </div>
         </div>

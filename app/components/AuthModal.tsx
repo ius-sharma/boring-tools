@@ -9,11 +9,25 @@ export default function AuthModal() {
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [ageConsentConfirmed, setAgeConsentConfirmed] = useState(true);
 
   if (!isAuthModalOpen) return null;
 
+  const handleGoogleLogin = () => {
+    if (!ageConsentConfirmed) {
+      setErrorMessage("Please confirm that you are at least 18 years of age and agree to our terms under the DPDP Act, 2023.");
+      return;
+    }
+    setErrorMessage("");
+    loginWithGoogle();
+  };
+
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!ageConsentConfirmed) {
+      setErrorMessage("Please confirm that you are at least 18 years of age and agree to our terms under the DPDP Act, 2023.");
+      return;
+    }
     if (!email.trim() || !email.includes("@")) {
       setErrorMessage("Please enter a valid email address");
       return;
@@ -96,7 +110,7 @@ export default function AuthModal() {
         {/* 1-Click Google Login Button */}
         <button
           type="button"
-          onClick={loginWithGoogle}
+          onClick={handleGoogleLogin}
           className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white hover:bg-slate-50 text-slate-800 font-medium rounded-xl border border-slate-300 shadow-sm transition transform active:scale-[0.98] mb-4"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -176,28 +190,46 @@ export default function AuthModal() {
           </form>
         )}
 
-        {/* Terms & Age Confirmation footer */}
-        <p className="text-center text-[11px] text-slate-500 mt-5 leading-relaxed">
-          By continuing, you confirm that you are at least 13 years old and agree to our{" "}
-          <a
-            href="/terms-of-service"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-700 underline font-medium hover:text-slate-900"
-          >
-            Terms of Service
-          </a>{" "}
-          &{" "}
-          <a
-            href="/privacy-policy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-700 underline font-medium hover:text-slate-900"
-          >
-            Privacy Policy
-          </a>
-          .
-        </p>
+        {/* DPDP Act 2023 Statutory Age Confirmation & Consent */}
+        <div className="mt-5 pt-3.5 border-t border-slate-100">
+          <label className="flex items-start gap-2.5 p-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-left cursor-pointer hover:bg-slate-100/70 transition group">
+            <input
+              type="checkbox"
+              checked={ageConsentConfirmed}
+              onChange={(e) => {
+                setAgeConsentConfirmed(e.target.checked);
+                if (e.target.checked) setErrorMessage("");
+              }}
+              className="mt-0.5 h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer flex-shrink-0"
+            />
+            <span className="text-[11px] text-slate-600 leading-relaxed group-hover:text-slate-800 transition select-none">
+              By continuing, you confirm that you are at least 18 years of age and agree to our{" "}
+              <a
+                href="/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-slate-900 underline font-medium hover:text-orange-600"
+              >
+                Terms of Service
+              </a>{" "}
+              &amp;{" "}
+              <a
+                href="/privacy-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-slate-900 underline font-medium hover:text-orange-600"
+              >
+                Privacy Policy
+              </a>{" "}
+              under the Digital Personal Data Protection Act, 2023.
+            </span>
+          </label>
+          <p className="text-center text-[10px] text-slate-400 mt-2">
+            Affirmative consent is required pursuant to Section 6 &amp; Section 9 of the DPDP Act 2023.
+          </p>
+        </div>
       </div>
     </div>
   );
