@@ -127,47 +127,37 @@ export default function ConsentBanner() {
 
   return (
     <>
-      {/* 1. Bottom Non-Intrusive Banner (Only shown if no consent recorded yet) */}
+      {/* 1. Bottom Theme-Matched Consent Banner */}
       {showBanner && !showModal && (
         <aside
           role="region"
           aria-label="Privacy and Cookie Consent"
           className="fixed bottom-0 inset-x-0 z-50 p-3 sm:p-5 pointer-events-none transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
         >
-          <div className="max-w-4xl mx-auto pointer-events-auto bg-slate-900/95 text-white backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="max-w-4xl mx-auto pointer-events-auto bg-white/95 text-slate-800 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex-1 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                    />
-                  </svg>
-                  DPDP Act 2023 Compliant
+              {/* Badge & Metadata Header */}
+              <div className="flex items-center flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Privacy Choices
                 </span>
-                <span className="text-xs text-slate-400 hidden sm:inline">•</span>
-                <span className="text-xs text-slate-400 hidden sm:inline">Zero Server Storage</span>
+                <span className="text-[11px] font-medium text-slate-500 bg-orange-50 border border-orange-200/80 text-orange-700 px-2 py-0.5 rounded-md">
+                  DPDP Act 2023
+                </span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+                  100% In-Browser &amp; Zero File Uploads
+                </span>
               </div>
-              <p className="text-sm text-slate-200 leading-relaxed">
-                We value your digital privacy. In accordance with India&apos;s Digital Personal Data
-                Protection Act 2023, optional performance and advertising cookies are{" "}
-                <strong className="text-white font-medium">disabled by default</strong>. Only strictly
-                necessary local storage is active.
-              </p>
-              <p className="text-xs text-slate-400">
-                You have full control to accept all, keep non-essential rejected, or customize
-                granularly. See our{" "}
+
+              {/* Concise Description */}
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Tools run privately in your browser. Optional analytics and ads are{" "}
+                <span className="text-slate-900 font-semibold">disabled by default</span>. Choose what you allow or learn more in our{" "}
                 <Link
                   href="/privacy-policy"
-                  className="text-amber-400 underline hover:text-amber-300 transition"
+                  className="text-orange-600 font-semibold underline underline-offset-2 hover:text-orange-700 transition"
                 >
                   Privacy Policy
                 </Link>
@@ -175,25 +165,26 @@ export default function ConsentBanner() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 sm:shrink-0">
+            {/* Actions */}
+            <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
               <button
                 type="button"
                 onClick={() => openPreferences()}
-                className="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 rounded-xl transition cursor-pointer"
+                className="px-3 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition cursor-pointer"
               >
                 Customize
               </button>
               <button
                 type="button"
                 onClick={() => saveConsent(false, false)}
-                className="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl transition cursor-pointer"
+                className="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-900 bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200/90 rounded-xl transition cursor-pointer"
               >
                 Reject Non-Essential
               </button>
               <button
                 type="button"
                 onClick={() => saveConsent(true, true)}
-                className="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-md transition cursor-pointer"
+                className="px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-xl shadow-xs transition cursor-pointer active:scale-[0.98]"
               >
                 Accept All
               </button>
@@ -202,92 +193,84 @@ export default function ConsentBanner() {
         </aside>
       )}
 
-      {/* 2. Granular Consent Preferences Modal (Accessible anytime via footer or customize) */}
+      {/* 2. Granular Consent Preferences Modal */}
       {showModal && (
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="consent-modal-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/40 backdrop-blur-xs animate-in fade-in"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowModal(false);
             }
           }}
         >
-          <div className="bg-slate-900 border border-slate-700/90 text-white rounded-2xl w-full max-w-xl shadow-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto flex flex-col space-y-5">
+          <div className="bg-white border border-slate-200 text-slate-900 rounded-2xl w-full max-w-xl shadow-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto flex flex-col space-y-4">
             {/* Header */}
-            <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-4">
+            <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-amber-400 text-base">🛡️</span>
-                  <h2 id="consent-modal-title" className="text-lg sm:text-xl font-bold text-white">
+                  <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                  <h2 id="consent-modal-title" className="text-lg font-bold text-slate-900 tracking-tight">
                     Privacy &amp; Cookie Preferences
                   </h2>
                 </div>
-                <p className="text-xs text-slate-400">
-                  Adheres to Section 6 of India&apos;s Digital Personal Data Protection (DPDP) Act,
-                  2023. You can review, modify, or withdraw your consent at any time.
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  In compliance with India&apos;s Digital Personal Data Protection (DPDP) Act, 2023. You can modify or withdraw consent anytime.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"
                 aria-label="Close preferences modal"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Category Cards */}
-            <div className="space-y-3.5">
+            <div className="space-y-3">
               {/* Category 1: Strictly Necessary */}
-              <div className="p-3.5 bg-slate-800/60 border border-slate-700/60 rounded-xl">
+              <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
                 <div className="flex items-center justify-between gap-3 mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-slate-100">
+                    <span className="font-semibold text-sm text-slate-900">
                       Strictly Necessary
                     </span>
-                    <span className="text-[11px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                       Always Active
                     </span>
                   </div>
                   {/* Disabled Switch */}
                   <div
                     aria-disabled="true"
-                    className="w-11 h-6 bg-emerald-600/40 rounded-full flex items-center p-1 cursor-not-allowed"
+                    className="w-11 h-6 bg-emerald-600 rounded-full flex items-center p-1 cursor-not-allowed"
                     title="Required for basic site functionality"
                   >
-                    <div className="w-4 h-4 bg-emerald-300 rounded-full translate-x-5 transition-transform" />
+                    <div className="w-4 h-4 bg-white rounded-full translate-x-5 transition-transform shadow-xs" />
                   </div>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Essential for core platform operations, including anonymous session authentication,
-                  anti-abuse security, and storing your DPDP consent choices locally. These cannot be
-                  switched off.
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Required for core platform security, anonymous authentication, and preserving your privacy choices locally. Cannot be disabled.
                 </p>
               </div>
 
               {/* Category 2: Performance & Analytics */}
-              <div className="p-3.5 bg-slate-800/60 border border-slate-700/60 rounded-xl">
+              <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
                 <div className="flex items-center justify-between gap-3 mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-slate-100">
+                    <span className="font-semibold text-sm text-slate-900">
                       Performance &amp; Analytics
                     </span>
                     <span
                       className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
                         analyticsConsent
-                          ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
-                          : "text-slate-400 bg-slate-700/30 border-slate-600/30"
+                          ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                          : "text-slate-500 bg-slate-100 border-slate-200"
                       }`}
                     >
                       {analyticsConsent ? "Granted" : "Opt-In (Off)"}
@@ -300,35 +283,33 @@ export default function ConsentBanner() {
                     aria-checked={analyticsConsent}
                     onClick={() => setAnalyticsConsent(!analyticsConsent)}
                     className={`w-11 h-6 rounded-full flex items-center p-1 transition-colors cursor-pointer ${
-                      analyticsConsent ? "bg-amber-500" : "bg-slate-700"
+                      analyticsConsent ? "bg-orange-600" : "bg-slate-300"
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full transition-transform ${
+                      className={`w-4 h-4 bg-white rounded-full transition-transform shadow-xs ${
                         analyticsConsent ? "translate-x-5" : "translate-x-0"
                       }`}
                     />
                   </button>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Powers anonymous telemetry via Vercel Analytics to identify broken browser tools,
-                  benchmark load performance, and optimize latency without storing IP addresses or
-                  personal identifiers.
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Anonymous performance metrics via Vercel Analytics to identify broken tools and optimize speed without storing IP addresses or tracking you.
                 </p>
               </div>
 
               {/* Category 3: Advertising & Marketing */}
-              <div className="p-3.5 bg-slate-800/60 border border-slate-700/60 rounded-xl">
+              <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
                 <div className="flex items-center justify-between gap-3 mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm text-slate-100">
+                    <span className="font-semibold text-sm text-slate-900">
                       Advertising &amp; Marketing
                     </span>
                     <span
                       className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
                         marketingConsent
-                          ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
-                          : "text-slate-400 bg-slate-700/30 border-slate-600/30"
+                          ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                          : "text-slate-500 bg-slate-100 border-slate-200"
                       }`}
                     >
                       {marketingConsent ? "Granted" : "Opt-In (Off)"}
@@ -341,38 +322,34 @@ export default function ConsentBanner() {
                     aria-checked={marketingConsent}
                     onClick={() => setMarketingConsent(!marketingConsent)}
                     className={`w-11 h-6 rounded-full flex items-center p-1 transition-colors cursor-pointer ${
-                      marketingConsent ? "bg-amber-500" : "bg-slate-700"
+                      marketingConsent ? "bg-orange-600" : "bg-slate-300"
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 bg-white rounded-full transition-transform ${
+                      className={`w-4 h-4 bg-white rounded-full transition-transform shadow-xs ${
                         marketingConsent ? "translate-x-5" : "translate-x-0"
                       }`}
                     />
                   </button>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Allows Google AdSense (<code>ca-pub-7528581776456991</code>) to display relevant
-                  advertisements that fund our serverless infrastructure and maintain free access to
-                  all 100+ browser tools. Disabling this blocks advertising tracking scripts.
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Allows Google AdSense (<code>ca-pub-7528581776456991</code>) to show contextual ads that support free access to all 100+ tools. Disabling this blocks ad tracking scripts completely.
                 </p>
               </div>
             </div>
 
             {/* DPDP Section 6(4) Notice */}
-            <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-3 text-xs text-slate-400">
-              <span className="text-slate-200 font-medium">Right to Withdraw (Section 6(4)): </span>
-              You have the unconditional statutory right to withdraw or modify your consent at any
-              time with equal ease via the &ldquo;Cookie &amp; Consent Preferences&rdquo; link in the
-              website footer.
+            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs text-slate-500 leading-relaxed">
+              <span className="text-slate-800 font-semibold">Right to Withdraw (Section 6(4)): </span>
+              You can withdraw or modify your consent at any time via the &ldquo;Cookie &amp; Consent Preferences&rdquo; link in the website footer.
             </div>
 
             {/* Modal Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-slate-800">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => saveConsent(false, false)}
-                className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition cursor-pointer text-center"
+                className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition cursor-pointer text-center"
               >
                 Reject Non-Essential
               </button>
@@ -380,14 +357,14 @@ export default function ConsentBanner() {
                 <button
                   type="button"
                   onClick={() => saveConsent(analyticsConsent, marketingConsent)}
-                  className="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-slate-700 hover:bg-slate-600 rounded-xl border border-slate-600 transition cursor-pointer text-center"
+                  className="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition cursor-pointer text-center"
                 >
                   Save Preferences
                 </button>
                 <button
                   type="button"
                   onClick={() => saveConsent(true, true)}
-                  className="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-md transition cursor-pointer text-center"
+                  className="flex-1 sm:flex-none px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-xl shadow-xs transition cursor-pointer text-center"
                 >
                   Accept All
                 </button>
