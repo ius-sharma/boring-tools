@@ -4,7 +4,6 @@ import NavBar from "./components/NavBar";
 import ToolContentFooter from "./components/ToolContentFooter";
 import StructuredData from "./components/StructuredData";
 import { getWebSiteSchema, getOrganizationSchema, SITE_CONFIG } from "@/lib/seo";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = { variable: "font-sans" };
@@ -104,6 +103,9 @@ import ToastNotification from "./components/ToastNotification";
 import CommandPalette from "./components/CommandPalette";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import FeedbackWidget from "./components/FeedbackWidget";
+import ConsentBanner from "./components/ConsentBanner";
+import GoogleAdsenseLoader from "./components/GoogleAdsenseLoader";
+import AnalyticsLoader from "./components/AnalyticsLoader";
 
 export default function RootLayout({
   children,
@@ -122,11 +124,6 @@ export default function RootLayout({
       <head>
         <StructuredData data={[websiteSchema, orgSchema]} />
         <meta name="google-adsense-account" content="ca-pub-7528581776456991" />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7528581776456991"
-          crossOrigin="anonymous"
-        />
       </head>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
@@ -134,7 +131,8 @@ export default function RootLayout({
           <div className="fixed inset-x-0 top-0 z-50 flex items-start justify-end gap-3 p-3 sm:p-4 pointer-events-none">
             <HomeButton />
           </div>
-          <Analytics />
+          <AnalyticsLoader />
+          <GoogleAdsenseLoader />
           {children}
           <ToolContentFooter />
           <FeedbackWidget />
@@ -144,6 +142,7 @@ export default function RootLayout({
           <ToastNotification />
           <CommandPalette />
           <ServiceWorkerRegistration />
+          <ConsentBanner />
         </AuthProvider>
       </body>
     </html>

@@ -995,6 +995,23 @@ export default function Home() {
                     Terms of Service
                   </a>
                 </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        if (typeof window.openConsentPreferences === "function") {
+                          window.openConsentPreferences();
+                        } else {
+                          window.dispatchEvent(new CustomEvent("boringtools_open_consent"));
+                        }
+                      }
+                    }}
+                    className="hover:text-amber-300 transition text-slate-400 hover:underline cursor-pointer text-left inline-flex items-center gap-1.5"
+                  >
+                    <span>Cookie &amp; Consent Preferences</span>
+                  </button>
+                </li>
               </ul>
             </div>
             <div>
