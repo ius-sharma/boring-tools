@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
       <main className="mx-auto max-w-4xl bg-white p-8 rounded-2xl border border-slate-200 shadow-xs">
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">Privacy Policy</h1>
         <p className="text-slate-700 text-base sm:text-lg leading-relaxed mb-6">
-          At BoringTools (accessible at <a href="https://boringtools.vercel.app" className="text-orange-600 font-semibold hover:underline">boringtools.vercel.app</a>), the privacy of our visitors is our primary priority. This Privacy Policy document outlines the types of information we handle and our commitment to client-side data privacy.
+          At BoringTools (accessible at <a href="https://boringtoolsai.com" className="text-orange-600 font-semibold hover:underline">boringtoolsai.com</a>), the privacy of our visitors is our primary priority. This Privacy Policy document outlines the types of information we handle and our commitment to client-side data privacy.
         </p>
 
         <section className="space-y-6 text-slate-700 leading-relaxed">

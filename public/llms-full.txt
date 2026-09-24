@@ -1,6 +1,6 @@
 # BoringTools - Comprehensive Ecosystem Specification (llms-full.txt)
 
-> Complete technical and architectural index of BoringTools (https://boringtools.vercel.app).
+> Complete technical and architectural index of BoringTools (https://boringtoolsai.com).
 > Maintained by Ayush Sharma (https://github.com/ius-sharma).
 
 ## Architectural Principles
@@ -11,102 +11,102 @@
 ## Comprehensive Tools Directory
 
 ### 1. Geography Quiz & Map Explorer
-- URL: https://boringtools.vercel.app/geography-quiz
+- URL: https://boringtoolsai.com/geography-quiz
 - Category: Education
 - Capabilities: Interactive SVG world map, capital guesser, flag identification, boundary drills, offline score saving.
 
 ### 2. Browser-Based Background Remover
-- URL: https://boringtools.vercel.app/background-remover
+- URL: https://boringtoolsai.com/background-remover
 - Category: Media
 - Capabilities: In-browser AI semantic segmentation (@imgly/background-removal) removing backgrounds from JPG/PNG without server uploads.
 
 ### 3. GIF Maker from Images
-- URL: https://boringtools.vercel.app/gif-maker
+- URL: https://boringtoolsai.com/gif-maker
 - Category: Media
 - Capabilities: Multi-frame canvas animation assembler, frame delay control, text caption overlays, color quantization, client-side GIF export.
 
 ### 4. Image Compressor / Resizer
-- URL: https://boringtools.vercel.app/image-compressor
+- URL: https://boringtoolsai.com/image-compressor
 - Category: Media
 - Capabilities: Lossy and lossless image compression, custom resolution scaling, WebP conversion, batch download.
 
 ### 5. Image to ASCII / Terminal Art Generator
-- URL: https://boringtools.vercel.app/image-to-ascii
+- URL: https://boringtoolsai.com/image-to-ascii
 - Category: Media
 - Capabilities: Luminance mapping, custom character sets, colored ASCII rendering, TXT/HTML/PNG export.
 
 ### 6. PDF Intelligence Tool
-- URL: https://boringtools.vercel.app/pdf-intelligence-tool
+- URL: https://boringtoolsai.com/pdf-intelligence-tool
 - Category: Documents
 - Capabilities: Client-side text parsing (pdfjs-dist/unpdf), contact extractor, URL finder, reading stats, offline summary generator.
 
 ### 7. DOC to PDF Converter
-- URL: https://boringtools.vercel.app/doc-to-pdf-converter
+- URL: https://boringtoolsai.com/doc-to-pdf-converter
 - Category: Documents
 - Capabilities: In-browser LibreOffice WASM engine converts DOC/DOCX files directly to PDF with cross-origin isolation.
 
 ### 8. Document Data Extractor
-- URL: https://boringtools.vercel.app/document-data-extractor
+- URL: https://boringtoolsai.com/document-data-extractor
 - Category: Documents
 - Capabilities: Regex and natural language pattern extraction for dates, currencies, emails, phone numbers, and raw tables.
 
 ### 9. JSON Formatter & Validator
-- URL: https://boringtools.vercel.app/json-formatter
+- URL: https://boringtoolsai.com/json-formatter
 - Category: Developer
 - Capabilities: Syntax error highlighting, key sorting, indentation customization, minification, clipboard copy.
 
 ### 10. Fake Data Generator
-- URL: https://boringtools.vercel.app/fake-data-generator
+- URL: https://boringtoolsai.com/fake-data-generator
 - Category: Developer
 - Capabilities: Synthetic persona generator, address generator, SQL INSERT script export, CSV dataset export.
 
 ### 11. Can I Trust This Website?
-- URL: https://boringtools.vercel.app/can-i-trust-this-website
+- URL: https://boringtoolsai.com/can-i-trust-this-website
 - Category: Security
 - Capabilities: Domain age estimation, SSL verification hints, phishing indicators, safety checklists.
 
 ### 12. Link Intelligence
-- URL: https://boringtools.vercel.app/link-intelligence
+- URL: https://boringtoolsai.com/link-intelligence
 - Category: Security
 - Capabilities: Query parameter parser, tracker stripper (UTM, gclid, fbclid), URL decoder, QR code generator.
 
 ### 13. Reaction Time & Mouse Accuracy Tester
-- URL: https://boringtools.vercel.app/reaction-time-tester
+- URL: https://boringtoolsai.com/reaction-time-tester
 - Category: Productivity
 - Capabilities: Millisecond visual reaction timer, target aim accuracy test, click speed CPS test, results summary card.
 
 ### 14. Playlist IQ (YouTube Playlist Analyzer)
-- URL: https://boringtools.vercel.app/youtube-playlist-analyzer
+- URL: https://boringtoolsai.com/youtube-playlist-analyzer
 - Category: Education
 - Capabilities: Total runtime calculator across 1x, 1.25x, 1.5x, 2x speeds, daily schedule planner, chapter breakdown.
 
 ### 15. Freelancer Pricing Calculator
-- URL: https://boringtools.vercel.app/freelancer-pricing-calculator
+- URL: https://boringtoolsai.com/freelancer-pricing-calculator
 - Category: Finance
 - Capabilities: Goal-based hourly rate formula (Expenses + Taxes + Profit Margin / Billable Hours).
 
 ### 16. BMI Calculator
-- URL: https://boringtools.vercel.app/bmi-calculator
+- URL: https://boringtoolsai.com/bmi-calculator
 - Category: Health
 - Capabilities: Metric and imperial BMI calculation, WHO category classification, ideal weight range estimation.
 
 ### 17. SIP Calculator & EMI Calculator
-- URLs: https://boringtools.vercel.app/sip-calculator, https://boringtools.vercel.app/emi-calculator
+- URLs: https://boringtoolsai.com/sip-calculator, https://boringtoolsai.com/emi-calculator
 - Category: Finance
 - Capabilities: Compound interest projection charts, monthly installment calculators, principal vs. interest breakdown.
 
 ### 18. Digital Time Capsule
-- URL: https://boringtools.vercel.app/digital-time-capsule
+- URL: https://boringtoolsai.com/digital-time-capsule
 - Category: Time & Date
 - Capabilities: AES-encrypted local storage time capsules with voice recordings, letters, and photos locked until future timestamps.
 
 ### 19. Cinematic AI Prompt Architect
-- URL: https://boringtools.vercel.app/cinematic-ai-prompt-architect
+- URL: https://boringtoolsai.com/cinematic-ai-prompt-architect
 - Category: Creator Tools
 - Capabilities: Lens, lighting, aspect ratio, camera angle, color grade, and render engine parameters builder.
 
 ## Contact & Links
-- Website: https://boringtools.vercel.app
+- Website: https://boringtoolsai.com
 - Developer: Ayush Sharma (https://github.com/ius-sharma)
 - Instagram: https://www.instagram.com/ocn.ayush07/
-- Sitemap: https://boringtools.vercel.app/sitemap.xml
+- Sitemap: https://boringtoolsai.com/sitemap.xml

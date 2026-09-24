@@ -373,7 +373,7 @@ DTSTART:${start}
 DTEND:${end}
 SUMMARY:Unlock Time Capsule: ${title}
 DESCRIPTION:Your digital time capsule "${title}" is ready to be opened. Visit BoringTools to decrypt and read your message.
-URL:https://boringtools.vercel.app/digital-time-capsule
+URL:https://boringtoolsai.com/digital-time-capsule
 END:VEVENT
 END:VCALENDAR`;
 }

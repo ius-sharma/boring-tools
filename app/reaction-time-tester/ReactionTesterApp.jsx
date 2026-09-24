@@ -999,7 +999,7 @@ export default function ReactionTesterApp() {
 
     ctx.fillStyle = "#64748b";
     ctx.font = "500 20px sans-serif";
-    ctx.fillText("Tested on boringtools.vercel.app/reaction-time-tester", 80, 585);
+    ctx.fillText("Tested on boringtoolsai.com/reaction-time-tester", 80, 585);
 
     const link = document.createElement("a");
     link.download = `boringtools-reaction-benchmark-${Date.now()}.png`;

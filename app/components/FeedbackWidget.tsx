@@ -68,7 +68,7 @@ export default function FeedbackWidget() {
   }, [pathname]);
 
   const toolName = currentTool?.name || "BoringTools";
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "https://boringtools.vercel.app";
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "https://boringtoolsai.com";
 
   // Check if previously reviewed in localStorage
   useEffect(() => {

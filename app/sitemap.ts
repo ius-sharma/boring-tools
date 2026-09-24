@@ -1,8 +1,9 @@
 import { MetadataRoute } from "next";
 import { tools } from "./tools-data";
+import { SITE_CONFIG } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://boringtools.vercel.app";
+  const baseUrl = SITE_CONFIG.url;
   const now = new Date();
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -26,6 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/contact`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/setup-guide`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
