@@ -3,9 +3,9 @@ import type { Tool } from "@/app/tools-data";
 
 export const SITE_CONFIG = {
   name: "BoringTools",
-  title: "BoringTools — 100 Days. 100 Free Browser-First Tools.",
+  title: "BoringTools — Micro-Tools for Everyday Tasks",
   description:
-    "100 practical tools built in 100 days. No signup, no clutter. Just get the job done. Runs entirely in your browser with 100% client-side privacy.",
+    "Micro-tools for everyday tasks. Fast, simple utilities with no signups, no clutter, and no tracking. Just get the job done.",
   url: (process.env.NEXT_PUBLIC_SITE_URL || "https://boringtoolsai.com").replace(/\/$/, ""),
   author: "Ayush Sharma",
   authorUrl: "https://github.com/ius-sharma",

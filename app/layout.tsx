@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
-    default: "BoringTools — 100 Days 100 Tools (Free & Browser-First)",
+    default: "BoringTools — Micro-Tools for Everyday Tasks",
     template: "%s | BoringTools",
   },
   description: SITE_CONFIG.description,
@@ -29,14 +29,14 @@ export const metadata: Metadata = {
   publisher: SITE_CONFIG.name,
   keywords: [
     "BoringTools",
+    "micro tools",
     "browser tools",
     "free online tools",
     "developer utilities",
     "pdf tools",
     "image compressor",
     "background remover",
-    "client-side privacy",
-    "100 days 100 tools",
+    "private utilities",
   ],
   alternates: {
     canonical: SITE_CONFIG.url,
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   openGraph: {
-    title: "BoringTools — 100 Free Browser-First Micro-Tools",
+    title: "BoringTools — Micro-Tools for Everyday Tasks",
     description:
-      "Fast, private browser utilities with zero sign-up and 100% client-side privacy. Video editing, PDF intelligence, converters, and calculators in your browser.",
+      "Micro-tools for everyday tasks. Fast, simple utilities with no clutter and no forced signups.",
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.name,
     locale: "en_US",
@@ -66,15 +66,15 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/png",
-        alt: "BoringTools — 100 Days 100 Browser Tools",
+        alt: "BoringTools — Micro-Tools for Everyday Tasks",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "BoringTools — 100 Free Browser-First Micro-Tools",
+    title: "BoringTools — Micro-Tools for Everyday Tasks",
     description:
-      "100% client-side privacy. Fast, free micro-tools for media, PDFs, documents, developer utilities, and calculations.",
+      "Micro-tools for everyday tasks. Fast, simple utilities with no clutter and no forced signups.",
     creator: "@ius_sharma",
     site: "@ius_sharma",
     images: [`${SITE_CONFIG.url}/boringtools-logo.png`],
