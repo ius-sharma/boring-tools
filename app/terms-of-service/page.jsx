@@ -199,11 +199,11 @@ export default function TermsOfService() {
               <span className="text-orange-600">9.</span> Grievance Redressal &amp; Inquiries
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mb-4">
-              For any questions regarding these Terms, billing, or to report a violation, please contact our designated Grievance Officer:
+              For any questions regarding these Terms, billing, or to report a violation, please contact our team:
             </p>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs sm:text-sm">
-              <p><strong>Grievance Officer:</strong> Ayush Sharma</p>
-              <p><strong>Designation:</strong> Grievance Officer &amp; Data Protection Lead</p>
+              <p><strong>Contact Person:</strong> Ayush Sharma</p>
+              <p><strong>Designation:</strong> Founder &amp; Maintainer</p>
               <p>
                 <strong>Email:</strong>{" "}
                 <a href="mailto:grievance@boringtoolsai.com" className="text-orange-600 font-semibold underline">
