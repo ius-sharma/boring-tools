@@ -240,11 +240,18 @@ export default function ToolContentFooter() {
     const name = tool.name;
     const category = tool.category;
     const desc = tool.description.replace(/\.$/, "");
+    const isServer = tool.execution === "server";
+    const privacyOverview = isServer
+      ? "Requests are processed securely with zero data logging or persistent storage."
+      : "All operations run locally inside your web browser, ensuring maximum privacy and instant feedback.";
+    const privacyImportance = isServer
+      ? "By utilizing stateless, zero-retention processing, your inputs are never stored, tracked, or profiled."
+      : "By keeping calculations client-side, it ensures your data remains secure and private on your local machine at all times.";
 
     return {
       title: `About the ${name} Tool & How It Works`,
-      overview: `The ${name} is a high-performance web utility built under the ${category} category of BoringTools. Designed to be completely browser-first, it enables you to ${desc.toLowerCase()} instantly. There is no software to install, no account registration required, and no hidden subscription fees. All operations run locally inside your web browser, ensuring maximum privacy and instant feedback.`,
-      importance: `In modern digital workflows, having quick access to reliable, single-purpose utilities saves valuable time. The ${name} tool simplifies what would otherwise require complex desktop software or signing up for suspicious online file converters. By keeping calculations client-side, it ensures your data remains secure and private on your local machine at all times.`,
+      overview: `The ${name} is a high-performance web utility built under the ${category} category of BoringTools. Designed to be fast and uncluttered, it enables you to ${desc.toLowerCase()} instantly. There is no software to install, no account registration required, and no hidden subscription fees. ${privacyOverview}`,
+      importance: `In modern digital workflows, having quick access to reliable, single-purpose utilities saves valuable time. The ${name} tool simplifies what would otherwise require complex desktop software or signing up for suspicious online file converters. ${privacyImportance}`,
       howToUse: [
         `Navigate to the ${name} tool page on BoringTools.`,
         `Input your data, toggle options, or upload files into the designated interface fields.`,
@@ -324,7 +331,7 @@ export default function ToolContentFooter() {
         <section className="mx-auto max-w-4xl px-6 py-12 sm:py-16">
           <div className="border-b border-slate-200 pb-10">
             <div className="mb-4">
-              <PrivacyTrustBadge />
+              <PrivacyTrustBadge execution={tool?.execution || "client"} />
             </div>
             <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-6">
               {content.title}
