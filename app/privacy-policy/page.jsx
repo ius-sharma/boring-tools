@@ -261,7 +261,7 @@ export default function PrivacyPolicyPage() {
               <span className="text-orange-600">6.</span> Grievance Redressal Mechanism &amp; Officer Details
             </h2>
             <p className="mb-4">
-              In compliance with Section 13 of the DPDP Act and the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, BoringTools has appointed a dedicated Grievance Officer:
+              In compliance with Section 13 of the DPDP Act and the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, users may direct any privacy inquiries or grievances to the project maintainer:
             </p>
 
             {/* Officer Card */}
@@ -273,7 +273,7 @@ export default function PrivacyPolicyPage() {
                 </div>
                 <div>
                   <span className="text-slate-500 uppercase tracking-wider text-xs block font-semibold">Designation</span>
-                  <span className="text-base font-bold text-slate-900">Grievance Officer &amp; Data Protection Lead</span>
+                  <span className="text-base font-bold text-slate-900">Founder &amp; Privacy Contact</span>
                 </div>
                 <div>
                   <span className="text-slate-500 uppercase tracking-wider text-xs block font-semibold">Official Email</span>
