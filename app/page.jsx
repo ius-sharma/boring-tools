@@ -368,7 +368,7 @@ export default function Home() {
             <p className="text-sm font-semibold uppercase tracking-widest text-orange-600 mb-4">Built daily in public</p>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 mb-6">BoringTools</h1>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-              100 practical tools. Built in 100 days. No signup, no clutter. Just get the job done.
+              Micro-tools for everyday tasks. No signup, no clutter. Just get the job done.
             </p>
             <div className="mb-8 flex justify-center gap-6 text-sm sm:text-base">
               <span className="text-slate-700 font-semibold">
@@ -429,8 +429,8 @@ export default function Home() {
                 <KoboyoGlobe className="w-4 h-4 text-orange-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-orange-600 mb-1">Browser-Based</p>
-                <p className="text-slate-600 text-xs">Data never leaves your device</p>
+                <p className="text-sm font-semibold text-orange-600 mb-1">Browser-First</p>
+                <p className="text-slate-600 text-xs">Most tools run offline on your device</p>
               </div>
             </div>
           </div>
