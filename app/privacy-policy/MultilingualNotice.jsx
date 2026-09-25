@@ -37,9 +37,9 @@ const NOTICES = {
           "Grievance Officer: Ayush Sharma | Email: grievance@boringtoolsai.com | Response: Acknowledged within 48 hours; substantive resolution within 30 days. If unsatisfied, you may appeal to the Data Protection Board of India (DPBI).",
       },
     ],
-    officerLabel: "Designated Grievance Officer",
-    officerDetails: "Ayush Sharma — Grievance Officer & Data Protection Lead (India)",
-    contactButton: "Contact Grievance Officer",
+    officerLabel: "Privacy & Grievance Contact",
+    officerDetails: "Ayush Sharma — Founder & Privacy Contact (India)",
+    contactButton: "Contact Privacy Contact",
   },
   hi: {
     langName: "हिन्दी",
@@ -75,9 +75,9 @@ const NOTICES = {
           "शिकायत अधिकारी: आयुष शर्मा | ईमेल: grievance@boringtoolsai.com | समय-सीमा: 48 घंटे में पावती और 30 दिनों में पूर्ण समाधान। समाधान न होने पर भारतीय डेटा संरक्षण बोर्ड (DPBI) में अपील की जा सकती है।",
       },
     ],
-    officerLabel: "नामित शिकायत निवारण अधिकारी",
-    officerDetails: "आयुष शर्मा — शिकायत अधिकारी एवं डेटा प्रोटेक्शन लीड (भारत)",
-    contactButton: "शिकायत अधिकारी से संपर्क करें",
+    officerLabel: "गोपनीयता एवं शिकायत संपर्क",
+    officerDetails: "आयुष शर्मा — संस्थापक एवं गोपनीयता संपर्क (भारत)",
+    contactButton: "संपर्क करें",
   },
   bn: {
     langName: "বাংলা",
@@ -311,7 +311,7 @@ export default function MultilingualNotice() {
             {notice.officerDetails}
           </span>
           <span className="block text-xs text-slate-600 mt-0.5">
-            grievance@boringtoolsai.com • Bengaluru / India
+            grievance@boringtoolsai.com (Fallback: hello@boringtoolsai.com) • India
           </span>
         </div>
         <a
