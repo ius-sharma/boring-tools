@@ -5,6 +5,7 @@ export interface Tool {
   category: string;
   description: string;
   status: string;
+  execution?: "client" | "server";
   isNew?: boolean;
   isFeatured?: boolean;
   seoTitle?: string;
@@ -13,7 +14,43 @@ export interface Tool {
   relatedToolIds?: string[];
 }
 
-export const tools: Tool[] = [
+export const SERVER_TOOL_IDS = new Set([
+  "news-accuracy-checker",
+  "pdf-intelligence-tool",
+  "cinematic-ai-prompt-architect",
+  "email-decoder",
+  "fear-decomposer",
+  "hook-generator",
+  "movie-series-recommendation",
+  "roast-my-todo-list",
+  "second-mind",
+  "should-i-reply",
+  "study-material-finder",
+  "terms-conditions-simplifier",
+  "video-transcriber",
+  "youtube-downloader",
+  "youtube-playlist-analyzer",
+  "youtube-title-generator",
+  "can-i-trust-this-website",
+  "document-data-extractor",
+  "download-reel",
+  "concept-explorer",
+  "history-repeats",
+  "if-this-never-happened",
+  "leverage-finder",
+  "linkedin-post-formatter",
+  "logo-meaning-explorer",
+  "parse-timetable",
+  "placement-readiness-score",
+  "resignation-letter-generator",
+  "resume-bullet-rewriter",
+  "social-account-analyzer",
+  "what-happened-today",
+]);
+
+export const isServerTool = (id: string): boolean => SERVER_TOOL_IDS.has(id);
+
+const rawTools: Tool[] = [
   { id: "geography-quiz", name: "Geography Quiz & Map Explorer", href: "/geography-quiz", category: "Education", description: "Explore countries, capitals, flags and world maps through interactive quizzes and challenges.", status: "Live", isNew: true, isFeatured: true },
   { id: "text-formatter", name: "Text Formatter", href: "/text-formatter", category: "Text", description: "Clean and transform text instantly.", status: "Live" },
   { id: "text-to-morse-code", name: "Text to Morse Code", href: "/text-to-morse-code", category: "Text", description: "Convert text to Morse Code and Morse back to text instantly.", status: "Live", isNew: true, isFeatured: true },
@@ -310,12 +347,29 @@ export const tools: Tool[] = [
   { id: "crypto-profit-calculator", name: "Live Crypto Price Tracker", href: "/crypto-profit-calculator", category: "Finance", description: "Track real-time prices for Bitcoin, Ethereum, and Solana in USD and INR with 24h highs, lows, and percentage changes 100% client-side.", status: "Live", isNew: true, isFeatured: true }
 ];
 
+export const tools: Tool[] = rawTools.map((t) => ({
+  ...t,
+  execution: (t.execution || (SERVER_TOOL_IDS.has(t.id) ? "server" : "client")) as "client" | "server",
+}));
+
 export const liveToolIds = new Set(
-  tools.filter(t => t.status === "Live").map(t => t.id)
+  tools.filter((t) => t.status === "Live").map((t) => t.id)
 );
 
-export const featuredToolIds = ["youtube-playlist-analyzer", "digital-time-capsule", "geography-quiz", "gif-maker", "image-to-ascii", "background-remover", "reaction-time-tester", "movie-series-recommendation", "fake-data-generator", "cinematic-ai-prompt-architect"];
+export const featuredToolIds = [
+  "youtube-playlist-analyzer",
+  "digital-time-capsule",
+  "geography-quiz",
+  "gif-maker",
+  "image-to-ascii",
+  "background-remover",
+  "reaction-time-tester",
+  "movie-series-recommendation",
+  "fake-data-generator",
+  "cinematic-ai-prompt-architect",
+];
 
 export const availableTools = tools.filter((t) => liveToolIds.has(t.id));
+
 
 
