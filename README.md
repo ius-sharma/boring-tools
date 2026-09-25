@@ -6,8 +6,8 @@
 
 # 🚀 BoringTools
 
-> **100+ Tools. 0% Bullshit.**  
-> The internet's most comprehensive collection of privacy-first, browser-based micro-utilities. No signups. No tracking. No excuses.
+> **Micro-tools for everyday tasks.**  
+> A comprehensive collection of fast, browser-first utilities with zero forced signups, zero tracking, and no clutter.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
@@ -31,14 +31,14 @@
 
 ## 📊 Quick Stats
 
-| Metric | Count |
-|--------|-------|
+| Metric | Details |
+|--------|---------|
 | **Total Tools** | 104 |
 | **Days to Build** | 100+ |
 | **Total Commits** | 350+ |
 | **Bundle Size** | <150KB (initial) |
-| **Server Calls** | 0 (100% client-side core) |
-| **Privacy Score** | 100% |
+| **Architecture** | Browser-First (WASM/Client) + Stateless Cloud AI |
+| **Tracking Policy** | 0 Trackers · No forced signups |
 
 ---
 
@@ -47,7 +47,7 @@
 Most online tools are bloated with ads, trackers, and login walls. **BoringTools** flips that model:
 
 ### 🔒 Privacy First
-Every calculation, conversion, and AI operation happens **100% in your browser** using WebAssembly (WASM), Web Workers, and modern browser APIs. Your data **never leaves your device**.
+Most calculators, converters, and media utilities run **entirely in your browser** using WebAssembly (WASM), Web Workers, and modern browser APIs where your data never leaves your device. For utilities that require external cloud models or web scraping, requests are processed statelessly with zero data retention or tracking.
 
 ### ⚡ Instant Access
 No authentication required for utilities. No paywalls. No "Sign up with Google" popups. Just open the URL and get shit done.
