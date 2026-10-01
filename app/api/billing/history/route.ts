@@ -18,12 +18,12 @@ export async function GET(req: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Fetch billing logs from usage_logs
+    // Fetch billing logs and student coupon claims from usage_logs
     const { data: logs, error } = await admin
       .from("usage_logs")
       .select("*")
       .eq("user_id", user.id)
-      .ilike("tool_id", "billing_%")
+      .or("tool_id.ilike.billing_%,tool_id.ilike.coupon_claim_%")
       .order("created_at", { ascending: false })
       .limit(20);
 
@@ -32,9 +32,25 @@ export async function GET(req: NextRequest) {
     }
 
     const formattedHistory = (logs || []).map((log) => {
+      const isCoupon = log.tool_id.startsWith("coupon_claim_");
       const isAddon = log.tool_id.includes("addon");
       const isYearly = log.tool_id.includes("yearly") || log.metadata?.planTier === "pro_yearly";
       const isCancel = log.tool_id.includes("canceled");
+
+      if (isCoupon) {
+        return {
+          id: log.id,
+          date: new Date(log.created_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+          description: "Marwadi University Student Pass (1-Year Pro Free)",
+          amount: "₹0.00 (100% OFF)",
+          status: "Redeemed",
+          orderId: `MU-${log.metadata?.couponCode || "STUDENT"}-${log.id.slice(0, 6).toUpperCase()}`,
+        };
+      }
 
       return {
         id: log.id,
