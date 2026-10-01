@@ -144,16 +144,25 @@ export default function BillingPage() {
 
   const isPro = credits.isPro;
   const isCanceled = subscription?.status === "canceled";
-  const planName =
-    subscription?.planTier === "pro_yearly"
-      ? "Boring Tools Pro (Yearly)"
-      : subscription?.planTier === "starter_yearly"
-      ? "Boring Tools Starter (Yearly)"
-      : subscription?.planTier === "starter_monthly"
-      ? "Boring Tools Starter (Monthly)"
-      : isPro
-      ? "Boring Tools Pro (Monthly)"
-      : "Boring Tools Free Tier";
+  const isStudentPass = Boolean(
+    subscription?.isStudentPass ||
+      subscription?.priceId?.includes("marwadi") ||
+      subscription?.priceId?.includes("student") ||
+      (user?.email?.toLowerCase().endsWith("@marwadiuniversity.ac.in") &&
+        subscription?.planTier === "pro_yearly")
+  );
+
+  const planName = isStudentPass
+    ? "Boring Tools Pro (Marwadi University Student Pass)"
+    : subscription?.planTier === "pro_yearly"
+    ? "Boring Tools Pro (Yearly)"
+    : subscription?.planTier === "starter_yearly"
+    ? "Boring Tools Starter (Yearly)"
+    : subscription?.planTier === "starter_monthly"
+    ? "Boring Tools Starter (Monthly)"
+    : isPro
+    ? "Boring Tools Pro (Monthly)"
+    : "Boring Tools Free Tier";
 
   const renewalDate = subscription?.currentPeriodEnd
     ? new Date(subscription.currentPeriodEnd).toLocaleDateString("en-US", {
@@ -197,16 +206,20 @@ export default function BillingPage() {
         <div className="border border-slate-200 bg-white rounded-2xl p-6 sm:p-8 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                   {planName}
                 </h2>
-                {isPro && !isCanceled && (
+                {isStudentPass ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-[#ea580c] border border-orange-200">
+                    🎓 Student Offer Active
+                  </span>
+                ) : isPro && !isCanceled ? (
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                     Active
                   </span>
-                )}
+                ) : null}
                 {isCanceled && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                     Cancels at period end
@@ -215,11 +228,27 @@ export default function BillingPage() {
               </div>
 
               <div className="mt-3 text-xs sm:text-sm text-slate-600 space-y-1">
-                {isPro ? (
+                {isStudentPass ? (
                   <>
                     <p>
                       <strong>Billing Rate:</strong>{" "}
-                      {subscription?.planTier === "pro_yearly" ? "₹3,499 / year" : "₹399 / month"} (Secured via Razorpay)
+                      <span className="text-[#ea580c] font-bold">₹0 Free (100% Student Grant)</span>
+                    </p>
+                    <p>
+                      <strong>Offer:</strong> 🎓 Marwadi University 1-Year Annual Pro Student Pass
+                    </p>
+                    {renewalDate && (
+                      <p className="text-slate-500">
+                        Student Pro access valid until:{" "}
+                        <span className="font-semibold text-slate-900">{renewalDate}</span>
+                      </p>
+                    )}
+                  </>
+                ) : isPro ? (
+                  <>
+                    <p>
+                      <strong>Billing Rate:</strong>{" "}
+                      {subscription?.planTier === "pro_yearly" ? "₹2,988 / year" : "₹299 / month"} (Secured via Razorpay)
                     </p>
                     {renewalDate && (
                       <p className="text-slate-500">
@@ -238,7 +267,19 @@ export default function BillingPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-3">
-              {isPro ? (
+              {isStudentPass ? (
+                <>
+                  <span className="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 shadow-xs">
+                    <span>✓</span> 1-Year Pass Active
+                  </span>
+                  <Link
+                    href="/pricing"
+                    className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl transition shadow-xs"
+                  >
+                    View All Plans
+                  </Link>
+                </>
+              ) : isPro ? (
                 <>
                   <Link
                     href="/pricing"
@@ -269,6 +310,36 @@ export default function BillingPage() {
               )}
             </div>
           </div>
+
+          {isStudentPass && (
+            <div className="mt-6 pt-6 border-t border-slate-100">
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-orange-50/90 via-amber-50/50 to-orange-50/40 border border-orange-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3.5">
+                  <span className="w-10 h-10 rounded-xl bg-orange-100 text-[#ea580c] flex items-center justify-center font-bold text-lg shrink-0 border border-orange-200 shadow-xs">
+                    🎓
+                  </span>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-bold text-slate-900">
+                        Marwadi University Student Benefit Active
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-200/80 text-orange-900 uppercase tracking-wide">
+                        100% OFF • 1 Year Free
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-2xl">
+                      Your account is verified under the <strong>Marwadi University Student Special Offer</strong>. You have 500 High-Speed AI credits/month, 100MB file limits, and batch tools enabled with zero fees until <strong>{renewalDate}</strong>.
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="text-xs font-mono font-semibold text-orange-800 bg-orange-100/80 px-2.5 py-1 rounded-lg border border-orange-200">
+                    MARWADI-PASS
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ─────────────────────────────────────────────────────────────
