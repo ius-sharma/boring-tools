@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
           discountType: coupon.discountType,
           allowedDomains: coupon.allowedDomains,
         },
-        message: "Please continue with your Marwadi University mail to claim this coupon.",
+        message: "Please continue with your student mail to claim this coupon.",
       });
     }
 
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
           isWrongDomain: true,
           currentEmail: userEmail,
           allowedDomains: coupon.allowedDomains,
-          error: `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${userEmail}). Please continue with your Marwadi University mail.`,
+          error: `This coupon is exclusively for students (Student Pack). You are currently signed in with a normal Gmail account (${userEmail}). Please continue with your student mail.`,
         },
         { status: 403 }
       );
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
         allowedDomains: coupon.allowedDomains,
         allowedPlans: coupon.allowedPlans,
       },
-      message: `Verified! You are eligible for 100% OFF on Boring Tools Annual Pro via your Marwadi University student account.`,
+      message: `Verified! You are eligible for 100% OFF on Boring Tools Annual Pro via your Student Pack.`,
     });
   } catch (error: any) {
     console.error("Coupon validation error:", error);

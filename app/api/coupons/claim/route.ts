@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: "Authentication required",
-          message: "Please sign in with your Marwadi University Google account to claim your student pass.",
+          message: "Please sign in with your student Google account to claim your Student Pack.",
         },
         { status: 401 }
       );
@@ -44,13 +44,13 @@ export async function POST(req: NextRequest) {
 
     const userEmail = user.email || "";
 
-    // 1. Strict Marwadi University domain check
+    // 1. Strict student domain check
     const isDomainAllowed = isEmailDomainAllowed(userEmail, coupon.allowedDomains);
     if (!isDomainAllowed) {
       return NextResponse.json(
         {
           error: "Domain Restriction",
-          message: `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${userEmail}). Please continue with your Marwadi University mail.`,
+          message: `This coupon is exclusively for students (Student Pack). You are currently signed in with a normal Gmail account (${userEmail}). Please continue with your student mail.`,
         },
         { status: 403 }
       );
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `🎉 Congratulations! Your 1-Year Free Student Pro plan is now active. 500 High-Speed AI credits have been added to your account!`,
+      message: `🎉 Congratulations! Your 1-Year Free Student Pack (Pro) is now active. 500 High-Speed AI credits have been added to your account!`,
       planTier,
       creditsBalance: allocatedCredits,
       periodEnd,
