@@ -4,15 +4,184 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "../components/AuthProvider";
 import { useRazorpayCheckout } from "../../lib/payments/useRazorpay";
+import { dispatchPaymentSuccess } from "../components/PaymentSuccessModal";
+import { showToast } from "../components/ToastNotification";
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("annual");
-  const { user, openAuthModal, credits, subscription } = useAuth();
+  const { user, openAuthModal, credits, subscription, refreshUser, loginWithGoogle } = useAuth();
   const { initiateCheckout, isProcessing } = useRazorpayCheckout();
   const [customCredits, setCustomCredits] = useState<number>(50);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+
+  // Checkout Modal & Coupon State
+  const [checkoutModalPlan, setCheckoutModalPlan] = useState<"starter" | "pro" | null>(null);
+  const [checkoutBillingCycle, setCheckoutBillingCycle] = useState<"monthly" | "annual">("annual");
+  const [couponInput, setCouponInput] = useState("");
+  const [isCheckingCoupon, setIsCheckingCoupon] = useState(false);
+  const [isClaimingCoupon, setIsClaimingCoupon] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    description: string;
+    discountValue: number;
+    allowedDomains: string[];
+  } | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
+
+  const openCheckoutModal = (plan: "starter" | "pro") => {
+    setCheckoutModalPlan(plan);
+    setCheckoutBillingCycle(billingCycle);
+    setCouponError(null);
+    setCouponSuccess(null);
+    setCouponInput("");
+    setAppliedCoupon(null);
+  };
+
+  const closeCheckoutModal = () => {
+    setCheckoutModalPlan(null);
+    setCouponError(null);
+    setCouponSuccess(null);
+    setAppliedCoupon(null);
+    setCouponInput("");
+  };
+
+  // Apply Coupon Validation
+  const handleApplyCoupon = async (
+    e?: React.FormEvent,
+    overridePlan?: "starter" | "pro",
+    overrideCycle?: "monthly" | "annual",
+    overrideCode?: string
+  ) => {
+    if (e) e.preventDefault();
+    const cleanCode = (overrideCode || couponInput).trim().toUpperCase();
+    if (!cleanCode) {
+      setCouponError("Please enter a coupon code.");
+      return;
+    }
+
+    const planToCheck = overridePlan || checkoutModalPlan || "pro";
+    const cycleToCheck = overrideCycle || checkoutBillingCycle || billingCycle;
+
+    setIsCheckingCoupon(true);
+    setCouponError(null);
+    setCouponSuccess(null);
+
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: cleanCode,
+          plan: planToCheck,
+          billingCycle: cycleToCheck,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.valid) {
+        if (data.wrongPlan) {
+          setCouponError(
+            data.error || "This coupon is valid exclusively for the Pro Annual Plan."
+          );
+        } else if (data.isWrongDomain) {
+          setCouponError(
+            `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${data.currentEmail}). Please continue with your Marwadi University mail.`
+          );
+        } else {
+          setCouponError(data.error || "Invalid coupon code.");
+        }
+        setAppliedCoupon(null);
+        return;
+      }
+
+      setAppliedCoupon({
+        code: data.coupon.code,
+        description: data.coupon.description,
+        discountValue: data.coupon.discountValue,
+        allowedDomains: data.coupon.allowedDomains || ["marwadiuniversity.ac.in"],
+      });
+
+      if (data.requiresLogin) {
+        setCouponSuccess(
+          `Coupon ${data.coupon.code} recognized! Please continue with your Marwadi University mail to activate.`
+        );
+      } else {
+        setCouponSuccess(`✓ ${data.coupon.code} applied! 100% Student Discount on Annual Pro.`);
+      }
+    } catch (err: any) {
+      setCouponError(err.message || "Failed to validate coupon.");
+    } finally {
+      setIsCheckingCoupon(false);
+    }
+  };
+
+  const handleSwitchToProAnnualAndApply = async () => {
+    setCheckoutModalPlan("pro");
+    setCheckoutBillingCycle("annual");
+    await handleApplyCoupon(undefined, "pro", "annual", couponInput);
+  };
+
+  // Claim Free Student Pro Pass
+  const handleClaimFreePass = async () => {
+    if (!user) {
+      openAuthModal(
+        "Please continue with your Marwadi University mail to claim your 1-year pass."
+      );
+      return;
+    }
+
+    const email = user.email?.toLowerCase() || "";
+    if (!email.endsWith("@marwadiuniversity.ac.in")) {
+      setCouponError(
+        `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${user.email}). Please continue with your Marwadi University mail.`
+      );
+      return;
+    }
+
+    setIsClaimingCoupon(true);
+    setCouponError(null);
+
+    try {
+      const code = appliedCoupon?.code || couponInput.trim() || "MARWADI100";
+      const res = await fetch("/api/coupons/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || data.error || "Failed to activate student pass.");
+      }
+
+      showToast("🎉 Marwadi University 1-Year Free Pro pass activated!", "success");
+      dispatchPaymentSuccess({
+        planTier: "pro_yearly",
+        planName: "Boring Tools Pro (Marwadi University 1-Year Pass)",
+        creditsAdded: 500,
+        amount: "₹0.00 (100% Student Discount)",
+        orderId: `MU-PASS-${Date.now().toString().slice(-6)}`,
+        paymentId: `student_${user.id.slice(0, 8)}`,
+        userName: user.fullName || user.email.split("@")[0],
+        userEmail: user.email,
+        message:
+          "Congratulations! Your 1-Year Free Student Pro pass is now active. 500 High-Speed AI credits have been added to your account.",
+      });
+
+      await refreshUser();
+      closeCheckoutModal();
+    } catch (err: any) {
+      setCouponError(err.message || "Could not activate student pass.");
+      showToast(err.message || "Activation failed", "error");
+    } finally {
+      setIsClaimingCoupon(false);
+    }
+  };
 
   // Monitor scroll position to show sticky comparison sub-header ONLY while viewing the comparison table
   useEffect(() => {
@@ -32,6 +201,34 @@ export default function PricingPage() {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const getModalPricing = () => {
+    const isAnnual = checkoutBillingCycle === "annual";
+    const isPro = checkoutModalPlan === "pro";
+
+    const monthlyPrice = isPro ? (isAnnual ? 249 : 299) : isAnnual ? 199 : 249;
+    const rawTotalAmount = isAnnual ? monthlyPrice * 12 : monthlyPrice;
+
+    // Check if 100% coupon applied for Pro Annual with Marwadi email
+    const isFree = Boolean(
+      appliedCoupon &&
+        appliedCoupon.discountValue === 100 &&
+        isPro &&
+        isAnnual &&
+        user?.email?.toLowerCase().endsWith("@marwadiuniversity.ac.in")
+    );
+
+    const finalAmount = isFree ? 0 : rawTotalAmount;
+
+    return {
+      isAnnual,
+      isPro,
+      monthlyPrice,
+      rawTotalAmount,
+      isFree,
+      finalAmount,
+    };
+  };
 
   const handleAction = async (planKey: string) => {
     if (planKey === "free") {
@@ -56,13 +253,10 @@ export default function PricingPage() {
       return;
     }
 
-    if (planKey === "starter") {
-      await initiateCheckout({ plan: "starter", billingCycle });
+    if (planKey === "starter" || planKey === "pro") {
+      openCheckoutModal(planKey);
       return;
     }
-
-    // Pro plan
-    await initiateCheckout({ plan: "pro", billingCycle });
   };
 
   // Reusable Single-Family Icons (Grayscale + Single Accent Checkmark)
@@ -321,7 +515,7 @@ export default function PricingPage() {
                 type="button"
                 onClick={() => handleAction("pro")}
                 disabled={isProcessing !== null || credits.isPro}
-                className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl transition shadow-sm disabled:opacity-75 ${
+                className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl transition shadow-sm disabled:opacity-75 cursor-pointer ${
                   credits.isPro
                     ? "bg-slate-100 text-slate-500 border border-slate-200 cursor-default"
                     : "bg-[#ea580c] hover:bg-[#c2410c] text-white active:scale-[0.99]"
@@ -766,6 +960,303 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          SUBSCRIPTION CHECKOUT & COUPON MODAL
+      ───────────────────────────────────────────────────────────── */}
+      {checkoutModalPlan && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in"
+          onClick={closeCheckoutModal}
+        >
+          <div
+            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header with Title and Close Button */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/60">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-orange-100 text-[#ea580c] flex items-center justify-center font-bold text-lg shadow-inner">
+                  {checkoutModalPlan === "pro" ? "⚡" : "✨"}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {checkoutModalPlan === "pro" ? "Boring Tools Pro" : "Boring Tools Starter"}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {checkoutModalPlan === "pro"
+                      ? "500 AI credits/mo • 100MB limits • Priority servers"
+                      : "100 AI credits/mo • 25MB limits • 100% ad-free"}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={closeCheckoutModal}
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              {/* Billing Cycle Switcher inside modal */}
+              <div className="flex items-center justify-between bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCheckoutBillingCycle("monthly");
+                    setCouponError(null);
+                    setCouponSuccess(null);
+                  }}
+                  className={`flex-1 py-2 rounded-lg transition text-center cursor-pointer ${
+                    checkoutBillingCycle === "monthly"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
+                  }`}
+                >
+                  Monthly billing
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCheckoutBillingCycle("annual");
+                    setCouponError(null);
+                    setCouponSuccess(null);
+                  }}
+                  className={`flex-1 py-2 rounded-lg transition text-center flex items-center justify-center gap-1.5 cursor-pointer ${
+                    checkoutBillingCycle === "annual"
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
+                  }`}
+                >
+                  <span>Annual billing</span>
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold bg-orange-100 text-[#ea580c] rounded">
+                    Save 20%
+                  </span>
+                </button>
+              </div>
+
+              {/* Order Summary & Pricing Calculation */}
+              {(() => {
+                const pricing = getModalPricing();
+                return (
+                  <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-2.5">
+                    <div className="flex justify-between items-center text-xs text-slate-600">
+                      <span>Plan & Term</span>
+                      <span className="font-semibold text-slate-900">
+                        {checkoutModalPlan === "pro" ? "Pro" : "Starter"} ({pricing.isAnnual ? "Annual" : "Monthly"})
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-xs text-slate-600">
+                      <span>Standard Rate</span>
+                      <span>
+                        {pricing.isAnnual
+                          ? `₹${pricing.monthlyPrice}/mo (₹${pricing.rawTotalAmount}/yr)`
+                          : `₹${pricing.monthlyPrice}/mo`}
+                      </span>
+                    </div>
+
+                    {appliedCoupon && (
+                      <div className="flex justify-between items-center text-xs text-emerald-700 font-semibold pt-1 border-t border-slate-200">
+                        <span className="flex items-center gap-1">
+                          <span>✓ Coupon:</span>
+                          <span className="font-mono bg-emerald-100 px-1 py-0.5 rounded text-[11px] text-emerald-800">
+                            {appliedCoupon.code}
+                          </span>
+                        </span>
+                        <span>-100% OFF</span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-200 text-sm font-bold text-slate-900">
+                      <span>Total Due Today</span>
+                      <div className="text-right">
+                        {pricing.isFree ? (
+                          <div className="flex items-baseline gap-1.5">
+                            <span className="text-xs text-slate-400 line-through">
+                              ₹{pricing.rawTotalAmount}
+                            </span>
+                            <span className="text-lg text-[#ea580c] font-extrabold">₹0</span>
+                          </div>
+                        ) : (
+                          <span className="text-lg font-extrabold">₹{pricing.finalAmount}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Universal Coupon Code Input */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-slate-700">
+                    Have a coupon code?
+                  </label>
+                  {appliedCoupon && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAppliedCoupon(null);
+                        setCouponSuccess(null);
+                        setCouponError(null);
+                        setCouponInput("");
+                      }}
+                      className="text-[11px] text-red-600 hover:text-red-700 underline font-medium cursor-pointer"
+                    >
+                      Remove coupon
+                    </button>
+                  )}
+                </div>
+
+                {!appliedCoupon ? (
+                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value.toUpperCase());
+                        setCouponError(null);
+                      }}
+                      placeholder="Enter coupon code"
+                      className="flex-1 px-3.5 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-[#ea580c] font-mono uppercase tracking-wider text-slate-900"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isCheckingCoupon || !couponInput.trim()}
+                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-semibold rounded-xl transition shadow-xs whitespace-nowrap active:scale-[0.99] cursor-pointer"
+                    >
+                      {isCheckingCoupon ? "Verifying..." : "Apply"}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-emerald-600">✓</span>
+                      <div>
+                        <span className="font-semibold">Code {appliedCoupon.code} active: </span>
+                        <span>{appliedCoupon.description}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Coupon Validation Error Feedback */}
+                {couponError && (
+                  <div className="mt-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 flex flex-col gap-1.5">
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold">⚠️</span>
+                      <span className="flex-1">{couponError}</span>
+                    </div>
+
+                    {/* Quick action: Switch to Pro Annual if wrong plan */}
+                    {(couponError.includes("Pro Annual") || couponError.includes("Annual")) &&
+                      (checkoutModalPlan !== "pro" || checkoutBillingCycle !== "annual") && (
+                        <div className="mt-1 pt-1.5 border-t border-red-200/80">
+                          <button
+                            type="button"
+                            onClick={handleSwitchToProAnnualAndApply}
+                            className="inline-flex items-center gap-1.5 font-bold text-orange-700 bg-orange-100 hover:bg-orange-200 px-2.5 py-1 rounded-lg transition cursor-pointer text-xs"
+                          >
+                            <span>Switch to Pro Annual (Yearly) & Apply &rarr;</span>
+                          </button>
+                        </div>
+                      )}
+
+                    {/* Quick action: Continue with your Marwadi University mail */}
+                    {couponError.includes("Marwadi University students") && (
+                      <div className="mt-1 pt-1.5 border-t border-red-200/80">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            closeCheckoutModal();
+                            loginWithGoogle();
+                          }}
+                          className="inline-flex items-center gap-1.5 font-bold text-orange-700 bg-orange-100 hover:bg-orange-200 px-2.5 py-1 rounded-lg transition cursor-pointer text-xs"
+                        >
+                          <span>Continue with your Marwadi University mail &rarr;</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Coupon Success prompt */}
+                {couponSuccess && !couponError && (
+                  <div className="mt-2 text-xs text-emerald-700 font-medium">
+                    {couponSuccess}
+                    {!user && (
+                      <div className="mt-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            closeCheckoutModal();
+                            openAuthModal("Please continue with your Marwadi University mail to activate.");
+                          }}
+                          className="font-bold text-[#ea580c] underline hover:text-[#c2410c] cursor-pointer"
+                        >
+                          Continue with your Marwadi University mail &rarr;
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2">
+                {(() => {
+                  const pricing = getModalPricing();
+                  if (pricing.isFree) {
+                    return (
+                      <button
+                        type="button"
+                        onClick={handleClaimFreePass}
+                        disabled={isClaimingCoupon}
+                        className="w-full py-3 px-4 bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-bold rounded-xl transition shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-75 flex items-center justify-center gap-2"
+                      >
+                        {isClaimingCoupon ? (
+                          "Activating Student Pass..."
+                        ) : (
+                          <>
+                            <span>🎓</span>
+                            <span>Claim 1-Year Free Pro Pass</span>
+                          </>
+                        )}
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const plan = checkoutModalPlan!;
+                        const cycle = checkoutBillingCycle;
+                        closeCheckoutModal();
+                        await initiateCheckout({ plan, billingCycle: cycle });
+                      }}
+                      disabled={isProcessing !== null}
+                      className="w-full py-3 px-4 bg-[#ea580c] hover:bg-[#c2410c] text-white text-sm font-bold rounded-xl transition shadow-md active:scale-[0.99] cursor-pointer disabled:opacity-75"
+                    >
+                      {isProcessing ? "Processing..." : `Proceed to Payment • ₹${pricing.finalAmount}`}
+                    </button>
+                  );
+                })()}
+
+                <p className="text-[11px] text-slate-400 text-center mt-2.5">
+                  {appliedCoupon && appliedCoupon.discountValue === 100
+                    ? "✓ No credit card or payment required • Instant activation"
+                    : "🔒 Secure 256-bit encrypted checkout via Razorpay • Cancel anytime"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
