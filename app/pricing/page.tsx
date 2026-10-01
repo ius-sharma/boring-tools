@@ -89,7 +89,7 @@ export default function PricingPage() {
           );
         } else if (data.isWrongDomain) {
           setCouponError(
-            `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${data.currentEmail}). Please continue with your Marwadi University mail.`
+            `This coupon is exclusively for students (Student Pack). You are currently signed in with a normal Gmail account (${data.currentEmail}). Please continue with your student mail.`
           );
         } else {
           setCouponError(data.error || "Invalid coupon code.");
@@ -107,10 +107,10 @@ export default function PricingPage() {
 
       if (data.requiresLogin) {
         setCouponSuccess(
-          `Coupon ${data.coupon.code} recognized! Please continue with your Marwadi University mail to activate.`
+          `Coupon ${data.coupon.code} recognized! Please continue with your student mail to activate.`
         );
       } else {
-        setCouponSuccess(`✓ ${data.coupon.code} applied! 100% Student Discount on Annual Pro.`);
+        setCouponSuccess(`✓ ${data.coupon.code} applied! 100% Student Pack Discount on Annual Pro.`);
       }
     } catch (err: any) {
       setCouponError(err.message || "Failed to validate coupon.");
@@ -129,7 +129,7 @@ export default function PricingPage() {
   const handleClaimFreePass = async () => {
     if (!user) {
       openAuthModal(
-        "Please continue with your Marwadi University mail to claim your 1-year pass."
+        "Please continue with your student mail to claim your 1-year Student Pack."
       );
       return;
     }
@@ -137,7 +137,7 @@ export default function PricingPage() {
     const email = user.email?.toLowerCase() || "";
     if (!email.endsWith("@marwadiuniversity.ac.in")) {
       setCouponError(
-        `This coupon is exclusively for Marwadi University students. You are currently signed in with a normal Gmail account (${user.email}). Please continue with your Marwadi University mail.`
+        `This coupon is exclusively for students (Student Pack). You are currently signed in with a normal Gmail account (${user.email}). Please continue with your student mail.`
       );
       return;
     }
@@ -159,18 +159,18 @@ export default function PricingPage() {
         throw new Error(data.message || data.error || "Failed to activate student pass.");
       }
 
-      showToast("🎉 Marwadi University 1-Year Free Pro pass activated!", "success");
+      showToast("🎉 Student Pack (1-Year Free Pro) activated!", "success");
       dispatchPaymentSuccess({
         planTier: "pro_yearly",
-        planName: "Boring Tools Pro (Marwadi University 1-Year Pass)",
+        planName: "Boring Tools Pro (Student Pack - 1-Year)",
         creditsAdded: 500,
         amount: "₹0.00 (100% Student Discount)",
-        orderId: `MU-PASS-${Date.now().toString().slice(-6)}`,
+        orderId: `STUDENT-PACK-${Date.now().toString().slice(-6)}`,
         paymentId: `student_${user.id.slice(0, 8)}`,
         userName: user.fullName || user.email.split("@")[0],
         userEmail: user.email,
         message:
-          "Congratulations! Your 1-Year Free Student Pro pass is now active. 500 High-Speed AI credits have been added to your account.",
+          "Congratulations! Your 1-Year Free Student Pack is now active. 500 High-Speed AI credits have been added to your account.",
       });
 
       await refreshUser();
@@ -1166,8 +1166,8 @@ export default function PricingPage() {
                         </div>
                       )}
 
-                    {/* Quick action: Continue with your Marwadi University mail */}
-                    {couponError.includes("Marwadi University students") && (
+                    {/* Quick action: Continue with your student mail */}
+                    {couponError.includes("Student Pack") && (
                       <div className="mt-1 pt-1.5 border-t border-red-200/80">
                         <button
                           type="button"
@@ -1177,7 +1177,7 @@ export default function PricingPage() {
                           }}
                           className="inline-flex items-center gap-1.5 font-bold text-orange-700 bg-orange-100 hover:bg-orange-200 px-2.5 py-1 rounded-lg transition cursor-pointer text-xs"
                         >
-                          <span>Continue with your Marwadi University mail &rarr;</span>
+                          <span>Continue with your student mail &rarr;</span>
                         </button>
                       </div>
                     )}
@@ -1194,11 +1194,11 @@ export default function PricingPage() {
                           type="button"
                           onClick={() => {
                             closeCheckoutModal();
-                            openAuthModal("Please continue with your Marwadi University mail to activate.");
+                            openAuthModal("Please continue with your student mail to activate.");
                           }}
                           className="font-bold text-[#ea580c] underline hover:text-[#c2410c] cursor-pointer"
                         >
-                          Continue with your Marwadi University mail &rarr;
+                          Continue with your student mail &rarr;
                         </button>
                       </div>
                     )}

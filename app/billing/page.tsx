@@ -153,7 +153,7 @@ export default function BillingPage() {
   );
 
   const planName = isStudentPass
-    ? "Boring Tools Pro (Marwadi University Student Pass)"
+    ? "Boring Tools Pro (Student Pack)"
     : subscription?.planTier === "pro_yearly"
     ? "Boring Tools Pro (Yearly)"
     : subscription?.planTier === "starter_yearly"
@@ -235,7 +235,7 @@ export default function BillingPage() {
                       <span className="text-[#ea580c] font-bold">₹0 Free (100% Student Grant)</span>
                     </p>
                     <p>
-                      <strong>Offer:</strong> 🎓 Marwadi University 1-Year Annual Pro Student Pass
+                      <strong>Offer:</strong> 🎓 1-Year Annual Pro Student Pack
                     </p>
                     {renewalDate && (
                       <p className="text-slate-500">
@@ -321,20 +321,20 @@ export default function BillingPage() {
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-bold text-slate-900">
-                        Marwadi University Student Benefit Active
+                        Student Pack Benefit Active
                       </span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-200/80 text-orange-900 uppercase tracking-wide">
                         100% OFF • 1 Year Free
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 mt-1 leading-relaxed max-w-2xl">
-                      Your account is verified under the <strong>Marwadi University Student Special Offer</strong>. You have 500 High-Speed AI credits/month, 100MB file limits, and batch tools enabled with zero fees until <strong>{renewalDate}</strong>.
+                      Your account is verified under the <strong>Student Pack Special Offer</strong>. You have 500 High-Speed AI credits/month, 100MB file limits, and batch tools enabled with zero fees until <strong>{renewalDate}</strong>.
                     </p>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
                   <span className="text-xs font-mono font-semibold text-orange-800 bg-orange-100/80 px-2.5 py-1 rounded-lg border border-orange-200">
-                    MARWADI-PASS
+                    STUDENT-PACK
                   </span>
                 </div>
               </div>
