@@ -107,8 +107,8 @@ export async function GET(req: NextRequest) {
       if (red || sub.price_id?.includes("marwadi") || sub.subscription_id?.includes("student")) {
         isStudentPass = true;
         studentPassInfo = {
-          institution: "Marwadi University",
-          couponCode: red?.coupon_code || "MARWADI100",
+          institution: "Student Pack",
+          couponCode: red?.coupon_code || "STUDENT-PACK",
           discount: "100% OFF (1-Year Free Pro)",
           redeemedAt: red?.redeemed_at || sub.updated_at || new Date().toISOString(),
         };

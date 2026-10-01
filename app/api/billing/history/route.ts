@@ -45,10 +45,10 @@ export async function GET(req: NextRequest) {
             day: "numeric",
             year: "numeric",
           }),
-          description: "Marwadi University Student Pass (1-Year Pro Free)",
+          description: "Student Pack (1-Year Pro Free)",
           amount: "₹0.00 (100% OFF)",
           status: "Redeemed",
-          orderId: `MU-${log.metadata?.couponCode || "STUDENT"}-${log.id.slice(0, 6).toUpperCase()}`,
+          orderId: `STUDENT-${log.metadata?.couponCode || "PACK"}-${log.id.slice(0, 6).toUpperCase()}`,
         };
       }
 
