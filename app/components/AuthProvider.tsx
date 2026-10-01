@@ -14,6 +14,14 @@ export interface SubscriptionState {
   planTier: "free" | "starter_monthly" | "starter_yearly" | "pro_monthly" | "pro_yearly" | string;
   status: string;
   currentPeriodEnd?: string;
+  priceId?: string;
+  isStudentPass?: boolean;
+  studentPass?: {
+    institution: string;
+    couponCode: string;
+    discount: string;
+    redeemedAt: string;
+  } | null;
 }
 
 export interface CreditsState {

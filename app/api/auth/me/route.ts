@@ -83,6 +83,38 @@ export async function GET(req: NextRequest) {
       }, { onConflict: "user_id" });
     }
 
+    // Check if user has an active student pass
+    let isStudentPass = false;
+    let studentPassInfo: {
+      institution: string;
+      couponCode: string;
+      discount: string;
+      redeemedAt: string;
+    } | null = null;
+
+    if (
+      sub &&
+      (sub.price_id?.includes("marwadi") ||
+        sub.subscription_id?.includes("student") ||
+        user.email?.toLowerCase().endsWith("@marwadiuniversity.ac.in"))
+    ) {
+      const { data: red } = await admin
+        .from("coupon_redemptions")
+        .select("coupon_code, redeemed_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (red || sub.price_id?.includes("marwadi") || sub.subscription_id?.includes("student")) {
+        isStudentPass = true;
+        studentPassInfo = {
+          institution: "Marwadi University",
+          couponCode: red?.coupon_code || "MARWADI100",
+          discount: "100% OFF (1-Year Free Pro)",
+          redeemedAt: red?.redeemed_at || sub.updated_at || new Date().toISOString(),
+        };
+      }
+    }
+
     return NextResponse.json({
       isLoggedIn: true,
       user: {
@@ -91,11 +123,21 @@ export async function GET(req: NextRequest) {
         fullName: profile?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0],
         avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url,
       },
-      subscription: sub ? {
-        planTier: sub.plan_tier,
-        status: sub.status,
-        currentPeriodEnd: sub.current_period_end,
-      } : { planTier: isPro ? "pro_monthly" : "free", status: isPro ? "active" : "active" },
+      subscription: sub
+        ? {
+            planTier: sub.plan_tier,
+            status: sub.status,
+            currentPeriodEnd: sub.current_period_end,
+            priceId: sub.price_id,
+            isStudentPass,
+            studentPass: studentPassInfo,
+          }
+        : {
+            planTier: isPro ? "pro_monthly" : "free",
+            status: isPro ? "active" : "active",
+            isStudentPass: false,
+            studentPass: null,
+          },
       credits: {
         creditsBalance: isPro ? balance : balance,
         bonusCredits: bonus,
