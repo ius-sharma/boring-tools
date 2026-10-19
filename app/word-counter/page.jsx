@@ -5,10 +5,16 @@ export default function WordCounter() {
   const [text, setText] = useState("");
 
   const getStats = () => {
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const trimmed = text.trim();
+    const words = trimmed ? trimmed.split(/\s+/).filter(Boolean).length : 0;
     const characters = text.length;
     const noSpaces = text.replace(/\s/g, "").length;
-    const sentences = text.split(/[.!?]+/).filter(Boolean).length;
+    const sentences = trimmed
+      ? text
+          .split(/[.!?]+/)
+          .map((s) => s.trim())
+          .filter(Boolean).length
+      : 0;
 
     return { words, characters, noSpaces, sentences };
   };
