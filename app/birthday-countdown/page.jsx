@@ -199,7 +199,7 @@ export default function BirthdayCountdownPage() {
     const currentAge = todayUtc.getTime() >= birthdayThisYear.getTime()
       ? currentYear - birthDate.getUTCFullYear()
       : currentYear - birthDate.getUTCFullYear() - 1;
-    const upcomingAge = hasBirthdayPassed ? currentAge + 1 : currentAge;
+    const upcomingAge = currentAge + 1;
     const birthdayProgressPercent = Math.max(0, Math.min(100, completedRatio * 100));
     const yearSpanDays = Math.round(totalCycleMs / DAY_MS);
     const dayOfYearPosition = dayOfYear(nextBirthdayDate);
