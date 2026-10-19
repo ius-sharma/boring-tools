@@ -83,38 +83,6 @@ export async function GET(req: NextRequest) {
       }, { onConflict: "user_id" });
     }
 
-    // Check if user has an active student pass
-    let isStudentPass = false;
-    let studentPassInfo: {
-      institution: string;
-      couponCode: string;
-      discount: string;
-      redeemedAt: string;
-    } | null = null;
-
-    if (
-      sub &&
-      (sub.price_id?.includes("marwadi") ||
-        sub.subscription_id?.includes("student") ||
-        user.email?.toLowerCase().endsWith("@marwadiuniversity.ac.in"))
-    ) {
-      const { data: red } = await admin
-        .from("coupon_redemptions")
-        .select("coupon_code, redeemed_at")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (red || sub.price_id?.includes("marwadi") || sub.subscription_id?.includes("student")) {
-        isStudentPass = true;
-        studentPassInfo = {
-          institution: "Student Pack",
-          couponCode: red?.coupon_code || "STUDENT-PACK",
-          discount: "100% OFF (1-Year Free Pro)",
-          redeemedAt: red?.redeemed_at || sub.updated_at || new Date().toISOString(),
-        };
-      }
-    }
-
     return NextResponse.json({
       isLoggedIn: true,
       user: {
@@ -129,8 +97,8 @@ export async function GET(req: NextRequest) {
             status: sub.status,
             currentPeriodEnd: sub.current_period_end,
             priceId: sub.price_id,
-            isStudentPass,
-            studentPass: studentPassInfo,
+            isStudentPass: false,
+            studentPass: null,
           }
         : {
             planTier: isPro ? "pro_monthly" : "free",
