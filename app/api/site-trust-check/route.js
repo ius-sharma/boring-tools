@@ -79,6 +79,10 @@ function normalizeUrl(rawUrl) {
     throw new Error("Local and private network addresses are not allowed");
   }
 
+  if (!parsed.hostname.includes(".") || parsed.hostname.startsWith(".") || parsed.hostname.endsWith(".")) {
+    throw new Error("Please enter a valid domain name with an extension (e.g. example.com)");
+  }
+
   return parsed;
 }
 
@@ -220,28 +224,34 @@ function levelFromScore(score) {
   return "risk";
 }
 
-function verdictFromScore(score) {
+function verdictFromScore(score, isUnreachable = false) {
+  if (isUnreachable) return "Unreachable or suspicious domain";
   if (score >= 75) return "Reasonably trustworthy";
   if (score >= 45) return "Use caution";
   return "High risk or insufficient trust signals";
 }
 
-function buildRecommendations(score, url, analysis) {
+function buildRecommendations(score, url, analysis, isUnreachable = false) {
   const recommendations = [];
 
-  if (score < 75) {
+  if (isUnreachable) {
+    recommendations.push("Verify that the domain spelling is correct and the website is currently online.");
+    recommendations.push("Do not attempt to send credentials or funds to an unreachable or unknown host.");
+  }
+
+  if (score < 75 && !isUnreachable) {
     recommendations.push("Check the domain carefully before entering passwords or payment details.");
   }
-  if (!url.hostname.startsWith("www.")) {
+  if (!url.hostname.startsWith("www.") && !isUnreachable) {
     recommendations.push("Confirm the exact brand domain matches the official source.");
   }
-  if (!analysis.description) {
+  if (!analysis.description && !isUnreachable) {
     recommendations.push("Look for a clear About, Contact, and Privacy Policy page.");
   }
   if (url.protocol === "http:") {
     recommendations.push("Avoid sending sensitive data over a non-HTTPS connection.");
   }
-  if (score < 45) {
+  if (score < 45 && !isUnreachable) {
     recommendations.push("Search the domain name plus " + "scam" + " or " + "review" + " before trusting it.");
   }
 
@@ -272,6 +282,8 @@ async function handlePost(request) {
     let finalUrl = parsedUrl.toString();
     let html = "";
     let headers = new Headers();
+
+    let isUnreachable = false;
 
     try {
       const response = await fetchWithTimeout(parsedUrl.toString(), {
@@ -307,9 +319,10 @@ async function handlePost(request) {
         signals.push(mode === "quick" ? "Quick scan used HEAD only for speed." : "Content type was not HTML, so page text analysis was skipped.");
       }
     } catch (fetchError) {
-      signals.push("Could not fetch the page directly, so this score is based on the URL alone.");
-      signals.push(fetchError instanceof Error ? fetchError.message : "Fetch failed.");
-      score -= 8;
+      isUnreachable = true;
+      signals.push("Could not connect to the server (domain may be offline, non-existent, or blocking requests).");
+      signals.push("No security headers or content could be verified.");
+      score = Math.min(score - 70, 25);
     }
 
     if (context) {
@@ -324,14 +337,14 @@ async function handlePost(request) {
 
     score = Math.max(0, Math.min(100, Math.round(score)));
     const level = levelFromScore(score);
-    const verdict = verdictFromScore(score);
-    const recommendations = buildRecommendations(score, parsedUrl, { description: html ? extractMeta(html, /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i) : "" });
+    const verdict = verdictFromScore(score, isUnreachable);
+    const recommendations = buildRecommendations(score, parsedUrl, { description: html ? extractMeta(html, /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["'][^>]*>/i) : "" }, isUnreachable);
 
     return Response.json({
       verdict,
       score,
       level,
-      summary: `${verdict}. ${level === "safe" ? "The site shows multiple trust signals." : level === "caution" ? "There are mixed signals, so verify before sharing anything sensitive." : "There are enough warning signs to treat this as suspicious until proven otherwise."}`,
+      summary: `${verdict}. ${isUnreachable ? "The website could not be contacted directly. Proceed with high caution." : level === "safe" ? "The site shows multiple trust signals." : level === "caution" ? "There are mixed signals, so verify before sharing anything sensitive." : "There are enough warning signs to treat this as suspicious until proven otherwise."}`,
       signals: Array.from(new Set(signals)).slice(0, 10),
       recommendations,
       details: {
