@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = process.env.GROQ_MODEL || "qwen/qwen3.8-27b";
 const DEFAULT_TIMEOUT_MS = 10000;
 
 function normalize(input) {
@@ -383,6 +383,10 @@ async function handlePost(request) {
         },
         { status: 502 }
       );
+    }
+
+    if (parsed.confidenceScore > 0 && parsed.confidenceScore <= 1) {
+      parsed.confidenceScore = Math.round(parsed.confidenceScore * 100);
     }
 
     // Combine manual score adjusts with the AI's confidence
