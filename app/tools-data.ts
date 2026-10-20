@@ -196,11 +196,11 @@ const rawTools: Tool[] = [
     name: "PDF Merger",
     href: "/pdf-merger",
     category: "Documents",
-    description: "Combine multiple PDF documents into a single organized file with reordering and page selection — 100% locally in your browser.",
+    description: "Combine multiple PDF documents or delete unwanted pages visually — 100% locally in your browser.",
     status: "Live",
     isNew: true,
     isFeatured: true,
-    seoTitle: "Free PDF Merger Online — Combine PDF Files in Browser | BoringTools",
+    seoTitle: "Free PDF Merger & Page Remover Online — Combine PDF Files & Delete Pages | BoringTools",
     seoDescription: "Merge and combine multiple PDF documents into one single file offline in your browser. No file size limits, zero server uploads, 100% private.",
     keywords: ["pdf merger", "merge pdf online free", "combine pdf files", "merge pdf without upload", "client side pdf merger"],
     relatedToolIds: ["doc-to-pdf-converter", "image-to-pdf-converter", "pdf-intelligence-tool", "document-data-extractor"]

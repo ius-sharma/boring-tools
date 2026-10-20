@@ -16,15 +16,15 @@ async function loadPdfJs() {
   return pdfjsLib;
 }
 
-async function renderPdfThumbnail(arrayBuffer) {
+async function renderPdfThumbnail(arrayBuffer, pageNumber = 1, scale = 0.45) {
   try {
     const pdfjsLib = await loadPdfJs();
     const loadingTask = pdfjsLib.getDocument({
       data: new Uint8Array(arrayBuffer.slice(0)),
     });
     const pdf = await loadingTask.promise;
-    const page = await pdf.getPage(1);
-    const viewport = page.getViewport({ scale: 0.6 });
+    const page = await pdf.getPage(pageNumber);
+    const viewport = page.getViewport({ scale });
     const canvas = document.createElement("canvas");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
@@ -34,7 +34,7 @@ async function renderPdfThumbnail(arrayBuffer) {
       return canvas.toDataURL("image/jpeg", 0.8);
     }
   } catch (err) {
-    console.warn("Could not render page preview:", err);
+    console.warn(`Could not render thumbnail for page ${pageNumber}:`, err);
   }
   return null;
 }
@@ -52,12 +52,16 @@ function formatBytes(bytes) {
 }
 
 function getBaseName(fileName) {
-  return String(fileName || "merged-document").replace(/\.[^.]+$/, "");
+  return String(fileName || "document").replace(/\.[^.]+$/, "");
 }
 
+// Convert range string (e.g. "1-3, 5" or "all") to 0-indexed page indices array
 function parsePageRanges(rangeStr, totalPages) {
   if (!rangeStr || rangeStr.trim().toLowerCase() === "all" || rangeStr.trim() === "") {
     return Array.from({ length: totalPages }, (_, i) => i);
+  }
+  if (rangeStr.trim().toLowerCase() === "none") {
+    return [];
   }
   const pages = new Set();
   const parts = rangeStr.split(",");
@@ -80,14 +84,38 @@ function parsePageRanges(rangeStr, totalPages) {
       }
     }
   }
-  const result = Array.from(pages).sort((a, b) => a - b);
-  return result.length > 0 ? result : Array.from({ length: totalPages }, (_, i) => i);
+  return Array.from(pages).sort((a, b) => a - b);
+}
+
+// Convert 1-indexed list of kept pages into a clean range string (e.g. "1-3, 5-8")
+function pageListToRangeString(includedPages, totalPages) {
+  if (!includedPages || includedPages.length === 0) return "none";
+  if (includedPages.length === totalPages) return "all";
+
+  const sorted = [...includedPages].sort((a, b) => a - b);
+  const ranges = [];
+  let start = sorted[0];
+  let prev = sorted[0];
+
+  for (let i = 1; i < sorted.length; i++) {
+    const curr = sorted[i];
+    if (curr === prev + 1) {
+      prev = curr;
+    } else {
+      ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+      start = curr;
+      prev = curr;
+    }
+  }
+  ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+  return ranges.join(", ");
 }
 
 export default function PdfMerger() {
   const fileInputRef = useRef(null);
   const additionalFileInputRef = useRef(null);
   const downloadUrlRef = useRef("");
+  const renderingSessionRef = useRef(0);
 
   const [files, setFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -99,7 +127,10 @@ export default function PdfMerger() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [downloadName, setDownloadName] = useState("");
   const [mergedStats, setMergedStats] = useState({ totalPages: 0, totalSize: 0 });
-  const [glanceModalEntry, setGlanceModalEntry] = useState(null);
+
+  // Managing Pages Modal State
+  const [managingEntryId, setManagingEntryId] = useState(null);
+  const [quickExcludeInput, setQuickExcludeInput] = useState("");
 
   useEffect(() => {
     downloadUrlRef.current = downloadUrl;
@@ -118,10 +149,17 @@ export default function PdfMerger() {
     [files]
   );
 
-  const totalPagesCount = useMemo(
+  const totalOriginalPages = useMemo(
     () => files.reduce((sum, entry) => sum + (entry.pageCount || 0), 0),
     [files]
   );
+
+  const totalKeptPages = useMemo(() => {
+    return files.reduce((sum, entry) => {
+      const kept = parsePageRanges(entry.pageRange, entry.pageCount || 0);
+      return sum + kept.length;
+    }, 0);
+  }, [files]);
 
   const loadPdfMetadata = async (file) => {
     try {
@@ -129,10 +167,10 @@ export default function PdfMerger() {
       const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
       const pageCount = pdfDoc.getPageCount();
 
-      // Render 1st-page thumbnail asynchronously for minimal glance
+      // Render 1st-page thumbnail asynchronously for glance
       let thumbnailUrl = null;
       try {
-        thumbnailUrl = await renderPdfThumbnail(arrayBuffer);
+        thumbnailUrl = await renderPdfThumbnail(arrayBuffer, 1, 0.45);
       } catch {
         thumbnailUrl = null;
       }
@@ -163,7 +201,7 @@ export default function PdfMerger() {
 
     setIsLoadingPages(true);
     setError("");
-    setStatus(`Reading & generating glance previews for ${validFiles.length} PDF${validFiles.length === 1 ? "" : "s"}...`);
+    setStatus(`Reading & preparing ${validFiles.length} PDF${validFiles.length === 1 ? "" : "s"}...`);
 
     try {
       const newEntries = await Promise.all(
@@ -175,6 +213,8 @@ export default function PdfMerger() {
             pageCount: meta.pageCount,
             arrayBuffer: meta.arrayBuffer,
             thumbnailUrl: meta.thumbnailUrl,
+            pageThumbnails: meta.thumbnailUrl ? { 1: meta.thumbnailUrl } : {},
+            excludedPages: [],
             pageRange: "all",
           };
         })
@@ -184,13 +224,14 @@ export default function PdfMerger() {
         const combined = isAppend ? [...prev, ...newEntries] : newEntries;
         if (!customOutputName && combined.length > 0) {
           const firstBase = getBaseName(combined[0].file.name);
-          setCustomOutputName(`${firstBase}-merged.pdf`);
+          const suffix = combined.length === 1 ? "-cleaned.pdf" : "-merged.pdf";
+          setCustomOutputName(`${firstBase}${suffix}`);
         }
         return combined;
       });
 
       const totalCount = isAppend ? files.length + newEntries.length : newEntries.length;
-      setStatus(`${totalCount} PDF${totalCount === 1 ? "" : "s"} ready to merge`);
+      setStatus(`${totalCount} PDF${totalCount === 1 ? "" : "s"} ready`);
     } catch {
       setError("Could not parse some PDF files. Please ensure they are valid and not password-protected.");
     } finally {
@@ -227,6 +268,10 @@ export default function PdfMerger() {
 
   const removeFileAtIndex = (index) => {
     setFiles((prev) => {
+      const targetId = prev[index]?.id;
+      if (managingEntryId === targetId) {
+        setManagingEntryId(null);
+      }
       const next = prev.filter((_, i) => i !== index);
       if (next.length === 0) {
         clearAll();
@@ -235,12 +280,192 @@ export default function PdfMerger() {
     });
   };
 
+  // Keep manual text box and excludedPages in sync
   const updatePageRange = (index, range) => {
     setFiles((prev) => {
       const copy = [...prev];
-      copy[index] = { ...copy[index], pageRange: range };
+      const entry = copy[index];
+      const selectedIndices = parsePageRanges(range, entry.pageCount);
+      const selectedSet = new Set(selectedIndices.map((i) => i + 1));
+      const excluded = [];
+      for (let p = 1; p <= entry.pageCount; p++) {
+        if (!selectedSet.has(p)) {
+          excluded.push(p);
+        }
+      }
+      copy[index] = {
+        ...entry,
+        pageRange: range,
+        excludedPages: excluded,
+      };
       return copy;
     });
+  };
+
+  // Toggle page exclusion in Visual Organizer
+  const togglePageExclusion = (entryId, pageNum) => {
+    setFiles((prev) =>
+      prev.map((entry) => {
+        if (entry.id !== entryId) return entry;
+
+        const currentExcluded = new Set(entry.excludedPages || []);
+        if (currentExcluded.has(pageNum)) {
+          currentExcluded.delete(pageNum);
+        } else {
+          currentExcluded.add(pageNum);
+        }
+
+        const nextExcluded = Array.from(currentExcluded).sort((a, b) => a - b);
+        const included = [];
+        for (let i = 1; i <= entry.pageCount; i++) {
+          if (!currentExcluded.has(i)) {
+            included.push(i);
+          }
+        }
+        const nextRangeStr = pageListToRangeString(included, entry.pageCount);
+
+        return {
+          ...entry,
+          excludedPages: nextExcluded,
+          pageRange: nextRangeStr,
+        };
+      })
+    );
+  };
+
+  const includeAllPages = (entryId) => {
+    setFiles((prev) =>
+      prev.map((entry) => {
+        if (entry.id !== entryId) return entry;
+        return {
+          ...entry,
+          excludedPages: [],
+          pageRange: "all",
+        };
+      })
+    );
+  };
+
+  const invertSelection = (entryId) => {
+    setFiles((prev) =>
+      prev.map((entry) => {
+        if (entry.id !== entryId) return entry;
+        const currentExcluded = new Set(entry.excludedPages || []);
+        const nextExcluded = [];
+        const included = [];
+        for (let i = 1; i <= entry.pageCount; i++) {
+          if (currentExcluded.has(i)) {
+            included.push(i);
+          } else {
+            nextExcluded.push(i);
+          }
+        }
+        return {
+          ...entry,
+          excludedPages: nextExcluded,
+          pageRange: pageListToRangeString(included, entry.pageCount),
+        };
+      })
+    );
+  };
+
+  const excludeFromQuickInput = (entryId, inputStr) => {
+    if (!inputStr.trim()) return;
+    setFiles((prev) =>
+      prev.map((entry) => {
+        if (entry.id !== entryId) return entry;
+        const parsedToExclude = parsePageRanges(inputStr, entry.pageCount).map((idx) => idx + 1);
+        const currentExcluded = new Set(entry.excludedPages || []);
+        parsedToExclude.forEach((p) => currentExcluded.add(p));
+        const nextExcluded = Array.from(currentExcluded).sort((a, b) => a - b);
+
+        const included = [];
+        for (let i = 1; i <= entry.pageCount; i++) {
+          if (!currentExcluded.has(i)) {
+            included.push(i);
+          }
+        }
+        return {
+          ...entry,
+          excludedPages: nextExcluded,
+          pageRange: pageListToRangeString(included, entry.pageCount),
+        };
+      })
+    );
+    setQuickExcludeInput("");
+  };
+
+  // Progressively render all page thumbnails for the document currently opened in modal
+  const openPageManager = async (entryId) => {
+    const entry = files.find((f) => f.id === entryId);
+    if (!entry) return;
+
+    setManagingEntryId(entryId);
+    setQuickExcludeInput("");
+
+    // Start background render for all pages of this entry if not already rendered
+    const sessionId = Date.now();
+    renderingSessionRef.current = sessionId;
+
+    try {
+      const pdfjsLib = await loadPdfJs();
+      let buffer = entry.arrayBuffer;
+      if (!buffer) {
+        buffer = await entry.file.arrayBuffer();
+      }
+
+      const loadingTask = pdfjsLib.getDocument({
+        data: new Uint8Array(buffer.slice(0)),
+      });
+      const pdf = await loadingTask.promise;
+      const totalPages = pdf.numPages;
+
+      for (let p = 1; p <= totalPages; p++) {
+        // If user switched or closed modal, cancel further renders
+        if (renderingSessionRef.current !== sessionId) break;
+
+        // Skip if already rendered
+        if (entry.pageThumbnails && entry.pageThumbnails[p]) continue;
+
+        try {
+          const page = await pdf.getPage(p);
+          const viewport = page.getViewport({ scale: 0.4 });
+          const canvas = document.createElement("canvas");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const context = canvas.getContext("2d");
+          if (context) {
+            await page.render({ canvasContext: context, viewport }).promise;
+            const thumbUrl = canvas.toDataURL("image/jpeg", 0.75);
+
+            setFiles((prev) =>
+              prev.map((f) => {
+                if (f.id === entryId) {
+                  return {
+                    ...f,
+                    pageThumbnails: {
+                      ...(f.pageThumbnails || {}),
+                      [p]: thumbUrl,
+                    },
+                  };
+                }
+                return f;
+              })
+            );
+          }
+        } catch (pageErr) {
+          console.warn(`Could not render thumbnail for page ${p}:`, pageErr);
+        }
+      }
+    } catch (err) {
+      console.warn("Could not load PDF document for page previewing:", err);
+    }
+  };
+
+  const closePageManager = () => {
+    renderingSessionRef.current = 0;
+    setManagingEntryId(null);
+    setQuickExcludeInput("");
   };
 
   const clearAll = () => {
@@ -250,7 +475,8 @@ export default function PdfMerger() {
     setDownloadName("");
     setCustomOutputName("");
     setMergedStats({ totalPages: 0, totalSize: 0 });
-    setGlanceModalEntry(null);
+    setManagingEntryId(null);
+    renderingSessionRef.current = 0;
 
     if (fileInputRef.current) fileInputRef.current.value = "";
     if (additionalFileInputRef.current) additionalFileInputRef.current.value = "";
@@ -272,15 +498,21 @@ export default function PdfMerger() {
     document.body.removeChild(anchor);
   };
 
-  const mergePdfs = async () => {
-    if (files.length < 2) {
-      setError("Please add at least 2 PDF files to merge.");
+  const processPdfs = async () => {
+    if (files.length === 0) {
+      setError("Please add at least 1 PDF file.");
+      return;
+    }
+
+    if (totalKeptPages === 0) {
+      setError("All pages are excluded! Please keep at least 1 page to export.");
       return;
     }
 
     setIsProcessing(true);
     setError("");
-    setStatus("Merging PDF documents locally...");
+    const isSingle = files.length === 1;
+    setStatus(isSingle ? "Processing document pages..." : "Merging PDF documents locally...");
 
     try {
       const mergedPdf = await PDFDocument.create();
@@ -288,7 +520,11 @@ export default function PdfMerger() {
 
       for (let i = 0; i < files.length; i++) {
         const entry = files[i];
-        setStatus(`Processing document ${i + 1} of ${files.length} (${entry.file.name})...`);
+        setStatus(
+          isSingle
+            ? `Extracting selected pages from ${entry.file.name}...`
+            : `Processing document ${i + 1} of ${files.length} (${entry.file.name})...`
+        );
 
         let sourceBytes = entry.arrayBuffer;
         if (!sourceBytes) {
@@ -299,12 +535,20 @@ export default function PdfMerger() {
         const docPageCount = sourcePdf.getPageCount();
         const pageIndicesToCopy = parsePageRanges(entry.pageRange, docPageCount);
 
-        const copiedPages = await mergedPdf.copyPages(sourcePdf, pageIndicesToCopy);
-        copiedPages.forEach((page) => mergedPdf.addPage(page));
-        totalPagesCombined += copiedPages.length;
+        if (pageIndicesToCopy.length > 0) {
+          const copiedPages = await mergedPdf.copyPages(sourcePdf, pageIndicesToCopy);
+          copiedPages.forEach((page) => mergedPdf.addPage(page));
+          totalPagesCombined += copiedPages.length;
+        }
       }
 
-      setStatus("Finalizing combined PDF file...");
+      if (totalPagesCombined === 0) {
+        setError("No pages selected. Please keep at least 1 page across your documents.");
+        setIsProcessing(false);
+        return;
+      }
+
+      setStatus("Finalizing output PDF file...");
       const mergedPdfBytes = await mergedPdf.save();
       const outputBlob = new Blob([mergedPdfBytes], { type: "application/pdf" });
 
@@ -315,19 +559,20 @@ export default function PdfMerger() {
       const nextUrl = URL.createObjectURL(outputBlob);
       downloadUrlRef.current = nextUrl;
 
-      const finalName = (customOutputName.trim() || "merged-document.pdf").replace(/\.pdf$/i, "") + ".pdf";
+      const fallbackName = isSingle ? "cleaned-document.pdf" : "merged-document.pdf";
+      const finalName = (customOutputName.trim() || fallbackName).replace(/\.pdf$/i, "") + ".pdf";
 
       setDownloadUrl(nextUrl);
       setDownloadName(finalName);
       setMergedStats({ totalPages: totalPagesCombined, totalSize: outputBlob.size });
-      setStatus("PDFs merged successfully!");
+      setStatus(isSingle ? "PDF saved successfully!" : "PDFs merged successfully!");
 
       downloadPdf(nextUrl, finalName);
     } catch (mergeError) {
       setError(
         mergeError instanceof Error
-          ? `Merge failed: ${mergeError.message}`
-          : "Could not merge the PDF files. Please ensure files are not encrypted or corrupted."
+          ? `Operation failed: ${mergeError.message}`
+          : "Could not process PDF files. Please ensure files are not encrypted or corrupted."
       );
       setStatus("Ready to try again");
     } finally {
@@ -335,7 +580,8 @@ export default function PdfMerger() {
     }
   };
 
-  const canMerge = files.length >= 2 && !isProcessing && !isLoadingPages;
+  const canProcess = files.length >= 1 && totalKeptPages > 0 && !isProcessing && !isLoadingPages;
+  const currentManagingEntry = files.find((f) => f.id === managingEntryId);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50/70 px-4 py-6 sm:px-6 lg:px-8">
@@ -344,11 +590,17 @@ export default function PdfMerger() {
           <div className="flex flex-col gap-8">
             {/* Header & Hero */}
             <div className="text-center">
-              <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
-                PDF Merger
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                PDF Merger & Page Manager
+              </span>
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                Merge PDFs & Delete Pages
               </h1>
               <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-                Combine multiple PDF documents into a single clean file. Reorder pages, customize page ranges, and merge instantly right inside your browser.
+                Combine multiple PDFs or clean up single documents. Visually delete unwanted pages with one click, arrange document sequence, and export right in your browser.
               </p>
             </div>
 
@@ -387,7 +639,7 @@ export default function PdfMerger() {
                       <div className="min-w-0">
                         <p className="text-base font-bold text-slate-900">Drop your PDF files here</p>
                         <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-slate-500 break-words">
-                          Select 2 or more PDF documents from your device. Each file gets a visual glance preview automatically.
+                          Upload 1 or more PDF documents. You can delete specific pages visually and merge files seamlessly.
                         </p>
                       </div>
 
@@ -403,7 +655,7 @@ export default function PdfMerger() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-amber-700"
+                        className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-amber-700 cursor-pointer"
                       >
                         Choose PDF Files
                       </button>
@@ -414,12 +666,18 @@ export default function PdfMerger() {
                   <div className="flex flex-col gap-4">
                     {/* Header Bar */}
                     <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2.5">
                         <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-bold text-white">
                           {files.length} {files.length === 1 ? "File" : "Files"}
                         </span>
-                        <span className="text-xs font-semibold text-slate-500">
-                          {totalPagesCount} total pages • {formatBytes(totalSize)}
+                        <span className="text-xs font-semibold text-slate-600">
+                          {totalKeptPages === totalOriginalPages ? (
+                            <span>{totalKeptPages} total pages • {formatBytes(totalSize)}</span>
+                          ) : (
+                            <span className="text-amber-700 font-bold">
+                              {totalKeptPages} of {totalOriginalPages} pages kept ({totalOriginalPages - totalKeptPages} deleted)
+                            </span>
+                          )}
                         </span>
                       </div>
 
@@ -435,141 +693,159 @@ export default function PdfMerger() {
                         <button
                           type="button"
                           onClick={() => additionalFileInputRef.current?.click()}
-                          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-amber-700"
+                          className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-amber-700 cursor-pointer"
                         >
                           + Add More
                         </button>
                         <button
                           type="button"
                           onClick={clearAll}
-                          className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 transition hover:bg-rose-100"
+                          className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 transition hover:bg-rose-100 cursor-pointer"
                         >
                           Clear All
                         </button>
                       </div>
                     </div>
 
-                    {/* PDF Cards List with Visual Glance */}
+                    {/* PDF Cards List */}
                     <div className="flex flex-col gap-3">
-                      {files.map((entry, index) => (
-                        <div
-                          key={entry.id}
-                          className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 sm:flex-row sm:items-center sm:justify-between"
-                        >
-                          {/* File Info with Minimal Glance Thumbnail */}
-                          <div className="flex items-center gap-3 min-w-0 flex-1">
-                            {/* Sequence Number */}
-                            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-xs font-bold text-amber-800">
-                              {index + 1}
-                            </span>
+                      {files.map((entry, index) => {
+                        const keptIndices = parsePageRanges(entry.pageRange, entry.pageCount);
+                        const keptCount = keptIndices.length;
+                        const excludedCount = entry.pageCount - keptCount;
 
-                            {/* Minimal Visual Glance Thumbnail */}
-                            <button
-                              type="button"
-                              onClick={() => setGlanceModalEntry(entry)}
-                              title="Click for larger document glance"
-                              className="group relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 shadow-xs transition hover:scale-105 hover:border-amber-400 focus:outline-none"
-                            >
-                              {entry.thumbnailUrl ? (
-                                <>
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={entry.thumbnailUrl}
-                                    alt={`Preview of ${entry.file.name}`}
-                                    className="h-full w-full object-cover object-top"
-                                  />
-                                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 opacity-0 transition group-hover:opacity-100">
-                                    <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                  </div>
-                                </>
-                              ) : (
-                                <div className="flex flex-col items-center justify-center text-slate-400 p-1 text-center">
-                                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                  </svg>
-                                  <span className="text-[9px] font-bold uppercase tracking-tight text-slate-500 mt-0.5">PDF</span>
-                                </div>
-                              )}
-                            </button>
-
-                            {/* Name and Metadata */}
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-bold text-slate-900" title={entry.file.name}>
-                                {entry.file.name}
-                              </p>
-                              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                                <span className="font-semibold text-slate-600">{formatBytes(entry.file.size)}</span>
-                                <span>•</span>
-                                <span className="rounded-md bg-slate-100 px-2 py-0.5 font-medium text-slate-700">
-                                  {entry.pageCount} {entry.pageCount === 1 ? "page" : "pages"}
+                        return (
+                          <div
+                            key={entry.id}
+                            className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
+                          >
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                              {/* File Info with Minimal Thumbnail */}
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                {/* Sequence Number */}
+                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-xs font-bold text-amber-800">
+                                  {index + 1}
                                 </span>
-                                {entry.thumbnailUrl && (
+
+                                {/* Thumbnail Trigger */}
+                                <button
+                                  type="button"
+                                  onClick={() => openPageManager(entry.id)}
+                                  title="Click to visually manage/delete pages"
+                                  className="group relative flex h-14 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 shadow-xs transition hover:scale-105 hover:border-amber-400 focus:outline-none cursor-pointer"
+                                >
+                                  {entry.thumbnailUrl ? (
+                                    <>
+                                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                                      <img
+                                        src={entry.thumbnailUrl}
+                                        alt={`Preview of ${entry.file.name}`}
+                                        className="h-full w-full object-cover object-top"
+                                      />
+                                      <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50 opacity-0 transition group-hover:opacity-100">
+                                        <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                      </div>
+                                    </>
+                                  ) : (
+                                    <div className="flex flex-col items-center justify-center text-slate-400 p-1 text-center">
+                                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                      </svg>
+                                      <span className="text-[9px] font-bold uppercase tracking-tight text-slate-500 mt-0.5">PDF</span>
+                                    </div>
+                                  )}
+                                </button>
+
+                                {/* Name and Metadata */}
+                                <div className="min-w-0 flex-1">
+                                  <p className="truncate text-sm font-bold text-slate-900" title={entry.file.name}>
+                                    {entry.file.name}
+                                  </p>
+                                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                                    <span className="font-semibold text-slate-600">{formatBytes(entry.file.size)}</span>
+                                    <span>•</span>
+                                    {keptCount === entry.pageCount ? (
+                                      <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
+                                        ✓ All {entry.pageCount} pages included
+                                      </span>
+                                    ) : keptCount === 0 ? (
+                                      <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-[11px] font-semibold text-rose-700 border border-rose-200">
+                                        ⚠️ All pages excluded
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-800 border border-amber-200">
+                                        ✂ {keptCount} of {entry.pageCount} kept ({excludedCount} deleted)
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                                <button
+                                  type="button"
+                                  onClick={() => openPageManager(entry.id)}
+                                  className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50/80 px-3 py-1.5 text-xs font-bold text-amber-900 shadow-xs transition hover:bg-amber-100 hover:border-amber-400 cursor-pointer"
+                                >
+                                  <svg className="w-3.5 h-3.5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                  </svg>
+                                  Manage Pages
+                                </button>
+
+                                <div className="flex items-center gap-1">
                                   <button
                                     type="button"
-                                    onClick={() => setGlanceModalEntry(entry)}
-                                    className="text-amber-700 hover:text-amber-900 font-semibold hover:underline flex items-center gap-1 ml-1"
+                                    onClick={() => moveItem(index, index - 1)}
+                                    disabled={index === 0}
+                                    title="Move up"
+                                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-slate-50 cursor-pointer"
                                   >
-                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    Glance
+                                    ▲
                                   </button>
-                                )}
+                                  <button
+                                    type="button"
+                                    onClick={() => moveItem(index, index + 1)}
+                                    disabled={index === files.length - 1}
+                                    title="Move down"
+                                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-slate-50 cursor-pointer"
+                                  >
+                                    ▼
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeFileAtIndex(index)}
+                                    title="Remove document"
+                                    className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-xs font-bold text-rose-600 hover:bg-rose-100 cursor-pointer"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Range Syntax Pill Info */}
+                            <div className="flex items-center justify-between border-t border-slate-100 pt-2 text-[11px] text-slate-500">
+                              <span className="font-medium text-slate-500">
+                                Pages to include: <code className="rounded bg-slate-100 px-1 py-0.5 font-bold text-slate-700">{entry.pageRange}</code>
+                              </span>
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-semibold text-slate-400">Manual Edit:</span>
+                                <input
+                                  type="text"
+                                  value={entry.pageRange}
+                                  onChange={(e) => updatePageRange(index, e.target.value)}
+                                  placeholder="all or 1-3, 5"
+                                  className="w-24 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[11px] font-medium text-slate-800 focus:border-amber-500 focus:bg-white focus:outline-none"
+                                />
                               </div>
                             </div>
                           </div>
-
-                          {/* Page Range & Controls */}
-                          <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-                            <div className="flex items-center gap-1.5">
-                              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                                Pages:
-                              </label>
-                              <input
-                                type="text"
-                                value={entry.pageRange}
-                                onChange={(e) => updatePageRange(index, e.target.value)}
-                                placeholder="all or 1-3, 5"
-                                title="Enter 'all' or comma-separated pages/ranges (e.g. 1-4, 7)"
-                                className="w-24 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-800 focus:border-amber-500 focus:bg-white focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="flex items-center gap-1">
-                              <button
-                                type="button"
-                                onClick={() => moveItem(index, index - 1)}
-                                disabled={index === 0}
-                                title="Move up"
-                                className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-slate-50"
-                              >
-                                ▲
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => moveItem(index, index + 1)}
-                                disabled={index === files.length - 1}
-                                title="Move down"
-                                className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-slate-50"
-                              >
-                                ▼
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => removeFileAtIndex(index)}
-                                title="Remove file"
-                                className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-200 bg-rose-50 text-xs font-bold text-rose-600 hover:bg-rose-100"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Output File Name Setting */}
@@ -582,7 +858,7 @@ export default function PdfMerger() {
                           type="text"
                           value={customOutputName}
                           onChange={(e) => setCustomOutputName(e.target.value)}
-                          placeholder="merged-document.pdf"
+                          placeholder="document-output.pdf"
                           className="w-full bg-transparent px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none"
                         />
                         <span className="flex items-center pr-3 text-xs font-bold text-slate-400">.pdf</span>
@@ -601,9 +877,9 @@ export default function PdfMerger() {
                 {/* Primary Action Button */}
                 <button
                   type="button"
-                  onClick={mergePdfs}
-                  disabled={!canMerge}
-                  className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-orange-500/20 transition hover:from-orange-600 hover:to-amber-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={processPdfs}
+                  disabled={!canProcess}
+                  className="inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-4 text-base font-bold text-white shadow-lg shadow-orange-500/20 transition hover:from-orange-600 hover:to-amber-600 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 >
                   {isProcessing ? (
                     <>
@@ -627,7 +903,9 @@ export default function PdfMerger() {
                           d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
                         />
                       </svg>
-                      Merge {files.length > 0 ? `${files.length} PDFs` : "PDFs"}
+                      {files.length <= 1
+                        ? `Save Cleaned PDF (${totalKeptPages} pages)`
+                        : `Merge ${files.length} PDFs (${totalKeptPages} pages)`}
                     </>
                   )}
                 </button>
@@ -642,39 +920,39 @@ export default function PdfMerger() {
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300">How It Works</p>
                   <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-200">
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
-                      <p className="font-semibold text-white">1. Add PDF Files</p>
-                      <p className="mt-1 text-xs text-slate-300">Upload two or more PDF documents from your device.</p>
+                      <p className="font-semibold text-white">1. Add PDF Document(s)</p>
+                      <p className="mt-1 text-xs text-slate-300">Upload 1 file to delete pages, or 2+ files to combine them.</p>
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
-                      <p className="font-semibold text-white">2. Arrange & Glance</p>
+                      <p className="font-semibold text-white">2. Visually Delete Pages</p>
                       <p className="mt-1 text-xs text-slate-300">
-                        Check visual 1st-page glance previews and arrange your sequence with ▲ / ▼.
+                        Click &quot;Manage Pages&quot; to see thumbnails of all pages. Click any page to exclude or restore it.
                       </p>
                     </div>
                     <div className="rounded-2xl bg-white/5 p-4 backdrop-blur-sm">
-                      <p className="font-semibold text-white">3. Merge & Download</p>
+                      <p className="font-semibold text-white">3. Save & Download</p>
                       <p className="mt-1 text-xs text-slate-300">
-                        Click Merge to compile your single combined PDF and download it instantly.
+                        Export your cleaned or combined PDF instantly with zero server uploads.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Info & Output Summary */}
+                {/* Security & Features */}
                 <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                  <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">Security & Features</p>
+                  <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-500">Features & Privacy</p>
                   <ul className="mt-4 space-y-3 text-sm leading-relaxed text-slate-600">
                     <li className="flex items-start gap-2">
                       <span className="text-emerald-500 font-bold">✓</span>
-                      <span><strong>100% In-Browser:</strong> Documents are never transmitted over the internet.</span>
+                      <span><strong>100% In-Browser:</strong> Documents never leave your device.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-emerald-500 font-bold">✓</span>
-                      <span><strong>Visual Glance:</strong> 1st-page snapshot to quickly recognize documents.</span>
+                      <span><strong>Visual Page Removal:</strong> See all pages as cards and click to delete unwanted pages.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-emerald-500 font-bold">✓</span>
-                      <span><strong>Selective Merging:</strong> Choose full files or exact page numbers.</span>
+                      <span><strong>Single & Multi File:</strong> Delete pages from 1 PDF or merge several into 1.</span>
                     </li>
                   </ul>
 
@@ -696,7 +974,7 @@ export default function PdfMerger() {
                     <button
                       type="button"
                       onClick={() => downloadPdf(downloadUrl, downloadName)}
-                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -711,59 +989,213 @@ export default function PdfMerger() {
         </div>
       </section>
 
-      {/* Glance Preview Modal */}
-      {glanceModalEntry && (
+      {/* Visual Page Grid Modal */}
+      {currentManagingEntry && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs"
-          onClick={() => setGlanceModalEntry(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-3 sm:p-5 backdrop-blur-xs"
+          onClick={closePageManager}
         >
           <div
-            className="relative flex w-full max-w-md flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl"
+            className="relative flex w-full max-w-4xl max-h-[92vh] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="min-w-0 flex-1 pr-3">
-                <h3 className="truncate text-base font-bold text-slate-900">
-                  {glanceModalEntry.file.name}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {glanceModalEntry.pageCount} {glanceModalEntry.pageCount === 1 ? "page" : "pages"} • {formatBytes(glanceModalEntry.file.size)}
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6">
+              <div className="min-w-0 flex-1 pr-4">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
+                    Page Manager
+                  </span>
+                  <h3 className="truncate text-base font-bold text-slate-900 sm:text-lg">
+                    {currentManagingEntry.file.name}
+                  </h3>
+                </div>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Click any page to toggle deletion. Excluded pages turn red and won&apos;t appear in your output.
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => setGlanceModalEntry(null)}
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200"
+                onClick={closePageManager}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition hover:bg-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="mt-4 flex flex-col items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 p-4">
-              {glanceModalEntry.thumbnailUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={glanceModalEntry.thumbnailUrl}
-                  alt={`1st Page Glance of ${glanceModalEntry.file.name}`}
-                  className="max-h-80 w-auto rounded-lg border border-slate-200 object-contain shadow-md"
-                />
-              ) : (
-                <div className="flex h-48 w-36 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400">
-                  <span className="text-xs font-bold">No preview available</span>
-                </div>
-              )}
-              <span className="mt-2 text-[11px] font-semibold text-slate-500">
-                Page 1 Preview (Glance)
-              </span>
+            {/* Quick Actions & Stats Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/80 px-5 py-3 sm:px-6">
+              <div className="flex items-center gap-2 text-xs">
+                {(() => {
+                  const kept = parsePageRanges(currentManagingEntry.pageRange, currentManagingEntry.pageCount).length;
+                  const excluded = currentManagingEntry.pageCount - kept;
+                  return (
+                    <span className="font-semibold text-slate-700">
+                      Including <strong className="text-slate-900">{kept}</strong> of{" "}
+                      <strong>{currentManagingEntry.pageCount}</strong> pages
+                      {excluded > 0 && (
+                        <span className="ml-1 text-rose-600 font-bold">
+                          ({excluded} {excluded === 1 ? "page" : "pages"} deleted)
+                        </span>
+                      )}
+                    </span>
+                  );
+                })()}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => includeAllPages(currentManagingEntry.id)}
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
+                >
+                  ✓ Keep All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => invertSelection(currentManagingEntry.id)}
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
+                >
+                  ⚡ Invert
+                </button>
+
+                {/* Quick Exclude Input */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    excludeFromQuickInput(currentManagingEntry.id, quickExcludeInput);
+                  }}
+                  className="flex items-center gap-1"
+                >
+                  <input
+                    type="text"
+                    value={quickExcludeInput}
+                    onChange={(e) => setQuickExcludeInput(e.target.value)}
+                    placeholder="Delete pages: e.g. 2, 4-5"
+                    className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-800 focus:border-rose-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 hover:bg-rose-100 cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
+            {/* Scrollable Visual Pages Grid */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/50">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {Array.from({ length: currentManagingEntry.pageCount }, (_, i) => i + 1).map((pageNum) => {
+                  const isExcluded = (currentManagingEntry.excludedPages || []).includes(pageNum);
+                  const thumb = currentManagingEntry.pageThumbnails?.[pageNum];
+
+                  return (
+                    <div
+                      key={pageNum}
+                      onClick={() => togglePageExclusion(currentManagingEntry.id, pageNum)}
+                      className={`group relative flex flex-col overflow-hidden rounded-2xl border transition-all cursor-pointer ${
+                        isExcluded
+                          ? "border-rose-300 bg-rose-50/40 opacity-75 ring-2 ring-rose-200 hover:opacity-100"
+                          : "border-slate-200 bg-white hover:border-amber-400 hover:shadow-md ring-1 ring-slate-100"
+                      }`}
+                    >
+                      {/* Page Label & Status Header */}
+                      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-2.5 py-1.5 text-xs">
+                        <span className="font-extrabold text-slate-800">Page {pageNum}</span>
+                        {isExcluded ? (
+                          <span className="rounded bg-rose-100 px-1.5 py-0.2 text-[10px] font-black uppercase tracking-wider text-rose-700">
+                            Deleted
+                          </span>
+                        ) : (
+                          <span className="rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-black uppercase tracking-wider text-emerald-700">
+                            Included
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Thumbnail Container */}
+                      <div className="relative flex aspect-[1/1.3] w-full items-center justify-center bg-slate-100/70 p-2 overflow-hidden">
+                        {thumb ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={thumb}
+                            alt={`Page ${pageNum}`}
+                            className={`h-full w-full rounded object-contain transition ${
+                              isExcluded ? "filter grayscale brightness-75 contrast-75" : ""
+                            }`}
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-1.5 text-slate-400 p-2 text-center">
+                            <svg className="h-6 w-6 animate-pulse text-amber-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span className="text-[10px] font-medium text-slate-500">Rendering preview...</span>
+                          </div>
+                        )}
+
+                        {/* Excluded Visual Cross Overlay */}
+                        {isExcluded && (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-rose-950/35 backdrop-blur-[1px]">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-600 text-white shadow-md">
+                              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </div>
+                            <span className="mt-1 text-[11px] font-black tracking-wider text-white drop-shadow">
+                              DELETED
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Card Bottom Action Button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePageExclusion(currentManagingEntry.id, pageNum);
+                        }}
+                        className={`flex w-full items-center justify-center gap-1.5 border-t py-1.5 text-xs font-bold transition cursor-pointer ${
+                          isExcluded
+                            ? "border-rose-200 bg-rose-100 text-rose-800 hover:bg-rose-200"
+                            : "border-slate-100 bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-700"
+                        }`}
+                      >
+                        {isExcluded ? (
+                          <>
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Restore
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete Page
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between border-t border-slate-100 bg-white px-5 py-3.5 sm:px-6">
+              <span className="text-xs text-slate-500 hidden sm:inline">
+                All page deletions update your document instantly.
+              </span>
               <button
                 type="button"
-                onClick={() => setGlanceModalEntry(null)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+                onClick={closePageManager}
+                className="ml-auto inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-2 text-xs font-bold text-white shadow-sm transition hover:from-orange-600 hover:to-amber-600 cursor-pointer"
               >
-                Close Glance
+                Done / Apply
               </button>
             </div>
           </div>

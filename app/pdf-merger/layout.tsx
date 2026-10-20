@@ -10,7 +10,7 @@ const tool = tools.find((t) => t.id === "pdf-merger") || {
   name: "PDF Merger",
   href: "/pdf-merger",
   category: "Documents",
-  description: "Combine multiple PDF documents into a single organized file with reordering and page selection — 100% locally in your browser.",
+  description: "Combine multiple PDF documents or delete unwanted pages visually — 100% locally in your browser.",
   status: "Live",
 };
 
