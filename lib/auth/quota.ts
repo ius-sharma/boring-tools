@@ -1,6 +1,7 @@
 import { createClient } from "../supabase/server";
 import { createAdminClient } from "../supabase/admin";
 import { ToolCostConfig } from "./types";
+import { isUserAdmin } from "./adminConfig";
 import { checkGuestQuota, incrementGuestQuota } from "./guest";
 import { NextRequest } from "next/server";
 
@@ -25,6 +26,28 @@ export async function verifyAndDeductQuota(
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+
+    // 0. Admin Whitelist: Unlimited Access
+    if (user && isUserAdmin(user.email)) {
+      return {
+        allowed: true,
+        isGuest: false,
+        isPro: true,
+        remaining: 999999,
+        userId: user.id,
+      };
+    }
+
+    // 0.1 Private Beta Gatekeeper: Block non-admins during private beta
+    const isPrivateBeta = process.env.NEXT_PUBLIC_PRIVATE_BETA !== "false";
+    if (isPrivateBeta && !isUserAdmin(user?.email)) {
+      return {
+        allowed: false,
+        isGuest: !user,
+        reason: "UNAUTHORIZED",
+        message: "BoringTools is currently in private beta. Join the waitlist for early access.",
+      };
+    }
 
     // 1. If User is Logged-In
     if (user) {

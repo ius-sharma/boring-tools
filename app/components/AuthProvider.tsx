@@ -2,12 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { createClient } from "../../lib/supabase/client";
+import { isUserAdmin } from "../../lib/auth/adminConfig";
 
 export interface UserState {
   id: string;
   email: string;
   fullName?: string;
   avatarUrl?: string;
+  isAdmin?: boolean;
 }
 
 export interface SubscriptionState {
@@ -47,6 +49,7 @@ interface AuthContextValue {
   subscription: SubscriptionState | null;
   credits: CreditsState;
   loading: boolean;
+  isAdmin: boolean;
   isAuthModalOpen: boolean;
   isUpgradeModalOpen: boolean;
   authModalMessage: string;
@@ -75,6 +78,7 @@ const AuthContext = createContext<AuthContextValue>({
   subscription: null,
   credits: defaultCredits,
   loading: true,
+  isAdmin: false,
   isAuthModalOpen: false,
   isUpgradeModalOpen: false,
   authModalMessage: "",
@@ -227,6 +231,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const isAdmin = Boolean(user?.isAdmin || isUserAdmin(user?.email));
+
   return (
     <AuthContext.Provider
       value={{
@@ -234,6 +240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         subscription,
         credits,
         loading,
+        isAdmin,
         isAuthModalOpen,
         isUpgradeModalOpen,
         authModalMessage,

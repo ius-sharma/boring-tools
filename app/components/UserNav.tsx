@@ -72,7 +72,7 @@ export default function UserNav() {
               <p className="text-xs text-slate-500 truncate">{user.email}</p>
               <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] font-medium text-slate-500">
-                  {credits?.isPro ? "Pro Plan" : "Free Plan"}
+                  {user?.isAdmin ? "Admin Access" : credits?.isPro ? "Pro Plan" : "Free Plan"}
                 </span>
                 <span className="text-[11px] font-semibold text-[#ea580c] bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200/60">
                   ⚡ {credits?.totalAvailable ?? 10} credits left

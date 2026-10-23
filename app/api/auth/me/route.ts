@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { checkGuestQuota } from "../../../../lib/auth/guest";
+import { isUserAdmin } from "../../../../lib/auth/adminConfig";
 
 export async function GET(req: NextRequest) {
   try {
@@ -90,6 +91,7 @@ export async function GET(req: NextRequest) {
         email: user.email,
         fullName: profile?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0],
         avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url,
+        isAdmin: isUserAdmin(user.email),
       },
       subscription: sub
         ? {
