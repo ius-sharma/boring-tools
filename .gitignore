@@ -64,3 +64,6 @@ Marketing/
 .tmp_sec_audit/
 scripts/build-submission-hub.mjs
 scripts/verify-directories.mjs
+
+scripts/monitor-traffic.mjs
+scripts/submit-*.mjs
