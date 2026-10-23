@@ -106,6 +106,7 @@ import FeedbackWidget from "./components/FeedbackWidget";
 import ConsentBanner from "./components/ConsentBanner";
 import GoogleAdsenseLoader from "./components/GoogleAdsenseLoader";
 import AnalyticsLoader from "./components/AnalyticsLoader";
+import WaitlistGuard from "./components/WaitlistGuard";
 
 export default function RootLayout({
   children,
@@ -134,6 +135,7 @@ export default function RootLayout({
           <AnalyticsLoader />
           <GoogleAdsenseLoader />
           {children}
+          <WaitlistGuard />
           <ToolContentFooter />
           <FeedbackWidget />
           <AuthModal />
