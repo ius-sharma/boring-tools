@@ -30,8 +30,10 @@ export default function WaitlistGuard() {
       const bypassParam = urlParams.get("admin_bypass");
       if (bypassParam === "ayush_admin") {
         localStorage.setItem("boring_admin_bypass", "ayush_admin");
+        document.cookie = "boring_admin_bypass=ayush_admin; path=/; max-age=31536000";
         setHasLocalBypass(true);
       } else if (localStorage.getItem("boring_admin_bypass") === "ayush_admin") {
+        document.cookie = "boring_admin_bypass=ayush_admin; path=/; max-age=31536000";
         setHasLocalBypass(true);
       }
     }

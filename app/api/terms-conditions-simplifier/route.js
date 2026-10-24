@@ -1,7 +1,7 @@
 import { withAuthAndQuota } from "../../../lib/auth/withAuthAndQuota";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = process.env.GROQ_MODEL || "qwen/qwen3.8-27b";
 
 function buildPrompt(legalText) {
   return [
@@ -35,13 +35,21 @@ function safeParseJson(content) {
     return JSON.parse(content);
   } catch {
     const fenced = content.match(/```json\s*([\s\S]*?)\s*```/i)?.[1] || content.match(/```\s*([\s\S]*?)\s*```/)?.[1];
-    if (!fenced) return null;
-
-    try {
-      return JSON.parse(fenced);
-    } catch {
-      return null;
+    if (fenced) {
+      try {
+        return JSON.parse(fenced);
+      } catch {}
     }
+
+    const firstBrace = content.indexOf("{");
+    const lastBrace = content.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(content.slice(firstBrace, lastBrace + 1));
+      } catch {}
+    }
+
+    return null;
   }
 }
 

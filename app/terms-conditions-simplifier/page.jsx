@@ -881,14 +881,14 @@ export default function TermsConditionsSimplifierPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-base font-semibold text-slate-900">How it works</h2>
-                <p className="text-sm text-slate-500">No network calls, no account, no document upload.</p>
+                <p className="text-sm text-slate-500">Fast, private, no account, zero tracking.</p>
               </div>
-              <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">Heuristic parser</span>
+              <span className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">AI Legal Auditor</span>
             </div>
 
             <div className="space-y-3 text-sm leading-6 text-slate-600">
               <p>1. Paste the legal text into the large editor on the left.</p>
-              <p>2. The tool scans the text locally for obligations, permissions, and risk-heavy clauses.</p>
+              <p>2. The tool analyzes the text for obligations, permissions, and risk-heavy clauses.</p>
               <p>3. You get a short summary and a report you can copy or download.</p>
             </div>
 
@@ -905,7 +905,7 @@ export default function TermsConditionsSimplifierPage() {
             <div className="rounded-2xl border border-orange-200 bg-orange-50/70 p-4">
               <p className="text-xs font-medium uppercase tracking-wider text-orange-700">Privacy note</p>
               <p className="mt-2 text-sm leading-6 text-slate-700">
-                Everything stays in the browser. Nothing is sent to a backend, stored in a database, or processed by an API.
+                Your input is processed ephemerally and never stored in a database, logged, or used for AI training.
               </p>
             </div>
           </section>

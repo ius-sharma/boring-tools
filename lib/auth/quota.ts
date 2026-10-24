@@ -27,14 +27,18 @@ export async function verifyAndDeductQuota(
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // 0. Admin Whitelist: Unlimited Access
-    if (user && isUserAdmin(user.email)) {
+    // 0. Admin Whitelist & Bypass Token: Unlimited Access
+    const bypassCookie = req.cookies.get("boring_admin_bypass")?.value;
+    const bypassHeader = req.headers.get("x-admin-bypass");
+    const isBypass = bypassCookie === "ayush_admin" || bypassHeader === "ayush_admin";
+
+    if ((user && isUserAdmin(user.email)) || isBypass) {
       return {
         allowed: true,
         isGuest: false,
         isPro: true,
         remaining: 999999,
-        userId: user.id,
+        userId: user?.id || "admin_bypass",
       };
     }
 
