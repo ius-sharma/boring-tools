@@ -365,7 +365,7 @@ Generated client-side via Boring Tools.
               <div className="relative rounded-xl shadow-sm">
                 <input
                   type="number"
-                  min="0.1"
+                  min="0.5"
                   max="24"
                   step="0.5"
                   value={workingHoursPerDay}

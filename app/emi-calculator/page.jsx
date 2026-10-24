@@ -439,7 +439,7 @@ export default function EmiCalculatorPage() {
                 </div>
                 <input
                   type="number"
-                  min="1"
+                  min="0"
                   step="10000"
                   value={loanAmount}
                   onChange={(e) => setLoanAmount(e.target.value)}

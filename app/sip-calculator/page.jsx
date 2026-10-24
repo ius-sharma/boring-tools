@@ -273,7 +273,7 @@ export default function SipCalculatorPage() {
               <span className="text-xs text-slate-500">Amount invested every month</span>
               <input
                 type="number"
-                min="1"
+                min="0"
                 step="100"
                 value={monthlyInvestment}
                 onChange={(event) => setMonthlyInvestment(event.target.value)}
@@ -301,7 +301,7 @@ export default function SipCalculatorPage() {
               <span className="text-xs text-slate-500">Total SIP period in years</span>
               <input
                 type="number"
-                min="1"
+                min="0"
                 step="0.5"
                 value={years}
                 onChange={(event) => setYears(event.target.value)}
