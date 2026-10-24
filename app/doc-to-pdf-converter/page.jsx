@@ -146,6 +146,69 @@ export default function DocToPdfConverter() {
     downloadPdf(downloadUrl, downloadName);
   };
 
+  async function convertDocxWithFallback(targetFile, targetPaperSize) {
+    const mammoth = await import("mammoth");
+    const { PDFDocument, rgb, StandardFonts } = await import("pdf-lib");
+
+    const arrayBuffer = await targetFile.arrayBuffer();
+    const { value: text } = await mammoth.extractRawText({ arrayBuffer });
+
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    const isLetter = targetPaperSize === "Letter";
+    const pageWidth = isLetter ? 612 : 595.28;
+    const pageHeight = isLetter ? 792 : 841.89;
+    const margin = 54;
+    const contentWidth = pageWidth - margin * 2;
+    const fontSize = 11;
+    const lineHeight = 16;
+
+    let page = pdfDoc.addPage([pageWidth, pageHeight]);
+    let y = pageHeight - margin;
+
+    const paragraphs = text.split(/\r?\n/);
+    for (const para of paragraphs) {
+      if (!para.trim()) {
+        y -= lineHeight * 0.75;
+        if (y < margin) {
+          page = pdfDoc.addPage([pageWidth, pageHeight]);
+          y = pageHeight - margin;
+        }
+        continue;
+      }
+
+      const words = para.split(/\s+/);
+      let line = "";
+      for (const word of words) {
+        const testLine = line ? `${line} ${word}` : word;
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+        if (testWidth > contentWidth && line) {
+          page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0.12, 0.12, 0.12) });
+          y -= lineHeight;
+          if (y < margin) {
+            page = pdfDoc.addPage([pageWidth, pageHeight]);
+            y = pageHeight - margin;
+          }
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line) {
+        page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0.12, 0.12, 0.12) });
+        y -= lineHeight;
+        if (y < margin) {
+          page = pdfDoc.addPage([pageWidth, pageHeight]);
+          y = pageHeight - margin;
+        }
+      }
+      y -= lineHeight * 0.4;
+    }
+
+    return await pdfDoc.save();
+  }
+
   async function getConverter() {
     if (converterRef.current?.isReady()) return converterRef.current;
 
@@ -166,7 +229,13 @@ export default function DocToPdfConverter() {
       },
     });
 
-    await converter.initialize();
+    await Promise.race([
+      converter.initialize(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Document engine timed out")), 15000)
+      ),
+    ]);
+
     converterRef.current = converter;
     return converter;
   }
@@ -182,6 +251,8 @@ export default function DocToPdfConverter() {
     setLoadProgress(0);
     setStatus("Preparing the document engine...");
 
+    let pdfBytes = null;
+
     try {
       const converter = await getConverter();
 
@@ -190,14 +261,48 @@ export default function DocToPdfConverter() {
       const result = await converter.convertFile(file, {
         outputFormat: "pdf",
         pdf: {
-          // A4 is LibreOffice's default page size; Letter is enforced via filter options
           ...(paperSize === "Letter" ? { quality: 90 } : {}),
         },
         ...(paperSize === "Letter" ? { filterOptions: 'PaperName="Letter"' } : {}),
       });
 
       const pdfBuffer = result.data;
-      const pdfBytes = pdfBuffer instanceof Uint8Array ? pdfBuffer : new Uint8Array(pdfBuffer);
+      pdfBytes = pdfBuffer instanceof Uint8Array ? pdfBuffer : new Uint8Array(pdfBuffer);
+    } catch (conversionError) {
+      console.warn("WASM engine failed or timed out, trying lightweight parser:", conversionError);
+
+      if (converterRef.current) {
+        try {
+          converterRef.current.destroy();
+        } catch {}
+        converterRef.current = null;
+      }
+
+      const lowerName = String(file.name || "").toLowerCase();
+      if (lowerName.endsWith(".docx")) {
+        try {
+          setStatus("Converting with fast document parser...");
+          pdfBytes = await convertDocxWithFallback(file, paperSize);
+        } catch (fallbackError) {
+          console.error("Fallback conversion failed:", fallbackError);
+          const message = conversionError instanceof Error ? conversionError.message : "Could not convert the document.";
+          setError(message);
+          setStatus("Ready to try again");
+          setIsProcessing(false);
+          return;
+        }
+      } else {
+        const message = conversionError instanceof Error ? conversionError.message : "Could not convert the document.";
+        setError(message);
+        setStatus("Ready to try again");
+        setIsProcessing(false);
+        return;
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+
+    if (pdfBytes) {
       const blob = new Blob([pdfBytes], { type: "application/pdf" });
       const nextUrl = URL.createObjectURL(blob);
       const nextName = getPdfName(file.name);
@@ -213,19 +318,6 @@ export default function DocToPdfConverter() {
       setStatus("PDF ready for download");
 
       downloadPdf(nextUrl, nextName);
-    } catch (conversionError) {
-      // Rebuild the engine on the next attempt if it broke
-      if (converterRef.current) {
-        try {
-          converterRef.current.destroy();
-        } catch {}
-        converterRef.current = null;
-      }
-      const message = conversionError instanceof Error ? conversionError.message : "Could not convert the document.";
-      setError(message);
-      setStatus("Ready to try again");
-    } finally {
-      setIsProcessing(false);
     }
   };
 
