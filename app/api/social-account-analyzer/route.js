@@ -118,10 +118,11 @@ async function fetchPlatformStats(platform, username, token) {
       maxPosts: 12
     };
   } else if (platform === "youtube") {
-    actorName = "apify~youtube-scraper";
+    actorName = "johnvc~youtube-shorts-api";
     runInput = {
-      startUrls: [{ url: `https://www.youtube.com/@${username}` }],
-      maxResults: 12
+      channels: [username],
+      maxResultsShorts: 12,
+      sortChannelShortsBy: "NEWEST"
     };
   } else if (platform === "tiktok") {
     actorName = "clockworks~tiktok-scraper";
@@ -242,7 +243,8 @@ async function fetchPlatformStats(platform, username, token) {
       postedAt: p.timestamp ?? null
     })).slice(0, 12);
   } else if (platform === "youtube") {
-    const first = items[0];
+    const videos = items.filter(i => !i.error);
+    const first = videos[0];
     if (!first) {
       throw new Error(`YouTube profile not found or has no videos. Please use Manual Mode.`);
     }
@@ -251,17 +253,17 @@ async function fetchPlatformStats(platform, username, token) {
       followers = first.channelInfo.subscribers ?? first.channelInfo.subscriberCount ?? null;
     }
     if (followers === null) {
-      const withSubs = items.find(i => i.numberOfSubscribers != null || i.subscriberCount != null);
+      const withSubs = videos.find(i => i.numberOfSubscribers != null || i.subscriberCount != null);
       if (withSubs) {
         followers = withSubs.numberOfSubscribers ?? withSubs.subscriberCount;
       }
     }
     following = 0;
-    postsCount = first.channelVideosCount ?? first.videosCount ?? items.length;
-    isVerified = !!(first.verified ?? first.channelInfo?.verified);
+    postsCount = first.channelTotalVideos ?? first.channelVideosCount ?? first.videosCount ?? videos.length;
+    isVerified = !!(first.isChannelVerified ?? first.verified ?? first.channelInfo?.verified);
     bio = first.channelDescription ?? first.description ?? first.channelInfo?.description ?? "";
 
-    recentPosts = items.map(p => ({
+    recentPosts = videos.map(p => ({
       likes: p.likes ?? p.likeCount ?? 0,
       comments: p.commentsCount ?? p.commentCount ?? 0,
       views: p.viewCount ?? p.views ?? p.likes ?? null,
